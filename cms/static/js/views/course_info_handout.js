@@ -1,4 +1,4 @@
-define(["js/views/baseview", "underscore", "codemirror", "js/views/feedback_notification", "js/views/course_info_helper", "js/utils/modal"],
+define(["js/views/baseview", "underscore", "codemirror", "js/views/feedback_notification", "js/views/course_info_helper", "js/utils/modal", "jquery.tinymce"],
     function(BaseView, _, CodeMirror, NotificationView, CourseInfoHelper, ModalUtils) {
 
     // the handouts view is dumb right now; it needs tied to a model and all that jazz
@@ -44,8 +44,25 @@ define(["js/views/baseview", "underscore", "codemirror", "js/views/feedback_noti
             this.$editor.val(this.$preview.html());
             this.$form.show();
 
-            this.$codeMirror = CourseInfoHelper.editWithCodeMirror(
-                self.model, 'data', self.options['base_asset_url'], this.$editor.get(0));
+            this.$tinymce = null;
+            var that = this;
+            this.$editor.tinymce({
+                theme: "modern",
+                plugins: [
+                    "image autolink link"
+                ],
+                image_dimensions: false,
+                image_description: false,
+                menubar : false,
+                toolbar: "formatselect bold italic underline strikethrough bullist numlist blockquote link unlink image",
+                block_formats: "Paragraph=p;Preformatted=pre;Header 1=h1;Header 2=h2;Header 3=h3",
+                setup: function(ed) {
+                    that.$tinymce = ed;
+                }
+            });
+
+            // this.$codeMirror = CourseInfoHelper.editWithCodeMirror(
+            //     self.model, 'data', self.options['base_asset_url'], this.$editor.get(0));
 
             ModalUtils.showModalCover(false, function() { self.closeEditor() });
         },
@@ -54,7 +71,9 @@ define(["js/views/baseview", "underscore", "codemirror", "js/views/feedback_noti
             $('#handout_error').removeClass('is-shown');
             $('.save-button').removeClass('is-disabled');
             if ($('.CodeMirror-lines').find('.cm-error').length == 0){
-                this.model.set('data', this.$codeMirror.getValue());
+                // this.model.set('data', this.$codeMirror.getValue());
+
+                this.model.set('data', this.$tinymce.getContent());
                 var saving = new NotificationView.Mini({
                     title: gettext('Saving&hellip;')
                 });
