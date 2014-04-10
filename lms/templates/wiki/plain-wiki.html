@@ -1,0 +1,23 @@
+{% extends "wiki/plain-wiki-base.html" %}
+{% load wiki_tags i18n %}
+{% load url from future %}
+
+{% block wiki_contents %}
+
+  <div class="article-wrapper">
+
+    <article class="main-article" id="main-article">
+        {% if selected_tab != "edit" %}
+          <h1>{{ article.current_revision.title }}</h1>
+
+        {% endif %}
+
+        {% block wiki_contents_tab %}
+        {% wiki_render article %}
+        {% endblock %}
+    </article>
+
+  </div>
+
+{% endblock %}
+
