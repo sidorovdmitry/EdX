@@ -69,7 +69,7 @@ def _xblock_has_studio_page(xblock):
           - chapters
     """
     category = xblock.category
-    if category in ('course', 'vertical'):
+    if category in ('course', 'vertical', 'lab'):
         return True
     elif category in ('sequential', 'chapter'):
         return False

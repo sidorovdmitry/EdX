@@ -32,9 +32,15 @@ This def will enumerate through a passed in subsection and list all of the units
         selected_class = ''
     %>
     <div class="section-item ${selected_class}">
+      % if unit.category == 'lab':
+      <a href="${unit_locator.url_reverse('lab-unit')}" class="${unit_state}-item">
+        <span class="unit-name">${unit.display_name_with_default}</span>
+      </a>
+      % else:
       <a href="${unit_locator.url_reverse('unit')}" class="${unit_state}-item">
         <span class="unit-name">${unit.display_name_with_default}</span>
       </a>
+      % endif
       % if actions:
       <div class="item-actions">
         <ul class="actions-list">
@@ -54,6 +60,10 @@ This def will enumerate through a passed in subsection and list all of the units
   % endfor
   <li class="courseware-unit add-new-unit">
     <%include file="_ui-dnd-indicator-initial.html" />
+
+    <a href="#" class="new-unit-item new-lab-unit-item" data-category="lab" data-parent="${subsection_locator}">
+      <i class="icon-plus"></i> ${_("New Lab Unit")}
+    </a>
 
     <a href="#" class="new-unit-item" data-category="${new_unit_category}" data-parent="${subsection_locator}">
       <i class="icon-plus"></i> ${_("New Unit")}

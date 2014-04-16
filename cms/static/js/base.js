@@ -226,6 +226,7 @@ function createNewUnit(e) {
 
     var parent = $(this).data('parent');
     var category = $(this).data('category');
+    var el = $(this);
 
     analytics.track('Created a Unit', {
         'course': course_location_analytics,
@@ -241,7 +242,11 @@ function createNewUnit(e) {
 
     function(data) {
         // redirect to the edit page
-        window.location = "/unit/" + data['locator'];
+        if (el.hasClass('new-lab-unit-item')) {
+            window.location = "/lab-unit/" + data['locator'];
+        } else {
+            window.location = "/unit/" + data['locator'];
+        }
     });
 }
 
