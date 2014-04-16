@@ -262,6 +262,7 @@ define ["jquery", "jquery.ui", "gettext", "backbone",
   class UnitEditView.NameEdit extends Backbone.View
     events:
       'change .unit-display-name-input': 'saveName'
+      'change .unit-lab-id-input': 'saveLab'
 
     initialize: =>
       @model.on('change:metadata', @render)
@@ -291,6 +292,70 @@ define ["jquery", "jquery.ui", "gettext", "backbone",
         course: course_location_analytics
         unit_id: unit_location_analytics
         display_name: metadata.display_name
+
+    saveLab: =>
+      metadata = $.extend({}, @model.get('metadata'))
+      metadata.lab_id = @$('.unit-lab-id-input').val()
+
+      # send POST to /xblock, create problems (HA!)
+      has_quizblocks = @$('.unit-has-quizblocks-input').val()
+      if has_quizblocks == "0"
+        lab_id = ".lab-" + metadata.lab_id + "-textarea"
+        textareas = @$(lab_id)
+        locator = $('.main-wrapper').data('locator')
+
+        post_xblock = (post_data) ->
+          $.ajax
+            url: "/xblock"
+            type: "POST"
+            contentType: "application/json"
+            dataType: "json"
+            async: false
+            data: JSON.stringify(post_data)
+
+        create_quizblock_header = (slug, description) ->
+          post_data =
+            type: "quizblock"
+            category: "quizblock"
+            parent_locator: locator
+            quizblock_slug: slug
+            description: description
+
+          post_xblock post_data
+
+        create_problem = (boilerplate) ->
+          post_data =
+            category: "problem"
+            parent_locator: locator
+            display_name: "Multiple Choice"
+            boilerplate_data: boilerplate
+
+          post_xblock post_data
+
+        if textareas.length > 0
+          old_quizblock = null
+          for textarea in textareas
+            el = @$(textarea)
+            problem_data = el.val()
+            new_quizblock = el.data('quizblock')
+
+            if old_quizblock is null or old_quizblock isnt new_quizblock
+              description = el.data('description')
+              slug = el.data('slug')
+              create_quizblock_header slug, description
+              old_quizblock = new_quizblock
+
+            create_problem problem_data
+
+        metadata.has_quizblocks = "1"
+
+      @model.save(metadata: metadata)
+      # disable lab select
+      @$('.unit-lab-id-input').attr('disabled', true)
+      analytics.track "Edited Lab",
+        course: course_location_analytics
+        unit_id: unit_location_analytics
+        lab_id: metadata.lab_id
 
 
   class UnitEditView.LocationState extends Backbone.View

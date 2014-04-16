@@ -20,11 +20,13 @@ from xblock.fields import Scope
 from xblock.fragment import Fragment
 
 import xmodule
+from contentstore.views.helpers import get_parent_xblock
+from xmodule.modulestore import Location
 from xmodule.modulestore.django import modulestore, loc_mapper
 from xmodule.modulestore.exceptions import ItemNotFoundError, InvalidLocationError
 from xmodule.modulestore.inheritance import own_metadata
 from xmodule.modulestore.locator import BlockUsageLocator
-from xmodule.modulestore import Location
+from xmodule.modulestore.search import path_to_location
 from xmodule.video_module import manage_video_subtitles_save
 
 from util.json_request import expect_json, JsonResponse
@@ -33,6 +35,7 @@ from util.string_utils import str_to_bool
 from ..utils import get_modulestore
 
 from .access import has_course_access
+from .component import _get_item_in_course
 from .helpers import _xmodule_recurse
 from contentstore.utils import compute_publish_state, PublishState
 from contentstore.views.preview import get_preview_fragment
@@ -347,6 +350,25 @@ def _save_item(request, usage_loc, item_location, data=None, children=None, meta
     # commit to datastore
     store.update_item(existing_item, request.user.id)
 
+    if existing_item.category == 'lab':
+        containing_subsection = get_parent_xblock(existing_item)
+        containing_section = get_parent_xblock(containing_subsection)
+        old_location, course, item, lms_link = _get_item_in_course(request, usage_loc)
+
+        # insert to LabProxy
+        from labster.models import LabProxy
+        try:
+            labproxy_kwargs = {
+                'lab_id': existing_item.lab_id,
+                'course_id': course.id,
+                'chapter_id': containing_section.location.name,
+                'section_id': containing_subsection.location.name,
+                'unit_id': existing_item.location.name,
+            }
+            LabProxy.objects.get(**labproxy_kwargs)
+        except LabProxy.DoesNotExist:
+            LabProxy.objects.create(**labproxy_kwargs)
+
     result = {
         'id': unicode(usage_loc),
         'data': data,
@@ -396,23 +418,35 @@ def _create_item(request):
     # get the metadata, display_name, and definition from the request
     metadata = {}
     data = None
-    template_id = request.json.get('boilerplate')
-    if template_id is not None:
-        clz = parent.runtime.load_block_type(category)
-        if clz is not None:
-            template = clz.get_template(template_id)
-            if template is not None:
-                metadata = template.get('metadata', {})
-                data = template.get('data')
+    fields = {}
 
-    if display_name is not None:
-        metadata['display_name'] = display_name
+    if request.json.get('category') == 'quizblock':
+        fields['quizblock_id'] = str(request.json.get('quizblock_slug', ''))
+        fields['description'] = request.json.get('description', '')
+
+    boilerplate_data = request.json.get('boilerplate_data')
+    if boilerplate_data is not None:
+        data = boilerplate_data
+
+    else:
+        template_id = request.json.get('boilerplate')
+        if template_id is not None:
+            clz = parent.runtime.load_block_type(category)
+            if clz is not None:
+                template = clz.get_template(template_id)
+                if template is not None:
+                    metadata = template.get('metadata', {})
+                    data = template.get('data')
+
+        if display_name is not None:
+            metadata['display_name'] = display_name
 
     get_modulestore(category).create_and_save_xmodule(
         dest_location,
         definition_data=data,
         metadata=metadata,
         system=parent.runtime,
+        fields=fields,
     )
 
     # TODO replace w/ nicer accessor

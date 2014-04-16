@@ -42,6 +42,8 @@ XMODULES = [
     "raw = xmodule.raw_module:RawDescriptor",
     "crowdsource_hinter = xmodule.crowdsource_hinter:CrowdsourceHinterDescriptor",
     "lti = xmodule.lti_module:LTIDescriptor",
+    "lab = xmodule.lab_module:LabDescriptor",
+    "quizblock = xmodule.quizblock_module:QuizblockDescriptor",
 ]
 
 setup(

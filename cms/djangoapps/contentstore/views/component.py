@@ -17,6 +17,7 @@ from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.django import loc_mapper
 from xmodule.modulestore.locator import BlockUsageLocator
 
+from labster.models import Lab
 from xblock.core import XBlock
 from xblock.django.request import webob_to_django_response, django_to_webob_request
 from xblock.exceptions import NoSuchHandlerError
@@ -37,6 +38,7 @@ __all__ = ['OPEN_ENDED_COMPONENT_TYPES',
            'ADVANCED_COMPONENT_POLICY_KEY',
            'subsection_handler',
            'unit_handler',
+           'lab_unit_handler',
            'container_handler',
            'component_handler'
            ]
@@ -289,6 +291,157 @@ def unit_handler(request, tag=None, package_id=None, branch=None, version_guid=N
                 get_default_time_display(item.published_date)
                 if item.published_date is not None else None
             ),
+        })
+    else:
+        return HttpResponseBadRequest("Only supports html requests")
+
+
+@require_GET
+@login_required
+def lab_unit_handler(request, tag=None, package_id=None, branch=None, version_guid=None, block=None):
+    """
+    The restful handler for unit-specific requests.
+
+    GET
+        html: return html page for editing a unit
+        json: not currently supported
+    """
+    if 'text/html' in request.META.get('HTTP_ACCEPT', 'text/html'):
+        locator = BlockUsageLocator(package_id=package_id, branch=branch, version_guid=version_guid, block_id=block)
+        try:
+            old_location, course, item, lms_link = _get_item_in_course(request, locator)
+        except ItemNotFoundError:
+            return HttpResponseBadRequest()
+
+        component_templates = defaultdict(list)
+
+        lab_component_types = ['problem', 'quizblock']
+
+        for category in lab_component_types:
+            component_class = _load_mixed_class(category)
+            # add the default template
+            # TODO: Once mixins are defined per-application, rather than per-runtime,
+            # this should use a cms mixed-in class. (cpennington)
+            if hasattr(component_class, 'display_name'):
+                display_name = component_class.display_name.default or 'Blank'
+            else:
+                display_name = 'Blank'
+            component_templates[category].append((
+                display_name,
+                category,
+                False,  # No defaults have markdown (hardcoded current default)
+                None  # no boilerplate for overrides
+            ))
+            # add boilerplates
+            if hasattr(component_class, 'templates'):
+                for template in component_class.templates():
+                    filter_templates = getattr(component_class, 'filter_templates', None)
+                    if not filter_templates or filter_templates(template, course):
+                        component_templates[category].append((
+                            template['metadata'].get('display_name'),
+                            category,
+                            template['metadata'].get('markdown') is not None,
+                            template.get('template_id')
+                        ))
+
+        # Check if there are any advanced modules specified in the course policy.
+        # These modules should be specified as a list of strings, where the strings
+        # are the names of the modules in ADVANCED_COMPONENT_TYPES that should be
+        # enabled for the course.
+        course_advanced_keys = course.advanced_modules
+
+        # Set component types according to course policy file
+        if isinstance(course_advanced_keys, list):
+            for category in course_advanced_keys:
+                if category in ADVANCED_COMPONENT_TYPES:
+                    # Do I need to allow for boilerplates or just defaults on the
+                    # class? i.e., can an advanced have more than one entry in the
+                    # menu? one for default and others for prefilled boilerplates?
+                    try:
+                        component_class = _load_mixed_class(category)
+
+                        component_templates['advanced'].append(
+                            (
+                                component_class.display_name.default or category,
+                                category,
+                                False,
+                                None  # don't override default data
+                            )
+                        )
+                    except PluginMissingError:
+                        # dhm: I got this once but it can happen any time the
+                        # course author configures an advanced component which does
+                        # not exist on the server. This code here merely
+                        # prevents any authors from trying to instantiate the
+                        # non-existent component type by not showing it in the menu
+                        pass
+        else:
+            log.error(
+                "Improper format for course advanced keys! %s",
+                course_advanced_keys
+            )
+
+        xblocks = item.get_children()
+        locators = [
+            loc_mapper().translate_location(
+                course.location.course_id, xblock.location, False, True
+            )
+            for xblock in xblocks
+        ]
+
+        # TODO (cpennington): If we share units between courses,
+        # this will need to change to check permissions correctly so as
+        # to pick the correct parent subsection
+        containing_subsection = get_parent_xblock(item)
+        containing_section = get_parent_xblock(containing_subsection)
+
+        # cdodge hack. We're having trouble previewing drafts via jump_to redirect
+        # so let's generate the link url here
+
+        # need to figure out where this item is in the list of children as the
+        # preview will need this
+        index = 1
+        for child in containing_subsection.get_children():
+            if child.location == item.location:
+                break
+            index = index + 1
+
+        preview_lms_base = settings.FEATURES.get('PREVIEW_LMS_BASE')
+
+        preview_lms_link = (
+            u'//{preview_lms_base}/courses/{org}/{course}/{course_name}/courseware/{section}/{subsection}/{index}'
+        ).format(
+            preview_lms_base=preview_lms_base,
+            lms_base=settings.LMS_BASE,
+            org=course.location.org,
+            course=course.location.course,
+            course_name=course.location.name,
+            section=containing_section.location.name,
+            subsection=containing_subsection.location.name,
+            index=index
+        )
+
+        return render_to_response('lab.html', {
+            'context_course': course,
+            'unit': item,
+            'unit_locator': locator,
+            'locators': locators,
+            'component_templates': component_templates,
+            'draft_preview_link': preview_lms_link,
+            'published_preview_link': lms_link,
+            'subsection': containing_subsection,
+            'release_date': (
+                get_default_time_display(containing_subsection.start)
+                if containing_subsection.start is not None else None
+            ),
+            'section': containing_section,
+            'new_unit_category': 'vertical',
+            'unit_state': compute_publish_state(item),
+            'published_date': (
+                get_default_time_display(item.published_date)
+                if item.published_date is not None else None
+            ),
+            'labs': Lab.objects.all(),
         })
     else:
         return HttpResponseBadRequest("Only supports html requests")
