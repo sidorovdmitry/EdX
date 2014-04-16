@@ -243,6 +243,9 @@ FEATURES = {
 
     # Turn off Advanced Security by default
     'ADVANCED_SECURITY': False,
+
+    # Labster apps
+    'LABSTER': True,
 }
 
 # Used for A/B testing
@@ -1306,6 +1309,11 @@ LINKEDIN_API = {
     'EMAIL_WHITELIST': [],
     'COMPANY_ID': '2746406',
 }
+
+
+############################ Labster ##########################################
+if FEATURES.get('LABSTER'):
+    INSTALLED_APPS += ('labster',)
 
 
 ##### ACCOUNT LOCKOUT DEFAULT PARAMETERS #####
