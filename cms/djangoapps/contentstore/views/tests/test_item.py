@@ -3,6 +3,7 @@
 import json
 from datetime import datetime
 import ddt
+from uuid import uuid4
 
 from mock import patch
 from pytz import UTC
@@ -56,7 +57,10 @@ class ItemTest(CourseTestCase):
         parsed = json.loads(response.content)
         return parsed['locator']
 
-    def create_xblock(self, parent_locator=None, display_name=None, category=None, boilerplate=None):
+    def create_xblock(self, parent_locator=None, display_name=None, category=None, boilerplate=None, type=None):
+        """
+        Create xblock
+        """
         data = {
             'parent_locator': self.unicode_locator if parent_locator is None else parent_locator,
             'category': category
@@ -65,6 +69,8 @@ class ItemTest(CourseTestCase):
             data['display_name'] = display_name
         if boilerplate is not None:
             data['boilerplate'] = boilerplate
+        if type is not None:
+            data['type'] = type
         return self.client.ajax_post('/xblock', json.dumps(data))
 
 
@@ -673,6 +679,43 @@ class TestEditItem(ItemTest):
         draft = self.get_item_from_modulestore(self.problem_locator, True)
         self.assertNotEqual(draft.data, published.data)
 
+    def test_create_delete_discussion_components(self):
+        """
+        Create discussion components and test that they are deleted from loc_mapper on delete
+        """
+        # Test that creating two discussion components with first 3 digit same of uuid will have
+        # different block_ids (locators)
+        with patch("uuid.UUID.hex", '987' + uuid4().hex[3:]):
+            resp = self.create_xblock(parent_locator=self.seq_locator, category='discussion', type='discussion')
+            self.assertEqual(resp.status_code, 200)
+        discussion_1_locator = self.response_locator(resp)
+        discussion_1_draft = self.get_item_from_modulestore(discussion_1_locator, True)
+        self.assertIsNotNone(discussion_1_draft)
+
+        with patch("uuid.UUID.hex", '987' + uuid4().hex[3:]):
+            resp = self.create_xblock(parent_locator=self.seq_locator, category='discussion', type='discussion')
+            self.assertEqual(resp.status_code, 200)
+        discussion_2_locator = self.response_locator(resp)
+        discussion_2_draft = self.get_item_from_modulestore(discussion_2_locator, True)
+        self.assertIsNotNone(discussion_2_draft)
+
+        self.assertNotEqual(discussion_1_locator, discussion_2_locator)
+        # now delete first discussion component
+        resp = self.client.delete('/xblock/' + discussion_1_locator)
+        self.assertEqual(resp.status_code, 204)
+
+        # create a new discussion component and check that it has same locator as first discussion component
+        # but different id's
+        with patch("uuid.UUID.hex", '987' + uuid4().hex[3:]):
+            resp = self.create_xblock(parent_locator=self.seq_locator, category='discussion', type='discussion')
+            self.assertEqual(resp.status_code, 200)
+        discussion_3_locator = self.response_locator(resp)
+        discussion_3_draft = self.get_item_from_modulestore(discussion_3_locator, True)
+        self.assertIsNotNone(discussion_3_draft)
+
+        self.assertEqual(discussion_1_locator, discussion_3_locator)
+        self.assertNotEqual(discussion_1_draft.id, discussion_3_draft.id)
+
     def test_publish_states_of_nested_xblocks(self):
         """ Test publishing of a unit page containing a nested xblock  """
 
@@ -765,34 +808,3 @@ class TestComponentHandler(TestCase):
         self.descriptor.handle = create_response
 
         self.assertEquals(component_handler(self.request, self.usage_id, 'dummy_handler').status_code, status_code)
-
-
-@ddt.ddt
-class TestNativeXBlock(ItemTest):
-    """
-    Test a "native" XBlock (not an XModule shim).
-    """
-
-    @ddt.data(('problem', True), ('acid', False))
-    @ddt.unpack
-    def test_save_cancel_buttons(self, category, include_buttons):
-        """
-        Native XBlocks handle their own persistence, so Studio
-        should not render Save/Cancel buttons for them.
-        """
-        # Create the XBlock
-        resp = self.create_xblock(category=category)
-        self.assertEqual(resp.status_code, 200)
-        native_loc = json.loads(resp.content)['locator']
-
-        # Render the XBlock
-        view_url = '/xblock/{locator}/student_view'.format(locator=native_loc)
-        resp = self.client.get(view_url, HTTP_ACCEPT='application/json')
-        self.assertEqual(resp.status_code, 200)
-
-        # Check that the save and cancel buttons are hidden for native XBlocks,
-        # but shown for XModule shim XBlocks
-        resp_html = json.loads(resp.content)['html']
-        assert_func = self.assertIn if include_buttons else self.assertNotIn
-        assert_func('save-button', resp_html)
-        assert_func('cancel-button', resp_html)

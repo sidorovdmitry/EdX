@@ -13,7 +13,7 @@ MAXIMUM_ATTEMPTS = "Maximum Attempts"
 PROBLEM_WEIGHT = "Problem Weight"
 RANDOMIZATION = 'Randomization'
 SHOW_ANSWER = "Show Answer"
-
+TIMER_BETWEEN_ATTEMPTS = "Timer Between Attempts"
 
 @step('I have created a Blank Common Problem$')
 def i_created_blank_common_problem(step):
@@ -44,6 +44,7 @@ def i_see_advanced_settings_with_values(step):
             [PROBLEM_WEIGHT, "", False],
             [RANDOMIZATION, "Never", False],
             [SHOW_ANSWER, "Finished", False],
+            [TIMER_BETWEEN_ATTEMPTS, "0", False]
         ])
 
 
@@ -247,6 +248,13 @@ def i_can_see_message(_step, msg):
 @step(u'I can edit the problem$')
 def i_can_edit_problem(_step):
     world.edit_component()
+
+
+@step(u'I can see cheatsheet$')
+def verify_cheat_sheet_displaying(_step):
+    world.css_click("a.cheatsheet-toggle")
+    css_selector = 'article.simple-editor-cheatsheet'
+    world.wait_for_visible(css_selector)
 
 
 def verify_high_level_source_links(step, visible):

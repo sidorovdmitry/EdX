@@ -125,12 +125,10 @@ def m2m_changed_metrics(sender, **kwargs):
     if 'model' in kwargs:
         tags.append('target_class:{}'.format(kwargs['model'].__name__))
 
-    try:
-        len_pk_set = len(kwargs.get('pk_set', []))
-    except TypeError:
-        len_pk_set = 0
+    pk_set = kwargs.get('pk_set', []) or []
+
     dog_stats_api.increment(
         'edxapp.db.model',
-        value=len_pk_set,
+        value=len(pk_set),
         tags=tags
     )

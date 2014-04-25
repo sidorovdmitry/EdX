@@ -35,6 +35,7 @@ from django.template.response import TemplateResponse
 from ratelimitbackend.exceptions import RateLimitException
 
 from edxmako.shortcuts import render_to_response, render_to_string
+from mako.exceptions import TopLevelLookupException
 
 from course_modes.models import CourseMode
 from student.models import (
@@ -150,8 +151,14 @@ def embargo(_request):
     Render the embargo page.
 
     Explains to the user why they are not able to access a particular embargoed course.
+    Tries to use the themed version, but fall back to the default if not found.
     """
-    return render_to_response('static_templates/embargo.html')
+    try:
+        if settings.FEATURES["USE_CUSTOM_THEME"]:
+            return render_to_response("static_templates/theme-embargo.html")
+    except TopLevelLookupException:
+        pass
+    return render_to_response("static_templates/embargo.html")
 
 
 def press(request):
@@ -1654,17 +1661,18 @@ def confirm_email_change(request, key):
 
 
 @ensure_csrf_cookie
+@require_POST
 def change_name_request(request):
     """ Log a request for a new name. """
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise Http404
 
     try:
-        pnc = PendingNameChange.objects.get(user=request.user)
+        pnc = PendingNameChange.objects.get(user=request.user.id)
     except PendingNameChange.DoesNotExist:
         pnc = PendingNameChange()
     pnc.user = request.user
-    pnc.new_name = request.POST['new_name']
+    pnc.new_name = request.POST['new_name'].strip()
     pnc.rationale = request.POST['rationale']
     if len(pnc.new_name) < 2:
         return JsonResponse({
