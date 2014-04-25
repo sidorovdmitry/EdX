@@ -1,0 +1,91 @@
+<%! from django.utils.translation import ugettext as _ %>
+<%inherit file="/main.html" />
+<%namespace name='static' file='/static_content.html'/>
+
+<%block name="headextra">
+<%static:css group='style-course-vendor'/>
+<%static:css group='style-course'/>
+</%block>
+
+
+<%block name="pagetitle">${_("{course_number} Progress").format(course_number=course.display_number_with_default) | h}</%block>
+<%block name="nav_skip">#course-info-progress</%block>
+
+<%!
+    from django.core.urlresolvers import reverse
+%>
+
+<%!
+from util.date_utils import get_time_display
+from django.conf import settings
+%>
+
+
+<%include file="/dashboard/_dashboard_prompt_midcourse_reverify.html" />
+
+<%include file="/courseware/course_navigation.html" args="active_page='progress'" />
+
+<div class="container">
+  <div class="profile-wrapper">
+
+    <div class="course-info" id="course-info-progress" aria-label="${_('Course Progress')}">
+      % if staff_access and studio_url is not None:
+        <div class="wrap-instructor-info">
+          <a class="instructor-info-action studio-view" href="${studio_url}">${_("View Grading in studio")}</a>
+        </div>
+      % endif
+      
+      <header>
+        <h1>${_("Course Progress for all Students")}</h1>
+      </header>
+
+     <div class="progress-all-students">
+       <table class="progress-all-table">
+          <tr>
+             <th>Name</th>
+             <th>Progress</th>
+             <th>Score</th>
+             <th>Details</th>
+          </tr>
+     %for item in students_context:
+      <tr>
+         <td>${item["student"]}</td>
+          
+            %for chapter in item["courseware_summary"]:
+               %if not chapter['display_name'] == "hidden":
+
+               <% 
+                  total_earned = 0
+                  total_question = 0
+                %>
+                %for section in chapter['sections']:
+                  <%
+                    earned = section['section_total'].earned
+                    total = section['section_total'].possible
+                    total_earned = total_earned + earned
+                    total_question = total_question + total
+                  %>
+                %endfor
+                <% 
+                  percentageString = "{0:.0%}".format( float(total_earned)/total_question) if total_earned > 0 and total_question > 0 else ""
+                
+                %>
+                <td><div class="progress">
+                %if total_question > 0 or total_earned > 01:
+                    <span style="width:${percentageString}"> ${percentageString}</span>
+                %endif
+                </div>
+                </td>
+                <td>
+                     <span>${"{0:.3n}".format( float(total_earned) )} </span>
+                </td>
+                <td><a href=progress/${item["student"].id}>Details</a>
+              %endif
+           %endfor
+      </tr>
+      %endfor
+      </table>
+     </div>
+    </div>
+  </div>
+</div>

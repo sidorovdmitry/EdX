@@ -710,6 +710,67 @@ def _progress(request, course_id, student_id):
     return response
 
 
+@login_required
+@cache_control(no_cache=True, no_store=True, must_revalidate=True)
+@transaction.commit_manually
+def progress_all(request, course_id):
+    """
+    Wraps "_progress_all" with the manual_transaction context manager just in case
+    there are unanticipated errors.
+    """
+    with grades.manual_transaction():
+        return _progress_all(request, course_id)
+
+def _progress_all(request, course_id):
+    """
+    Unwrapped version of "progress".
+
+    User progress. We show the grade bar and every problem score.
+
+    Course staff are allowed to see the progress of students in their class.
+    """
+    students_context = []
+    course = get_course_with_access(request.user, course_id, 'load', depth=None)
+    staff_access = has_access(request.user, course, 'staff')
+    Student_Objects = CourseEnrollment.objects.filter(course_id=course_id)
+    # Requesting access to a different student's profile
+    if not staff_access:
+        raise Http404
+
+    for item in Student_Objects:
+        student_id = item.user_id
+        stud = User.objects.get(id=int(student_id))
+        # additional DB lookup (this kills the Progress page in particular).
+        student = User.objects.prefetch_related("groups").get(id=stud.id)
+
+        courseware_summary = grades.progress_summary(student, request, course)
+        grade_summary = grades.grade(student, request, course)
+
+        if courseware_summary is None:
+            #This means the student didn't have access to the course (which the instructor requested)
+            raise Http404
+        student_context = {
+            'courseware_summary': courseware_summary,
+            'grade_summary': grade_summary,
+            'student': student,
+        }
+        students_context.append(student_context)
+
+    studio_url = get_studio_url(course_id, 'settings/grading')
+    context = {
+        'students_context': students_context,
+        'course': course,
+        'studio_url': studio_url,
+        'staff_access': staff_access,
+        'reverifications': fetch_reverify_banner_info(request, course_id)
+    }
+    with grades.manual_transaction():
+        response = render_to_response('courseware/progress_all.html', context)
+
+    return response
+
+
+
 def fetch_reverify_banner_info(request, course_id):
     """
     Fetches needed context variable to display reverification banner in courseware

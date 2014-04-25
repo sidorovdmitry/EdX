@@ -267,6 +267,8 @@ if settings.COURSEWARE_ENABLED:
         # Takes optional student_id for instructor use--shows profile as that student sees it.
         url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/progress/(?P<student_id>[^/]*)/$',
             'courseware.views.progress', name="student_progress"),
+        url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/progress_all_students$',
+            'courseware.views.progress_all', name="progress_all"),
 
         # For the instructor
         url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/instructor$',
