@@ -68,12 +68,14 @@ function (VideoPlayer, VideoStorage) {
         initialize: initialize,
         isHtml5Mode: isHtml5Mode,
         isFlashMode: isFlashMode,
+        isYoutubeType: isYoutubeType,
         parseSpeed: parseSpeed,
         parseVideoSources: parseVideoSources,
         parseYoutubeStreams: parseYoutubeStreams,
         saveState: saveState,
         setPlayerMode: setPlayerMode,
         setSpeed: setSpeed,
+        speedToString: speedToString,
         trigger: trigger,
         youtubeId: youtubeId
     },
@@ -510,8 +512,10 @@ function (VideoPlayer, VideoStorage) {
             element: element,
             fadeOutTimeout:     1400,
             captionsFreezeTime: 10000,
-            availableQualities: ['hd720', 'hd1080', 'highres'],
-            mode: $.cookie('edX_video_player_mode')
+            mode: $.cookie('edX_video_player_mode'),
+            // Available HD qualities will only be accessible once the video has
+            // been played once, via player.getAvailableQualityLevels.
+            availableHDQualities: []
         });
 
         if (this.config.endTime < this.config.startTime) {
@@ -519,9 +523,9 @@ function (VideoPlayer, VideoStorage) {
         }
 
         this.lang = this.config.transcriptLanguage;
-        this.speed = Number(
+        this.speed = this.speedToString(
             this.config.speed || this.config.generalSpeed
-        ).toFixed(2).replace(/\.00$/, '.0');
+        );
 
         if (!(_parseYouTubeIDs(this))) {
 
@@ -630,7 +634,7 @@ function (VideoPlayer, VideoStorage) {
             var speed;
 
             video = video.split(/:/);
-            speed = parseFloat(video[0]).toFixed(2).replace(/\.00$/, '.0');
+            speed = _this.speedToString(video[0]);
 
             _this.videos[speed] = video[1];
         });
@@ -842,6 +846,14 @@ function (VideoPlayer, VideoStorage) {
      */
     function isHtml5Mode() {
         return this.getPlayerMode() === 'html5';
+    }
+
+    function isYoutubeType() {
+        return this.videoType === 'youtube';
+    }
+
+    function speedToString(speed) {
+        return parseFloat(speed).toFixed(2).replace(/\.00$/, '.0');
     }
 
     function getCurrentLanguage() {

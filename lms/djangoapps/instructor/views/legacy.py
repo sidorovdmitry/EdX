@@ -30,6 +30,11 @@ from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.exceptions import ItemNotFoundError
 from xmodule.html_module import HtmlDescriptor
 
+# Submissions is a Django app that is currently installed
+# from the edx-ora2 repo, although it will likely move in the future.
+from submissions import api as sub_api
+from student.models import anonymous_id_for_user
+
 from bulk_email.models import CourseEmail, CourseAuthorization
 from courseware import grades
 from courseware.access import has_access
@@ -348,6 +353,23 @@ def instructor_dashboard(request, course_id):
         msg += message
         student_module = None
         if student is not None:
+
+            # Reset the student's score in the submissions API
+            # Currently this is used only by open assessment (ORA 2)
+            # We need to do this *before* retrieving the `StudentModule` model,
+            # because it's possible for a score to exist even if no student module exists.
+            if "Delete student state for module" in action:
+                try:
+                    sub_api.reset_score(
+                        anonymous_id_for_user(student, course_id),
+                        course_id,
+                        module_state_key,
+                    )
+                except sub_api.SubmissionError:
+                    # Trust the submissions API to log the error
+                    error_msg = _("An error occurred while deleting the score.")
+                    msg += "<font color='red'>{err}</font>  ".format(err=error_msg)
+
             # find the module in question
             try:
                 student_module = StudentModule.objects.get(
@@ -356,6 +378,7 @@ def instructor_dashboard(request, course_id):
                     module_state_key=module_state_key
                 )
                 msg += _("Found module.  ")
+
             except StudentModule.DoesNotExist as err:
                 error_msg = _("Couldn't find module with that urlname: {url}. ").format(url=problem_urlname)
                 msg += "<font color='red'>{err_msg} ({err})</font>".format(err_msg=error_msg, err=err)
@@ -366,6 +389,7 @@ def instructor_dashboard(request, course_id):
                 # delete the state
                 try:
                     student_module.delete()
+
                     msg += "<font color='red'>{text}</font>".format(
                         text=_("Deleted student module state for {state}!").format(state=module_state_key)
                     )
@@ -1381,16 +1405,32 @@ def _do_enroll_students(course, course_id, students, overload=False, auto_enroll
             'SITE_NAME',
             settings.SITE_NAME
         )
-        registration_url = 'https://' + stripped_site_name + reverse('student.views.register_user')
-        #Composition of email
-        d = {'site_name': stripped_site_name,
-             'registration_url': registration_url,
-             'course': course,
-             'auto_enroll': auto_enroll,
-             'course_url': 'https://' + stripped_site_name + '/courses/' + course_id,
-             'course_about_url': 'https://' + stripped_site_name + '/courses/' + course_id + '/about',
-             'is_shib_course': is_shib_course
-             }
+        registration_url = 'https://{}{}'.format(
+            stripped_site_name,
+            reverse('student.views.register_user')
+        )
+        course_url = 'https://{}{}'.format(
+            stripped_site_name,
+            reverse('course_root', kwargs={'course_id': course_id})
+        )
+        # We can't get the url to the course's About page if the marketing site is enabled.
+        course_about_url = None
+        if not settings.FEATURES.get('ENABLE_MKTG_SITE', False):
+            course_about_url = u'https://{}{}'.format(
+                stripped_site_name,
+                reverse('about_course', kwargs={'course_id': course.id})
+            )
+
+        # Composition of email
+        d = {
+            'site_name': stripped_site_name,
+            'registration_url': registration_url,
+            'course': course,
+            'auto_enroll': auto_enroll,
+            'course_url': course_url,
+            'course_about_url': course_about_url,
+            'is_shib_course': is_shib_course
+        }
 
     for student in new_students:
         try:

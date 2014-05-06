@@ -180,6 +180,9 @@ SECRET_KEY = '85920908f28904ed733fe576320db18cabd7b6cd'
 # hide ratelimit warnings while running tests
 filterwarnings('ignore', message='No request passed to the backend, unable to rate-limit')
 
+######### Third-party auth ##########
+FEATURES['ENABLE_THIRD_PARTY_AUTH'] = True
+
 ################################## OPENID #####################################
 FEATURES['AUTH_USE_OPENID'] = True
 FEATURES['AUTH_USE_OPENID_PROVIDER'] = True
@@ -257,6 +260,7 @@ LETTUCE_SERVER_PORT = 8003
 XQUEUE_PORT = 8040
 YOUTUBE_PORT = 8031
 LTI_PORT = 8765
+VIDEO_SOURCE_PORT = 8777
 
 ################### Make tests faster
 

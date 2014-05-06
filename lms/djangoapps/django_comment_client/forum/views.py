@@ -314,7 +314,7 @@ def single_thread(request, course_id, discussion_id, thread_id):
 
         return render_to_response('discussion/index.html', context)
 
-
+@require_GET
 @login_required
 def user_profile(request, course_id, user_id):
     nr_transaction = newrelic.agent.current_transaction()
@@ -353,6 +353,8 @@ def user_profile(request, course_id, user_id):
                 'threads': saxutils.escape(json.dumps(threads), escapedict),
                 'user_info': saxutils.escape(json.dumps(user_info), escapedict),
                 'annotated_content_info': saxutils.escape(json.dumps(annotated_content_info), escapedict),
+                'page': query_params['page'],
+                'num_pages': query_params['num_pages'],
 #                'content': content,
             }
 
