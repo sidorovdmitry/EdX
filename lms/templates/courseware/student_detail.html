@@ -1,0 +1,38 @@
+<%! from django.utils.translation import ugettext as _ %>
+<% import json  %>
+<%inherit file="/main.html" />
+<%namespace name='static' file='/static_content.html'/>
+
+<%block name="headextra">
+<%static:css group='style-course-vendor'/>
+<%static:css group='style-course'/>
+</%block>
+
+
+<div class="container">
+  <div class="profile-wrapper">  
+    %for each in problemset['problems']:
+      ${each.url_name} <br/><br/>
+    %endfor            
+
+    grade summary : ${grade_summary} <br/><br/>  	
+	  ${course} <br/>    
+    <br/>
+    ${grade_summary} <br/>        
+    <br/>
+
+    %for item in student_histories:
+    	% for i, entry in enumerate(item):
+    		<hr/>
+    		<div>
+    			<b>test: ${entry.grade} / ${entry.max_grade}
+    			<b>Score: ${entry.grade} / ${entry.max_grade}
+    			<pre>
+    				${json.dumps(json.loads(entry.state), indent=2, sort_keys=True) | h}
+    			</pre>
+    		</div>
+  		% endfor
+    %endfor    
+
+  </div>
+</div>

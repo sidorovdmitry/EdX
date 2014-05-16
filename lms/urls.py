@@ -269,6 +269,8 @@ if settings.COURSEWARE_ENABLED:
             'courseware.views.progress', name="student_progress"),
         url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/progress_all_students$',
             'courseware.views.progress_all', name="progress_all"),
+        url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/(?P<student_id>\d+)/student_detail$',
+            'courseware.views.student_detail', name="student_detail"),
 
         # For the instructor
         url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/instructor$',
