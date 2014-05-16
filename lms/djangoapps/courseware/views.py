@@ -6,7 +6,7 @@ import logging
 import urllib
 import json
 
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from django.utils.translation import ugettext as _
 
 from django.conf import settings
@@ -819,6 +819,88 @@ def _progress_all(request, course_id):
     }
     with grades.manual_transaction():
         response = render_to_response('courseware/progress_all.html', context)
+
+    return response
+
+
+@login_required
+def student_detail(request, course_id, student_id):
+    """
+        Create page for student detail
+    """
+    student = User.objects.get(id=int(student_id))
+    course = get_course(course_id=course_id)
+    grading_context = course.grading_context
+
+    field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
+            course.id, student, course, depth=2)
+
+    course_module = get_module_for_descriptor(student, request, course, field_data_cache, course.id)
+    chapter = get_current_child(course_module)
+    section = get_current_child(chapter)
+    chapter_descriptor = course.get_child_by(lambda m: m.url_name == chapter.url_name)
+    section_descriptor = chapter_descriptor.get_child_by(lambda m: m.url_name == section.url_name)
+    section_descriptor = modulestore().get_instance(course.id, section_descriptor.location, depth=None)
+
+    section_field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
+            course.id, student, section_descriptor, depth=2)
+
+    try:
+        student_module = StudentModule.objects.filter(
+                course_id=course_id,
+                student_id=student.id,
+                module_type='problem',
+            )
+    except StudentModule.DoesNotExist:
+        return HttpResponse(escape(_(u'User {username} has never accessed problem').format(
+            username=student_username,
+        )))
+
+    quiz_details = None
+    problemset = {
+        'problems' : [],
+    }
+    quizzes = []
+
+    # descriptors store all the xmodule/xblock
+    for each in section_field_data_cache.descriptors:
+        if each.plugin_name == 'problem' and each.data:
+            field_name = "{tag}-{org}-{course}-{category}-{name}_2_1"
+            field_name = field_name.format(**each.location.dict())
+            each.attempt_key = field_name
+
+            problemset['problems'].append(each)
+
+    # loop inside student_module
+    student_histories = []
+    for item in student_module:
+        history_entries = StudentModuleHistory.objects.filter(
+            student_module=item
+        ).latest('id')
+        data = json.loads(history_entries.state)
+        if history_entries and data.get('attempts'):
+            student_histories.append(history_entries)
+            # input_state is an information that stores the url of the problem
+            for key in data.get('input_state').keys():
+                for each in problemset['problems']:
+                    #search the data based on the input state. input_state itself is a dictionary
+                    if each.attempt_key ==  key:
+                        quiz_details = {
+                            'problem' : each.data,
+                            'attempts' : data.get('attempts'),
+                            'score' : history_entries.grade,
+                        }
+                        quizzes.append(quiz_details)
+                        break
+
+    context = {
+        'student' : student,
+        'course' : course,
+        'quizzes' : quizzes,
+    }
+
+    with grades.manual_transaction():
+        response = render_to_response('courseware/student_detail.html', context)
 
     return response
 
