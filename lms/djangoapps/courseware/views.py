@@ -4,8 +4,9 @@ Courseware views functions
 
 import logging
 import urllib
+import json
 
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from django.utils.translation import ugettext as _
 
 from django.conf import settings
@@ -24,7 +25,7 @@ from markupsafe import escape
 
 from courseware import grades
 from courseware.access import has_access
-from courseware.courses import get_courses, get_course_with_access, get_studio_url, sort_by_announcement
+from courseware.courses import get_course, get_courses, get_course_with_access, get_studio_url, sort_by_announcement
 
 from courseware.masquerade import setup_masquerade
 from courseware.model_data import FieldDataCache
@@ -770,6 +771,87 @@ def _progress_all(request, course_id):
     return response
 
 
+def student_detail(request, course_id, student_id):
+    """
+        Create page for student detail
+    """
+    student = User.objects.get(id=int(student_id))
+    # course = course_from_id(course_id)
+    course = get_course(course_id=course_id)
+    grade_summary = grades.grade(student, request, course)    
+    studio_url = get_studio_url(course_id, 'course')
+    chapter_descriptor = course.get_child_by(lambda m: m.url_name == studio_url)    
+
+    courseware_summary = grades.progress_summary(student, request, course)
+
+    field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
+            course.id, student, course, depth=2)
+
+    course_module = get_module_for_descriptor(student, request, course, field_data_cache, course.id)
+    grading_context = course.grading_context
+    chapter = get_current_child(course_module)
+    section = get_current_child(chapter)
+    chapter_descriptor = course.get_child_by(lambda m: m.url_name == chapter.url_name)
+    section_descriptor = chapter_descriptor.get_child_by(lambda m: m.url_name == section.url_name)
+    section_descriptor = modulestore().get_instance(course.id, section_descriptor.location, depth=None)
+
+    section_field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
+            course.id, student, section_descriptor, depth=2)    
+
+    try:        
+        student_module = StudentModule.objects.filter(
+                course_id=course_id,                
+                student_id=student.id,
+                module_type='problem',
+            )
+    except StudentModule.DoesNotExist:
+        return HttpResponse(escape(_(u'User {username} has never accessed problem').format(
+            username=student_username,            
+        )))
+
+    quizblock = None
+    problemset = {
+        'problems' : []
+    }
+
+    # descriptors store all the xmodule/xblock
+    for each in section_field_data_cache.descriptors:        
+        if each.plugin_name == 'problem' and each.data:            
+            problemset['problems'].append(each)               
+
+    # loop inside student_module
+    count = 0
+    student_histories = []
+    for item in student_module:
+        history_entries = StudentModuleHistory.objects.filter(
+            student_module=item
+        ).order_by('-id')
+        entries = []
+        for each in history_entries:
+            data = json.loads(each.state)
+            if each and data.get('attempts'):                
+                entries.append(each)
+        student_histories.append(entries)    
+    
+    context = {
+        'student' : student,
+        'course' : course,
+        'grade_summary' : grade_summary,
+        'student_histories' : student_histories,
+        'count' : len(student_histories),
+        'courseware_summary' : courseware_summary,
+        'course_module' : course_module,
+        'grading_context' : grading_context,                
+        'field_data_cache' : field_data_cache,
+        'section_field_data_cache' : section_field_data_cache,
+        'problemset' : problemset
+    }
+
+    with grades.manual_transaction():
+        response = render_to_response('courseware/student_detail.html', context)
+
+    return response
+    
 
 def fetch_reverify_banner_info(request, course_id):
     """
