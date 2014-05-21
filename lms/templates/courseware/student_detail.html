@@ -8,31 +8,33 @@
 <%static:css group='style-course'/>
 </%block>
 
+<%block name="pagetitle">${_("{course_number} Progress").format(course_number=course.display_number_with_default) | h}</%block>
+<%block name="nav_skip">#course-info-progress</%block>
+
+<%include file="/courseware/course_navigation.html" args="active_page='instructor'" />
 
 <div class="container">
   <div class="profile-wrapper">  
-    %for each in problemset['problems']:
-      ${each.url_name} <br/><br/>
-    %endfor            
-
-    grade summary : ${grade_summary} <br/><br/>  	
-	  ${course} <br/>    
-    <br/>
-    ${grade_summary} <br/>        
-    <br/>
-
-    %for item in student_histories:
-    	% for i, entry in enumerate(item):
-    		<hr/>
-    		<div>
-    			<b>test: ${entry.grade} / ${entry.max_grade}
-    			<b>Score: ${entry.grade} / ${entry.max_grade}
-    			<pre>
-    				${json.dumps(json.loads(entry.state), indent=2, sort_keys=True) | h}
-    			</pre>
-    		</div>
-  		% endfor
-    %endfor    
-
-  </div>
-</div>
+    <div class="course-info" id="course-info-progress" aria-label="${_('Course Progress')}">
+      <header>
+        <h1>Student quiz detail for student: ${student}</h1>
+      </header>
+      
+      <div class="progress-all-students">
+        <table class="progress-all-table">
+          <tr>
+            <th>Problem</th>
+            <th>Attempt count</th>
+          </tr>
+          %for quiz in quizzes:
+            <tr>
+              %for value in quiz:          
+                  <td>${quiz[value]}</td>                      
+              %endfor        
+            </tr>
+          %endfor
+        </table>  
+      </div>  <!-- progress-all-students -->
+    </div> <!-- course-info -->
+  </div> <!-- profile-wrapper -->
+</div> <!-- container -->
