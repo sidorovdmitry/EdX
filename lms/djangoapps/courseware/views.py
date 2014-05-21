@@ -776,13 +776,10 @@ def student_detail(request, course_id, student_id):
         Create page for student detail
     """
     student = User.objects.get(id=int(student_id))
-    # course = course_from_id(course_id)
     course = get_course(course_id=course_id)
     grade_summary = grades.grade(student, request, course)    
     studio_url = get_studio_url(course_id, 'course')
-    chapter_descriptor = course.get_child_by(lambda m: m.url_name == studio_url)    
-
-    courseware_summary = grades.progress_summary(student, request, course)
+    chapter_descriptor = course.get_child_by(lambda m: m.url_name == studio_url)        
 
     field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
             course.id, student, course, depth=2)
@@ -809,42 +806,45 @@ def student_detail(request, course_id, student_id):
             username=student_username,            
         )))
 
-    quizblock = None
+    quiz_details = None
     problemset = {
-        'problems' : []
+        'problems' : [],        
     }
+    quizzes = []    
 
     # descriptors store all the xmodule/xblock
     for each in section_field_data_cache.descriptors:        
         if each.plugin_name == 'problem' and each.data:            
-            problemset['problems'].append(each)               
+            field_name = "{tag}-{org}-{course}-{category}-{name}_2_1"
+            field_name = field_name.format(**each.location.dict())
+            each.attempt_key = field_name
+
+            problemset['problems'].append(each)
 
     # loop inside student_module
-    count = 0
     student_histories = []
     for item in student_module:
         history_entries = StudentModuleHistory.objects.filter(
             student_module=item
-        ).order_by('-id')
-        entries = []
-        for each in history_entries:
-            data = json.loads(each.state)
-            if each and data.get('attempts'):                
-                entries.append(each)
-        student_histories.append(entries)    
-    
+        ).latest('created')
+        data = json.loads(history_entries.state)
+        if history_entries and data.get('attempts'):
+            student_histories.append(history_entries)
+            for key in data.get('input_state').keys():
+                    #location_url.append(key)     
+                    for item in problemset['problems']:
+                        if item.attempt_key ==  key:
+                            quiz_details = {
+                                'problem' : item.data,
+                                'attempts' : data.get('attempts'),                                
+                            }
+                            quizzes.append(quiz_details)
+                            break      
+
     context = {
         'student' : student,
         'course' : course,
-        'grade_summary' : grade_summary,
-        'student_histories' : student_histories,
-        'count' : len(student_histories),
-        'courseware_summary' : courseware_summary,
-        'course_module' : course_module,
-        'grading_context' : grading_context,                
-        'field_data_cache' : field_data_cache,
-        'section_field_data_cache' : section_field_data_cache,
-        'problemset' : problemset
+        'quizzes' : quizzes,
     }
 
     with grades.manual_transaction():
