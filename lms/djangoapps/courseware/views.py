@@ -771,21 +771,19 @@ def _progress_all(request, course_id):
     return response
 
 
+@login_required
 def student_detail(request, course_id, student_id):
     """
         Create page for student detail
     """
     student = User.objects.get(id=int(student_id))
     course = get_course(course_id=course_id)
-    grade_summary = grades.grade(student, request, course)    
-    studio_url = get_studio_url(course_id, 'course')
-    chapter_descriptor = course.get_child_by(lambda m: m.url_name == studio_url)        
+    grading_context = course.grading_context
 
     field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
             course.id, student, course, depth=2)
 
-    course_module = get_module_for_descriptor(student, request, course, field_data_cache, course.id)
-    grading_context = course.grading_context
+    course_module = get_module_for_descriptor(student, request, course, field_data_cache, course.id)    
     chapter = get_current_child(course_module)
     section = get_current_child(chapter)
     chapter_descriptor = course.get_child_by(lambda m: m.url_name == chapter.url_name)
@@ -826,25 +824,27 @@ def student_detail(request, course_id, student_id):
     for item in student_module:
         history_entries = StudentModuleHistory.objects.filter(
             student_module=item
-        ).latest('created')
+        ).latest('id')
         data = json.loads(history_entries.state)
         if history_entries and data.get('attempts'):
             student_histories.append(history_entries)
+            # input_state is an information that stores the url of the problem
             for key in data.get('input_state').keys():
-                    #location_url.append(key)     
-                    for item in problemset['problems']:
-                        if item.attempt_key ==  key:
-                            quiz_details = {
-                                'problem' : item.data,
-                                'attempts' : data.get('attempts'),                                
-                            }
-                            quizzes.append(quiz_details)
-                            break      
+                for each in problemset['problems']:
+                    #search the data based on the input state. input_state itself is a dictionary
+                    if each.attempt_key ==  key:
+                        quiz_details = {
+                            'problem' : each.data,
+                            'attempts' : data.get('attempts'),     
+                            'score' : history_entries.grade,                           
+                        }
+                        quizzes.append(quiz_details)
+                        break      
 
     context = {
         'student' : student,
         'course' : course,
-        'quizzes' : quizzes,
+        'quizzes' : quizzes,        
     }
 
     with grades.manual_transaction():
