@@ -79,7 +79,10 @@ from django.conf import settings
                 <td>
                      <span>${"{0:.3n}".format( float(total_earned) )} </span>
                 </td>
-                <td><a href=progress/${item["student"].id}>Details</a>
+                <td>
+                  <a href=progress/${item["student"].id}>Details</a>
+                  <a href=${item["student"].id}/student_detail>| Quiz Details</a>
+                </td>
               %endif
            %endfor
       </tr>
