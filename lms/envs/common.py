@@ -252,6 +252,9 @@ FEATURES = {
     # Show a "Download your certificate" on the Progress page if the lowest
     # nonzero grade cutoff is met
     'SHOW_PROGRESS_SUCCESS_BUTTON': False,
+
+    # labster app
+    'LABSTER': True,
 }
 
 # Used for A/B testing
@@ -1342,6 +1345,18 @@ LINKEDIN_API = {
     'EMAIL_WHITELIST': [],
     'COMPANY_ID': '2746406',
 }
+
+############################ Labster ##########################################
+if FEATURES.get('LABSTER'):
+    INSTALLED_APPS += ('labster',
+                       'corsheaders',
+                       )
+
+    MIDDLEWARE_CLASSES = (
+        'corsheaders.middleware.CorsMiddleware',
+    ) + MIDDLEWARE_CLASSES
+
+    CORS_ORIGIN_ALLOW_ALL = True
 
 
 ##### ACCOUNT LOCKOUT DEFAULT PARAMETERS #####

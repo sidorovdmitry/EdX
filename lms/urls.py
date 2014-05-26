@@ -68,7 +68,7 @@ urlpatterns = ('',  # nopep8
     url(r'^i18n/', include('django.conf.urls.i18n')),
 
     url(r'^embargo$', 'student.views.embargo', name="embargo"),
-    
+
     # Feedback Form endpoint
     url(r'^submit_feedback$', 'util.views.submit_feedback'),
 )
@@ -485,6 +485,12 @@ if settings.FEATURES.get('AUTOMATIC_AUTH_FOR_TESTING'):
 if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
     urlpatterns += (
         url(r'', include('third_party_auth.urls')),
+    )
+
+# Labster
+if settings.FEATURES.get('LABSTER'):
+    urlpatterns += (
+        url('^labster/', include('labster.urls')),
     )
 
 urlpatterns = patterns(*urlpatterns)

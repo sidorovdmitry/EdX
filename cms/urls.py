@@ -121,6 +121,12 @@ if settings.FEATURES.get('AUTH_USE_CAS'):
         url(r'^cas-auth/logout/$', 'django_cas.views.logout', {'next_page': '/'}, name="cas-logout"),
     )
 
+# Labster
+if settings.FEATURES.get('LABSTER'):
+    urlpatterns += (
+        url('^labster/', include('labster.cms_urls')),
+    )
+
 urlpatterns += patterns('', url(r'^admin/', include(admin.site.urls)),)
 
 # enable automatic login
