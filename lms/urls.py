@@ -495,6 +495,12 @@ if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
         url(r'', include('third_party_auth.urls')),
     )
 
+# Labster
+if settings.FEATURES.get('LABSTER'):
+    urlpatterns += (
+        url('^labster/', include('labster.urls')),
+    )
+
 urlpatterns = patterns(*urlpatterns)
 
 if settings.DEBUG:

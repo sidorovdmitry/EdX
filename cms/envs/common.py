@@ -74,7 +74,7 @@ FEATURES = {
 
     # If set to True, Studio won't restrict the set of advanced components
     # to just those pre-approved by edX
-    'ALLOW_ALL_ADVANCED_COMPONENTS': False,
+    'ALLOW_ALL_ADVANCED_COMPONENTS': True,
 
     # Turn off account locking if failed login attempts exceeds a limit
     'ENABLE_MAX_FAILED_LOGIN_ATTEMPTS': False,
@@ -105,6 +105,14 @@ FEATURES = {
 
     # Toggles Group Configuration editing functionality
     'ENABLE_GROUP_CONFIGURATIONS': os.environ.get('FEATURE_GROUP_CONFIGURATIONS'),
+
+    # Temporary feature flag for duplicating xblock leaves
+    'ENABLE_DUPLICATE_XBLOCK_LEAF_COMPONENT': False,
+
+    # Temporary feature flag for deleting xblock leaves
+    'ENABLE_DELETE_XBLOCK_LEAF_COMPONENT': False,
+
+    'LABSTER': True,
 }
 ENABLE_JASMINE = False
 
@@ -593,6 +601,11 @@ PASSWORD_DICTIONARY = []
 ##### ACCOUNT LOCKOUT DEFAULT PARAMETERS #####
 MAX_FAILED_LOGIN_ATTEMPTS_ALLOWED = 5
 MAX_FAILED_LOGIN_ATTEMPTS_LOCKOUT_PERIOD_SECS = 15 * 60
+
+
+############################ Labster ##########################################
+if FEATURES.get('LABSTER'):
+    INSTALLED_APPS += ('labster',)
 
 
 ### Apps only installed in some instances
