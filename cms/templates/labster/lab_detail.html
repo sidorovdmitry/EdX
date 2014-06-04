@@ -1,0 +1,46 @@
+<%inherit file="../base.html" />
+<%!
+  import logging
+  from util.date_utils import get_default_time_display
+  from django.utils.translation import ugettext as _
+  from django.core.urlresolvers import reverse
+  from xmodule.modulestore.django import loc_mapper
+%>
+<%block name="title">Course Outline</%block>
+<%block name="bodyclass">is-signedin course view-outline</%block>
+
+
+<%block name="content">
+  <div class="wrapper-mast wrapper">
+    <header class="mast has-actions has-subtitle">
+      <h1 class="page-header">
+        <small class="subtitle">Labs</small>
+        <span class="sr">&gt; </span>${lab.name}
+      </h1>
+    </header>
+  </div>
+
+  <div class="wrapper-content wrapper">
+    <section class="content">
+      <article class="content-primary" role="main">
+          <div class="wrapper-dnd">
+            <article class="courseware-overview" data-locator="">
+
+              % for quiz_block in quiz_blocks:
+              <section class="courseware-section is-collapsible is-draggable">
+                <header class="section">
+                  <div class="item-details">
+                    <a href="${quiz_block.studio_detail_url}"><h3 class="section-name">${quiz_block.slug}</h3></a>
+                  </div>
+                </header>
+              </section>
+              % endfor
+
+            </article>
+          </div>
+      </article>
+    </section>
+  </div>
+
+  <footer></footer>
+</%block>

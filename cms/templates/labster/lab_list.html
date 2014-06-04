@@ -36,10 +36,12 @@
       <div class="courses">
         <ul class="list-courses">
 
+          % for lab in labs:
           <li class="course-item">
-            <a class="course-link" href="">
-              <h3 class="course-title">Title</h3>
+            <a class="course-link" href="${lab.studio_detail_url}">
+              <h3 class="course-title">${lab.name}</h3>
 
+              <%doc>
               <div class="course-metadata">
                 <span class="course-org metadata-item">
                   <span class="label">Organization:</span> <span class="value">org</span>
@@ -52,15 +54,20 @@
                   <span class="label">Course Run:</span> <span class="value">run</span>
                 </span>
               </div>
+              </%doc>
+
             </a>
 
+            <%doc>
             <ul class="item-actions course-actions">
               <li class="action">
                 <a href="" rel="external" class="button view-button view-live-button">View Live</a>
               </li>
             </ul>
-          </li>
+            </%doc>
 
+          </li>
+          % endfor
 
         </ul>
       </div>
