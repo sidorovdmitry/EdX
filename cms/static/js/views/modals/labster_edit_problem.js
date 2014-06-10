@@ -8,9 +8,10 @@ define(["underscore", "jquery", "js/views/modals/base_modal", "js/views/labster_
             save: function(event) {
                 event.preventDefault();
                 var that = this;
-                this.editorView.save(function() {
+                this.editorView.save(function(response) {
                     that.hide();
-                    that.component.find(".problem-content").html(that.editorView.problem.content_xml);
+                    that.editorView.problem = response;
+                    that.component.find(".problem-content").html(response.content_html);
                 });
             },
 
@@ -27,7 +28,7 @@ define(["underscore", "jquery", "js/views/modals/base_modal", "js/views/labster_
             },
 
             edit: function(problem_id) {
-                var problem_url = "http://localhost:8000/labster/api/v2/problems/" + problem_id + "/";
+                var problem_url = problem_url = "http://192.168.3.10:8000/labster/api/v2/problems/" + problem_id + "/";
                 var that = this;
                 $.ajax({
                     url: problem_url,

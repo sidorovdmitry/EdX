@@ -34,7 +34,7 @@ define(["jquery", "underscore", "gettext", "codemirror", "js/views/feedback_noti
                     dataType: "json",
                     data: JSON.stringify(this.problem),
                     success: function(response) {
-                        callback();
+                        callback(response);
                     }
                 });
 
