@@ -14,19 +14,9 @@
   <div class="wrapper-mast wrapper">
     <header class="mast has-actions has-subtitle">
       <h1 class="page-header">
-        <small class="subtitle">Labs</small>
-        <span class="sr">&gt; </span>${lab.name}
+        <small class="subtitle">${lab.name}</small>
+        <span class="sr">&gt; </span>Create New Quiz Block
       </h1>
-
-      <nav class="nav-actions">
-        <h3 class="sr">Page Actions</h3>
-        <ul>
-          <li class="nav-item">
-            <a href="${lab.new_quiz_block_url}" class="button new-button new-course-button"><i class="icon-plus icon-inline"></i>
-              New Quiz Block</a>
-          </li>
-        </ul>
-      </nav>
 
     </header>
   </div>
@@ -37,15 +27,24 @@
           <div class="wrapper-dnd">
             <article class="courseware-overview" data-locator="">
 
-              % for quiz_block in quiz_blocks:
               <section class="courseware-section is-collapsible is-draggable">
-                <header class="section">
-                  <div class="item-details">
-                    <a href="${quiz_block.studio_detail_url}"><h3 class="section-name">${quiz_block.slug}</h3></a>
-                  </div>
-                </header>
+                <form action="" method="post">
+                  <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}" />
+
+                  % for field in form:
+                  <header class="section">
+                    <div class="item-details">
+                      <label>
+                        <h3 class="section-name">${field.label}</h3>
+                        ${field}
+                      </label>
+                    </div>
+                  </header>
+                  % endfor
+
+                  <button type="submit" class="button new-button">Save</button>
+                </form>
               </section>
-              % endfor
 
             </article>
           </div>
