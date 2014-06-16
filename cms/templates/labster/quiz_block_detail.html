@@ -37,6 +37,26 @@ from xmodule.modulestore.django import loc_mapper
 </%block>
 
 <%block name="content">
+  <div class="wrapper-mast wrapper">
+    <header class="mast has-actions has-subtitle">
+      <h1 class="page-header">
+        <small class="subtitle">Labs</small>
+        <span class="sr">&gt; </span>${quiz_block.slug}
+      </h1>
+
+      <nav class="nav-actions">
+        <h3 class="sr">Page Actions</h3>
+        <ul>
+          <li class="nav-item">
+            <a href="" class="button new-button new-course-button"><i class="icon-plus icon-inline"></i>
+              New Problem</a>
+          </li>
+        </ul>
+      </nav>
+
+    </header>
+  </div>
+
   <div class="main-wrapper">
     <div class="inner-wrapper">
       <div class="main-column">

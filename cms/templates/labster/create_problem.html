@@ -1,0 +1,56 @@
+<%inherit file="../base.html" />
+<%!
+  import logging
+  from util.date_utils import get_default_time_display
+  from django.utils.translation import ugettext as _
+  from django.core.urlresolvers import reverse
+  from xmodule.modulestore.django import loc_mapper
+%>
+<%block name="title">Course Outline</%block>
+<%block name="bodyclass">is-signedin course view-outline</%block>
+
+
+<%block name="content">
+  <div class="wrapper-mast wrapper">
+    <header class="mast has-actions has-subtitle">
+      <h1 class="page-header">
+        <small class="subtitle">${lab.name}</small>
+        <span class="sr">&gt; </span>Create New Quiz Block
+      </h1>
+
+    </header>
+  </div>
+
+  <div class="wrapper-content wrapper">
+    <section class="content">
+      <article class="content-primary" role="main">
+          <div class="wrapper-dnd">
+            <article class="courseware-overview" data-locator="">
+
+              <section class="courseware-section is-collapsible is-draggable">
+                <form action="" method="post">
+                  <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}" />
+
+                  % for field in form:
+                  <header class="section">
+                    <div class="item-details">
+                      <label>
+                        <h3 class="section-name">${field.label}</h3>
+                        ${field}
+                      </label>
+                    </div>
+                  </header>
+                  % endfor
+
+                  <button type="submit" class="button new-button">Save</button>
+                </form>
+              </section>
+
+            </article>
+          </div>
+      </article>
+    </section>
+  </div>
+
+  <footer></footer>
+</%block>
