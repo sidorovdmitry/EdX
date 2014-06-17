@@ -9,7 +9,7 @@ define(["underscore", "jquery", "js/views/modals/base_modal", "js/views/labster_
                 event.preventDefault();
                 var that = this;
                 this.editorView.save("POST", function(response) {
-                    // that.hide();
+                    that.hide();
                     // that.editorView.problem = response;
                     // that.component.find(".problem-content").html(response.content_html);
                 });
@@ -36,7 +36,7 @@ define(["underscore", "jquery", "js/views/modals/base_modal", "js/views/labster_
                 });
 
                 this.editorView.problem_url = problem_url;
-                this.editorView.problem = {};
+                this.editorView.problem = {quiz_block: this.quiz_block_id};
                 this.editorView.render();
             },
 

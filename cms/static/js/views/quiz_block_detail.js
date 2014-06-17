@@ -10,8 +10,10 @@ define(["underscore", "jquery", "js/views/baseview", "js/views/modals/labster_ed
                 event.preventDefault();
                 var el = $(event.currentTarget);
                 var url = el.data("url");
+                var quiz_block_id = el.data("quiz-block-id");
 
                 var modal = new CreateProblemModal();
+                modal.quiz_block_id = quiz_block_id;
                 modal.create();
             },
 

@@ -35,7 +35,7 @@ define(["jquery", "underscore", "gettext", "codemirror", "js/views/feedback_noti
                     lineWrapping: false});
 
                 if (this.problem) {
-                    this.codeMirror.doc.setValue(this.problem.content_xml);
+                    this.codeMirror.doc.setValue(this.problem.content_markdown);
                 }
             },
 
@@ -134,8 +134,8 @@ define(["jquery", "underscore", "gettext", "codemirror", "js/views/feedback_noti
             },
 
             save: function(http_method, callback) {
-                var content_xml = this.codeMirror.doc.getValue();
-                this.problem.content_xml = content_xml;
+                var content_markdown = this.codeMirror.doc.getValue();
+                this.problem.content_markdown = content_markdown;
 
                 $.ajax({
                     type: http_method,
