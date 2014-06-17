@@ -28,7 +28,7 @@ from xmodule.modulestore.django import loc_mapper
   require(["domReady!", "js/views/quiz_block_detail"],
     function(doc, QuizBlockDetailView) {
       new QuizBlockDetailView({
-        el: $('.main-wrapper'),
+        el: $('.wrapper-view'),
         view: 'quiz_block_detail'
       });
     }
@@ -48,7 +48,7 @@ from xmodule.modulestore.django import loc_mapper
         <h3 class="sr">Page Actions</h3>
         <ul>
           <li class="nav-item">
-            <a href="${quiz_block.new_problem_url}" class="button new-button new-course-button"><i class="icon-plus icon-inline"></i>
+            <a href="#" data-url="${quiz_block.new_problem_url}" class="button new-button new-problem-button"><i class="icon-plus icon-inline"></i>
               New Problem</a>
           </li>
         </ul>

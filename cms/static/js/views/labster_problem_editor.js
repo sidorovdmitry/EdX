@@ -20,41 +20,27 @@ define(["jquery", "underscore", "gettext", "codemirror", "js/views/feedback_noti
                     lineNumbers: false, 
                     lineWrapping: false});
 
-                this.codeMirror.doc.setValue(this.problem.content_xml);
+                if (this.problem) {
+                    this.codeMirror.doc.setValue(this.problem.content_xml);
+                }
             },
 
-            save: function(callback) {
+            save: function(http_method, callback) {
                 var content_xml = this.codeMirror.doc.getValue();
                 this.problem.content_xml = content_xml;
 
                 $.ajax({
-                    type: "PUT",
+                    type: http_method,
                     url: this.problem_url,
                     contentType: "application/json",
                     dataType: "json",
                     data: JSON.stringify(this.problem),
                     success: function(response) {
-                        callback(response);
+                        if (callback) {
+                            callback(response);
+                        }
                     }
                 });
-
-                // var xblockInfo = this.model,
-                //     data,
-                //     saving;
-                // data = this.getXModuleData();
-                // if (data) {
-                //     saving = new NotificationView.Mini({
-                //         title: gettext("Saving&hellip;")
-                //     });
-                //     saving.show();
-                //     return xblockInfo.save(data).done(function() {
-                //         var success = options.success;
-                //         saving.hide();
-                //         if (success) {
-                //             success();
-                //         }
-                //     });
-                // }
             }
 
         });

@@ -1,6 +1,6 @@
 define(["underscore", "jquery", "js/views/modals/base_modal", "js/views/labster_problem_editor"],
     function(_, $, BaseModal, LabsterProblemEditorView) {
-        var EditProblemModal = BaseModal.extend({
+        var CreateProblemModal = BaseModal.extend({
             events: {
                 "click .action-save": "save"
             },
@@ -8,17 +8,17 @@ define(["underscore", "jquery", "js/views/modals/base_modal", "js/views/labster_
             save: function(event) {
                 event.preventDefault();
                 var that = this;
-                this.editorView.save("PUT", function(response) {
-                    that.hide();
-                    that.editorView.problem = response;
-                    that.component.find(".problem-content").html(response.content_html);
+                this.editorView.save("POST", function(response) {
+                    // that.hide();
+                    // that.editorView.problem = response;
+                    // that.component.find(".problem-content").html(response.content_html);
                 });
             },
 
             options: $.extend({}, BaseModal.prototype.options, {
-                modalName: "edit-problem",
+                modalName: "create-problem",
                 addSaveButton: true,
-                "title": "Editing: Problem"
+                "title": "Create: Problem"
             }),
 
             initialize: function() {
@@ -27,23 +27,17 @@ define(["underscore", "jquery", "js/views/modals/base_modal", "js/views/labster_
                 this.events = _.extend({}, BaseModal.prototype.events, this.events);
             },
 
-            edit: function(problem_id) {
-                var problem_url = problem_url = "http://localhost:8000/labster/api/v2/problems/" + problem_id + "/";
-                var that = this;
-                $.ajax({
-                    url: problem_url,
-                    type: "GET",
-                    success: function(response) {
-                        that.show();
-                        that.editorView = new LabsterProblemEditorView({
-                            el: that.$(".xblock-editor")
-                        });
-                        that.editorView.problem_url = problem_url;
-                        that.editorView.problem = response;
-                        that.editorView.render();
-                    }
+            create: function() {
+                var problem_url = "http://localhost:8000/labster/api/v2/problems/";
 
+                this.show();
+                this.editorView = new LabsterProblemEditorView({
+                    el: this.$(".xblock-editor")
                 });
+
+                this.editorView.problem_url = problem_url;
+                this.editorView.problem = {};
+                this.editorView.render();
             },
 
             hide: function() {
@@ -61,7 +55,7 @@ define(["underscore", "jquery", "js/views/modals/base_modal", "js/views/labster_
             }
         });
 
-        return EditProblemModal;
+        return CreateProblemModal;
     }
 );
 

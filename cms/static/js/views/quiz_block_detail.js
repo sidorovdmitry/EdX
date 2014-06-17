@@ -1,8 +1,18 @@
-define(["underscore", "jquery", "js/views/baseview", "js/views/modals/labster_edit_problem"],
-    function(_, $, BaseView, EditProblemModal) {
+define(["underscore", "jquery", "js/views/baseview", "js/views/modals/labster_edit_problem", "js/views/modals/labster_create_problem"],
+    function(_, $, BaseView, EditProblemModal, CreateProblemModal) {
         var QuizBlockDetail = BaseView.extend({
             events: {
+                "click .nav-actions .new-problem-button": "clickNewButton",
                 "click .component-actions .edit-button": "clickEditButton"
+            },
+
+            clickNewButton: function(event) {
+                event.preventDefault();
+                var el = $(event.currentTarget);
+                var url = el.data("url");
+
+                var modal = new CreateProblemModal();
+                modal.create();
             },
 
             clickEditButton: function(event) {
