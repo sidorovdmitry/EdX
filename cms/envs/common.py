@@ -74,7 +74,7 @@ FEATURES = {
 
     # If set to True, Studio won't restrict the set of advanced components
     # to just those pre-approved by edX
-    'ALLOW_ALL_ADVANCED_COMPONENTS': False,
+    'ALLOW_ALL_ADVANCED_COMPONENTS': True,
 
     # Turn off account locking if failed login attempts exceeds a limit
     'ENABLE_MAX_FAILED_LOGIN_ATTEMPTS': False,
@@ -105,6 +105,8 @@ FEATURES = {
 
     # Temporary feature flag for deleting xblock leaves
     'ENABLE_DELETE_XBLOCK_LEAF_COMPONENT': False,
+
+    'LABSTER': True,
 }
 ENABLE_JASMINE = False
 
@@ -260,7 +262,6 @@ SITE_ID = 1
 SITE_NAME = "localhost:8001"
 HTTPS = 'on'
 ROOT_URLCONF = 'cms.urls'
-IGNORABLE_404_ENDS = ('favicon.ico')
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -546,7 +547,7 @@ COURSES_WITH_UNSAFE_CODE = []
 
 ############################## EVENT TRACKING #################################
 
-TRACK_MAX_EVENT = 10000
+TRACK_MAX_EVENT = 50000
 
 TRACKING_BACKENDS = {
     'logger': {
@@ -557,6 +558,26 @@ TRACKING_BACKENDS = {
     }
 }
 
+# We're already logging events, and we don't want to capture user
+# names/passwords.  Heartbeat events are likely not interesting.
+TRACKING_IGNORE_URL_PATTERNS = [r'^/event', r'^/login', r'^/heartbeat']
+
+EVENT_TRACKING_ENABLED = True
+EVENT_TRACKING_BACKENDS = {
+    'logger': {
+        'ENGINE': 'eventtracking.backends.logger.LoggerBackend',
+        'OPTIONS': {
+            'name': 'tracking',
+            'max_event_size': TRACK_MAX_EVENT,
+        }
+    }
+}
+EVENT_TRACKING_PROCESSORS = [
+    {
+        'ENGINE': 'track.shim.LegacyFieldMappingProcessor'
+    }
+]
+
 #### PASSWORD POLICY SETTINGS #####
 
 PASSWORD_MIN_LENGTH = None
@@ -565,14 +586,14 @@ PASSWORD_COMPLEXITY = {}
 PASSWORD_DICTIONARY_EDIT_DISTANCE_THRESHOLD = None
 PASSWORD_DICTIONARY = []
 
-# We're already logging events, and we don't want to capture user
-# names/passwords.  Heartbeat events are likely not interesting.
-TRACKING_IGNORE_URL_PATTERNS = [r'^/event', r'^/login', r'^/heartbeat']
-TRACKING_ENABLED = True
-
 ##### ACCOUNT LOCKOUT DEFAULT PARAMETERS #####
 MAX_FAILED_LOGIN_ATTEMPTS_ALLOWED = 5
 MAX_FAILED_LOGIN_ATTEMPTS_LOCKOUT_PERIOD_SECS = 15 * 60
+
+
+############################ Labster ##########################################
+if FEATURES.get('LABSTER'):
+    INSTALLED_APPS += ('labster',)
 
 
 ### Apps only installed in some instances

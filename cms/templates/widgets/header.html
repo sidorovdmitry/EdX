@@ -153,6 +153,11 @@
                   <li class="nav-item nav-account-dashboard">
                     <a href="/">${_("My Courses")}</a>
                   </li>
+                  % if user.is_superuser:
+                  <li class="nav-item nav-account-dashboard">
+                    <a href="/labster/labs/">${_("Labster labs")}</a>
+                  </li>
+                  % endif
                   <li class="nav-item nav-account-signout">
                     <a class="action action-signout" href="${reverse('logout')}">${_("Sign Out")}</a>
                   </li>

@@ -2,6 +2,49 @@
 Change Log
 ############
 
+***********
+May, 2014
+***********
+
+.. list-table::
+   :widths: 10 70
+   :header-rows: 1
+
+   * - Date
+     - Change
+   * - 05/14/14
+     - Updated the :ref:`Running Your Course Index` chapter to remove references
+       to the "new beta" Instructor Dashboard.
+   * - 
+     - Updated the :ref:`Enrollment` section to reflect that usernames or email
+       addresses can be used to batch enroll students.
+   * - 
+     - Updated the :ref:`Grades` section to reflect new features on the problem
+       **Staff Debug** viewer for rescoring, resetting attempts, and deleting
+       student state.
+   * - 
+     - Updated the :ref:`Course_Staffing` section to state the labeling
+       differences between Studio and the LMS with respect to course team roles.
+   * - 05/09/14
+     - Updated :ref:`Assigning_discussion_roles` with a note about course staff
+       requiring explicit granting of discussion administration roles.
+   * - 
+     - Added :ref:`VitalSource` topic.
+   * - 05/08/14
+     - Added warnings to :ref:`Add a File` about file size.
+   * - 05/07/14
+     - Updated the :ref:`Discussions` chapter to include a topic on closing
+       discussions.
+   * - 05/06/14
+     - Expanded the :ref:`Grades` chapter to include a topic on interpreting the
+       score histograms for problems.
+   * - 
+     - Updated :ref:`LTI Component` to reflect changes to the Studio UI.
+   * - 05/02/14
+     - Updated :ref:`Drag and Drop` information.
+   * - 
+     - Updated :ref:`IFrame` documentation.
+
 ************
 April, 2014
 ************
@@ -12,6 +55,8 @@ April, 2014
 
    * - Date
      - Change
+   * - 04/28/14
+     - Updated :ref:`Show or Hide the Course Wiki Page` to include note about Wiki content being available after you hide the Wiki page.
    * - 04/26/14
      - Updated label information; added XML information to :ref:`Problem with Adaptive Hint`  
    * - 04/24/14

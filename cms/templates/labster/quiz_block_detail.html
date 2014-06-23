@@ -1,0 +1,134 @@
+<%inherit file="../base.html" />
+<%!
+from django.core.urlresolvers import reverse
+from contentstore.views.helpers import EDITING_TEMPLATES
+from django.utils.translation import ugettext as _
+from xmodule.modulestore.django import loc_mapper
+%>
+<%namespace name='static' file='../static_content.html'/>
+<%block name="title">Individual Unit</%block>
+<%block name="bodyclass">is-signedin course unit view-unit feature-upload</%block>
+
+<%block name="header_extras">
+% for template_name in ['basic-modal', 'modal-button']:
+<script type="text/template" id="${template_name}-tpl">
+    <%static:include path="js/${template_name}.underscore" />
+</script>
+% endfor
+<script type="text/template" id="problem-editor-tpl">
+    <%static:include path="js/labster-problem-editor.underscore" />
+</script>
+
+</script>
+</%block>
+
+
+<%block name="jsextra">
+<script type='text/javascript'>
+  require(["domReady!", "js/views/quiz_block_detail"],
+    function(doc, QuizBlockDetailView) {
+      new QuizBlockDetailView({
+        el: $('.wrapper-view'),
+        view: 'quiz_block_detail'
+      });
+    }
+  );
+</script>
+</%block>
+
+<%block name="content">
+  <div class="wrapper-mast wrapper">
+    <header class="mast has-actions has-subtitle">
+      <h1 class="page-header">
+        <small class="subtitle">Labs</small>
+        <span class="sr">&gt; </span>${quiz_block.slug}
+      </h1>
+
+      <nav class="nav-actions">
+        <h3 class="sr">Page Actions</h3>
+        <ul>
+          <li class="nav-item">
+            <a href="#" data-quiz-block-id="${quiz_block.id}" data-url="${quiz_block.new_problem_url}" class="button new-button new-problem-button"><i class="icon-plus icon-inline"></i>
+              New Problem</a>
+          </li>
+        </ul>
+      </nav>
+
+    </header>
+  </div>
+
+  <div class="main-wrapper">
+    <div class="inner-wrapper">
+      <div class="main-column">
+        <article class="unit-body window">
+          <p class="unit-name-input">
+            <label for="unit-display-name-input">${_("QuizBlock ID:")}</label>
+            <input type="text" value="${quiz_block.slug}" id="unit-display-name-input" class="unit-display-name-input" readonly/>
+          </p>
+          <ol class="components">
+
+            % for problem in problems:
+            <li class="component">
+
+              <div class="wrapper wrapper-component-action-header">
+                <div class="component-header">
+                  ${problem.get_problem_type_display()}
+                </div>
+                <ul class="component-actions">
+                  <li class="action-item action-edit">
+                    <a href="#" data-problem-id="${problem.id}" class="edit-button action-button">
+                      <i class="icon-pencil"></i>
+                      <span class="action-button-text">Edit</span>
+                    </a>
+                  </li>
+
+                  <li class="action-item action-delete">
+                    <a href="#" data-problem-id="${problem.id}" data-tooltip="Delete" class="delete-button action-button">
+                      <i class="icon-trash"></i>
+                      <span class="sr">Delete</span>
+                    </a>
+                  </li>
+
+                </ul>
+              </div>
+
+              <%doc>
+              <span data-tooltip="Drag to reorder" class="drag-handle"></span>
+              </%doc>
+
+              <div class="xblock xblock-student_view xmodule_display xmodule_CapaModule xblock-initialized" data-type="Problem" data-block-type="problem">
+                <div class="problems-wrapper">
+
+                  <h2 class="problem-header">
+                    ${problem.get_problem_type_display()}
+                  </h2>
+
+                  <div class="problem" role="application">
+                    <div class="problem-content">
+                      ${problem.content_html}
+                    </div>
+
+                    <%doc>
+                    <div class="action">
+                      <input type="hidden" name="problem_id" value="Multiple Choice">
+
+                      <input class="check Check" type="button" data-checking="Checking..." value="Check">
+                      <button class="show"><span class="show-label" aria-hidden="true">Show Answer</span> <span class="sr">Reveal Answer</span></button>
+                    </div>
+                    </%doc>
+
+                  </div>
+                </div>
+
+              </div>
+
+            </li>
+            % endfor
+
+          </ol>
+        </article>
+      </div>
+    </div>
+  </div>
+</%block>
+
