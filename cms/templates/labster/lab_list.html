@@ -43,11 +43,11 @@
             <a class="course-link" href="${lab.studio_detail_url}">
               <h3 class="course-title">${lab.name}</h3>
 
-              <%doc>
               <div class="course-metadata">
                 <span class="course-org metadata-item">
-                  <span class="label">Organization:</span> <span class="value">org</span>
+                  <span class="value">template</span>
                 </span>
+                <!--
                 <span class="course-num metadata-item">
                   <span class="label">Course Number:</span>
                   <span class="value">num</span>
@@ -55,21 +55,36 @@
                 <span class="course-run metadata-item">
                   <span class="label">Course Run:</span> <span class="value">run</span>
                 </span>
+                -->
               </div>
-              </%doc>
 
             </a>
 
-            <%doc>
+            <!--
             <ul class="item-actions course-actions">
               <li class="action">
                 <a href="" rel="external" class="button view-button view-live-button">View Live</a>
               </li>
             </ul>
-            </%doc>
+            -->
 
           </li>
           % endfor
+
+          % for proxy in lab_proxies:
+          <li class="course-item">
+            <a class="course-link" href="">
+              <h3 class="course-title">${proxy.lab.name}</h3>
+
+              <div class="course-metadata">
+                <span class="course-org metadata-item">
+                  <span class="value">template</span>
+                </span>
+              </div>
+            </a>
+          </li>
+          % endfor
+
 
         </ul>
       </div>
