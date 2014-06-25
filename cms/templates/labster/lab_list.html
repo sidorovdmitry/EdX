@@ -73,12 +73,12 @@
 
           % for proxy in lab_proxies:
           <li class="course-item">
-            <a class="course-link" href="">
+            <a class="course-link" href="${proxy.studio_detail_url}">
               <h3 class="course-title">${proxy.lab.name}</h3>
 
               <div class="course-metadata">
                 <span class="course-org metadata-item">
-                  <span class="value">template</span>
+                  <span class="value">${proxy.location_id}</span>
                 </span>
               </div>
             </a>
