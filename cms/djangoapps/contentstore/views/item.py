@@ -131,6 +131,7 @@ def xblock_handler(request, usage_key_string):
                 nullout=request.json.get('nullout'),
                 grader_type=request.json.get('graderType'),
                 publish=request.json.get('publish'),
+                lab_id=request.json.get('labId'),
             )
     elif request.method in ('PUT', 'POST'):
         if 'duplicate_source_locator' in request.json:
@@ -261,7 +262,7 @@ def _is_xblock_read_only(xblock):
 
 
 def _save_item(user, usage_key, data=None, children=None, metadata=None, nullout=None,
-               grader_type=None, publish=None):
+               grader_type=None, publish=None, lab_id=None):
     """
     Saves xblock w/ its fields. Has special processing for grader_type, publish, and nullout and Nones in metadata.
     nullout means to truly set the field to None whereas nones in metadata mean to unset them (so they revert
@@ -340,6 +341,9 @@ def _save_item(user, usage_key, data=None, children=None, metadata=None, nullout
 
     if callable(getattr(existing_item, "editor_saved", None)):
         existing_item.editor_saved(user, old_metadata, old_content)
+
+    if lab_id is not None:
+        existing_item.lab_id = lab_id
 
     # commit to datastore
     store.update_item(existing_item, user.id)

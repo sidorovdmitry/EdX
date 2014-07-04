@@ -1,5 +1,5 @@
-define(["js/views/baseview", "underscore", "gettext", "js/models/assignment_grade", "js/views/feedback_notification"],
-        function(BaseView, _, gettext, AssignmentGrade, NotificationView) {
+define(["js/views/baseview", "underscore", "gettext", "js/models/assignment_grade", "js/views/feedback_notification", "js/models/subsection_lab"],
+        function(BaseView, _, gettext, AssignmentGrade, NotificationView, SubsectionLab) {
     var l10nNotGraded = gettext('Not Graded');
     var OverviewAssignmentGrader = BaseView.extend({
         // instantiate w/ { graders : CourseGraderCollection, el : <the gradable-status div> }
@@ -79,6 +79,12 @@ define(["js/views/baseview", "underscore", "gettext", "js/models/assignment_grad
                       ($(e.target).hasClass('gradable-status-notgraded')) ? 'notgraded' : $(e.target).text(),
                       {success: function () { saving.hide(); }}
                   );
+
+              this.subsectionLab = new SubsectionLab({
+                  locator : this.$el.closest('.id-holder').data('locator'),
+                  labId: 1});
+
+              this.subsectionLab.save('labId', 1, {success: function() {}});
 
               this.render();
         }

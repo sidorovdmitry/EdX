@@ -44,6 +44,8 @@ class SequenceFields(object):
         scope=Scope.user_state,
     )
 
+    lab_id = Integer(help="Lab ID if the gradeType is Lab", scope=Scope.settings)
+
 
 class SequenceModule(SequenceFields, XModule):
     ''' Layout module which lays out content in a temporal sequence
