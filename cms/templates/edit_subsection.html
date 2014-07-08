@@ -63,7 +63,15 @@
     <div class="row gradable">
       <label>${_("Graded as:")}</label>
 
-    <div class="gradable-status" data-initial-status="${subsection.format if subsection.format is not None else 'notgraded'}">
+    <div class="gradable-status gradable-status-original" data-initial-status="${subsection.format if subsection.format is not None else 'notgraded'}">
+    </div>
+
+    <div class="lab-selection" style="display:none" data-lab-id="${subsection.lab_id}">
+      <label>${_("Selected Lab:")}</label>
+
+      <div class=" gradable-status is-active">
+        <h4 class="status-label">${subsection.format} ${subsection.lab_id}</h4>
+      </div>
     </div>
 
     <div class="due-date-input row">
@@ -103,8 +111,8 @@
 
 <script type="text/javascript">
 require(["domReady!", "jquery", "js/models/location", "js/views/overview_assignment_grader",
-  "js/collections/course_grader", "js/views/overview"],
-  function(doc, $, Location, OverviewAssignmentGrader, CourseGraderCollection) {
+  "js/collections/course_grader", "js/collections/labster_lab", "js/views/overview"],
+  function(doc, $, Location, OverviewAssignmentGrader, CourseGraderCollection, LabsterLabCollection) {
     // expand the due-date area if the values are set
     if ($('#due_date').val() != '') {
       var $block = $('.set-date').closest('.due-date-input');
@@ -118,11 +126,16 @@ require(["domReady!", "jquery", "js/models/location", "js/views/overview_assignm
         window.graderTypes = new CourseGraderCollection(${course_graders|n}, {parse:true});
     }
 
-    $(".gradable-status").each(function(index, ele) {
+    var labsterLabs = new LabsterLabCollection(${labster_labs|n}, {parse:true});
+    var labSelectionEl = $(".lab-selection");
+
+    $(".gradable-status.gradable-status-original").each(function(index, ele) {
       var gradeView = new OverviewAssignmentGrader({
         el : ele,
         graders : window.graderTypes,
-        hideSymbol : true
+        hideSymbol : true,
+        labsterLabs: labsterLabs,
+        labSelectionEl: labSelectionEl
       });
     });
 });

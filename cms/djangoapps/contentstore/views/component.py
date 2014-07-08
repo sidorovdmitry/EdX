@@ -30,6 +30,7 @@ from opaque_keys.edx.keys import UsageKey
 
 from .access import has_course_access
 from django.utils.translation import ugettext as _
+from labster.models import fetch_labs_as_json
 
 __all__ = ['OPEN_ENDED_COMPONENT_TYPES',
            'ADVANCED_COMPONENT_POLICY_KEY',
@@ -136,6 +137,7 @@ def subsection_handler(request, usage_key_string):
                 'lms_link': lms_link,
                 'preview_link': preview_link,
                 'course_graders': json.dumps(CourseGradingModel.fetch(item.location.course_key).graders),
+                'labster_labs': json.dumps(fetch_labs_as_json()),
                 'parent_item': parent,
                 'locator': item.location,
                 'policy_metadata': policy_metadata,

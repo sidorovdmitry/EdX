@@ -37,6 +37,19 @@ define(["js/views/baseview", "underscore", "gettext", "js/models/assignment_grad
             };
             this.hideSymbol = this.options['hideSymbol'];
             this.render();
+
+            this.labsterLabs = this.options['labsterLabs'];
+            this.labSelectionEl = this.options['labSelectionEl'];
+            this.labSelectionMenuEl = this.labSelectionEl.find('.gradable-status');
+            var labId = this.labSelectionEl.data('lab-id');
+            if (this.$el.find('.status-label').text().toUpperCase() == 'LAB' && labId) {
+                var selectedLab = this.labsterLabs.find(function(lab) {
+                    return parseInt(lab.get('id')) == parseInt(labId);
+                });
+
+                this.labSelectionMenuEl.find('.status-label').text(selectedLab.get('name'));
+                this.labSelectionEl.show();
+            }
         },
         render : function() {
             var graderType = this.assignmentGrade.get('graderType');
@@ -62,6 +75,48 @@ define(["js/views/baseview", "underscore", "gettext", "js/models/assignment_grad
             $(document).on('click', this.removeMenu);
             this.$el.addClass('is-active');
         },
+        renderLabSelection : function() {
+            var template = _.template(
+                    // TODO move to a template file
+                    '<h4 class="status-label"></h4>' +
+                    '<a data-tooltip="Select lab" class="menu-toggle" href="#">' +
+                    '</a>' +
+                    '<ul class="menu">' +
+                        '<% labs.each(function(lab) { %>' +
+                            '<li><a href="#" data-lab-id="<%= lab.get("id") %>"><%= lab.get("name") %></a></li>' +
+                        '<% }) %>' +
+                    '</ul>');
+
+            this.labSelectionMenuEl.empty().append(template({labs: this.labsterLabs}));
+            this.labSelectionEl.show();
+
+            var cachethis = this;
+            this.labSelectionEl.find('li a').click(function(ev) {
+                var labId = $(ev.target).data('lab-id');
+                var statusLabel = cachethis.labSelectionEl.find('.status-label');
+
+                statusLabel.empty().append($(ev.target).text());
+                statusLabel.after('<div class="due-date-input"><a class="save-lab" href="#">save lab</a></div>');
+
+                cachethis.labSelectionEl.find('ul').hide();
+
+                cachethis.labSelectionEl.find('a.save-lab').click(function(ev) {
+
+                    cachethis.subsectionLab = new SubsectionLab({
+                        locator : cachethis.$el.closest('.id-holder').data('locator'),
+                        labId: parseInt(labId)});
+
+                    cachethis.subsectionLab.save('labId', parseInt(labId), {success: function() {}});
+
+                    $(ev.target).remove();
+                    cachethis.labSelectionEl.find('.menu-toggle').unbind('click');
+                });
+            });
+
+            this.labSelectionEl.find('.menu-toggle').click(function(ev) {
+                cachethis.labSelectionEl.find('ul').show();
+            });
+        },
         selectGradeType : function(e) {
               e.preventDefault();
 
@@ -80,11 +135,14 @@ define(["js/views/baseview", "underscore", "gettext", "js/models/assignment_grad
                       {success: function () { saving.hide(); }}
                   );
 
-              this.subsectionLab = new SubsectionLab({
-                  locator : this.$el.closest('.id-holder').data('locator'),
-                  labId: 1});
+              if ($(e.target).text() == 'Lab') {
+                  // show the lab selection popup
+                  this.renderLabSelection();
 
-              this.subsectionLab.save('labId', 1, {success: function() {}});
+              } else {
+                  this.labSelectionEl.hide();
+                  this.labSelectionMenuEl.empty();
+              }
 
               this.render();
         }
