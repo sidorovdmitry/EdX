@@ -40,15 +40,19 @@ define(["js/views/baseview", "underscore", "gettext", "js/models/assignment_grad
 
             this.labsterLabs = this.options['labsterLabs'];
             this.labSelectionEl = this.options['labSelectionEl'];
-            this.labSelectionMenuEl = this.labSelectionEl.find('.gradable-status');
-            var labId = this.labSelectionEl.data('lab-id');
-            if (this.$el.find('.status-label').text().toUpperCase() == 'LAB' && labId) {
-                var selectedLab = this.labsterLabs.find(function(lab) {
-                    return parseInt(lab.get('id')) == parseInt(labId);
-                });
+            if (this.labSelectionEl) {
+                this.labSelectionMenuEl = this.labSelectionEl.find('.gradable-status');
+                var labId = this.labSelectionEl.data('lab-id');
+                if (this.$el.find('.status-label').text().toUpperCase() == 'LAB' && labId) {
+                    var selectedLab = this.labsterLabs.find(function(lab) {
+                        return parseInt(lab.get('id')) == parseInt(labId);
+                    });
 
-                this.labSelectionMenuEl.find('.status-label').text(selectedLab.get('name'));
-                this.labSelectionEl.show();
+                    if (selectedLab) {
+                        this.labSelectionMenuEl.find('.status-label').text(selectedLab.get('name'));
+                    }
+                    this.labSelectionEl.show();
+                }
             }
         },
         render : function() {
