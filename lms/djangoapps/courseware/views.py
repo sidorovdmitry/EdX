@@ -390,8 +390,9 @@ def index(request, course_id, chapter=None, section=None,
                 raise Http404
 
             render_view = STUDENT_VIEW
-            if section_descriptor.format.upper() == 'LAB' and section_descriptor.lab_id:
-                render_view = STUDENT_LAB_VIEW
+            if section_descriptor.format:
+                if section_descriptor.format.upper() == 'LAB' and section_descriptor.lab_id:
+                    render_view = STUDENT_LAB_VIEW
 
             # Save where we are in the chapter
             save_child_position(chapter_module, section)
