@@ -43,6 +43,7 @@ from xmodule.modulestore.exceptions import ItemNotFoundError, NoPathToItem
 from xmodule.modulestore.search import path_to_location
 from xmodule.tabs import CourseTabList, StaffGradingTab, PeerGradingTab, OpenEndedGradingTab
 from xmodule.x_module import STUDENT_VIEW
+from xmodule.x_module import STUDENT_LAB_VIEW
 import shoppingcart
 from opaque_keys import InvalidKeyError
 
@@ -388,9 +389,13 @@ def index(request, course_id, chapter=None, section=None,
                 # they don't have access to.
                 raise Http404
 
+            render_view = STUDENT_VIEW
+            if section_descriptor.format.upper() == 'LAB' and section_descriptor.lab_id:
+                render_view = STUDENT_LAB_VIEW
+
             # Save where we are in the chapter
             save_child_position(chapter_module, section)
-            context['fragment'] = section_module.render(STUDENT_VIEW)
+            context['fragment'] = section_module.render(render_view)
             context['section_title'] = section_descriptor.display_name_with_default
         else:
             # section is none, so display a message
