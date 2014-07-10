@@ -14,6 +14,8 @@ from .progress import Progress
 from .x_module import XModule, STUDENT_VIEW
 from .xml_module import XmlDescriptor
 
+from labster.models import Lab
+
 log = logging.getLogger(__name__)
 
 # HACK: This shouldn't be hard-coded to two types
@@ -161,44 +163,19 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
         return xml_object
 
     def student_lab_view(self, context):
-        # If we're rendering this sequence, but no position is set yet,
-        # default the position to the first element
-        # if self.position is None:
-        #     self.position = 1
-
-        # ## Returns a set of all types of all sub-children
-        # contents = []
-
         fragment = Fragment()
-
-        # for child in self.get_display_items():
-        #     progress = child.get_progress()
-        #     rendered_child = child.render(STUDENT_VIEW, context)
-        #     fragment.add_frag_resources(rendered_child)
-
-        #     titles = child.get_content_titles()
-        #     childinfo = {
-        #         'content': rendered_child.content,
-        #         'title': "\n".join(titles),
-        #         'page_title': titles[0] if titles else '',
-        #         'progress_status': Progress.to_js_status_str(progress),
-        #         'progress_detail': Progress.to_js_detail_str(progress),
-        #         'type': child.get_icon_class(),
-        #         'id': child.scope_ids.usage_id.to_deprecated_string(),
-        #     }
-        #     if childinfo['title'] == '':
-        #         childinfo['title'] = child.display_name_with_default
-        #     contents.append(childinfo)
-
-        # params = {'items': contents,
-        #           'element_id': self.location.html_id(),
-        #           'item_id': self.location.to_deprecated_string(),
-        #           'position': self.position,
-        #           'tag': self.location.category,
-        #           }
-
-        import pdb; pdb.set_trace()  # XXX BREAKPOINT
         params = {}
+
+        # fetch labs
+        try:
+            lab = Lab.objects.get(id=self.lab_id)
+        except Lab.DoesNotExist:
+            params['errors'] = "Lab doesn't no exist"
+        else:
+            params.update({
+                'lab': lab,
+            })
+
         fragment.add_content(self.system.render_template('lab_module.html', params))
 
         return fragment

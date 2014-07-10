@@ -1,1 +1,6 @@
-<em>This is where the unity will live</em>
+% if errors:
+  <div>${errors}</div>
+% else:
+  <h4>${lab.name}</h4>
+  <div>${lab.description}</div>
+% endif
