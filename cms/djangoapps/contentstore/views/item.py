@@ -443,7 +443,12 @@ def _duplicate_item(parent_usage_key, duplicate_source_usage_key, display_name=N
     store = modulestore()
     source_item = store.get_item(duplicate_source_usage_key)
     # Change the blockID to be unique.
-    dest_usage_key = source_item.location.replace(name=uuid4().hex)
+    dest_usage_key = duplicate_source_usage_key.replace(name=uuid4().hex)
+
+    dest_usage_key = dest_usage_key.replace(org=parent_usage_key.org)
+    dest_usage_key = dest_usage_key.replace(course=parent_usage_key.course)
+    dest_usage_key = dest_usage_key.replace(run=parent_usage_key.run)
+
     category = dest_usage_key.block_type
 
     # Update the display name to indicate this is a duplicate (unless display name provided).
