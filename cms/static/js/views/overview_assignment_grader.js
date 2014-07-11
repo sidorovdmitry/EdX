@@ -1,5 +1,8 @@
-define(["js/views/baseview", "underscore", "gettext", "js/models/assignment_grade", "js/views/feedback_notification", "js/models/subsection_lab"],
-        function(BaseView, _, gettext, AssignmentGrade, NotificationView, SubsectionLab) {
+define(["js/views/baseview", "jquery", "underscore", "gettext",
+        "js/models/assignment_grade", "js/views/feedback_notification",
+        "js/models/subsection_lab", "jquery.cookie"],
+
+        function(BaseView, $, _, gettext, AssignmentGrade, NotificationView, SubsectionLab) {
     var l10nNotGraded = gettext('Not Graded');
     var OverviewAssignmentGrader = BaseView.extend({
         // instantiate w/ { graders : CourseGraderCollection, el : <the gradable-status div> }
@@ -85,9 +88,15 @@ define(["js/views/baseview", "underscore", "gettext", "js/models/assignment_grad
                     '<h4 class="status-label"></h4>' +
                     '<a data-tooltip="Select lab" class="menu-toggle" href="#">' +
                     '</a>' +
+                    '<form id="duplicate-lab-form" action="/labster/duplicate-lab/" method="post">' +
+                    '<input type="hidden" name="csrfmiddlewaretoken">' +
+                    '<input type="hidden" name="parent_locator">' +
+                    '<input type="hidden" name="source_locator">' +
+                    '<input type="hidden" name="redirect_url">' +
+                    '</form>' +
                     '<ul class="menu">' +
                         '<% labs.each(function(lab) { %>' +
-                            '<li><a href="#" data-lab-id="<%= lab.get("id") %>"><%= lab.get("name") %></a></li>' +
+                            '<li><a href="#" data-lab-id="<%= lab.get("id") %>" data-location="<%= lab.get("template_location") %>"><%= lab.get("name") %></a></li>' +
                         '<% }) %>' +
                     '</ul>');
 
@@ -96,10 +105,11 @@ define(["js/views/baseview", "underscore", "gettext", "js/models/assignment_grad
 
             var cachethis = this;
             this.labSelectionEl.find('li a').click(function(ev) {
-                var labId = $(ev.target).data('lab-id');
+                var linkEl = $(ev.target);
+                var labId = linkEl.data('lab-id');
                 var statusLabel = cachethis.labSelectionEl.find('.status-label');
 
-                statusLabel.empty().append($(ev.target).text());
+                statusLabel.empty().append(linkEl.text());
                 statusLabel.after('<div class="due-date-input"><a class="save-lab" href="#">save lab</a></div>');
 
                 cachethis.labSelectionEl.find('ul').hide();
@@ -114,6 +124,19 @@ define(["js/views/baseview", "underscore", "gettext", "js/models/assignment_grad
 
                     $(ev.target).remove();
                     cachethis.labSelectionEl.find('.menu-toggle').unbind('click');
+
+                    // POST to duplicate content
+                    var form = $('#duplicate-lab-form');
+                    var csrftoken = $.cookie('csrftoken');
+                    var parent_location = linkEl.closest('.unit-settings').data('locator');
+                    var source_location = linkEl.data('location');
+                    var redirect_url = window.location.href;
+
+                    form.find('input[name=parent_locator]').val(parent_location);
+                    form.find('input[name=source_locator]').val(source_location);
+                    form.find('input[name=redirect_url]').val(redirect_url);
+                    form.find('input[name=csrfmiddlewaretoken]').val(csrftoken);
+                    form.submit();
                 });
             });
 
