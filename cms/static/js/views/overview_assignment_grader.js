@@ -120,23 +120,23 @@ define(["js/views/baseview", "jquery", "underscore", "gettext",
                         locator : cachethis.$el.closest('.id-holder').data('locator'),
                         labId: parseInt(labId)});
 
-                    cachethis.subsectionLab.save('labId', parseInt(labId), {success: function() {}});
+                    cachethis.subsectionLab.save('labId', parseInt(labId), {success: function() {
+                        // POST to duplicate content
+                        var form = $('#duplicate-lab-form');
+                        var csrftoken = $.cookie('csrftoken');
+                        var parent_location = linkEl.closest('.unit-settings').data('locator');
+                        var source_location = linkEl.data('location');
+                        var redirect_url = window.location.href;
+
+                        form.find('input[name=parent_locator]').val(parent_location);
+                        form.find('input[name=source_locator]').val(source_location);
+                        form.find('input[name=redirect_url]').val(redirect_url);
+                        form.find('input[name=csrfmiddlewaretoken]').val(csrftoken);
+                        form.submit();
+                    }});
 
                     $(ev.target).remove();
                     cachethis.labSelectionEl.find('.menu-toggle').unbind('click');
-
-                    // POST to duplicate content
-                    var form = $('#duplicate-lab-form');
-                    var csrftoken = $.cookie('csrftoken');
-                    var parent_location = linkEl.closest('.unit-settings').data('locator');
-                    var source_location = linkEl.data('location');
-                    var redirect_url = window.location.href;
-
-                    form.find('input[name=parent_locator]').val(parent_location);
-                    form.find('input[name=source_locator]').val(source_location);
-                    form.find('input[name=redirect_url]').val(redirect_url);
-                    form.find('input[name=csrfmiddlewaretoken]').val(csrftoken);
-                    form.submit();
                 });
             });
 
