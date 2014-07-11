@@ -30,6 +30,7 @@ from opaque_keys.edx.keys import UsageKey
 
 from .access import has_course_access
 from django.utils.translation import ugettext as _
+
 from labster.models import fetch_labs_as_json
 
 __all__ = ['OPEN_ENDED_COMPONENT_TYPES',
@@ -128,6 +129,16 @@ def subsection_handler(request, usage_key_string):
                 can_view_live = True
                 break
 
+        from labster.edx_bridge import get_master_quiz_blocks
+        _labster_labs = [lab for lab in fetch_labs_as_json()]
+        _master_quiz_blocks = get_master_quiz_blocks()
+        labster_labs = []
+        for lab in _labster_labs:
+            lab_in_edx = _master_quiz_blocks.get(lab['name'].upper())
+            if lab_in_edx:
+                lab['template_location'] = unicode(lab_in_edx['lab'].location)
+                labster_labs.append(lab)
+
         return render_to_response(
             'edit_subsection.html',
             {
@@ -137,7 +148,7 @@ def subsection_handler(request, usage_key_string):
                 'lms_link': lms_link,
                 'preview_link': preview_link,
                 'course_graders': json.dumps(CourseGradingModel.fetch(item.location.course_key).graders),
-                'labster_labs': json.dumps(fetch_labs_as_json()),
+                'labster_labs': json.dumps(labster_labs),
                 'parent_item': parent,
                 'locator': item.location,
                 'policy_metadata': policy_metadata,
