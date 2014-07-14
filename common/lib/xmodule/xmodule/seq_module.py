@@ -14,8 +14,6 @@ from .progress import Progress
 from .x_module import XModule, STUDENT_VIEW
 from .xml_module import XmlDescriptor
 
-from labster.models import Lab
-
 log = logging.getLogger(__name__)
 
 # HACK: This shouldn't be hard-coded to two types
@@ -164,10 +162,13 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
 
     def student_lab_view(self, context):
         fragment = Fragment()
-        params = {}
+        params = {
+            'module': self,
+        }
 
         # fetch labs
         try:
+            from labster.models import Lab
             lab = Lab.objects.get(id=self.lab_id)
         except Lab.DoesNotExist:
             params['errors'] = "Lab doesn't no exist"

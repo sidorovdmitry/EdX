@@ -31,7 +31,6 @@ from opaque_keys.edx.keys import UsageKey
 from .access import has_course_access
 from django.utils.translation import ugettext as _
 
-from labster.models import fetch_labs_as_json
 
 __all__ = ['OPEN_ENDED_COMPONENT_TYPES',
            'ADVANCED_COMPONENT_POLICY_KEY',
@@ -129,7 +128,10 @@ def subsection_handler(request, usage_key_string):
                 can_view_live = True
                 break
 
+        # import here to reduce circular imports
         from labster.edx_bridge import get_master_quiz_blocks
+        from labster.models import fetch_labs_as_json
+
         _labster_labs = [lab for lab in fetch_labs_as_json()]
         _master_quiz_blocks = get_master_quiz_blocks()
         labster_labs = []
