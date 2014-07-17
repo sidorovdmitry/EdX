@@ -168,14 +168,16 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
 
         # fetch labs
         try:
-            from labster.models import Lab, Token
+            from labster.models import Lab
             lab = Lab.objects.get(id=self.lab_id)
         except Lab.DoesNotExist:
             params['errors'] = "Lab doesn't no exist"
         else:
+            from rest_framework.authtoken.models import Token
+            token, _ = Token.objects.get_or_create(user_id=self.scope_ids.user_id)
             params.update({
                 'lab': lab,
-                'token': Token.get_for_platform(),
+                'user_token': token,
             })
 
         fragment.add_content(self.system.render_template('lab_module.html', params))

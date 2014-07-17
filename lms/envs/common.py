@@ -1395,6 +1395,7 @@ if FEATURES.get('LABSTER'):
     INSTALLED_APPS += (
         'labster',
         'corsheaders',
+        'rest_framework.authtoken',
     )
 
     MIDDLEWARE_CLASSES = (
