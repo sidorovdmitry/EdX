@@ -268,6 +268,10 @@ if settings.COURSEWARE_ENABLED:
         # Takes optional student_id for instructor use--shows profile as that student sees it.
         url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/progress/(?P<student_id>[^/]*)/$',
             'courseware.views.progress', name="student_progress"),
+        url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/progress_all_students$',
+            'courseware.views.progress_all', name="progress_all"),
+        url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/(?P<student_id>\d+)/student_detail$',
+            'courseware.views.student_detail', name="student_detail"),
 
         # For the instructor
         url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/instructor$',
@@ -479,6 +483,12 @@ if settings.FEATURES.get('ENABLE_HINTER_INSTRUCTOR_VIEW'):
 if settings.FEATURES.get('AUTOMATIC_AUTH_FOR_TESTING'):
     urlpatterns += (
         url(r'^auto_auth$', 'student.views.auto_auth'),
+    )
+
+# Labster
+if settings.FEATURES.get('LABSTER'):
+    urlpatterns += (
+        url('^labster/', include('labster.urls')),
     )
 
 # Third-party auth.

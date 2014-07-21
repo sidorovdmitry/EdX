@@ -658,7 +658,9 @@ SIMPLE_WIKI_REQUIRE_LOGIN_VIEW = False
 from course_wiki import settings as course_wiki_settings
 
 WIKI_ACCOUNT_HANDLING = False
-WIKI_EDITOR = 'course_wiki.editors.CodeMirror'
+# WIKI_EDITOR = 'course_wiki.editors.CodeMirror'
+# WIKI_EDITOR = 'wiki.editors.markitup.MarkItUp'
+WIKI_EDITOR = 'course_wiki.labster_editors.CustomContent'
 WIKI_SHOW_MAX_CHILDREN = 0  # We don't use the little menu that shows children of an article in the breadcrumb
 WIKI_ANONYMOUS = False  # Don't allow anonymous access until the styling is figured out
 
@@ -1357,6 +1359,11 @@ if FEATURES.get('LABSTER'):
     ) + MIDDLEWARE_CLASSES
 
     CORS_ORIGIN_ALLOW_ALL = True
+
+
+############################ Labster ##########################################
+if FEATURES.get('LABSTER'):
+    INSTALLED_APPS += ('labster',)
 
 
 ##### ACCOUNT LOCKOUT DEFAULT PARAMETERS #####

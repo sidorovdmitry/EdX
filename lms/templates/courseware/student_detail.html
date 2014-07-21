@@ -1,0 +1,41 @@
+<%! from django.utils.translation import ugettext as _ %>
+<% import json  %>
+<%inherit file="/main.html" />
+<%namespace name='static' file='/static_content.html'/>
+
+<%block name="headextra">
+<%static:css group='style-course-vendor'/>
+<%static:css group='style-course'/>
+</%block>
+
+<%block name="pagetitle">${_("{course_number} Progress").format(course_number=course.display_number_with_default) | h}</%block>
+<%block name="nav_skip">#course-info-progress</%block>
+
+<%include file="/courseware/course_navigation.html" args="active_page='instructor'" />
+
+<div class="container">
+  <div class="profile-wrapper">  
+    <div class="course-info" id="course-info-progress" aria-label="${_('Course Progress')}">
+      <header>
+        <h1>Student quiz detail for student: ${student}</h1>
+      </header>
+      
+      <div class="progress-all-students">
+        <table class="progress-all-table">
+          <tr>
+            <th>Problem</th>
+            <th>Score</th>
+            <th>Attempt count</th>
+          </tr>
+          %for quiz in quizzes:
+            <tr>
+              %for value in quiz:          
+                  <td>${quiz[value]}</td>                      
+              %endfor        
+            </tr>
+          %endfor
+        </table>  
+      </div>  <!-- progress-all-students -->
+    </div> <!-- course-info -->
+  </div> <!-- profile-wrapper -->
+</div> <!-- container -->

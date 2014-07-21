@@ -1,0 +1,58 @@
+@mixin border-radius($radius) {
+ -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+     -ms-border-radius: $radius;
+         border-radius: $radius;
+}
+
+.box { @include border-radius(10px); }
+
+.progress-all-students{
+     .progress-all-table{
+           width:100%;
+           tr th, tr td{
+                padding:10px;
+                border: 1px solid #dfdfdf;
+           }
+           tr th{
+                color: white;
+                background: #243b56;
+           }
+           tr:nth-child(even) {background: #eceff3}
+           tr:nth-child(odd) {background: #FFF}
+           .progress{ 
+                background: white;
+                @include border-radius(5px);
+                span{
+                    text-align: center; 
+                    display: block;
+                    background-color:#006f85;
+                    color:white;
+                    @include border-radius(5px);
+                    
+                }
+                span.processing, span{
+                       background-image:
+                          -webkit-gradient(linear, 0 0, 100% 100%,
+                             color-stop(.25, rgba(255, 255, 255, .2)),
+                             color-stop(.25, transparent), color-stop(.5, transparent),
+                             color-stop(.5, rgba(255, 255, 255, .2)),
+                             color-stop(.75, rgba(255, 255, 255, .2)),
+                             color-stop(.75, transparent), to(transparent)
+                          );
+                       background-image:
+                               -moz-linear-gradient(
+                                 -45deg,
+                             rgba(255, 255, 255, .2) 25%,
+                             transparent 25%,
+                             transparent 50%,
+                             rgba(255, 255, 255, .2) 50%,
+                             rgba(255, 255, 255, .2) 75%,
+                             transparent 75%,
+                             transparent
+                          );
+                }
+           }
+     }
+
+}

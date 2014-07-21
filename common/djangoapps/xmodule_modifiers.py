@@ -7,6 +7,8 @@ import json
 import logging
 import static_replace
 
+from collections import OrderedDict
+
 from django.conf import settings
 from django.utils.timezone import UTC
 from edxmako.shortcuts import render_to_string
