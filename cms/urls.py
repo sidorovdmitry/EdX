@@ -129,6 +129,12 @@ if settings.FEATURES.get('AUTH_USE_CAS'):
 
 urlpatterns += patterns('', url(r'^admin/', include(admin.site.urls)),)
 
+# Labster
+if settings.FEATURES.get('LABSTER'):
+    urlpatterns += (
+        url('^labster/', include('labster.cms_urls')),
+    )
+
 # enable automatic login
 if settings.FEATURES.get('AUTOMATIC_AUTH_FOR_TESTING'):
     urlpatterns += (
