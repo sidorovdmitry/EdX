@@ -48,6 +48,9 @@ AUTHOR_VIEW = 'author_view'
 # from the LMS student_view, and it is only shown when the author selects "Edit".
 STUDIO_VIEW = 'studio_view'
 
+# Labster's lab view for displaying unity platform in sub section
+STUDENT_LAB_VIEW = 'student_lab_view'
+
 # Views that present a "preview" view of an xblock (as opposed to an editing view).
 PREVIEW_VIEWS = [STUDENT_VIEW, AUTHOR_VIEW]
 

@@ -1,0 +1,9 @@
+% if errors:
+  <div>${errors}</div>
+% else:
+  <h4>${lab.name}</h4>
+  <div>${lab.description}</div>
+  <div>user_id: ${module.scope_ids.user_id}</div>
+  <div>token: ${user_token.key}</div>
+  <div>${module.location}</div>
+% endif

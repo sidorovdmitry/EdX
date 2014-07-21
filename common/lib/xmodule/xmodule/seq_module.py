@@ -44,6 +44,8 @@ class SequenceFields(object):
         scope=Scope.user_state,
     )
 
+    lab_id = Integer(help="Lab ID if the gradeType is Lab", scope=Scope.settings)
+
 
 class SequenceModule(SequenceFields, XModule):
     ''' Layout module which lays out content in a temporal sequence
@@ -157,3 +159,27 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
         for child in self.get_children():
             self.runtime.add_block_as_child_node(child, xml_object)
         return xml_object
+
+    def student_lab_view(self, context):
+        fragment = Fragment()
+        params = {
+            'module': self,
+        }
+
+        # fetch labs
+        try:
+            from labster.models import Lab
+            lab = Lab.objects.get(id=self.lab_id)
+        except Lab.DoesNotExist:
+            params['errors'] = "Lab doesn't no exist"
+        else:
+            from rest_framework.authtoken.models import Token
+            token, _ = Token.objects.get_or_create(user_id=self.scope_ids.user_id)
+            params.update({
+                'lab': lab,
+                'user_token': token,
+            })
+
+        fragment.add_content(self.system.render_template('lab_module.html', params))
+
+        return fragment

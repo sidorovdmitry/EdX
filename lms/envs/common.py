@@ -1392,9 +1392,11 @@ LINKEDIN_API = {
 
 ############################ Labster ##########################################
 if FEATURES.get('LABSTER'):
-    INSTALLED_APPS += ('labster',
-                       'corsheaders',
-                       )
+    INSTALLED_APPS += (
+        'labster',
+        'corsheaders',
+        'rest_framework.authtoken',
+    )
 
     MIDDLEWARE_CLASSES = (
         'corsheaders.middleware.CorsMiddleware',
