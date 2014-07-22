@@ -38,9 +38,9 @@ from lms.lib.xblock.mixin import LmsBlockMixin
 
 ################################### FEATURES ###################################
 # The display name of the platform to be used in templates/emails/etc.
-PLATFORM_NAME = "Your Platform Name Here"
+PLATFORM_NAME = "LabsterX"
 CC_MERCHANT_NAME = PLATFORM_NAME
-PLATFORM_TWITTER_ACCOUNT = "@YourPlatformTwitterAccount"
+PLATFORM_TWITTER_ACCOUNT = "@labster"
 PLATFORM_FACEBOOK_ACCOUNT = "http://www.facebook.com/YourPlatformFacebookAccount"
 
 COURSEWARE_ENABLED = True
@@ -117,7 +117,7 @@ FEATURES = {
     'SHIB_DISABLE_TOS': False,
 
     # Can be turned off if course lists need to be hidden. Effects views and templates.
-    'COURSES_ARE_BROWSABLE': True,
+    'COURSES_ARE_BROWSABLE': False,
 
     # Enables ability to restrict enrollment in specific courses by the user account login method
     'RESTRICT_ENROLL_BY_REG_METHOD': False,
@@ -1349,8 +1349,8 @@ REGISTRATION_EXTRA_FIELDS = {
     'mailing_address': 'optional',
     'goals': 'optional',
     'honor_code': 'required',
-    'city': 'hidden',
-    'country': 'hidden',
+    'city': 'optional',
+    'country': 'optional',
 }
 
 ########################## CERTIFICATE NAME ########################
