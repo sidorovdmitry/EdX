@@ -778,29 +778,30 @@ def progress_all(request, course_id):
     there are unanticipated errors.
     """
     with grades.manual_transaction():
-        return _progress_all(request, course_id)
+        return _progress_all(request, SlashSeparatedCourseKey.from_deprecated_string(course_id))
 
-def _progress_all(request, course_id):
+
+def _progress_all(request, course_key):
     """
-    Unwrapped version of "progress".
+    Unwrapped version of "progress_all".
 
     User progress. We show the grade bar and every problem score.
 
     Course staff are allowed to see the progress of students in their class.
     """
     students_context = []
-    course = get_course_with_access(request.user, course_id, 'load', depth=None)
-    staff_access = has_access(request.user, course, 'staff')
-    Student_Objects = CourseEnrollment.objects.filter(course_id=course_id)
+    course = get_course_with_access(request.user, 'load', course_key, depth=None)
+    staff_access = has_access(request.user, 'staff', course)
+    student_objects = CourseEnrollment.objects.filter(course_id=course_key)
     # Requesting access to a different student's profile
     if not staff_access:
         raise Http404
 
-    for item in Student_Objects:
+    for item in student_objects:
         student_id = item.user_id
-        stud = User.objects.get(id=int(student_id))
+        student_user = User.objects.get(id=int(student_id))
         # additional DB lookup (this kills the Progress page in particular).
-        student = User.objects.prefetch_related("groups").get(id=stud.id)
+        student = User.objects.prefetch_related("groups").get(id=student_user.id)
 
         courseware_summary = grades.progress_summary(student, request, course)
         grade_summary = grades.grade(student, request, course)
@@ -815,13 +816,13 @@ def _progress_all(request, course_id):
         }
         students_context.append(student_context)
 
-    studio_url = get_studio_url(course_id, 'settings/grading')
+    studio_url = get_studio_url(course_key, 'settings/grading')
     context = {
         'students_context': students_context,
         'course': course,
         'studio_url': studio_url,
         'staff_access': staff_access,
-        'reverifications': fetch_reverify_banner_info(request, course_id)
+        'reverifications': fetch_reverify_banner_info(request, course_key)
     }
     with grades.manual_transaction():
         response = render_to_response('courseware/progress_all.html', context)
