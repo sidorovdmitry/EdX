@@ -1,8 +1,10 @@
+from collections import defaultdict
+
 from django.http import Http404
 from edxmako.shortcuts import render_to_response
 from django.db import connection
 
-from student.models import CourseEnrollment
+from student.models import CourseEnrollment, UserProfile
 from django.contrib.auth.models import User
 
 
@@ -73,11 +75,31 @@ def dashboard(request):
                group by user_id) as registrations_per_user
         group by registrations;"""
 
+    table_queries["students per country"] = """
+        select country as Country, count(user_id) as Students
+        from auth_userprofile
+        group by country
+        order by Students desc;"""
+
     # add the result for each of the table_queries to the results object
     for query in table_queries.keys():
         cursor.execute(table_queries[query])
         results["tables"][query] = SQL_query_to_list(cursor, table_queries[query])
 
-    context={"results":results}
+    # user per month
+    user_profiles = UserProfile.objects.order_by('user__date_joined')
+    results['tables']['registrations per month'] = [
+        ['Month', 'Students'],
+    ]
+
+    _per_month = defaultdict(int)
+    for each in user_profiles:
+        _month_key = each.user.date_joined.strftime('%B %Y')
+        _per_month[_month_key] += 1
+
+    for _month, _count in _per_month.items():
+        results['tables']['registrations per month'].append([_month, _count])
+
+    context = {"results": results}
 
     return render_to_response("admin_dashboard.html",context)
