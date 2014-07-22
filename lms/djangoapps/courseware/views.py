@@ -792,7 +792,7 @@ def _progress_all(request, course_key):
     students_context = []
     course = get_course_with_access(request.user, 'load', course_key, depth=None)
     staff_access = has_access(request.user, 'staff', course)
-    student_objects = CourseEnrollment.objects.filter(course_id=course_key)
+    student_objects = CourseEnrollment.objects.filter(course_id=course_key, is_active=True)
     # Requesting access to a different student's profile
     if not staff_access:
         raise Http404
@@ -807,8 +807,9 @@ def _progress_all(request, course_key):
         grade_summary = grades.grade(student, request, course)
 
         if courseware_summary is None:
-            #This means the student didn't have access to the course (which the instructor requested)
-            raise Http404
+            # if the student is indeed registered, it means the course is not
+            # started yet
+            continue
         student_context = {
             'courseware_summary': courseware_summary,
             'grade_summary': grade_summary,
