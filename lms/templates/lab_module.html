@@ -6,4 +6,14 @@
   <div>user_id: ${module.scope_ids.user_id}</div>
   <div>token: ${user_token.key}</div>
   <div>${module.location}</div>
+  <div class="lab-container">${lab.name}</div>
+  <div><a class="play-lab-link" href="#">view</a></div>
+  <script>
+    jQuery(function() {
+      jQuery('.play-lab-link').click(function(ev) {
+        var el = jQuery(ev.currentTarget);
+        el.parent().prev('.lab-container').fullScreen(true);
+      });
+    });
+  </script>
 % endif
