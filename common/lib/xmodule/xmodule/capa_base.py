@@ -25,7 +25,7 @@ from capa.responsetypes import StudentInputError, \
 from capa.util import convert_files_to_filenames
 from .progress import Progress
 from xmodule.exceptions import NotFoundError, ProcessingError
-from xblock.fields import Scope, String, Boolean, Dict, Integer, Float
+from xblock.fields import Scope, String, Boolean, Dict, Integer, Float, List
 from .fields import Timedelta, Date
 from django.utils.timezone import UTC
 from .util.duedate import get_extended_due_date
@@ -197,6 +197,12 @@ class CapaFields(object):
              "if you believe the key is exposed or compromised. To obtain a key for your course, "
              "or to report and issue, please contact moocsupport@mathworks.com",
         scope=Scope.settings
+    )
+    tags = List(
+        display_name="Tags",
+        help=_("List of tags for this problem"),
+        default=[],
+        scope=Scope.settings,
     )
 
 
