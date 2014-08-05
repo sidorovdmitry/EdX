@@ -836,8 +836,9 @@ def student_detail(request, course_id, student_id):
     """
         Create page for student detail
     """
+    course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
     student = User.objects.get(id=int(student_id))
-    course = get_course(course_id=course_id)
+    course = modulestore().get_course(course_key)
     grading_context = course.grading_context
 
     field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
@@ -848,14 +849,13 @@ def student_detail(request, course_id, student_id):
     section = get_current_child(chapter)
     chapter_descriptor = course.get_child_by(lambda m: m.url_name == chapter.url_name)
     section_descriptor = chapter_descriptor.get_child_by(lambda m: m.url_name == section.url_name)
-    section_descriptor = modulestore().get_instance(course.id, section_descriptor.location, depth=None)
 
     section_field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
             course.id, student, section_descriptor, depth=2)
 
     try:
         student_module = StudentModule.objects.filter(
-                course_id=course_id,
+                course_id=course_key,
                 student_id=student.id,
                 module_type='problem',
             )
@@ -868,13 +868,21 @@ def student_detail(request, course_id, student_id):
     problemset = {
         'problems' : [],
     }
-    quizzes = []
+    quizzes = []    
 
     # descriptors store all the xmodule/xblock
     for each in section_field_data_cache.descriptors:
         if each.plugin_name == 'problem' and each.data:
             field_name = "{tag}-{org}-{course}-{category}-{name}_2_1"
-            field_name = field_name.format(**each.location.dict())
+            field_key = {
+                'tag': each.location.tag,
+                'org': each.location.org,
+                'course': each.location.course,
+                'category': each.location.category,
+                'name': each.location.name,
+            }            
+            # we're going to need field_name to compare the problems to student_histories
+            field_name = field_name.format(**field_key)
             each.attempt_key = field_name
 
             problemset['problems'].append(each)
@@ -905,7 +913,7 @@ def student_detail(request, course_id, student_id):
         'student' : student,
         'course' : course,
         'quizzes' : quizzes,
-    }
+    }    
 
     with grades.manual_transaction():
         response = render_to_response('courseware/student_detail.html', context)
