@@ -839,11 +839,28 @@ def student_detail(request, course_id, student_id):
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
     student = User.objects.get(id=int(student_id))
     course = modulestore().get_course(course_key)
-    grading_context = course.grading_context
+    
+    quizzes = get_problems_student_in_course(request, student, course, course_key)
+
+    context = {
+        'student' : student,
+        'course' : course,
+        'quizzes' : quizzes,
+    }    
+
+    with grades.manual_transaction():
+        response = render_to_response('courseware/student_detail.html', context)
+
+    return response
+
+
+def get_problems_student_in_course(request, student, course, course_key):
+    """
+        Helper function to get all the problems for a student in a course
+    """
 
     field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
-            course.id, student, course, depth=2)
-
+            course.id, student, course, depth=2)    
     course_module = get_module_for_descriptor(student, request, course, field_data_cache, course.id)
     chapter = get_current_child(course_module)
     section = get_current_child(chapter)
@@ -909,16 +926,7 @@ def student_detail(request, course_id, student_id):
                         quizzes.append(quiz_details)
                         break
 
-    context = {
-        'student' : student,
-        'course' : course,
-        'quizzes' : quizzes,
-    }    
-
-    with grades.manual_transaction():
-        response = render_to_response('courseware/student_detail.html', context)
-
-    return response
+    return quizzes
 
 
 def fetch_reverify_banner_info(request, course_key):
