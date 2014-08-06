@@ -841,11 +841,13 @@ def student_detail(request, course_id, student_id):
     course = modulestore().get_course(course_key)
     
     quizzes = get_problems_student_in_course(request, student, course, course_key)
+    total_score = sum(item['score'] for item in quizzes)
 
     context = {
         'student' : student,
         'course' : course,
         'quizzes' : quizzes,
+        'total_score' : total_score,
     }    
 
     with grades.manual_transaction():

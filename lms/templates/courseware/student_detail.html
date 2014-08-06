@@ -31,10 +31,15 @@
             <tr>
               %for value in quiz:          
                   <td>${quiz[value]}</td>                      
-              %endfor        
-            </tr>
+              %endfor                        
+            </tr>            
           %endfor
-        </table>  
+          <tr>
+              <td>Total score:</td>
+              <td>${total_score}</td>
+              <td></td>
+            </tr>
+        </table>          
       </div>  <!-- progress-all-students -->
     </div> <!-- course-info -->
   </div> <!-- profile-wrapper -->
