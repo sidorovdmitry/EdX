@@ -840,14 +840,16 @@ def student_detail(request, course_id, student_id):
     student = User.objects.get(id=int(student_id))
     course = modulestore().get_course(course_key)
     
-    quizzes = get_problems_student_in_course(request, student, course, course_key)
-    total_score = sum(item['score'] for item in quizzes)
-
+    problems = get_problems_student_in_course(request, student, course, course_key)
+    total_score = sum(item['score'] for item in problems)
+    difficult_problems = get_most_difficult_problem(problems, 3)
+    
     context = {
         'student' : student,
         'course' : course,
-        'quizzes' : quizzes,
+        'problems' : problems,
         'total_score' : total_score,
+        'difficult_problems': difficult_problems,
     }    
 
     with grades.manual_transaction():
@@ -887,7 +889,7 @@ def get_problems_student_in_course(request, student, course, course_key):
     problemset = {
         'problems' : [],
     }
-    quizzes = []    
+    problems = []    
 
     # descriptors store all the xmodule/xblock
     for each in section_field_data_cache.descriptors:
@@ -925,10 +927,29 @@ def get_problems_student_in_course(request, student, course, course_key):
                             'attempts' : data.get('attempts'),
                             'score' : history_entries.grade,
                         }
-                        quizzes.append(quiz_details)
+                        problems.append(quiz_details)
                         break
+    return problems
 
-    return quizzes
+
+def get_most_difficult_problem(problems, problem_needed):
+    """
+        Helper function to get the most difficult problems for a student
+    """
+    count = 0
+    difficult_problems = []
+    # create a copy of the problems
+    sorted_problems = problems[:]
+
+    # sort the problems by its attempts count
+    sorted_problems.sort(key=lambda item:item['attempts'], reverse=True)    
+    for problem in sorted_problems:        
+        difficult_problems.append(problem)
+        count += 1
+        if count == problem_needed:
+            break
+
+    return difficult_problems
 
 
 def fetch_reverify_banner_info(request, course_key):

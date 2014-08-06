@@ -21,16 +21,32 @@
       </header>
       
       <div class="progress-all-students">
+        <h3>The 3 top most difficult questions:</h3>
         <table class="progress-all-table">
           <tr>
             <th>Problem</th>
             <th>Score</th>
             <th>Attempt count</th>
           </tr>
-          %for quiz in quizzes:
+          %for problem in difficult_problems:
             <tr>
-              %for value in quiz:          
-                  <td>${quiz[value]}</td>                      
+              %for value in problem:          
+                  <td>${problem[value]}</td>                      
+              %endfor                        
+            </tr>            
+          %endfor
+        </table>          
+        <br/><br/> <br/>
+        <table class="progress-all-table">
+          <tr>
+            <th>Problem</th>
+            <th>Score</th>
+            <th>Attempt count</th>
+          </tr>
+          %for problem in problems:
+            <tr>
+              %for value in problem:          
+                  <td>${problem[value]}</td>                      
               %endfor                        
             </tr>            
           %endfor
@@ -39,7 +55,7 @@
               <td>${total_score}</td>
               <td></td>
             </tr>
-        </table>          
+        </table>            
       </div>  <!-- progress-all-students -->
     </div> <!-- course-info -->
   </div> <!-- profile-wrapper -->
