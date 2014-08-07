@@ -839,18 +839,18 @@ def student_detail(request, course_id, student_id):
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
     student = User.objects.get(id=int(student_id))
     course = modulestore().get_course(course_key)
-    
+
     problems = get_problems_student_in_course(request, student, course, course_key)
     total_score = sum(item['score'] for item in problems)
     difficult_problems = get_most_difficult_problem(problems, 3)
-    
+
     context = {
-        'student' : student,
-        'course' : course,
-        'problems' : problems,
-        'total_score' : total_score,
+        'student': student,
+        'course': course,
+        'problems': problems,
+        'total_score': total_score,
         'difficult_problems': difficult_problems,
-    }    
+    }
 
     with grades.manual_transaction():
         response = render_to_response('courseware/student_detail.html', context)
@@ -864,7 +864,7 @@ def get_problems_student_in_course(request, student, course, course_key):
     """
 
     field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
-            course.id, student, course, depth=2)    
+            course.id, student, course, depth=2)
     course_module = get_module_for_descriptor(student, request, course, field_data_cache, course.id)
     chapter = get_current_child(course_module)
     section = get_current_child(chapter)
@@ -889,7 +889,7 @@ def get_problems_student_in_course(request, student, course, course_key):
     problemset = {
         'problems' : [],
     }
-    problems = []    
+    problems = []
 
     # descriptors store all the xmodule/xblock
     for each in section_field_data_cache.descriptors:
@@ -901,7 +901,7 @@ def get_problems_student_in_course(request, student, course, course_key):
                 'course': each.location.course,
                 'category': each.location.category,
                 'name': each.location.name,
-            }            
+            }
             # we're going to need field_name to compare the problems to student_histories
             field_name = field_name.format(**field_key)
             each.attempt_key = field_name
@@ -942,8 +942,8 @@ def get_most_difficult_problem(problems, problem_needed):
     sorted_problems = problems[:]
 
     # sort the problems by its attempts count
-    sorted_problems.sort(key=lambda item:item['attempts'], reverse=True)    
-    for problem in sorted_problems:        
+    sorted_problems.sort(key=lambda item:item['attempts'], reverse=True)
+    for problem in sorted_problems:
         difficult_problems.append(problem)
         count += 1
         if count == problem_needed:
