@@ -844,12 +844,17 @@ def student_detail(request, course_id, student_id):
     total_score = sum(item['score'] for item in problems)
     difficult_problems = get_most_difficult_problem(problems, 3)
 
+    # user attempts
+    from labster.models import UserAttempt
+    user_attempts = UserAttempt.objects.filter(user=student).order_by('-created_at')
+
     context = {
         'student': student,
         'course': course,
         'problems': problems,
         'total_score': total_score,
         'difficult_problems': difficult_problems,
+        'user_attempts': user_attempts,
     }
 
     with grades.manual_transaction():

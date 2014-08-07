@@ -56,7 +56,25 @@
               <td></td>
             </tr>
         </table>
+      </div>
+
+      %if user_attempt:
+      <div class="progress-all-students" style="margin-top:36px">
+        <table class="progress-all-table">
+          <tr>
+            <th>Lab</th>
+            <th>Attempt count</th>
+          </tr>
+          %for each in user_attempts:
+          <tr>
+            <td>${each.lab_proxy.lab.name}</td>
+            <td>${each.get_total_play_count()}</td>
+          </tr>
+          %endfor
+        </table>
       </div>  <!-- progress-all-students -->
+      %endif
+
     </div> <!-- course-info -->
   </div> <!-- profile-wrapper -->
 </div> <!-- container -->
