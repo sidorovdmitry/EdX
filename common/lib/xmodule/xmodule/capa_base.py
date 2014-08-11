@@ -204,7 +204,10 @@ class CapaFields(object):
         default=[],
         scope=Scope.settings,
     )
-
+    time_spent = Float(
+        help=_("Float number of time spent by the student on this problem"),
+        default=0.0,
+        scope=Scope.user_state)
 
 class CapaMixin(CapaFields):
     """
@@ -987,6 +990,13 @@ class CapaMixin(CapaFields):
                 }
 
         try:
+            time_spent = float(answers.get('time_spent', 0.0))
+        except ValueError:
+            time_spent = 0.0
+
+        try:
+            self.time_spent = time_spent
+
             correct_map = self.lcp.grade_answers(answers)
             self.attempts = self.attempts + 1
             self.lcp.done = True
