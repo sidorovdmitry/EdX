@@ -925,12 +925,13 @@ def get_problems_student_in_course(request, student, course, course_key):
             # input_state is an information that stores the url of the problem
             for key in data.get('input_state').keys():
                 for each in problemset['problems']:
-                    #search the data based on the input state. input_state itself is a dictionary
-                    if each.attempt_key ==  key:
+                    # search the data based on the input state. input_state itself is a dictionary
+                    if each.attempt_key == key:
                         quiz_details = {
-                            'problem' : each.data,
-                            'attempts' : data.get('attempts'),
-                            'score' : history_entries.grade,
+                            'problem': each.data,
+                            'attempts': data.get('attempts'),
+                            'score': history_entries.grade,
+                            'time_spent': each.time_spent,
                         }
                         problems.append(quiz_details)
                         break
