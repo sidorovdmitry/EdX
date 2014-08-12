@@ -6,6 +6,7 @@ JSON views which the instructor dashboard requests.
 Many of these GETs may become PUTs in the future.
 """
 
+from datetime import datetime
 import json
 import logging
 import re
@@ -69,6 +70,7 @@ from .tools import (
 )
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from opaque_keys import InvalidKeyError
+from xmodule.modulestore.django import modulestore
 
 log = logging.getLogger(__name__)
 
@@ -994,8 +996,43 @@ def calculate_grades_csv(request, course_id):
 @cache_control(no_cache=True, no_store=True, must_revalidate=True)
 @require_level('staff')
 def student_quiz_detail_csv(request, course_id):
+    from courseware.views import get_problems_student_in_course
+
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
-    return HttpResponse('ok')
+    course = modulestore().get_course(course_key)
+    course_enrollments = CourseEnrollment.objects.filter(course_id=course_key, is_active=True)
+
+    csv_headers = ['name', 'email', 'number', 'question', 'attempt_count', 'completion_time', 'score']
+
+    response = HttpResponse(content_type='text/csv')
+    writer = csv.DictWriter(response, fieldnames=csv_headers)
+    writer.writeheader()
+
+    for each in course_enrollments:
+        student_id = each.user_id
+        student_user = User.objects.get(id=int(student_id))
+        problems = get_problems_student_in_course(request, student_user, course, course_key)
+        for problem in problems:
+            question = strip_tags(problem['problem'])
+            question = question.encode('utf-8')
+            csv_item = {
+                'number': 1,
+                'name': student_user.get_full_name(),
+                'email': student_user.email,
+                'question': question,
+                'attempt_count': problem['attempts'],
+                'completion_time': problem['time_spent'],
+                'score': problem['score'],
+            }
+
+            writer.writerow(csv_item)
+
+    now = datetime.now()
+    datetime_as_string = re.sub(r'\W+', '', now.isoformat())
+    csv_file_name = "student-quiz-detail-{}.csv".format(datetime_as_string)
+
+    response['Content-Disposition'] = 'attachment; filename="{filename}"'.format(filename=csv_file_name)
+    return response
 
 
 @ensure_csrf_cookie
