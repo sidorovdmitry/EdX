@@ -1,8 +1,14 @@
 <%! from django.utils.translation import ugettext as _ %>
 <%page args="section_data"/>
 
+<div class="data-download-container action-type-container">
+  <h2>${_("Lab Questions")}</h2>
+  <p>${_("Click to download a CSV file of all students with answer attempts:")}</p>
+  <p><input type="button" name="student-quiz-detail-csv" value="${_("Get Problems Detail CSV")}" data-csv="true" class="csv" data-endpoint="${ section_data['student_quiz_detail_csv_url'] }" class=""></p>
+</div>
 
 <div class="data-download-container action-type-container">
+  <hr>
   <h2>${_("Data Download")}</h2>
   <div class="request-response-error msg msg-error copy" id="data-request-response-error"></div>
 

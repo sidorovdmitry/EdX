@@ -22,6 +22,7 @@ class DataDownload
     @$list_anon_btn = @$section.find("input[name='list-anon-ids']'")
     @$grade_config_btn = @$section.find("input[name='dump-gradeconf']'")
     @$calculate_grades_csv_btn = @$section.find("input[name='calculate-grades-csv']'")
+    @$student_quiz_detail_csv_button = @$section.find("input[name='student-quiz-detail-csv']")
 
     # response areas
     @$download                        = @$section.find '.data-download-container'
@@ -40,6 +41,10 @@ class DataDownload
     # The list-anon case is always CSV
     @$list_anon_btn.click (e) =>
       url = @$list_anon_btn.data 'endpoint'
+      location.href = url
+
+    @$student_quiz_detail_csv_button.click (e) =>
+      url = @$student_quiz_detail_csv_button.data 'endpoint'
       location.href = url
 
     # this handler binds to both the download
