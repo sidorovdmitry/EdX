@@ -21,45 +21,53 @@
       </header>
 
       <div class="progress-all-students">
-        <h3>The 3 top most difficult questions:</h3>
+        <h3>The 3 top most difficult questions:</h3> <br/>
         <table class="progress-all-table">
-          <tr>
+          <tr>            
             <th>Problem</th>
+            <th>Time Spent</th>
             <th>Score</th>
             <th>Attempt count</th>
           </tr>
           %for problem in difficult_problems:
             <tr>
-              %for value in problem:
-                  <td>${problem[value]}</td>
-              %endfor
+              <td>${problem['problem']}</td>
+              <td>${problem['time_spent']}</td>
+              <td>${problem['score']}</td>
+              <td>${problem['attempts']}</td>
             </tr>
           %endfor
         </table>
         <br/><br/> <br/>
+
+        <h3>Detail report:</h3><br/>
         <table class="progress-all-table">
-          <tr>
+          <tr>            
             <th>Problem</th>
+            <th>Time Spent</th>
             <th>Score</th>
             <th>Attempt count</th>
           </tr>
-          %for problem in problems:
+          %for problem in problems:          
             <tr>
-              %for value in problem:
-                  <td>${problem[value]}</td>
-              %endfor
+              <td>${problem['problem']}</td>
+              <td>${problem['time_spent']}</td>
+              <td>${problem['score']}</td>
+              <td>${problem['attempts']}</td>
             </tr>
           %endfor
           <tr>
-              <td>Total score:</td>
+              <td>Total : </td>
+              <td>${total_time_spent}</td>
               <td>${total_score}</td>
+              <td>${total_attempts}</td>
               <td></td>
             </tr>
         </table>
       </div>
 
       %if user_attempt:
-      <div class="progress-all-students" style="margin-top:36px">
+      <div class="progress-all-students" style="margin-top:36px">      
         <table class="progress-all-table">
           <tr>
             <th>Lab</th>

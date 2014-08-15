@@ -840,19 +840,23 @@ def student_detail(request, course_id, student_id):
     student = User.objects.get(id=int(student_id))
     course = modulestore().get_course(course_key)
 
-    problems = get_problems_student_in_course(request, student, course, course_key)
-    total_score = sum(item['score'] for item in problems)
-    difficult_problems = get_most_difficult_problem(problems, 3)
-
     # user attempts
     from labster.models import UserAttempt
     user_attempts = UserAttempt.objects.filter(user=student).order_by('-created_at')
+
+    problems = get_problems_student_in_course(request, student, course, course_key)
+    total_score = sum(item['score'] for item in problems)
+    total_time_spent = sum(item['time_spent'] for item in problems)
+    total_attempts = sum(item['attempts'] for item in problems)  
+    difficult_problems = get_most_difficult_problem(problems, 3)    
 
     context = {
         'student': student,
         'course': course,
         'problems': problems,
         'total_score': total_score,
+        'total_attempts': total_attempts,
+        'total_time_spent': total_time_spent,
         'difficult_problems': difficult_problems,
         'user_attempts': user_attempts,
     }
@@ -942,18 +946,14 @@ def get_most_difficult_problem(problems, problem_needed):
     """
         Helper function to get the most difficult problems for a student
     """
-    count = 0
     difficult_problems = []
     # create a copy of the problems
     sorted_problems = problems[:]
 
     # sort the problems by its attempts count
     sorted_problems.sort(key=lambda item:item['attempts'], reverse=True)
-    for problem in sorted_problems:
+    for problem in sorted_problems[:problem_needed]:
         difficult_problems.append(problem)
-        count += 1
-        if count == problem_needed:
-            break
 
     return difficult_problems
 
