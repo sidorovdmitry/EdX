@@ -7,7 +7,6 @@ Acceptance tests for Video.
 import json
 from unittest import skipIf, skip
 import requests
-from box.test.flaky import flaky
 from ..helpers import UniqueCourseTest, is_youtube_available
 from ...pages.lms.video.video import VideoPage
 from ...pages.lms.tab_nav import TabNavPage
@@ -16,7 +15,6 @@ from ...pages.lms.auto_auth import AutoAuthPage
 from ...pages.lms.course_info import CourseInfoPage
 from ...fixtures.course import CourseFixture, XBlockFixtureDesc
 from ..helpers import skip_if_browser
-
 
 
 VIDEO_SOURCE_PORT = 8777
@@ -41,7 +39,6 @@ class YouTubeConfigError(Exception):
     pass
 
 
-@flaky
 @skipIf(is_youtube_available() is False, 'YouTube is not available!')
 class VideoBaseTest(UniqueCourseTest):
     """
@@ -267,7 +264,7 @@ class YouTubeVideoTest(VideoBaseTest):
 
         # Verify that we see "好 各位同学" text in the captions
         unicode_text = "好 各位同学".decode('utf-8')
-        self.assertIn(unicode_text, self.video.captions_text())
+        self.assertIn(unicode_text, self.video.captions_text)
 
     def test_cc_button_transcripts_and_sub_fields_empty(self):
         """
@@ -284,7 +281,7 @@ class YouTubeVideoTest(VideoBaseTest):
         self.video.show_captions()
 
         # Verify that we see "Hi, welcome to Edx." text in the captions
-        self.assertIn('Hi, welcome to Edx.', self.video.captions_text())
+        self.assertIn('Hi, welcome to Edx.', self.video.captions_text)
 
     def test_cc_button_hidden_no_translations(self):
         """
@@ -348,7 +345,7 @@ class YouTubeVideoTest(VideoBaseTest):
         self.navigate_to_video()
 
         # check if "Hi, welcome to Edx." text in the captions
-        self.assertIn('Hi, welcome to Edx.', self.video.captions_text())
+        self.assertIn('Hi, welcome to Edx.', self.video.captions_text)
 
         # check if we can download transcript in "srt" format that has text "Hi, welcome to Edx."
         self.assertTrue(self.video.downloaded_transcript_contains_text('srt', 'Hi, welcome to Edx.'))
@@ -358,7 +355,7 @@ class YouTubeVideoTest(VideoBaseTest):
 
         # check if we see "好 各位同学" text in the captions
         unicode_text = "好 各位同学".decode('utf-8')
-        self.assertIn(unicode_text, self.video.captions_text())
+        self.assertIn(unicode_text, self.video.captions_text)
 
         # check if we can download transcript in "srt" format that has text "好 各位同学"
         unicode_text = "好 各位同学".decode('utf-8')
@@ -496,7 +493,14 @@ class YouTubeVideoTest(VideoBaseTest):
         self.course_nav.go_to_sequential('C')
 
         # menu "download_transcript" doesn't exist
-        self.assertFalse(self.video.is_menu_exist('download_transcript'))
+        self.assertFalse(self.video.is_menu_present('download_transcript'))
+
+    def _verify_caption_text(self, text):
+        self.video._wait_for(
+            lambda: (text in self.video.captions_text),
+            u'Captions contain "{}" text'.format(text),
+            timeout=5
+        )
 
     def test_video_language_menu_working(self):
         """
@@ -520,15 +524,15 @@ class YouTubeVideoTest(VideoBaseTest):
         self.video.hide_captions()
 
         correct_languages = {'en': 'English', 'zh': 'Chinese'}
-        self.assertEqual(self.video.caption_languages(), correct_languages)
+        self.assertEqual(self.video.caption_languages, correct_languages)
 
         self.video.select_language('zh')
 
         unicode_text = "好 各位同学".decode('utf-8')
-        self.assertIn(unicode_text, self.video.captions_text())
+        self._verify_caption_text(unicode_text)
 
         self.video.select_language('en')
-        self.assertIn('Hi, welcome to Edx.', self.video.captions_text())
+        self._verify_caption_text('Hi, welcome to Edx.')
 
     def test_multiple_videos_in_sequentials_load_and_work(self):
         """
@@ -548,9 +552,10 @@ class YouTubeVideoTest(VideoBaseTest):
             Execute video steps
             """
             for video_name in video_names:
-                self.video.click_player_button('play', video_name)
-                self.assertIn(self.video.state(video_name), ['playing', 'buffering'])
-                self.video.click_player_button('pause', video_name)
+                self.video.use_video(video_name)
+                self.video.click_player_button('play')
+                self.assertIn(self.video.state, ['playing', 'buffering'])
+                self.video.click_player_button('pause')
 
         # go to video
         self.navigate_to_video()
@@ -582,23 +587,23 @@ class YouTubeVideoTest(VideoBaseTest):
 
         # select the "2.0" speed on video "A"
         self.course_nav.go_to_sequential('A')
-        self.video.set_speed('2.0')
+        self.video.speed = '2.0'
 
         # select the "0.50" speed on video "B"
         self.course_nav.go_to_sequential('B')
-        self.video.set_speed('0.50')
+        self.video.speed = '0.50'
 
         # open video "C"
         self.course_nav.go_to_sequential('C')
 
         # check if video "C" should start playing at speed "0.75"
-        self.assertEqual(self.video.get_speed(), '0.75x')
+        self.assertEqual(self.video.speed, '0.75x')
 
         # open video "A"
         self.course_nav.go_to_sequential('A')
 
         # check if video "A" should start playing at speed "2.0"
-        self.assertEqual(self.video.get_speed(), '2.0x')
+        self.assertEqual(self.video.speed, '2.0x')
 
         # reload the page
         self.video.reload_page()
@@ -607,22 +612,22 @@ class YouTubeVideoTest(VideoBaseTest):
         self.course_nav.go_to_sequential('A')
 
         # check if video "A" should start playing at speed "2.0"
-        self.assertEqual(self.video.get_speed(), '2.0x')
+        self.assertEqual(self.video.speed, '2.0x')
 
         # select the "1.0" speed on video "A"
-        self.video.set_speed('1.0')
+        self.video.speed = '1.0'
 
         # open video "B"
         self.course_nav.go_to_sequential('B')
 
         # check if video "B" should start playing at speed "0.50"
-        self.assertEqual(self.video.get_speed(), '0.50x')
+        self.assertEqual(self.video.speed, '0.50x')
 
         # open video "C"
         self.course_nav.go_to_sequential('C')
 
         # check if video "C" should start playing at speed "1.0"
-        self.assertEqual(self.video.get_speed(), '1.0x')
+        self.assertEqual(self.video.speed, '1.0x')
 
     def test_video_has_correct_transcript(self):
         """
@@ -646,15 +651,15 @@ class YouTubeVideoTest(VideoBaseTest):
 
         self.video.show_captions()
 
-        self.assertIn('Hi, welcome to Edx.', self.video.captions_text())
+        self.assertIn('Hi, welcome to Edx.', self.video.captions_text)
 
-        self.video.set_speed('1.50')
+        self.video.speed = '1.50'
 
         self.video.reload_page()
 
-        self.assertIn('Hi, welcome to Edx.', self.video.captions_text())
+        self.assertIn('Hi, welcome to Edx.', self.video.captions_text)
 
-        self.assertTrue(self.video.duration(), '1.56')
+        self.assertTrue(self.video.duration, '1.56')
 
     def test_video_position_stored_correctly_wo_seek(self):
         """
@@ -683,7 +688,7 @@ class YouTubeVideoTest(VideoBaseTest):
         self.video.click_player_button('play')
         self.video.click_player_button('pause')
 
-        self.assertGreaterEqual(self.video.seconds(), 5)
+        self.assertGreaterEqual(self.video.seconds, 5)
 
     @skip("Intermittently fails 03 June 2014")
     def test_video_position_stored_correctly_with_seek(self):
@@ -713,7 +718,7 @@ class YouTubeVideoTest(VideoBaseTest):
         self.video.click_player_button('play')
         self.video.click_player_button('pause')
 
-        self.assertGreaterEqual(self.video.seconds(), 10)
+        self.assertGreaterEqual(self.video.seconds, 10)
 
 
 class YouTubeHtml5VideoTest(VideoBaseTest):
@@ -753,7 +758,7 @@ class Html5VideoTest(VideoBaseTest):
         self.navigate_to_video()
 
         # Verify that the video has autoplay mode disabled
-        self.assertFalse(self.video.is_autoplay_enabled())
+        self.assertFalse(self.video.is_autoplay_enabled)
 
     def test_html5_video_rendering_with_unsupported_sources(self):
         """
@@ -767,14 +772,14 @@ class Html5VideoTest(VideoBaseTest):
         self.navigate_to_video_no_render()
 
         # Verify that error message is shown
-        self.assertTrue(self.video.is_error_message_shown())
+        self.assertTrue(self.video.is_error_message_shown)
 
         # Verify that error message has correct text
         correct_error_message_text = 'No playable video sources found.'
-        self.assertIn(correct_error_message_text, self.video.error_message_text())
+        self.assertIn(correct_error_message_text, self.video.error_message_text)
 
         # Verify that spinner is not shown
-        self.assertFalse(self.video.is_spinner_shown())
+        self.assertFalse(self.video.is_spinner_shown)
 
     def test_download_button_wo_english_transcript(self):
         """
@@ -794,7 +799,7 @@ class Html5VideoTest(VideoBaseTest):
 
         # check if we see "好 各位同学" text in the captions
         unicode_text = "好 各位同学".decode('utf-8')
-        self.assertIn(unicode_text, self.video.captions_text())
+        self.assertIn(unicode_text, self.video.captions_text)
 
         # check if we can download transcript in "srt" format that has text "好 各位同学"
         unicode_text = "好 各位同学".decode('utf-8')
@@ -819,7 +824,7 @@ class Html5VideoTest(VideoBaseTest):
         self.navigate_to_video()
 
         # check if "Hi, welcome to Edx." text in the captions
-        self.assertIn('Hi, welcome to Edx.', self.video.captions_text())
+        self.assertIn('Hi, welcome to Edx.', self.video.captions_text)
 
         # check if we can download transcript in "srt" format that has text "Hi, welcome to Edx."
         self.assertTrue(self.video.downloaded_transcript_contains_text('srt', 'Hi, welcome to Edx.'))
@@ -830,7 +835,7 @@ class Html5VideoTest(VideoBaseTest):
         # check if we see "好 各位同学" text in the captions
         unicode_text = "好 各位同学".decode('utf-8')
 
-        self.assertIn(unicode_text, self.video.captions_text())
+        self.assertIn(unicode_text, self.video.captions_text)
 
         #Then I can download transcript in "srt" format that has text "好 各位同学"
         unicode_text = "好 各位同学".decode('utf-8')
@@ -881,7 +886,7 @@ class Html5VideoTest(VideoBaseTest):
         self.video.show_captions()
 
         # check if we see "Hi, welcome to Edx." text in the captions
-        self.assertIn("Hi, welcome to Edx.", self.video.captions_text())
+        self.assertIn("Hi, welcome to Edx.", self.video.captions_text)
 
     def test_cc_button_wo_english_transcript(self):
         """
@@ -903,7 +908,7 @@ class Html5VideoTest(VideoBaseTest):
 
         # check if we see "好 各位同学" text in the captions
         unicode_text = "好 各位同学".decode('utf-8')
-        self.assertIn(unicode_text, self.video.captions_text())
+        self.assertIn(unicode_text, self.video.captions_text)
 
     def test_video_rendering(self):
         """
@@ -918,7 +923,7 @@ class Html5VideoTest(VideoBaseTest):
 
         self.assertTrue(self.video.is_video_rendered('html5'))
 
-        self.assertTrue(all([source in HTML5_SOURCES for source in self.video.sources()]))
+        self.assertTrue(all([source in HTML5_SOURCES for source in self.video.sources]))
 
 
 class YouTubeQualityTest(VideoBaseTest):
@@ -939,11 +944,11 @@ class YouTubeQualityTest(VideoBaseTest):
         """
         self.navigate_to_video()
 
-        self.assertFalse(self.video.is_quality_button_visible())
+        self.assertFalse(self.video.is_quality_button_visible)
 
         self.video.click_player_button('play')
 
-        self.assertTrue(self.video.is_quality_button_visible())
+        self.assertTrue(self.video.is_quality_button_visible)
 
     @skip_if_browser('firefox')
     def test_quality_button_works_correctly(self):
@@ -960,8 +965,8 @@ class YouTubeQualityTest(VideoBaseTest):
 
         self.video.click_player_button('play')
 
-        self.assertFalse(self.video.is_quality_button_active())
+        self.assertFalse(self.video.is_quality_button_active)
 
         self.video.click_player_button('quality')
 
-        self.assertTrue(self.video.is_quality_button_active())
+        self.assertTrue(self.video.is_quality_button_active)

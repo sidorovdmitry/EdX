@@ -54,7 +54,7 @@ class CourseEndingTest(TestCase):
     def test_cert_info(self):
         user = Mock(username="fred")
         survey_url = "http://a_survey.com"
-        course = Mock(end_of_course_survey_url=survey_url)
+        course = Mock(end_of_course_survey_url=survey_url, certificates_display_behavior='end')
 
         self.assertEqual(_cert_info(user, course, None),
                          {'status': 'processing',
@@ -133,6 +133,15 @@ class CourseEndingTest(TestCase):
                           'mode': 'honor'
                           })
 
+        # test when the display is unavailable or notpassing, we get the correct results out
+        course2.certificates_display_behavior = 'early_no_info'
+        cert_status = {'status': 'unavailable'}
+        self.assertIsNone(_cert_info(user, course2, cert_status))
+
+        cert_status = {'status': 'notpassing', 'grade': '67',
+                       'download_url': download_url, 'mode': 'honor'}
+        self.assertIsNone(_cert_info(user, course2, cert_status))
+
 
 @override_settings(MODULESTORE=TEST_DATA_MIXED_MODULESTORE)
 class DashboardTest(TestCase):
@@ -148,11 +157,6 @@ class DashboardTest(TestCase):
         self.course = CourseFactory.create(org=self.COURSE_ORG, display_name=self.COURSE_NAME, number=self.COURSE_SLUG)
         self.assertIsNotNone(self.course)
         self.user = UserFactory.create(username="jack", email="jack@fake.edx.org", password='test')
-        CourseModeFactory.create(
-            course_id=self.course.id,
-            mode_slug='honor',
-            mode_display_name='Honor Code',
-        )
         self.client = Client()
 
     @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
@@ -229,6 +233,26 @@ class DashboardTest(TestCase):
         verified_mode.expiration_datetime = datetime.now(pytz.UTC) - timedelta(days=1)
         verified_mode.save()
         self.assertFalse(enrollment.refundable())
+
+    @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
+    def test_refundable_of_purchased_course(self):
+
+        self.client.login(username="jack", password="test")
+        CourseModeFactory.create(
+            course_id=self.course.id,
+            mode_slug='honor',
+            min_price=10,
+            currency='usd',
+            mode_display_name='honor',
+            expiration_datetime=datetime.now(pytz.UTC) + timedelta(days=1)
+        )
+        enrollment = CourseEnrollment.enroll(self.user, self.course.id, mode='honor')
+
+        # TODO: Until we can allow course administrators to define a refund period for paid for courses show_refund_option should be False. # pylint: disable=W0511
+        self.assertFalse(enrollment.refundable())
+
+        resp = self.client.post(reverse('student.views.dashboard', args=[]))
+        self.assertIn('You will not be refunded the amount you paid.', resp.content)
 
     @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
     def test_refundable_when_certificate_exists(self):
@@ -308,6 +332,18 @@ class EnrollInCourseTest(TestCase):
     def assert_no_events_were_emitted(self):
         """Ensures no events were emitted since the last event related assertion"""
         self.assertFalse(self.mock_tracker.emit.called)  # pylint: disable=maybe-no-member
+        self.mock_tracker.reset_mock()
+
+    def assert_enrollment_mode_change_event_was_emitted(self, user, course_key, mode):
+        """Ensures an enrollment mode change event was emitted"""
+        self.mock_tracker.emit.assert_called_once_with(  # pylint: disable=maybe-no-member
+            'edx.course.enrollment.mode_changed',
+            {
+                'course_id': course_key.to_deprecated_string(),
+                'user_id': user.pk,
+                'mode': mode
+            }
+        )
         self.mock_tracker.reset_mock()
 
     def assert_enrollment_event_was_emitted(self, user, course_key):
@@ -446,6 +482,23 @@ class EnrollInCourseTest(TestCase):
         CourseEnrollment.enroll(user, course_id)
         self.assertTrue(CourseEnrollment.is_enrolled(user, course_id))
         self.assert_enrollment_event_was_emitted(user, course_id)
+
+    def test_change_enrollment_modes(self):
+        user = User.objects.create(username="justin", email="jh@fake.edx.org")
+        course_id = SlashSeparatedCourseKey("edX", "Test101", "2013")
+
+        CourseEnrollment.enroll(user, course_id)
+        self.assert_enrollment_event_was_emitted(user, course_id)
+
+        CourseEnrollment.enroll(user, course_id, "audit")
+        self.assert_enrollment_mode_change_event_was_emitted(user, course_id, "audit")
+
+        # same enrollment mode does not emit an event
+        CourseEnrollment.enroll(user, course_id, "audit")
+        self.assert_no_events_were_emitted()
+
+        CourseEnrollment.enroll(user, course_id, "honor")
+        self.assert_enrollment_mode_change_event_was_emitted(user, course_id, "honor")
 
 
 @override_settings(MODULESTORE=TEST_DATA_MIXED_MODULESTORE)

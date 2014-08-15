@@ -39,7 +39,11 @@ ANALYTICS_API_KEY = ""
 
 ANALYTICS_DATA_URL = "http://127.0.0.1:8080"
 ANALYTICS_DATA_TOKEN = ""
-FEATURES['ENABLE_ANALYTICS_ACTIVE_COUNT'] = True
+FEATURES['ENABLE_ANALYTICS_ACTIVE_COUNT'] = False
+
+# Set this to the dashboard URL in order to display the link from the
+# dashboard to the Analytics Dashboard.
+ANALYTICS_DASHBOARD_URL = None
 
 
 ################################ DEBUG TOOLBAR ################################
@@ -82,8 +86,12 @@ FEATURES['ENABLE_PAYMENT_FAKE'] = True
 CC_PROCESSOR['CyberSource']['PURCHASE_ENDPOINT'] = '/shoppingcart/payment_fake/'
 
 #####################################################################
-# Lastly, see if the developer has any local overrides.
+# See if the developer has any local overrides.
 try:
     from .private import *      # pylint: disable=F0401
 except ImportError:
     pass
+
+#####################################################################
+# Lastly, run any migrations, if needed.
+MODULESTORE = convert_module_store_setting_if_needed(MODULESTORE)

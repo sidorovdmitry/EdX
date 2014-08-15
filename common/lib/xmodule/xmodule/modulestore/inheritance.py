@@ -51,6 +51,11 @@ class InheritanceMixin(XBlockMixin):
         default=None,
         scope=Scope.user_state,
     )
+    visible_to_staff_only = Boolean(
+        help=_("If true, can be seen only by course staff, regardless of start date."),
+        default=False,
+        scope=Scope.settings,
+    )
     course_edit_method = String(
         display_name=_("Course Editor"),
         help=_("Enter the method by which this course is edited (\"XML\" or \"Studio\")."),
@@ -143,7 +148,8 @@ class InheritanceMixin(XBlockMixin):
         scope=Scope.settings
     )
     video_speed_optimizations = Boolean(
-        help="Enable Video CDN.",
+        display_name=_("Enable video caching system"),
+        help=_("Enter true or false. If true, video caching will be used for HTML5 videos."),
         default=True,
         scope=Scope.settings
     )

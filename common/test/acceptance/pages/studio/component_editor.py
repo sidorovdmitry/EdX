@@ -1,6 +1,5 @@
 from bok_choy.page_object import PageObject
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
 from utils import click_css
 from selenium.webdriver.support.ui import Select
 
@@ -45,7 +44,9 @@ class ComponentEditorView(PageObject):
         """
         Returns the index of the setting entry with given label (display name) within the Settings modal.
         """
-        # TODO: will need to handle tabbed "Settings" in future (current usage is in vertical, only shows Settings.
+        settings_button = self.q(css='.edit-xblock-modal .editor-modes .settings-button')
+        if settings_button.is_present():
+            settings_button.click()
         setting_labels = self.q(css=self._bounded_selector('.metadata_edit .wrapper-comp-setting .setting-label'))
         for index, setting in enumerate(setting_labels):
             if setting.text == label:
@@ -57,13 +58,13 @@ class ComponentEditorView(PageObject):
         Sets the text field with given label (display name) to the specified value, and presses Save.
         """
         elem = self.get_setting_element(label)
-        # Click in the field, delete the value there.
-        action = ActionChains(self.browser).click(elem)
-        for _x in range(0, len(elem.get_attribute('value'))):
-            action = action.send_keys(Keys.BACKSPACE)
-        # Send the new text, then Tab to move to the next field (so change event is triggered).
-        action.send_keys(value).send_keys(Keys.TAB).perform()
-        click_css(self, 'a.action-save')
+
+        # Clear the current value, set the new one, then
+        # Tab to move to the next field (so change event is triggered).
+        elem.clear()
+        elem.send_keys(value)
+        elem.send_keys(Keys.TAB)
+        self.save()
 
     def set_select_value_and_save(self, label, value):
         """
@@ -72,4 +73,27 @@ class ComponentEditorView(PageObject):
         elem = self.get_setting_element(label)
         select = Select(elem)
         select.select_by_value(value)
+        self.save()
+
+    def get_selected_option_text(self, label):
+        """
+        Returns the text of the first selected option for the select with given label (display name).
+        """
+        elem = self.get_setting_element(label)
+        if elem:
+            select = Select(elem)
+            return select.first_selected_option.text
+        else:
+            return None
+
+    def save(self):
+        """
+        Clicks save button.
+        """
         click_css(self, 'a.action-save')
+
+    def cancel(self):
+        """
+        Clicks cancel button.
+        """
+        click_css(self, 'a.action-cancel', require_notification=False)

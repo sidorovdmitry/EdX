@@ -48,8 +48,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-platform\n"
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
-"POT-Creation-Date: 2014-07-07 10:29-0400\n"
-"PO-Revision-Date: 2014-06-22 06:40+0000\n"
+"POT-Creation-Date: 2014-08-04 09:18-0400\n"
+"PO-Revision-Date: 2014-07-22 14:02+0000\n"
 "Last-Translator: Gerardo Milan Ortega <Milann@outlook.es>\n"
 "Language-Team: Spanish (Mexico) (http://www.transifex.com/projects/p/edx-platform/language/es_MX/)\n"
 "MIME-Version: 1.0\n"
@@ -79,7 +79,7 @@ msgstr ""
 #: lms/djangoapps/class_dashboard/dashboard_data.py
 #: lms/templates/courseware/instructor_dashboard.html
 #: lms/templates/courseware/instructor_dashboard.html
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
 msgid "Problem"
 msgstr ""
 
@@ -344,6 +344,10 @@ msgid "A country is required"
 msgstr ""
 
 #: common/djangoapps/student/views.py
+msgid "You are missing one or more required fields"
+msgstr ""
+
+#: common/djangoapps/student/views.py
 msgid "Username cannot be more than {0} characters long"
 msgstr ""
 
@@ -361,6 +365,10 @@ msgstr ""
 
 #: common/djangoapps/student/views.py common/djangoapps/student/views.py
 msgid "Password: "
+msgstr ""
+
+#: common/djangoapps/student/views.py
+msgid "Username and password fields cannot match"
 msgstr ""
 
 #: common/djangoapps/student/views.py
@@ -1201,6 +1209,10 @@ msgid "Finished"
 msgstr ""
 
 #: common/lib/xmodule/xmodule/capa_base.py
+msgid "Correct or Past Due"
+msgstr ""
+
+#: common/lib/xmodule/xmodule/capa_base.py
 msgid "Past Due"
 msgstr ""
 
@@ -1420,10 +1432,10 @@ msgstr ""
 
 #: common/lib/xmodule/xmodule/combined_open_ended_module.py
 msgid ""
-"A list of lists of state dictionaries for student states that are saved.This"
-" field is only populated if the instructor changes tasks afterthe module is "
-"created and students have attempted it (for example changes a self assessed "
-"problem to self and peer assessed."
+"A list of lists of state dictionaries for student states that are saved. "
+"This field is only populated if the instructor changes tasks after the "
+"module is created and students have attempted it (for example, if a self "
+"assessed problem is changed to self and peer assessed)."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/combined_open_ended_module.py
@@ -2105,6 +2117,10 @@ msgid ""
 msgstr ""
 
 #: common/lib/xmodule/xmodule/course_module.py
+msgid "Invitation Only"
+msgstr ""
+
+#: common/lib/xmodule/xmodule/course_module.py
 msgid "General"
 msgstr ""
 
@@ -2641,6 +2657,11 @@ msgstr ""
 
 #: common/lib/xmodule/xmodule/modulestore/inheritance.py
 msgid "Enter the default date by which problems are due."
+msgstr ""
+
+#: common/lib/xmodule/xmodule/modulestore/inheritance.py
+#: lms/lib/xblock/mixin.py
+msgid "If true, can be seen only by course staff, regardless of start date."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/modulestore/inheritance.py
@@ -3368,6 +3389,8 @@ msgstr ""
 
 #: lms/djangoapps/dashboard/support.py
 #: lms/templates/sysadmin_dashboard_gitlogs.html
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
 msgid "Course ID"
 msgstr ""
 
@@ -3656,7 +3679,7 @@ msgid "allowed file types are '%(file_types)s'"
 msgstr ""
 
 #: lms/djangoapps/django_comment_client/base/views.py
-msgid "maximum upload file size is %(file_size)sK"
+msgid "Maximum upload file size is %(file_size)s bytes."
 msgstr ""
 
 #: lms/djangoapps/django_comment_client/base/views.py
@@ -3705,7 +3728,7 @@ msgid "Gender"
 msgstr ""
 
 #: lms/djangoapps/instructor/views/api.py
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
 msgid "Level of Education"
 msgstr ""
 
@@ -3754,6 +3777,63 @@ msgstr ""
 
 #: lms/djangoapps/instructor/views/api.py
 msgid "Successfully reset due date for student {0} for {1} to {2}"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon id is None"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon id ({coupon_id}) DoesNotExist"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon id ({coupon_id}) is already inactive"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon id ({coupon_id}) updated successfully"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon code ({code}) already exist"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "Please Enter the Integer Value for Coupon Discount"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Please Enter the Coupon Discount Value Less than or Equal to 100"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon code ({code}) added successfully"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon id not found"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon id ({coupon_id}) already exists"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon id ({coupon_id}) updated Successfully"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/instructor_dashboard.py
+msgid "E-Commerce"
 msgstr ""
 
 #: lms/djangoapps/instructor/views/instructor_dashboard.py
@@ -4436,7 +4516,11 @@ msgstr ""
 msgid "Currency"
 msgstr ""
 
-#: lms/djangoapps/shoppingcart/reports.py lms/templates/shoppingcart/list.html
+#: lms/djangoapps/shoppingcart/reports.py
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+#: lms/templates/shoppingcart/list.html
 #: lms/templates/shoppingcart/receipt.html
 #: lms/templates/shoppingcart/verified_cert_receipt.html
 #: lms/templates/shoppingcart/verified_cert_receipt.html
@@ -4550,30 +4634,52 @@ msgid "Course added to cart."
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/views.py
+msgid "Discount does not exist against coupon '{0}'."
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/views.py
+msgid "Coupon '{0}' already used."
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/views.py
+msgid "Coupon '{0}' is not valid for any course in the shopping cart."
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/views.py
+msgid "Coupon '{0}' is inactive."
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/views.py
 msgid "You do not have permission to view this page."
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid "The payment processor did not return a required parameter: {0}"
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid "The payment processor returned a badly-typed value {0} for param {1}."
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "The payment processor accepted an order whose number is not in our system."
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "The amount charged by the processor {0} {1} is different than the total cost"
 " of the order {2} {3}."
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "            <p class=\"error_msg\">\n"
@@ -4587,6 +4693,7 @@ msgid ""
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "                <p class=\"error_msg\">\n"
@@ -4599,6 +4706,7 @@ msgid ""
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "                <p class=\"error_msg\">\n"
@@ -4623,6 +4731,7 @@ msgid ""
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid "Successful transaction."
 msgstr ""
 
@@ -4631,6 +4740,7 @@ msgid "The request is missing one or more required fields."
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid "One or more fields in the request contains invalid data."
 msgstr ""
 
@@ -4673,6 +4783,7 @@ msgid ""
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "            Expired card. You might also receive this if the expiration date you\n"
@@ -4682,6 +4793,7 @@ msgid ""
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "            General decline of the card. No other information provided by the issuing bank.\n"
@@ -4690,6 +4802,7 @@ msgid ""
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "Insufficient funds in the account. Possible fix: retry with another form of "
 "payment"
@@ -4701,11 +4814,13 @@ msgid "Unknown reason"
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "Issuing bank unavailable. Possible fix: retry again after a few minutes"
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "            Inactive card or card not authorized for card-not-present transactions.\n"
@@ -4714,6 +4829,7 @@ msgid ""
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "The card has reached the credit limit. Possible fix: retry with another form"
 " of payment"
@@ -4726,11 +4842,13 @@ msgid ""
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "Invalid account number. Possible fix: retry with another form of payment"
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "            The card type is not accepted by the payment processor.\n"
@@ -4739,6 +4857,7 @@ msgid ""
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "General decline by the processor.  Possible fix: retry with another form of "
 "payment"
@@ -4756,6 +4875,7 @@ msgid "The requested amount exceeds the originally authorized amount."
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid "Processor Failure.  Possible fix: retry the payment"
 msgstr ""
 
@@ -4769,6 +4889,7 @@ msgid ""
 msgstr ""
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "            The card type sent is invalid or does not correlate with the credit card number.\n"
@@ -4815,6 +4936,87 @@ msgstr ""
 msgid ""
 "\n"
 "            The authorization request was approved by the issuing bank but declined by CyberSource.'\n"
+"            Possible fix: retry with a different form of payment.\n"
+"            "
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"\n"
+"            The access_key and transaction_uuid fields for this authorization request matches the access_key and\n"
+"            transaction_uuid of another authorization request that you sent in the last 15 minutes.\n"
+"            Possible fix: retry the payment after 15 minutes.\n"
+"            "
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid "Only a partial amount was approved."
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"\n"
+"            The authorization request was approved by the issuing bank but declined by CyberSource\n"
+"            because it did not pass the Address Verification System (AVS).\n"
+"            "
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"\n"
+"            The issuing bank has questions about the request. You do not receive an\n"
+"            authorization code programmatically, but you might receive one verbally by calling the processor.\n"
+"            Possible fix: retry with another form of payment\n"
+"            "
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid "Stolen or lost card"
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"Invalid card verification number (CVN). Possible fix: retry with another "
+"form of payment"
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid "The customer matched an entry on the processors negative file."
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid "Account frozen. Possible fix: retry with another form of payment"
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"\n"
+"            The authorization request was approved by the issuing bank but declined by\n"
+"            CyberSource because it did not pass the CVN check.\n"
+"            Possible fix: retry with another form of payment\n"
+"            "
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"\n"
+"            There is a problem with the information in your CyberSource account.  Please let us know at {0}\n"
+"            "
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid "The cardholder is enrolled for payer authentication"
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid "Payer authentication could not be authenticated"
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"\n"
+"            The authorization request was approved by the issuing bank but declined by CyberSource based\n"
+"            on your legacy Smart Authorization settings.\n"
 "            Possible fix: retry with a different form of payment.\n"
 "            "
 msgstr ""
@@ -5030,6 +5232,8 @@ msgstr ""
 #: lms/templates/registration/password_reset_confirm.html
 #: lms/templates/forgot_password_modal.html lms/templates/login.html
 #: lms/templates/register-shib.html lms/templates/register.html
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
 msgid "Required Information"
 msgstr ""
 
@@ -5200,6 +5404,8 @@ msgstr ""
 #: lms/templates/discussion/_underscore_templates.html
 #: lms/templates/discussion/_underscore_templates.html
 #: lms/templates/discussion/mustache/_inline_thread_show.mustache
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
 #: lms/templates/instructor/instructor_dashboard_2/metrics.html
 #: lms/templates/modal/_modal-settings-language.html
 #: lms/templates/modal/accessible_confirm.html
@@ -5638,6 +5844,22 @@ msgid ""
 "{err}"
 msgstr ""
 
+#: cms/djangoapps/contentstore/views/course.py
+msgid "invalid JSON"
+msgstr ""
+
+#: cms/djangoapps/contentstore/views/course.py
+msgid "must have name of the configuration"
+msgstr ""
+
+#: cms/djangoapps/contentstore/views/course.py
+msgid "must have at least two groups"
+msgstr ""
+
+#: cms/djangoapps/contentstore/views/course.py
+msgid "This Group Configuration is already in use and cannot be removed."
+msgstr ""
+
 #: cms/djangoapps/contentstore/views/export_git.py
 msgid "Course successfully exported to git repository"
 msgstr ""
@@ -5652,6 +5874,10 @@ msgstr ""
 
 #: cms/djangoapps/contentstore/views/import_export.py
 msgid "Could not find the course.xml file in the package."
+msgstr ""
+
+#: cms/djangoapps/contentstore/views/item.py
+msgid "Empty"
 msgstr ""
 
 #: cms/djangoapps/contentstore/views/item.py
@@ -5750,7 +5976,7 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: cms/templates/container.html
+#: cms/templates/container.html cms/templates/group_configurations.html
 #: lms/templates/courseware/instructor_dashboard.html
 #: lms/templates/courseware/instructor_dashboard.html
 #: lms/templates/instructor/instructor_dashboard_2/metrics.html
@@ -5762,6 +5988,13 @@ msgstr ""
 #: cms/templates/studio_xblock_wrapper.html
 #: lms/templates/wiki/includes/article_menu.html
 msgid "View"
+msgstr ""
+
+#: cms/templates/group_configurations.html cms/templates/manage_users.html
+#: cms/templates/settings.html cms/templates/settings_advanced.html
+#: cms/templates/settings_graders.html cms/templates/widgets/header.html
+#: lms/templates/wiki/includes/article_menu.html
+msgid "Settings"
 msgstr ""
 
 #: cms/templates/html_error.html lms/templates/module-error.html
@@ -5810,13 +6043,6 @@ msgstr ""
 #: lms/templates/register.html lms/templates/signup_modal.html
 #: lms/templates/sysadmin_dashboard.html
 msgid "Password"
-msgstr ""
-
-#: cms/templates/manage_users.html cms/templates/settings.html
-#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
-#: cms/templates/widgets/header.html
-#: lms/templates/wiki/includes/article_menu.html
-msgid "Settings"
 msgstr ""
 
 #: cms/templates/manage_users.html
@@ -5869,8 +6095,8 @@ msgstr ""
 msgid "Terms of Service"
 msgstr ""
 
-#: cms/templates/widgets/footer.html lms/templates/footer.html
-#: lms/templates/static_templates/privacy.html
+#: cms/templates/widgets/footer.html lms/templates/edx_footer.html
+#: lms/templates/footer.html lms/templates/static_templates/privacy.html
 #: lms/templates/static_templates/privacy.html
 msgid "Privacy Policy"
 msgstr ""
@@ -6050,12 +6276,13 @@ msgstr ""
 msgid "Faq"
 msgstr ""
 
-#: lms/templates/contact.html lms/templates/footer.html
+#: lms/templates/contact.html lms/templates/edx_footer.html
+#: lms/templates/footer.html
 msgid "Press"
 msgstr ""
 
-#: lms/templates/contact.html lms/templates/footer.html
-#: lms/templates/static_templates/contact.html
+#: lms/templates/contact.html lms/templates/edx_footer.html
+#: lms/templates/footer.html lms/templates/static_templates/contact.html
 #: lms/templates/static_templates/contact.html
 msgid "Contact"
 msgstr ""
@@ -6297,6 +6524,43 @@ msgstr ""
 msgid "View Unit in Studio"
 msgstr ""
 
+#: lms/templates/edx_footer.html lms/templates/footer.html
+msgid "About"
+msgstr ""
+
+#: lms/templates/edx_footer.html lms/templates/footer.html
+#: lms/templates/static_templates/jobs.html
+#: lms/templates/static_templates/jobs.html
+msgid "Jobs"
+msgstr ""
+
+#: lms/templates/edx_footer.html lms/templates/footer.html
+#: lms/templates/static_templates/faq.html
+#: lms/templates/static_templates/faq.html
+msgid "FAQ"
+msgstr ""
+
+#: lms/templates/edx_footer.html
+msgid "edX Logo"
+msgstr ""
+
+#: lms/templates/edx_footer.html
+msgid ""
+"{EdX} is a non-profit created by founding partners {Harvard} and {MIT} whose"
+" mission is to bring the best of higher education to students of all ages "
+"anywhere in the world, wherever there is Internet access. {EdX}'s free "
+"online MOOCs are interactive and subjects include computer science, public "
+"health, and artificial intelligence."
+msgstr ""
+
+#: lms/templates/edx_footer.html
+msgid "&copy; 2014 edX, some rights reserved."
+msgstr ""
+
+#: lms/templates/edx_footer.html lms/templates/footer.html
+msgid "Terms of Service and Honor Code"
+msgstr ""
+
 #: lms/templates/email_change_failed.html lms/templates/email_exists.html
 msgid "E-mail change failed"
 msgstr ""
@@ -6394,42 +6658,12 @@ msgid "User"
 msgstr ""
 
 #: lms/templates/footer.html
-msgid "About"
-msgstr ""
-
-#: lms/templates/footer.html lms/templates/static_templates/jobs.html
-#: lms/templates/static_templates/jobs.html
-msgid "Jobs"
-msgstr ""
-
-#: lms/templates/footer.html lms/templates/static_templates/faq.html
-#: lms/templates/static_templates/faq.html
-msgid "FAQ"
-msgstr ""
-
-#: lms/templates/footer.html
-msgid "{platform_name} Logo"
-msgstr ""
-
-#: lms/templates/footer.html
-msgid ""
-"{platform_name} is a non-profit created by founding partners {Harvard} and "
-"{MIT} whose mission is to bring the best of higher education to students of "
-"all ages anywhere in the world, wherever there is Internet access. "
-"{platform_name}'s free online MOOCs are interactive and subjects include "
-"computer science, public health, and artificial intelligence."
-msgstr ""
-
-#: lms/templates/footer.html
-msgid "&copy; 2014 {platform_name}, some rights reserved."
-msgstr ""
-
-#: lms/templates/footer.html
-msgid "Terms of Service and Honor Code"
+msgid "&copy; 2014 {platform_name}, some rights reserved"
 msgstr ""
 
 #: lms/templates/forgot_password_modal.html
 #: lms/templates/forgot_password_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
 msgid "Password Reset"
 msgstr ""
 
@@ -6858,7 +7092,7 @@ msgid "Confirm"
 msgstr ""
 
 #: lms/templates/name_changes.html
-msgid "[Reject]"
+msgid "Reject"
 msgstr ""
 
 #: lms/templates/navigation.html
@@ -6910,8 +7144,7 @@ msgstr ""
 #: lms/templates/navigation.html
 msgid ""
 "<strong>Warning:</strong> Your browser is not fully supported. We strongly "
-"recommend using {chrome_link_start}Chrome{chrome_link_end} or "
-"{ff_link_start}Firefox{ff_link_end}."
+"recommend using {chrome_link} or {ff_link}."
 msgstr ""
 
 #: lms/templates/notes.html lms/templates/textannotation.html
@@ -7106,16 +7339,16 @@ msgstr ""
 msgid "Please complete the following fields to register for an account. "
 msgstr ""
 
-#: lms/templates/register.html lms/templates/register.html
-msgid "cannot be changed later"
-msgstr ""
-
 #: lms/templates/register.html lms/templates/verify_student/face_upload.html
 msgid "example: Jane Doe"
 msgstr ""
 
 #: lms/templates/register.html lms/templates/register.html
 msgid "Needed for any certificates you may earn"
+msgstr ""
+
+#: lms/templates/register.html lms/templates/register.html
+msgid "cannot be changed later"
 msgstr ""
 
 #: lms/templates/register.html
@@ -7151,7 +7384,7 @@ msgid "Highest Level of Education Completed"
 msgstr ""
 
 #: lms/templates/register.html
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
 msgid "Year of Birth"
 msgstr ""
 
@@ -7302,6 +7535,7 @@ msgid "Staff Debug"
 msgstr ""
 
 #: lms/templates/staff_problem_info.html
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Actions"
 msgstr ""
 
@@ -7819,10 +8053,6 @@ msgid ""
 msgstr ""
 
 #: lms/templates/courseware/course_about.html
-msgid "About {course.display_number_with_default}"
-msgstr ""
-
-#: lms/templates/courseware/course_about.html
 msgid "You are registered for this course"
 msgstr ""
 
@@ -7837,6 +8067,14 @@ msgstr ""
 #: lms/templates/courseware/course_about.html
 msgid ""
 "Add {course.display_number_with_default} to Cart ({currency_symbol}{cost})"
+msgstr ""
+
+#: lms/templates/courseware/course_about.html
+msgid "Enrollment in this course is by invitation only"
+msgstr ""
+
+#: lms/templates/courseware/course_about.html
+msgid "Enrollment is Closed"
 msgstr ""
 
 #: lms/templates/courseware/course_about.html
@@ -8006,7 +8244,7 @@ msgid "speed of light"
 msgstr ""
 
 #: lms/templates/courseware/courseware.html
-msgid "freezing point of water in degrees Kelvin"
+msgid "Typical room temperature: 298.15 (Kelvin), same as 25C/77F"
 msgstr ""
 
 #: lms/templates/courseware/courseware.html
@@ -8058,7 +8296,7 @@ msgstr ""
 msgid "Course Updates &amp; News"
 msgstr ""
 
-#: lms/templates/courseware/info.html
+#: lms/templates/courseware/info.html lms/templates/courseware/info.html
 msgid "Handout Navigation"
 msgstr ""
 
@@ -8655,6 +8893,7 @@ msgid "Enrolled as: "
 msgstr ""
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
+#: lms/templates/instructor/instructor_dashboard_2/course_info.html
 msgid "Verified"
 msgstr ""
 
@@ -8721,6 +8960,7 @@ msgid "View Archived Course"
 msgstr ""
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
+#: lms/templates/shoppingcart/receipt.html
 msgid "View Course"
 msgstr ""
 
@@ -9548,48 +9788,48 @@ msgstr ""
 msgid "Skip"
 msgstr ""
 
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid "Active Students"
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+msgid "Add Coupon"
 msgstr ""
 
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid ""
-"The count of students who interacted at least once by opening pages, playing"
-" videos, posting in discussions, submitting problems, or completing other "
-"activities. The date range includes all activities from midnight on the "
-"start date (inclusive) though midnight on the end date (exclusive)."
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+msgid "Please enter Coupon detail below"
 msgstr ""
 
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid "Score Distribution"
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+msgid "Code"
 msgstr ""
 
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid ""
-"The chart below displays the score distribution for each standard problem in"
-" your class, specified by the problem's url name."
-msgstr ""
-
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid ""
-"Scores are shown without weighting applied, so if your problem contains 2 "
-"questions, it will display as having a total of 2 points."
-msgstr ""
-
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid "Loading problem list..."
-msgstr ""
-
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid "Gender Distribution"
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+msgid "Percentage Discount"
 msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/course_info.html
 msgid "Enrollment Information"
 msgstr ""
 
+#. Translators: 'track' refers to the enrollment type ('honor', 'verified', or
+#. 'audit')
 #: lms/templates/instructor/instructor_dashboard_2/course_info.html
-msgid "Total number of enrollees (instructors, staff members, and students)"
+msgid ""
+"Number of enrollees (instructors, staff members, and students) by track"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/course_info.html
+msgid "Audit"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/course_info.html
+msgid "Honor"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/course_info.html
+#: lms/templates/shoppingcart/verified_cert_receipt.html
+msgid "Total"
 msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/course_info.html
@@ -9733,6 +9973,65 @@ msgid ""
 "links for direct access. Copies of links expire within 5 minutes."
 msgstr ""
 
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Coupons List"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Total Amount: "
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Coupons Information"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "+ Add Coupon"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Course_id"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Discount(%)"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Count"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Please Enter the Coupon Code"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Please Enter the Value Greater than 0"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Please Enter the Coupon Discount Value Greater than 0"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Please Enter the Numeric value for Discount"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+msgid "Edit Coupon"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+msgid "Update Coupon"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+msgid "Update Coupon Information"
+msgstr ""
+
 #: lms/templates/instructor/instructor_dashboard_2/extensions.html
 msgid "Individual due date extensions"
 msgstr ""
@@ -9804,6 +10103,42 @@ msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/extensions.html
 msgid "Reset due date for student"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid "Active Students"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid ""
+"The count of students who interacted at least once by opening pages, playing"
+" videos, posting in discussions, submitting problems, or completing other "
+"activities. The date range includes all activities from midnight on the "
+"start date (inclusive) though midnight on the end date (exclusive)."
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid "Score Distribution"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid ""
+"The chart below displays the score distribution for each standard problem in"
+" your class, specified by the problem's url name."
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid ""
+"Scores are shown without weighting applied, so if your problem contains 2 "
+"questions, it will display as having a total of 2 points."
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid "Loading problem list..."
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid "Gender Distribution"
 msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/instructor_dashboard_2.html
@@ -10579,6 +10914,10 @@ msgstr ""
 msgid "Qty"
 msgstr ""
 
+#: lms/templates/shoppingcart/receipt.html
+msgid "URL"
+msgstr ""
+
 #. Translators: Please keep the "<del>" and "</del>" tags around your
 #. translation of the word "this" in your translation.
 #: lms/templates/shoppingcart/receipt.html
@@ -10735,10 +11074,6 @@ msgstr ""
 
 #: lms/templates/shoppingcart/verified_cert_receipt.html
 msgid "Order No."
-msgstr ""
-
-#: lms/templates/shoppingcart/verified_cert_receipt.html
-msgid "Total"
 msgstr ""
 
 #: lms/templates/shoppingcart/verified_cert_receipt.html
@@ -11631,12 +11966,6 @@ msgstr ""
 
 #: lms/templates/verify_student/show_requirements.html
 msgid ""
-"{ff_a_start}Firefox{a_end}, {chrome_a_start}Chrome{a_end}, "
-"{safari_a_start}Safari{a_end}, {ie_a_start}IE9+{a_end}"
-msgstr ""
-
-#: lms/templates/verify_student/show_requirements.html
-msgid ""
 "Please make sure your browser is updated to the most recent version possible"
 msgstr ""
 
@@ -11803,8 +12132,9 @@ msgstr ""
 
 #: cms/templates/asset_index.html cms/templates/container.html
 #: cms/templates/course_info.html cms/templates/edit-tabs.html
-#: cms/templates/index.html cms/templates/manage_users.html
-#: cms/templates/overview.html cms/templates/textbooks.html
+#: cms/templates/group_configurations.html cms/templates/index.html
+#: cms/templates/manage_users.html cms/templates/overview.html
+#: cms/templates/textbooks.html
 msgid "Page Actions"
 msgstr ""
 
@@ -11845,7 +12175,8 @@ msgid ""
 msgstr ""
 
 #: cms/templates/asset_index.html cms/templates/container.html
-#: cms/templates/overview.html cms/templates/settings_graders.html
+#: cms/templates/group_configurations.html cms/templates/overview.html
+#: cms/templates/settings_graders.html
 msgid "What can I do on this page?"
 msgstr ""
 
@@ -12342,6 +12673,78 @@ msgstr ""
 msgid "Course git url:"
 msgstr ""
 
+#: cms/templates/group_configurations.html
+#: cms/templates/group_configurations.html cms/templates/settings.html
+#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
+#: cms/templates/widgets/header.html
+msgid "Group Configurations"
+msgstr ""
+
+#: cms/templates/group_configurations.html
+msgid "New Group Configuration"
+msgstr ""
+
+#: cms/templates/group_configurations.html
+msgid "This module is disabled at the moment."
+msgstr ""
+
+#: cms/templates/group_configurations.html
+msgid "You can create, edit, and delete group configurations."
+msgstr ""
+
+#: cms/templates/group_configurations.html
+msgid ""
+"A group configuration defines how many groups of students are in an "
+"experiment. When you create an experiment, you select the group "
+"configuration to use."
+msgstr ""
+
+#: cms/templates/group_configurations.html
+msgid ""
+"Click {em_start}New Group Configuration{em_end} to add a new configuration. "
+"To edit a configuration, hover over its box and click "
+"{em_start}Edit{em_end}."
+msgstr ""
+
+#: cms/templates/group_configurations.html
+msgid ""
+"You can delete a group configuration only if it is not in use in an "
+"experiment. To delete a configuration, hover over its box and click the "
+"delete icon."
+msgstr ""
+
+#: cms/templates/group_configurations.html cms/templates/textbooks.html
+msgid "Learn More"
+msgstr ""
+
+#: cms/templates/group_configurations.html cms/templates/settings.html
+#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
+msgid "Other Course Settings"
+msgstr ""
+
+#: cms/templates/group_configurations.html
+#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
+msgid "Details &amp; Schedule"
+msgstr ""
+
+#: cms/templates/group_configurations.html cms/templates/settings.html
+#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
+#: cms/templates/widgets/header.html
+msgid "Grading"
+msgstr ""
+
+#: cms/templates/group_configurations.html cms/templates/manage_users.html
+#: cms/templates/settings.html cms/templates/settings_advanced.html
+#: cms/templates/settings_graders.html cms/templates/widgets/header.html
+msgid "Course Team"
+msgstr ""
+
+#: cms/templates/group_configurations.html cms/templates/settings.html
+#: cms/templates/settings_advanced.html cms/templates/settings_advanced.html
+#: cms/templates/settings_graders.html cms/templates/widgets/header.html
+msgid "Advanced Settings"
+msgstr ""
+
 #: cms/templates/howitworks.html
 msgid "Welcome"
 msgstr ""
@@ -12750,7 +13153,9 @@ msgid "e.g. Introduction to Computer Science"
 msgstr ""
 
 #: cms/templates/index.html
-msgid "The public display name for your course."
+msgid ""
+"The public display name for your course. This cannot be changed, but you can"
+" set a different display name in Advanced Settings later."
 msgstr ""
 
 #: cms/templates/index.html cms/templates/settings.html
@@ -12992,12 +13397,6 @@ msgstr ""
 
 #: cms/templates/manage_users.html
 msgid "Course Team Settings"
-msgstr ""
-
-#: cms/templates/manage_users.html cms/templates/settings.html
-#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
-#: cms/templates/widgets/header.html
-msgid "Course Team"
 msgstr ""
 
 #: cms/templates/manage_users.html
@@ -13509,22 +13908,6 @@ msgid ""
 "new courses to take."
 msgstr ""
 
-#: cms/templates/settings.html cms/templates/settings_advanced.html
-#: cms/templates/settings_graders.html
-msgid "Other Course Settings"
-msgstr ""
-
-#: cms/templates/settings.html cms/templates/settings_advanced.html
-#: cms/templates/settings_graders.html cms/templates/widgets/header.html
-msgid "Grading"
-msgstr ""
-
-#: cms/templates/settings.html cms/templates/settings_advanced.html
-#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
-#: cms/templates/widgets/header.html
-msgid "Advanced Settings"
-msgstr ""
-
 #: cms/templates/settings_advanced.html
 msgid "Hide Deprecated Settings"
 msgstr ""
@@ -13574,10 +13957,6 @@ msgid ""
 "{em_start}Note:{em_end} When you enter strings as policy values, ensure that"
 " you use double quotation marks (&quot;) around the string. Do not use "
 "single quotation marks (&apos;)."
-msgstr ""
-
-#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
-msgid "Details &amp; Schedule"
 msgstr ""
 
 #: cms/templates/settings_graders.html
@@ -13680,10 +14059,6 @@ msgid ""
 "If your textbook doesn't have individual chapters, you can upload the entire"
 " text as a single chapter and enter a name of your choice in the Chapter "
 "Name field."
-msgstr ""
-
-#: cms/templates/textbooks.html
-msgid "Learn More"
 msgstr ""
 
 #: cms/templates/unit.html cms/templates/ux/reference/unit.html

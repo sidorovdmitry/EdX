@@ -127,6 +127,7 @@
 # This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
 # 
 # Translators:
+# dcschwester <244876839@qq.com>, 2014
 # AdiaCheng <75707teen@gmail.com>, 2014
 # 刘家骅 <alphaf52@gmail.com>, 2013
 # 肖寒 <bookman@vip.163.com>, 2013
@@ -184,8 +185,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-platform\n"
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
-"POT-Creation-Date: 2014-07-07 10:29-0400\n"
-"PO-Revision-Date: 2014-05-23 12:14+0000\n"
+"POT-Creation-Date: 2014-08-04 09:18-0400\n"
+"PO-Revision-Date: 2014-07-22 14:02+0000\n"
 "Last-Translator: wuqiong <wuqiong417@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/edx-platform/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -213,7 +214,7 @@ msgstr "论坛"
 
 #: lms/templates/courseware/instructor_dashboard.html
 #: lms/templates/courseware/instructor_dashboard.html
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
 msgid "Problem"
 msgstr "问题"
 
@@ -485,6 +486,10 @@ msgid "A country is required"
 msgstr "国家是必填项"
 
 #: common/djangoapps/student/views.py
+msgid "You are missing one or more required fields"
+msgstr ""
+
+#: common/djangoapps/student/views.py
 msgid "Username cannot be more than {0} characters long"
 msgstr "用户名不能超过{0}字符长度"
 
@@ -503,6 +508,10 @@ msgstr "用户名只能包含英文字母A-Z大小写和阿拉伯数字0-9，不
 #: common/djangoapps/student/views.py common/djangoapps/student/views.py
 msgid "Password: "
 msgstr "密码: "
+
+#: common/djangoapps/student/views.py
+msgid "Username and password fields cannot match"
+msgstr ""
 
 #: common/djangoapps/student/views.py
 msgid "Could not send activation e-mail."
@@ -1338,6 +1347,10 @@ msgid "Finished"
 msgstr ""
 
 #: common/lib/xmodule/xmodule/capa_base.py
+msgid "Correct or Past Due"
+msgstr ""
+
+#: common/lib/xmodule/xmodule/capa_base.py
 msgid "Past Due"
 msgstr ""
 
@@ -1557,10 +1570,10 @@ msgstr ""
 
 #: common/lib/xmodule/xmodule/combined_open_ended_module.py
 msgid ""
-"A list of lists of state dictionaries for student states that are saved.This"
-" field is only populated if the instructor changes tasks afterthe module is "
-"created and students have attempted it (for example changes a self assessed "
-"problem to self and peer assessed."
+"A list of lists of state dictionaries for student states that are saved. "
+"This field is only populated if the instructor changes tasks after the "
+"module is created and students have attempted it (for example, if a self "
+"assessed problem is changed to self and peer assessed)."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/combined_open_ended_module.py
@@ -2240,6 +2253,10 @@ msgid ""
 msgstr ""
 
 #: common/lib/xmodule/xmodule/course_module.py
+msgid "Invitation Only"
+msgstr ""
+
+#: common/lib/xmodule/xmodule/course_module.py
 msgid "General"
 msgstr "一般"
 
@@ -2776,6 +2793,11 @@ msgstr ""
 
 #: common/lib/xmodule/xmodule/modulestore/inheritance.py
 msgid "Enter the default date by which problems are due."
+msgstr ""
+
+#: common/lib/xmodule/xmodule/modulestore/inheritance.py
+#: lms/lib/xblock/mixin.py
+msgid "If true, can be seen only by course staff, regardless of start date."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/modulestore/inheritance.py
@@ -3505,6 +3527,8 @@ msgid "Email Address"
 msgstr "电子邮件地址"
 
 #: lms/templates/sysadmin_dashboard_gitlogs.html
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
 msgid "Course ID"
 msgstr "课程编号"
 
@@ -3794,8 +3818,8 @@ msgid "allowed file types are '%(file_types)s'"
 msgstr "允许的文件类型是'%(file_types)s'"
 
 #: lms/djangoapps/django_comment_client/base/views.py
-msgid "maximum upload file size is %(file_size)sK"
-msgstr "最大上传文件%(file_size)s KB"
+msgid "Maximum upload file size is %(file_size)s bytes."
+msgstr ""
 
 #: lms/djangoapps/django_comment_client/base/views.py
 msgid ""
@@ -3843,7 +3867,7 @@ msgid "Gender"
 msgstr "性别"
 
 #: lms/djangoapps/instructor/views/api.py
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
 msgid "Level of Education"
 msgstr "教育水平"
 
@@ -3893,6 +3917,63 @@ msgstr "成功修改了学生{0}的截止日期从{1}变为{2}"
 #: lms/djangoapps/instructor/views/api.py
 msgid "Successfully reset due date for student {0} for {1} to {2}"
 msgstr "成功重置了学生{0}的截止日期从{1}变为{2}"
+
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon id is None"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon id ({coupon_id}) DoesNotExist"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon id ({coupon_id}) is already inactive"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon id ({coupon_id}) updated successfully"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon code ({code}) already exist"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "Please Enter the Integer Value for Coupon Discount"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Please Enter the Coupon Discount Value Less than or Equal to 100"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon code ({code}) added successfully"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon id not found"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon id ({coupon_id}) already exists"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/coupons.py
+msgid "coupon with the coupon id ({coupon_id}) updated Successfully"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/instructor_dashboard.py
+msgid "E-Commerce"
+msgstr ""
 
 #: lms/djangoapps/instructor/views/instructor_dashboard.py
 msgid "Membership"
@@ -4587,7 +4668,11 @@ msgstr "总价格"
 msgid "Currency"
 msgstr "货币"
 
-#: lms/djangoapps/shoppingcart/reports.py lms/templates/shoppingcart/list.html
+#: lms/djangoapps/shoppingcart/reports.py
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+#: lms/templates/shoppingcart/list.html
 #: lms/templates/shoppingcart/receipt.html
 #: lms/templates/shoppingcart/verified_cert_receipt.html
 #: lms/templates/shoppingcart/verified_cert_receipt.html
@@ -4701,30 +4786,52 @@ msgid "Course added to cart."
 msgstr "课程添加到购物车。"
 
 #: lms/djangoapps/shoppingcart/views.py
+msgid "Discount does not exist against coupon '{0}'."
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/views.py
+msgid "Coupon '{0}' already used."
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/views.py
+msgid "Coupon '{0}' is not valid for any course in the shopping cart."
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/views.py
+msgid "Coupon '{0}' is inactive."
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/views.py
 msgid "You do not have permission to view this page."
 msgstr "你没有访问此页面的权限。"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid "The payment processor did not return a required parameter: {0}"
 msgstr "付款处理器没有返回所需的参数：{0}"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid "The payment processor returned a badly-typed value {0} for param {1}."
 msgstr "对于参数 {1} ，付款处理器返回一个错误类型值 {0} 。"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "The payment processor accepted an order whose number is not in our system."
 msgstr "付款处理器接受了一个号码不在我们系统中的订单。"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "The amount charged by the processor {0} {1} is different than the total cost"
 " of the order {2} {3}."
 msgstr "付款处理器收取的总金额 {0} {1} 与订单总金额 {2} {3} 不一致。"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "            <p class=\"error_msg\">\n"
@@ -4747,6 +4854,7 @@ msgstr ""
 "            "
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "                <p class=\"error_msg\">\n"
@@ -4767,6 +4875,7 @@ msgstr ""
 "                "
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "                <p class=\"error_msg\">\n"
@@ -4806,6 +4915,7 @@ msgstr ""
 "                "
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid "Successful transaction."
 msgstr "交易成功。"
 
@@ -4814,6 +4924,7 @@ msgid "The request is missing one or more required fields."
 msgstr "请求缺少了一个或多个必须的字段"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid "One or more fields in the request contains invalid data."
 msgstr "请求中的一个或多个字段包含了无效数据。"
 
@@ -4870,6 +4981,7 @@ msgid ""
 msgstr "发卡银行对请求有问题。可能的解决方法：重试另一种付款方式。"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "            Expired card. You might also receive this if the expiration date you\n"
@@ -4884,6 +4996,7 @@ msgstr ""
 "            "
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "            General decline of the card. No other information provided by the issuing bank.\n"
@@ -4896,6 +5009,7 @@ msgstr ""
 "            "
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "Insufficient funds in the account. Possible fix: retry with another form of "
 "payment"
@@ -4907,11 +5021,13 @@ msgid "Unknown reason"
 msgstr "未知的原因"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "Issuing bank unavailable. Possible fix: retry again after a few minutes"
 msgstr "发卡银行无响应。可能的解决方法：几分钟后重试"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "            Inactive card or card not authorized for card-not-present transactions.\n"
@@ -4924,6 +5040,7 @@ msgstr ""
 "            "
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "The card has reached the credit limit. Possible fix: retry with another form"
 " of payment"
@@ -4936,11 +5053,13 @@ msgid ""
 msgstr "无效的信用卡验证码。可能的解决方法：重试另一种付款方式"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "Invalid account number. Possible fix: retry with another form of payment"
 msgstr "无效的帐户号码。可能的解决方法：重试另一种付款方式"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "            The card type is not accepted by the payment processor.\n"
@@ -4953,6 +5072,7 @@ msgstr ""
 "            "
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "General decline by the processor.  Possible fix: retry with another form of "
 "payment"
@@ -4973,6 +5093,7 @@ msgid "The requested amount exceeds the originally authorized amount."
 msgstr "所要求的数额超过的原始授权的金额。"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid "Processor Failure.  Possible fix: retry the payment"
 msgstr "处理器故障。可能的解决方法：重试支付。"
 
@@ -4986,6 +5107,7 @@ msgid ""
 msgstr "要求的交易金额必须与先前的交易金额一致。"
 
 #: lms/djangoapps/shoppingcart/processors/CyberSource.py
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
 msgid ""
 "\n"
 "            The card type sent is invalid or does not correlate with the credit card number.\n"
@@ -5054,6 +5176,87 @@ msgstr ""
 "            授权请求已被发卡行通过但被CyberSouce拒绝。'\n"
 "            可能的解决办法：尝试其他支付形式\n"
 "            "
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"\n"
+"            The access_key and transaction_uuid fields for this authorization request matches the access_key and\n"
+"            transaction_uuid of another authorization request that you sent in the last 15 minutes.\n"
+"            Possible fix: retry the payment after 15 minutes.\n"
+"            "
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid "Only a partial amount was approved."
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"\n"
+"            The authorization request was approved by the issuing bank but declined by CyberSource\n"
+"            because it did not pass the Address Verification System (AVS).\n"
+"            "
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"\n"
+"            The issuing bank has questions about the request. You do not receive an\n"
+"            authorization code programmatically, but you might receive one verbally by calling the processor.\n"
+"            Possible fix: retry with another form of payment\n"
+"            "
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid "Stolen or lost card"
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"Invalid card verification number (CVN). Possible fix: retry with another "
+"form of payment"
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid "The customer matched an entry on the processors negative file."
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid "Account frozen. Possible fix: retry with another form of payment"
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"\n"
+"            The authorization request was approved by the issuing bank but declined by\n"
+"            CyberSource because it did not pass the CVN check.\n"
+"            Possible fix: retry with another form of payment\n"
+"            "
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"\n"
+"            There is a problem with the information in your CyberSource account.  Please let us know at {0}\n"
+"            "
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid "The cardholder is enrolled for payer authentication"
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid "Payer authentication could not be authenticated"
+msgstr ""
+
+#: lms/djangoapps/shoppingcart/processors/CyberSource2.py
+msgid ""
+"\n"
+"            The authorization request was approved by the issuing bank but declined by CyberSource based\n"
+"            on your legacy Smart Authorization settings.\n"
+"            Possible fix: retry with a different form of payment.\n"
+"            "
+msgstr ""
 
 #: lms/djangoapps/shoppingcart/tests/test_views.py
 #: lms/templates/shoppingcart/download_report.html
@@ -5278,6 +5481,8 @@ msgstr ""
 #: lms/templates/registration/password_reset_confirm.html
 #: lms/templates/forgot_password_modal.html lms/templates/login.html
 #: lms/templates/register-shib.html lms/templates/register.html
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
 #, fuzzy
 msgid "Required Information"
 msgstr ""
@@ -5334,7 +5539,7 @@ msgstr ""
 msgid ""
 "You're receiving this e-mail because you requested a password reset for your"
 " user account at edx.org."
-msgstr "您收到本邮件是由于您曾经要求重置您在edx.org的账号的密码。"
+msgstr ""
 
 #: lms/templates/registration/password_reset_email.html
 msgid "Please go to the following page and choose a new password:"
@@ -5352,7 +5557,7 @@ msgstr "谢谢您访问我们的网站！"
 
 #: lms/templates/registration/password_reset_email.html
 msgid "The edX Team"
-msgstr "EDX团队"
+msgstr ""
 
 #: lms/templates/wiki/article.html
 msgid "Last modified:"
@@ -5457,6 +5662,8 @@ msgstr "预览"
 #: lms/templates/discussion/_underscore_templates.html
 #: lms/templates/discussion/_underscore_templates.html
 #: lms/templates/discussion/mustache/_inline_thread_show.mustache
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
 #: lms/templates/instructor/instructor_dashboard_2/metrics.html
 #: lms/templates/modal/_modal-settings-language.html
 #: lms/templates/modal/accessible_confirm.html
@@ -5907,6 +6114,22 @@ msgstr ""
 "\n"
 "{err}"
 
+#: cms/djangoapps/contentstore/views/course.py
+msgid "invalid JSON"
+msgstr ""
+
+#: cms/djangoapps/contentstore/views/course.py
+msgid "must have name of the configuration"
+msgstr ""
+
+#: cms/djangoapps/contentstore/views/course.py
+msgid "must have at least two groups"
+msgstr ""
+
+#: cms/djangoapps/contentstore/views/course.py
+msgid "This Group Configuration is already in use and cannot be removed."
+msgstr ""
+
 #: cms/djangoapps/contentstore/views/export_git.py
 msgid "Course successfully exported to git repository"
 msgstr "课程成功被导出到Git源"
@@ -5922,6 +6145,10 @@ msgstr "文件上传失败，请重试。"
 #: cms/djangoapps/contentstore/views/import_export.py
 msgid "Could not find the course.xml file in the package."
 msgstr "在包中未找到course.xml文件。"
+
+#: cms/djangoapps/contentstore/views/item.py
+msgid "Empty"
+msgstr ""
 
 #: cms/djangoapps/contentstore/views/item.py
 msgid "Duplicate of {0}"
@@ -6019,7 +6246,7 @@ msgstr "页面无法找到"
 msgid "close"
 msgstr "关闭"
 
-#: cms/templates/container.html
+#: cms/templates/container.html cms/templates/group_configurations.html
 #: lms/templates/courseware/instructor_dashboard.html
 #: lms/templates/courseware/instructor_dashboard.html
 #: lms/templates/instructor/instructor_dashboard_2/metrics.html
@@ -6032,6 +6259,13 @@ msgstr "载入中..."
 #: lms/templates/wiki/includes/article_menu.html
 msgid "View"
 msgstr "阅览"
+
+#: cms/templates/group_configurations.html cms/templates/manage_users.html
+#: cms/templates/settings.html cms/templates/settings_advanced.html
+#: cms/templates/settings_graders.html cms/templates/widgets/header.html
+#: lms/templates/wiki/includes/article_menu.html
+msgid "Settings"
+msgstr "设置"
 
 #: cms/templates/html_error.html lms/templates/module-error.html
 msgid "Error:"
@@ -6080,13 +6314,6 @@ msgstr "忘记密码？"
 #: lms/templates/sysadmin_dashboard.html
 msgid "Password"
 msgstr "密码"
-
-#: cms/templates/manage_users.html cms/templates/settings.html
-#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
-#: cms/templates/widgets/header.html
-#: lms/templates/wiki/includes/article_menu.html
-msgid "Settings"
-msgstr "设置"
 
 #: cms/templates/manage_users.html
 #: lms/templates/courseware/instructor_dashboard.html
@@ -6138,8 +6365,8 @@ msgstr "访问您的{link_start}控制面板{link_end}来查看您的课程。"
 msgid "Terms of Service"
 msgstr "服务条款"
 
-#: cms/templates/widgets/footer.html lms/templates/footer.html
-#: lms/templates/static_templates/privacy.html
+#: cms/templates/widgets/footer.html lms/templates/edx_footer.html
+#: lms/templates/footer.html lms/templates/static_templates/privacy.html
 #: lms/templates/static_templates/privacy.html
 msgid "Privacy Policy"
 msgstr "隐私政策"
@@ -6320,12 +6547,13 @@ msgstr "愿景"
 msgid "Faq"
 msgstr "常见问题"
 
-#: lms/templates/contact.html lms/templates/footer.html
+#: lms/templates/contact.html lms/templates/edx_footer.html
+#: lms/templates/footer.html
 msgid "Press"
 msgstr "新闻报道"
 
-#: lms/templates/contact.html lms/templates/footer.html
-#: lms/templates/static_templates/contact.html
+#: lms/templates/contact.html lms/templates/edx_footer.html
+#: lms/templates/footer.html lms/templates/static_templates/contact.html
 #: lms/templates/static_templates/contact.html
 msgid "Contact"
 msgstr "联系我们"
@@ -6575,6 +6803,43 @@ msgstr "退出课程"
 msgid "View Unit in Studio"
 msgstr "在职员界面查看单元"
 
+#: lms/templates/edx_footer.html lms/templates/footer.html
+msgid "About"
+msgstr "关于我们"
+
+#: lms/templates/edx_footer.html lms/templates/footer.html
+#: lms/templates/static_templates/jobs.html
+#: lms/templates/static_templates/jobs.html
+msgid "Jobs"
+msgstr "招才纳贤"
+
+#: lms/templates/edx_footer.html lms/templates/footer.html
+#: lms/templates/static_templates/faq.html
+#: lms/templates/static_templates/faq.html
+msgid "FAQ"
+msgstr "常见问题"
+
+#: lms/templates/edx_footer.html
+msgid "edX Logo"
+msgstr ""
+
+#: lms/templates/edx_footer.html
+msgid ""
+"{EdX} is a non-profit created by founding partners {Harvard} and {MIT} whose"
+" mission is to bring the best of higher education to students of all ages "
+"anywhere in the world, wherever there is Internet access. {EdX}'s free "
+"online MOOCs are interactive and subjects include computer science, public "
+"health, and artificial intelligence."
+msgstr ""
+
+#: lms/templates/edx_footer.html
+msgid "&copy; 2014 edX, some rights reserved."
+msgstr ""
+
+#: lms/templates/edx_footer.html lms/templates/footer.html
+msgid "Terms of Service and Honor Code"
+msgstr "服务条款和诚信准则"
+
 #: lms/templates/email_change_failed.html lms/templates/email_exists.html
 msgid "E-mail change failed"
 msgstr "邮件变更失败"
@@ -6672,45 +6937,12 @@ msgid "User"
 msgstr "用户"
 
 #: lms/templates/footer.html
-msgid "About"
-msgstr "关于我们"
-
-#: lms/templates/footer.html lms/templates/static_templates/jobs.html
-#: lms/templates/static_templates/jobs.html
-msgid "Jobs"
-msgstr "招才纳贤"
-
-#: lms/templates/footer.html lms/templates/static_templates/faq.html
-#: lms/templates/static_templates/faq.html
-msgid "FAQ"
-msgstr "常见问题"
-
-#: lms/templates/footer.html
-msgid "{platform_name} Logo"
-msgstr "{platform_name} 标识"
-
-#: lms/templates/footer.html
-msgid ""
-"{platform_name} is a non-profit created by founding partners {Harvard} and "
-"{MIT} whose mission is to bring the best of higher education to students of "
-"all ages anywhere in the world, wherever there is Internet access. "
-"{platform_name}'s free online MOOCs are interactive and subjects include "
-"computer science, public health, and artificial intelligence."
+msgid "&copy; 2014 {platform_name}, some rights reserved"
 msgstr ""
-"{platform_name} 是由合作创建方 {Harvard} 和 {MIT} "
-"共同创立的非盈利组织，它的使命是将最好的高等教育带给世界各地不同年龄段拥有上网机会的学生。{platform_name}的免费在线 MOOC "
-"提供交互式的学习体验，课程包括计算机科学，公共健康和人工智能等。"
-
-#: lms/templates/footer.html
-msgid "&copy; 2014 {platform_name}, some rights reserved."
-msgstr "&copy; 2014 {platform_name}，一些权利被保留。"
-
-#: lms/templates/footer.html
-msgid "Terms of Service and Honor Code"
-msgstr "服务条款和诚信准则"
 
 #: lms/templates/forgot_password_modal.html
 #: lms/templates/forgot_password_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
 msgid "Password Reset"
 msgstr "密码重置"
 
@@ -7152,8 +7384,8 @@ msgid "Confirm"
 msgstr "确认"
 
 #: lms/templates/name_changes.html
-msgid "[Reject]"
-msgstr "[拒绝]"
+msgid "Reject"
+msgstr ""
 
 #: lms/templates/navigation.html
 msgid "Global Navigation"
@@ -7204,12 +7436,8 @@ msgstr "登录"
 #: lms/templates/navigation.html
 msgid ""
 "<strong>Warning:</strong> Your browser is not fully supported. We strongly "
-"recommend using {chrome_link_start}Chrome{chrome_link_end} or "
-"{ff_link_start}Firefox{ff_link_end}."
+"recommend using {chrome_link} or {ff_link}."
 msgstr ""
-"<strong>警告：</strong> 你的浏览器不支持全部功能。我们强烈建议您使用 "
-"{chrome_link_start}谷歌浏览器{chrome_link_end}或者 "
-"{ff_link_start}火狐浏览器{ff_link_end}。"
 
 #: lms/templates/notes.html lms/templates/textannotation.html
 #: lms/templates/videoannotation.html
@@ -7409,10 +7637,6 @@ msgstr "完成您的账户注册开始学习"
 msgid "Please complete the following fields to register for an account. "
 msgstr "请将以下字段补充完整以完成账户注册。"
 
-#: lms/templates/register.html lms/templates/register.html
-msgid "cannot be changed later"
-msgstr "以后不能更改"
-
 #: lms/templates/register.html lms/templates/verify_student/face_upload.html
 msgid "example: Jane Doe"
 msgstr "例：Jane Doe"
@@ -7420,6 +7644,10 @@ msgstr "例：Jane Doe"
 #: lms/templates/register.html lms/templates/register.html
 msgid "Needed for any certificates you may earn"
 msgstr "用于你将来获得的各种证书"
+
+#: lms/templates/register.html lms/templates/register.html
+msgid "cannot be changed later"
+msgstr "以后不能更改"
 
 #: lms/templates/register.html
 msgid "Welcome {username}"
@@ -7454,7 +7682,7 @@ msgid "Highest Level of Education Completed"
 msgstr "最高教育程度"
 
 #: lms/templates/register.html
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
 msgid "Year of Birth"
 msgstr "出生年份"
 
@@ -7606,6 +7834,7 @@ msgid "Staff Debug"
 msgstr "工作人员调试"
 
 #: lms/templates/staff_problem_info.html
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
 msgid "Actions"
 msgstr "动作"
 
@@ -8127,10 +8356,6 @@ msgstr ""
 "当前登录用户的账号没有参加此课程的权限，建议您{start_logout_tag}登出{end_tag}后尝试重新注册，请访问{start_help_tag}帮助页面{end_tag}查找解决方法。"
 
 #: lms/templates/courseware/course_about.html
-msgid "About {course.display_number_with_default}"
-msgstr "关于{course.display_number_with_default}"
-
-#: lms/templates/courseware/course_about.html
 msgid "You are registered for this course"
 msgstr "您已注册了此课程"
 
@@ -8147,6 +8372,14 @@ msgid ""
 "Add {course.display_number_with_default} to Cart ({currency_symbol}{cost})"
 msgstr ""
 "添加 {course.display_number_with_default} 到购物车 ({currency_symbol}{cost})"
+
+#: lms/templates/courseware/course_about.html
+msgid "Enrollment in this course is by invitation only"
+msgstr ""
+
+#: lms/templates/courseware/course_about.html
+msgid "Enrollment is Closed"
+msgstr ""
 
 #: lms/templates/courseware/course_about.html
 msgid "Register for {course.display_number_with_default}"
@@ -8316,8 +8549,8 @@ msgid "speed of light"
 msgstr "光速"
 
 #: lms/templates/courseware/courseware.html
-msgid "freezing point of water in degrees Kelvin"
-msgstr "绝对温度下水的冰点"
+msgid "Typical room temperature: 298.15 (Kelvin), same as 25C/77F"
+msgstr ""
 
 #: lms/templates/courseware/courseware.html
 msgid "fundamental charge"
@@ -8369,7 +8602,7 @@ msgstr "在职员界面查看更新"
 msgid "Course Updates &amp; News"
 msgstr "课程动态 &amp; 新闻"
 
-#: lms/templates/courseware/info.html
+#: lms/templates/courseware/info.html lms/templates/courseware/info.html
 msgid "Handout Navigation"
 msgstr "讲义导航"
 
@@ -8975,6 +9208,7 @@ msgid "Enrolled as: "
 msgstr "登记为："
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
+#: lms/templates/instructor/instructor_dashboard_2/course_info.html
 msgid "Verified"
 msgstr "已验证"
 
@@ -9043,6 +9277,7 @@ msgid "View Archived Course"
 msgstr "查看存档的课程"
 
 #: lms/templates/dashboard/_dashboard_course_listing.html
+#: lms/templates/shoppingcart/receipt.html
 msgid "View Course"
 msgstr "查看课程"
 
@@ -9891,49 +10126,49 @@ msgstr "被标记为不恰当的内容，需要再次审查"
 msgid "Skip"
 msgstr "跳过"
 
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid "Active Students"
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+msgid "Add Coupon"
 msgstr ""
 
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid ""
-"The count of students who interacted at least once by opening pages, playing"
-" videos, posting in discussions, submitting problems, or completing other "
-"activities. The date range includes all activities from midnight on the "
-"start date (inclusive) though midnight on the end date (exclusive)."
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+msgid "Please enter Coupon detail below"
 msgstr ""
 
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid "Score Distribution"
-msgstr "成绩分布"
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+msgid "Code"
+msgstr ""
 
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid ""
-"The chart below displays the score distribution for each standard problem in"
-" your class, specified by the problem's url name."
-msgstr "下图显示的是您的班级中每个问答的成绩分布，问答由其链接地址指定。"
-
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid ""
-"Scores are shown without weighting applied, so if your problem contains 2 "
-"questions, it will display as having a total of 2 points."
-msgstr "所显示的成绩尚未加权，所以，如果您的问答包含2个问题，系统显示的总分为2分。"
-
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid "Loading problem list..."
-msgstr "加载问题列表……"
-
-#: lms/templates/instructor/instructor_dashboard_2/analytics.html
-msgid "Gender Distribution"
-msgstr "性别分布"
+#: lms/templates/instructor/instructor_dashboard_2/add_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+msgid "Percentage Discount"
+msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/course_info.html
 msgid "Enrollment Information"
 msgstr "注册信息"
 
+#. Translators: 'track' refers to the enrollment type ('honor', 'verified', or
+#. 'audit')
 #: lms/templates/instructor/instructor_dashboard_2/course_info.html
-msgid "Total number of enrollees (instructors, staff members, and students)"
-msgstr "总参与人数(主讲教师、教员及学生)"
+msgid ""
+"Number of enrollees (instructors, staff members, and students) by track"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/course_info.html
+msgid "Audit"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/course_info.html
+msgid "Honor"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/course_info.html
+#: lms/templates/shoppingcart/verified_cert_receipt.html
+msgid "Total"
+msgstr "总计"
 
 #: lms/templates/instructor/instructor_dashboard_2/course_info.html
 msgid "Basic Course Information"
@@ -10079,6 +10314,65 @@ msgid ""
 "links for direct access. Copies of links expire within 5 minutes."
 msgstr "<b>注意</b>：为了确保学生数据的安全，您不能保存或邮寄这些链接以便将来直接访问，因为这些链接5分钟之后会失效。"
 
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Coupons List"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Total Amount: "
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Coupons Information"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "+ Add Coupon"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Course_id"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Discount(%)"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Count"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Please Enter the Coupon Code"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Please Enter the Value Greater than 0"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Please Enter the Coupon Discount Value Greater than 0"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/e-commerce.html
+msgid "Please Enter the Numeric value for Discount"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+msgid "Edit Coupon"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+msgid "Update Coupon"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/edit_coupon_modal.html
+msgid "Update Coupon Information"
+msgstr ""
+
 #: lms/templates/instructor/instructor_dashboard_2/extensions.html
 msgid "Individual due date extensions"
 msgstr "延长单个人的结束时间"
@@ -10151,6 +10445,42 @@ msgstr "重设一个问题的截止日期，将取消学生在指定单元上的
 #: lms/templates/instructor/instructor_dashboard_2/extensions.html
 msgid "Reset due date for student"
 msgstr "重置学生的结束时间"
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid "Active Students"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid ""
+"The count of students who interacted at least once by opening pages, playing"
+" videos, posting in discussions, submitting problems, or completing other "
+"activities. The date range includes all activities from midnight on the "
+"start date (inclusive) though midnight on the end date (exclusive)."
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid "Score Distribution"
+msgstr "成绩分布"
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid ""
+"The chart below displays the score distribution for each standard problem in"
+" your class, specified by the problem's url name."
+msgstr "下图显示的是您的班级中每个问答的成绩分布，问答由其链接地址指定。"
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid ""
+"Scores are shown without weighting applied, so if your problem contains 2 "
+"questions, it will display as having a total of 2 points."
+msgstr "所显示的成绩尚未加权，所以，如果您的问答包含2个问题，系统显示的总分为2分。"
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid "Loading problem list..."
+msgstr "加载问题列表……"
+
+#: lms/templates/instructor/instructor_dashboard_2/instructor_analytics.html
+msgid "Gender Distribution"
+msgstr "性别分布"
 
 #: lms/templates/instructor/instructor_dashboard_2/instructor_dashboard_2.html
 msgid "Revert to Legacy Dashboard"
@@ -10942,6 +11272,10 @@ msgstr "订单项目："
 msgid "Qty"
 msgstr "数量"
 
+#: lms/templates/shoppingcart/receipt.html
+msgid "URL"
+msgstr ""
+
 #. Translators: Please keep the "<del>" and "</del>" tags around your
 #. translation of the word "this" in your translation.
 #: lms/templates/shoppingcart/receipt.html
@@ -11099,10 +11433,6 @@ msgstr "请打印此页作为您自己的纪录,这是你的收据。您也会�
 #: lms/templates/shoppingcart/verified_cert_receipt.html
 msgid "Order No."
 msgstr "订单号："
-
-#: lms/templates/shoppingcart/verified_cert_receipt.html
-msgid "Total"
-msgstr "总计"
 
 #: lms/templates/shoppingcart/verified_cert_receipt.html
 msgid "Billed To"
@@ -12002,14 +12332,6 @@ msgstr "网络摄像头和新版浏览器"
 
 #: lms/templates/verify_student/show_requirements.html
 msgid ""
-"{ff_a_start}Firefox{a_end}, {chrome_a_start}Chrome{a_end}, "
-"{safari_a_start}Safari{a_end}, {ie_a_start}IE9+{a_end}"
-msgstr ""
-"{ff_a_start}Firefox{a_end}, {chrome_a_start}Chrome{a_end}, "
-"{safari_a_start}Safari{a_end}, {ie_a_start}IE9+{a_end}等"
-
-#: lms/templates/verify_student/show_requirements.html
-msgid ""
 "Please make sure your browser is updated to the most recent version possible"
 msgstr "请确认你的浏览器已经升级到最新可用版本"
 
@@ -12178,8 +12500,9 @@ msgstr "内容"
 
 #: cms/templates/asset_index.html cms/templates/container.html
 #: cms/templates/course_info.html cms/templates/edit-tabs.html
-#: cms/templates/index.html cms/templates/manage_users.html
-#: cms/templates/overview.html cms/templates/textbooks.html
+#: cms/templates/group_configurations.html cms/templates/index.html
+#: cms/templates/manage_users.html cms/templates/overview.html
+#: cms/templates/textbooks.html
 msgid "Page Actions"
 msgstr "页面操作"
 
@@ -12221,7 +12544,8 @@ msgid ""
 msgstr "你可以通过设定外部URL的值来引用你课程外的文件或者图像。请不要将外部URL值作为课程内部链接值直接使用。"
 
 #: cms/templates/asset_index.html cms/templates/container.html
-#: cms/templates/overview.html cms/templates/settings_graders.html
+#: cms/templates/group_configurations.html cms/templates/overview.html
+#: cms/templates/settings_graders.html
 msgid "What can I do on this page?"
 msgstr "我在这个页面能做什么？"
 
@@ -12722,6 +13046,78 @@ msgstr "您的课程："
 msgid "Course git url:"
 msgstr "课程Git地址："
 
+#: cms/templates/group_configurations.html
+#: cms/templates/group_configurations.html cms/templates/settings.html
+#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
+#: cms/templates/widgets/header.html
+msgid "Group Configurations"
+msgstr ""
+
+#: cms/templates/group_configurations.html
+msgid "New Group Configuration"
+msgstr ""
+
+#: cms/templates/group_configurations.html
+msgid "This module is disabled at the moment."
+msgstr ""
+
+#: cms/templates/group_configurations.html
+msgid "You can create, edit, and delete group configurations."
+msgstr ""
+
+#: cms/templates/group_configurations.html
+msgid ""
+"A group configuration defines how many groups of students are in an "
+"experiment. When you create an experiment, you select the group "
+"configuration to use."
+msgstr ""
+
+#: cms/templates/group_configurations.html
+msgid ""
+"Click {em_start}New Group Configuration{em_end} to add a new configuration. "
+"To edit a configuration, hover over its box and click "
+"{em_start}Edit{em_end}."
+msgstr ""
+
+#: cms/templates/group_configurations.html
+msgid ""
+"You can delete a group configuration only if it is not in use in an "
+"experiment. To delete a configuration, hover over its box and click the "
+"delete icon."
+msgstr ""
+
+#: cms/templates/group_configurations.html cms/templates/textbooks.html
+msgid "Learn More"
+msgstr ""
+
+#: cms/templates/group_configurations.html cms/templates/settings.html
+#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
+msgid "Other Course Settings"
+msgstr "课程其他设置"
+
+#: cms/templates/group_configurations.html
+#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
+msgid "Details &amp; Schedule"
+msgstr "细节 &amp; 日程"
+
+#: cms/templates/group_configurations.html cms/templates/settings.html
+#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
+#: cms/templates/widgets/header.html
+msgid "Grading"
+msgstr "评分"
+
+#: cms/templates/group_configurations.html cms/templates/manage_users.html
+#: cms/templates/settings.html cms/templates/settings_advanced.html
+#: cms/templates/settings_graders.html cms/templates/widgets/header.html
+msgid "Course Team"
+msgstr "课程团队"
+
+#: cms/templates/group_configurations.html cms/templates/settings.html
+#: cms/templates/settings_advanced.html cms/templates/settings_advanced.html
+#: cms/templates/settings_graders.html cms/templates/widgets/header.html
+msgid "Advanced Settings"
+msgstr "高级设置"
+
 #: cms/templates/howitworks.html
 msgid "Welcome"
 msgstr "欢迎"
@@ -13138,8 +13534,10 @@ msgid "e.g. Introduction to Computer Science"
 msgstr "例如，计算机科学导论"
 
 #: cms/templates/index.html
-msgid "The public display name for your course."
-msgstr "您的课程的公开显示名称"
+msgid ""
+"The public display name for your course. This cannot be changed, but you can"
+" set a different display name in Advanced Settings later."
+msgstr ""
 
 #: cms/templates/index.html cms/templates/settings.html
 msgid "Organization"
@@ -13388,12 +13786,6 @@ msgstr ""
 #: cms/templates/manage_users.html
 msgid "Course Team Settings"
 msgstr "课程团队设置"
-
-#: cms/templates/manage_users.html cms/templates/settings.html
-#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
-#: cms/templates/widgets/header.html
-msgid "Course Team"
-msgstr "课程团队"
 
 #: cms/templates/manage_users.html
 msgid "New Team Member"
@@ -13909,22 +14301,6 @@ msgid ""
 msgstr ""
 "本页面的其他信息将会出现在你课程的关于页面上。这些信息包括课程概要，课程图片，介绍视频，以及预估的时间要求。学生们使用关于页面来选择要上的课程。"
 
-#: cms/templates/settings.html cms/templates/settings_advanced.html
-#: cms/templates/settings_graders.html
-msgid "Other Course Settings"
-msgstr "课程其他设置"
-
-#: cms/templates/settings.html cms/templates/settings_advanced.html
-#: cms/templates/settings_graders.html cms/templates/widgets/header.html
-msgid "Grading"
-msgstr "评分"
-
-#: cms/templates/settings.html cms/templates/settings_advanced.html
-#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
-#: cms/templates/widgets/header.html
-msgid "Advanced Settings"
-msgstr "高级设置"
-
 #: cms/templates/settings_advanced.html
 msgid "Hide Deprecated Settings"
 msgstr ""
@@ -13975,10 +14351,6 @@ msgid ""
 " you use double quotation marks (&quot;) around the string. Do not use "
 "single quotation marks (&apos;)."
 msgstr "{em_start}注意：{em_end}当您输入字符串策略值的时候请用双引号(&quot;)引起来。请不要使用单引号(&apos;)。"
-
-#: cms/templates/settings_advanced.html cms/templates/settings_graders.html
-msgid "Details &amp; Schedule"
-msgstr "细节 &amp; 日程"
 
 #: cms/templates/settings_graders.html
 msgid "Grading Settings"
@@ -14081,10 +14453,6 @@ msgid ""
 " text as a single chapter and enter a name of your choice in the Chapter "
 "Name field."
 msgstr "如果您的教材没有独立的章节，您可以上传整个文本作为一个章节，并在章节名称字段中输入您所选择的名称。"
-
-#: cms/templates/textbooks.html
-msgid "Learn More"
-msgstr ""
 
 #: cms/templates/unit.html cms/templates/ux/reference/unit.html
 msgid "Individual Unit"
