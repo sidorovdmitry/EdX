@@ -3,9 +3,13 @@
 % else:
   <h4>${lab.name}</h4>
   <div>${lab.description}</div>
-  <div>user_id: ${module.scope_ids.user_id}</div>
+  <hr>
   <div>token: ${user_token.key}</div>
+  <div>lab_id: ${lab_proxy.id}</div>
+  <hr>
+  <div>user_id: ${module.scope_ids.user_id}</div>
   <div>${module.location}</div>
+  <hr>
   <div class="lab-container">${lab.name}</div>
   <div><a class="play-lab-link" href="#">view</a></div>
   <script>
