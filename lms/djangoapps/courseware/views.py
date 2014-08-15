@@ -946,18 +946,14 @@ def get_most_difficult_problem(problems, problem_needed):
     """
         Helper function to get the most difficult problems for a student
     """
-    count = 0
     difficult_problems = []
     # create a copy of the problems
     sorted_problems = problems[:]
 
     # sort the problems by its attempts count
     sorted_problems.sort(key=lambda item:item['attempts'], reverse=True)
-    for problem in sorted_problems:
+    for problem in sorted_problems[:problem_needed]:
         difficult_problems.append(problem)
-        count += 1
-        if count == problem_needed:
-            break
 
     return difficult_problems
 
