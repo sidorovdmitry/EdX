@@ -53,6 +53,12 @@
                               <option value="<%= grader %>"><%= grader %></option>
                             <% }); %>
                           </select>
+                          <select class="input" id="lab_type" style="display:none" data-lab-id="<%= labId %>">
+                              <option value=""></option>
+                            <% _.each(labsterLabs, function(lab) { %>
+                              <option value="<%= lab.id %>" data-locator="<%= lab.template_locator %>"><%= lab.name %></option>
+                            <% }); %>
+                          </select>
                       </li>
                   </ul>
               </div>

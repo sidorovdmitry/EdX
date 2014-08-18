@@ -217,6 +217,27 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/modals/base_mod
             afterRender: function () {
                 this.setElement(this.options.parentView.$(this.options.selector).get(0));
                 this.setValue(this.model.get('format'));
+
+                var that = this;
+                var grading_type = this.$('#grading_type');
+                var lab_type = this.$('#lab_type');
+                var lab_id = lab_type.data('lab-id');
+
+                if (lab_id) {
+                    lab_type.show();
+                    lab_type.val(lab_id);
+                    grading_type.prop('disabled', true);
+                    lab_type.prop('disabled', true);
+                }
+
+                grading_type.change(function(ev) {
+                    var val = grading_type.val();
+                    if (val == 'Lab') {
+                        lab_type.show();
+                    } else {
+                        lab_type.hide();
+                    }
+                });
             },
 
             setValue: function (value) {
@@ -227,15 +248,26 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/modals/base_mod
                 return this.$('#grading_type').val();
             },
 
+            getLabId: function () {
+                return this.$('#lab_type').val();
+            },
+
             getRequestData: function () {
-                return {
+                var data = {
                     'graderType': this.getValue()
                 };
+
+                if (data['graderType'] == 'Lab') {
+                    data['labId'] = this.getLabId()
+                }
+                return data;
             },
 
             getContext: function () {
                 return {
-                    graderTypes: JSON.parse(this.model.get('course_graders'))
+                    graderTypes: JSON.parse(this.model.get('course_graders')),
+                    labsterLabs: JSON.parse(this.model.get('labster_labs')),
+                    labId: JSON.parse(this.model.get('lab_id'))
                 };
             }
         });
