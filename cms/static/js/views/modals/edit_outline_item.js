@@ -6,7 +6,7 @@
  * re-renders edited course outline.
  */
 define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/modals/base_modal',
-    'date', 'js/views/utils/xblock_utils', 'js/utils/date_utils'
+    'date', 'js/views/utils/xblock_utils', 'js/utils/date_utils', 'jquery.cookie',
 ],
     function(
         $, Backbone, _, gettext, BaseModal, date, XBlockViewUtils, DateUtils
@@ -61,9 +61,26 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/modals/base_mod
                 var requestData = _.extend({}, this.getRequestData(), {
                     metadata: this.getMetadata()
                 });
+
                 XBlockViewUtils.updateXBlockFields(this.model, requestData, {
                     success: this.options.onSave
                 });
+
+                if (requestData.graderType == 'Lab' && requestData.labId) {
+                    // redirect
+                    var form = $('#duplicate-lab-form');
+                    var csrftoken = $.cookie('csrftoken');
+                    var redirect_url = window.location.href;
+                    var source_locator = this.$('#lab_type').find(':selected').data('locator');
+                    var parent_locator = this.$('#lab_type').closest('.xblock-editor').data('locator');
+
+                    form.find('input[name=parent_locator]').val(parent_locator);
+                    form.find('input[name=source_locator]').val(source_locator);
+                    form.find('input[name=redirect_url]').val(redirect_url);
+                    form.find('input[name=csrfmiddlewaretoken]').val(csrftoken);
+                    form.submit();
+                }
+
                 this.hide();
             },
 
@@ -218,7 +235,6 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/modals/base_mod
                 this.setElement(this.options.parentView.$(this.options.selector).get(0));
                 this.setValue(this.model.get('format'));
 
-                var that = this;
                 var grading_type = this.$('#grading_type');
                 var lab_type = this.$('#lab_type');
                 var lab_id = lab_type.data('lab-id');
