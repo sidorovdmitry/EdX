@@ -113,7 +113,11 @@ class HtmlDescriptor(HtmlFields, XmlDescriptor, EditingDescriptor):
         Show them only if use_latex_compiler is set to True in
         course settings.
         """
-        return (not 'latex' in template['template_id'] or course.use_latex_compiler)
+        # FIXME
+        try:
+            return (not 'latex' in template['template_id'] or course.use_latex_compiler)
+        except AttributeError:
+            return course.use_latext_compiler
 
     def get_context(self):
         """
