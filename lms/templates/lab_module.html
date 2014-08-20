@@ -1,6 +1,9 @@
 % if errors:
   <div>${errors}</div>
 % else:
+
+  <script src="http://webplayer.unity3d.com/download_webplayer-3.x/3.0/uo/UnityObject2.js"></script>
+
   <h4>${lab.name}</h4>
   <div>${lab.description}</div>
   <hr>
@@ -10,14 +13,36 @@
   <div>user_id: ${module.scope_ids.user_id}</div>
   <div>${module.location}</div>
   <hr>
-  <div class="lab-container">${lab.name}</div>
   <div><a class="play-lab-link" href="#">view</a></div>
+  <div class="lab-container">${lab.name}</div>
+
+  <div id="unityPlayer">
+    <div class="missing">
+      <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
+        <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
+      </a>
+    </div>
+  </div>
+
   <script>
-    jQuery(function() {
-      jQuery('.play-lab-link').click(function(ev) {
-        var el = jQuery(ev.currentTarget);
-        el.parent().prev('.lab-container').fullScreen(true);
-      });
-    });
+    var config = {
+      width: 957,
+      height: 650,
+      params: {
+        backgroundcolor: "000000",
+        disableContextMenu: true
+      }
+    };
+    var u = new UnityObject2();
+    u.initPlugin(jQuery("#unityPlayer")[0], "https://s3-us-west-2.amazonaws.com/labster/unity/test/labster.unity3d");
+  </script>
+
+  <script>
+    // jQuery(function() {
+    //   jQuery('.play-lab-link').click(function(ev) {
+    //     var el = jQuery(ev.currentTarget);
+    //     el.parent().prev('.lab-container').fullScreen(true);
+    //   });
+    // });
   </script>
 % endif
