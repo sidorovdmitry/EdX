@@ -2,7 +2,14 @@
   <div>${errors}</div>
 % else:
 
-  <script src="http://webplayer.unity3d.com/download_webplayer-3.x/3.0/uo/UnityObject2.js"></script>
+  <script type="text/javascript">
+  <!--
+  var unityObjectUrl = "http://webplayer.unity3d.com/download_webplayer-3.x/3.0/uo/UnityObject2.js";
+  if (document.location.protocol == 'https:')
+      unityObjectUrl = unityObjectUrl.replace("http://", "https://ssl-");
+  document.write('<script type="text/javascript" src="' + unityObjectUrl + '"></script>');
+  -->
+  </script>
 
   <h4>${lab.name}</h4>
   <div>${lab.description}</div>
@@ -12,9 +19,9 @@
   <hr>
   <div>user_id: ${module.scope_ids.user_id}</div>
   <div>${module.location}</div>
+  <div>${lab.name}</div>
   <hr>
-  <div><a class="play-lab-link" href="#">view</a></div>
-  <div class="lab-container">${lab.name}</div>
+  <div><a id="showLab" href="#">Show</a></div>
 
   <div id="unityPlayer">
     <div class="missing">
@@ -25,24 +32,40 @@
   </div>
 
   <script>
-    var config = {
-      width: 957,
-      height: 650,
-      params: {
-        backgroundcolor: "000000",
-        disableContextMenu: true
+    var loaded = false;
+
+    // jQuery("#showLab").click(function(ev) {
+    //   ev.preventDefault();
+    //   jQuery("#unityPlayer").fullScreen(true);
+    // });
+
+    // $(document).bind("fullscreenchange", function() {
+    //   var isFull = $(document).fullScreen();
+    //   if (isFull) {
+    //     jQuery("#unityPlayer").show();
+    //     playLab();
+    //   } else {
+    //     jQuery("#unityPlayer").hide();
+    //   }
+    // });
+
+    var playLab = function() {
+      if (! loaded) {
+        loaded = true;
+        var config = {
+          width: 957,
+          height: 650,
+          params: {
+            backgroundcolor: "000000",
+            disableContextMenu: true
+          }
+        };
+        var u = new UnityObject2(config);
+        u.initPlugin(jQuery("#unityPlayer")[0], "https://s3-us-west-2.amazonaws.com/labster/unity/labster.unity3d");
       }
-    };
-    var u = new UnityObject2();
-    u.initPlugin(jQuery("#unityPlayer")[0], "https://s3-us-west-2.amazonaws.com/labster/unity/test/labster.unity3d");
+    }
+
+    playLab();
   </script>
 
-  <script>
-    // jQuery(function() {
-    //   jQuery('.play-lab-link').click(function(ev) {
-    //     var el = jQuery(ev.currentTarget);
-    //     el.parent().prev('.lab-container').fullScreen(true);
-    //   });
-    // });
-  </script>
 % endif
