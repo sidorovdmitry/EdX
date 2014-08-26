@@ -23,7 +23,7 @@
   <hr>
   <div><a id="showLab" href="#">Show</a></div>
 
-  <div id="unityPlayer">
+  <div id="unityPlayer" style="display:none">
     <div class="missing">
       <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
         <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
@@ -73,21 +73,23 @@
   <script>
     var loaded = false;
 
-    // jQuery("#showLab").click(function(ev) {
-    //   ev.preventDefault();
-    //   jQuery("#unityPlayer").fullScreen(true);
-    // });
+    jQuery("#showLab").click(function(ev) {
+      ev.preventDefault();
+      jQuery("#unityPlayer").fullScreen(true);
+    });
 
-    // $(document).bind("fullscreenchange", function() {
-    //   var isFull = $(document).fullScreen();
-    //   if (isFull) {
-    //     jQuery("#unityPlayer").show();
-    //     playLab();
-    //   } else {
-    //     jQuery("#unityPlayer").hide();
-    //   }
-    // });
+    jQuery(document).bind("fullscreenchange", function() {
+      var isFull = $(document).fullScreen();
+      if (isFull) {
+        jQuery("#unityPlayer").show();
+        playLab();
+      } else {
+        jQuery("#unityPlayer").hide();
+        window.location.reload(true);
+      }
+    });
 
+    var u;
     var playLab = function() {
       if (! loaded) {
         loaded = true;
@@ -99,10 +101,13 @@
             disableContextMenu: true
           }
         };
-        var u = new UnityObject2(config);
+        u = new UnityObject2(config);
         u.initPlugin(jQuery("#unityPlayer")[0], "https://s3-us-west-2.amazonaws.com/labster/unity/labster.unity3d");
       }
-    }
+    };
+
+    var stopLab = function() {
+    };
 
     playLab();
   </script>
