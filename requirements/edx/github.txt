@@ -16,7 +16,7 @@
 -e git+https://github.com/un33k/django-ipware.git@42cb1bb1dc680a60c6452e8bb2b843c2a0382c90#egg=django-ipware
 -e git+https://github.com/appliedsec/pygeoip.git@95e69341cebf5a6a9fbf7c4f5439d458898bdc3b#egg=pygeoip
 -e git+https://github.com/jazkarta/edx-jsme.git@813079fd5218ed275248d2a1fcae2fcbf20a0838#egg=edx-jsme
--e git+https://github.com/kriwil/labster.git@6c50e8e15f452ba14cfb532e2521b25fe0ee8a30#egg=labster
+-e git+https://github.com/kriwil/labster.git@e6a6f13e9344d91f606387cffee10b902c4bfc77#egg=labster
 
 # Our libraries:
 -e git+https://github.com/edx/XBlock.git@aed7a2c51a59836e435259ad0fb41f8e865fa530#egg=XBlock
