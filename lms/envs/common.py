@@ -719,10 +719,11 @@ SIMPLE_WIKI_REQUIRE_LOGIN_VIEW = False
 ################################# WIKI ###################################
 from course_wiki import settings as course_wiki_settings
 
+WIKI_ENABLED = True
 WIKI_ACCOUNT_HANDLING = False
 WIKI_EDITOR = 'course_wiki.editors.CodeMirror'
 WIKI_SHOW_MAX_CHILDREN = 0  # We don't use the little menu that shows children of an article in the breadcrumb
-WIKI_ANONYMOUS = False  # Don't allow anonymous access until the styling is figured out
+WIKI_ANONYMOUS = True  # Don't allow anonymous access until the styling is figured out
 
 WIKI_CAN_READ = True
 WIKI_CAN_DELETE = course_wiki_settings.CAN_DELETE
