@@ -1451,6 +1451,7 @@ if FEATURES.get('LABSTER'):
     ) + MIDDLEWARE_CLASSES
 
     CORS_ORIGIN_ALLOW_ALL = True
+    LABSTER_UNITY_URL_PREFIX = "https://s3-us-west-2.amazonaws.com/labster/unity/"
 
 
 ############################ ORA 2 ############################################
