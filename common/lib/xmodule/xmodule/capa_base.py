@@ -209,6 +209,7 @@ class CapaFields(object):
         help=_("Float number of time spent by the student on this problem"),
         default=0.0,
         scope=Scope.user_state)
+    platform_xml = String(help=_("Parsed XML data for unity platform"), scope=Scope.content, default="")
 
 class CapaMixin(CapaFields):
     """
