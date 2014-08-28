@@ -527,6 +527,11 @@ urlpatterns = patterns(*urlpatterns)
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += (
+        url(r'crossdomain\.xml$',
+            'static_template_view.views.render',
+            {'template': 'crossdomain.xml'}, name="crossdomain.xml"),
+    )
 
 #Custom error pages
 handler404 = 'static_template_view.views.render_404'

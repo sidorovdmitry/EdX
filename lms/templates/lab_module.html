@@ -102,7 +102,7 @@
           }
         };
         u = new UnityObject2(config);
-        u.initPlugin(jQuery("#unityPlayer")[0], "https://s3-us-west-2.amazonaws.com/labster/unity/labster.unity3d");
+        u.initPlugin(jQuery("#unityPlayer")[0], "https://s3-us-west-2.amazonaws.com/labster/unity/labster.unity3d?token=${user_token.key}");
       }
     };
 
@@ -110,6 +110,15 @@
     };
 
     playLab();
+  </script>
+  <script>
+    var messages = []
+    function Log(message) {
+      console.log(message);
+      messages.push(message);
+    }
+
+    function gaLogEvent(category, action, label, value, noninteract) {}
   </script>
 
 % endif
