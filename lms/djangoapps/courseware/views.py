@@ -116,26 +116,6 @@ def render_accordion(request, course, chapter, section, field_data_cache):
         ('due_date_display_format', course.due_date_display_format)
     ] + template_imports.items())
 
-    from rest_framework.authtoken.models import Token
-    from labster.models import LabProxy
-
-    token, _ = Token.objects.get_or_create(user_id=user.id)
-    context['token'] = token
-
-    for chapter in toc:
-        for section in chapter['sections']:
-            section_url = reverse(
-                'courseware_section',
-                args=[context['course_id'], chapter['url_name'], section['url_name']])
-
-            if section['format'] == 'Lab':
-                location_str = section['location_str']
-                lab_id = section['lab_id']
-                lab_proxy, _ = LabProxy.objects.get_or_create(location=location_str, defaults={'lab_id': lab_id})
-                section_url = "{}?token={}&lab_id={}".format(section_url, token.key, lab_proxy.id)
-
-            section['courseware_url'] = section_url
-
     return render_to_string('courseware/accordion.html', context)
 
 
@@ -433,18 +413,6 @@ def index(request, course_id, chapter=None, section=None,
                 'chapter': chapter_descriptor.url_name,
                 'section': prev_section.url_name
             })
-
-            if prev_section.format == 'Lab':
-                from rest_framework.authtoken.models import Token
-                from labster.models import LabProxy
-
-                token, _ = Token.objects.get_or_create(user_id=request.user.id)
-                location_str = str(prev_section.location)
-                lab_id = prev_section.lab_id
-                lab_proxy, _ = LabProxy.objects.get_or_create(location=location_str, defaults={'lab_id': lab_id})
-
-                prev_section_url = "{}?token={}&lab_id={}".format(
-                    prev_section_url, token.key, lab_proxy.id)
 
             context['fragment'] = Fragment(content=render_to_string(
                 'courseware/welcome-back.html',

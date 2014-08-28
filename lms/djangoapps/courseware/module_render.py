@@ -128,8 +128,6 @@ def toc_for_course(user, request, course, active_chapter, active_section, field_
                                  'due': get_extended_due_date(section),
                                  'active': active,
                                  'graded': section.graded,
-                                 'lab_id': section.lab_id,
-                                 'location_str': str(section.location),
                                  })
 
         chapters.append({'display_name': chapter.display_name_with_default,
