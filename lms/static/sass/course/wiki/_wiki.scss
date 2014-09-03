@@ -203,6 +203,26 @@ section.wiki {
       font-family: Monaco, monospace;
     }
 
+    p + table, ul + table, ol + table, table + p, table + ul, table + ol {
+      margin-top: 20px;
+    }
+
+    table {
+      border: 1px solid #ccc;
+
+      th {
+        background-color: #ddd;
+      }
+
+      th, td {
+        padding: 10px;
+      }
+      
+      tr:nth-child(even) td {
+        background-color: #eee;
+      }
+    }
+
     .toc {
       background-color: $sidebar-color;
       padding: 9px;
