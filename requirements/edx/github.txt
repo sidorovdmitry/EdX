@@ -9,6 +9,8 @@
 # Third-party:
 -e git+https://github.com/edx/django-staticfiles.git@d89aae2a82f2b#egg=django-staticfiles
 -e git+https://github.com/edx/django-pipeline.git@88ec8a011e481918fdc9d2682d4017c835acd8be#egg=django-pipeline
+-e git+https://github.com/jambonrose/markdown_superscript_extension.git@7a6c509111b39fd778c8dd13938e38d256222632#egg=MarkdownSuperscript
+-e git+https://github.com/jambonrose/markdown_subscript_extension.git@609d8bd797ab451cb1510e9b252c87b9194bda14#egg=MarkdownSubscript
 -e git+https://github.com/Bodekaer/Labster.EdX.django-wiki.git@1cacf4733c078e70aa6e4271b1c61618012dbc9e#egg=django-wiki
 -e git+https://github.com/gabrielfalcao/lettuce.git@cccc3978ad2df82a78b6f9648fe2e9baddd22f88#egg=lettuce
 -e git+https://github.com/dementrock/pystache_custom.git@776973740bdaad83a3b029f96e415a7d1e8bec2f#egg=pystache_custom-dev
@@ -16,7 +18,7 @@
 -e git+https://github.com/un33k/django-ipware.git@42cb1bb1dc680a60c6452e8bb2b843c2a0382c90#egg=django-ipware
 -e git+https://github.com/appliedsec/pygeoip.git@95e69341cebf5a6a9fbf7c4f5439d458898bdc3b#egg=pygeoip
 -e git+https://github.com/jazkarta/edx-jsme.git@813079fd5218ed275248d2a1fcae2fcbf20a0838#egg=edx-jsme
--e git+https://github.com/kriwil/labster.git@ef072d4f6dc027d96479169f9d7da327b379a196#egg=labster
+-e git+https://github.com/kriwil/labster.git@1b7694b7483d20ffa1145ba33a8519de0c67b3ec#egg=labster
 
 # Our libraries:
 -e git+https://github.com/edx/XBlock.git@aed7a2c51a59836e435259ad0fb41f8e865fa530#egg=XBlock
