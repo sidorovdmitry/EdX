@@ -210,6 +210,10 @@ class CapaFields(object):
         default=0.0,
         scope=Scope.user_state)
     platform_xml = String(help=_("Parsed XML data for unity platform"), scope=Scope.content, default="")
+    correct_index = Integer(help=_("The index (as in list) for the correct answer"),
+                            default=None,
+                            scope=Scope.content)
+    correct_answer = String(help=_("The answer for comparison"), scope=Scope.content, default="")
 
 class CapaMixin(CapaFields):
     """
