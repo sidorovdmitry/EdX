@@ -27,7 +27,7 @@
 
   <div><a id="showLab" href="#">Play Lab</a></div>
 
-  <div id="unityPlayer" style="display:none">
+  <div id="unityPlayer">
     <div class="missing">
       <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
         <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
@@ -78,8 +78,9 @@
     var loaded = false;
 
     jQuery("#showLab").click(function(ev) {
-      ev.preventDefault();
-      jQuery("#unityPlayer").fullScreen(true);
+      return false;
+      // ev.preventDefault();
+      // jQuery("#unityPlayer").fullScreen(true);
     });
 
     jQuery(document).bind("fullscreenchange", function() {
@@ -113,7 +114,7 @@
     var stopLab = function() {
     };
 
-    // playLab();
+    playLab();
   </script>
   <script>
     var messages = []
