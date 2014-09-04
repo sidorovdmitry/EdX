@@ -209,11 +209,14 @@ class CapaFields(object):
         help=_("Float number of time spent by the student on this problem"),
         default=0.0,
         scope=Scope.user_state)
-    platform_xml = String(help=_("Parsed XML data for unity platform"), scope=Scope.content, default="")
+    platform_xml = String(help=_("Parsed XML data for unity platform"), scope=Scope.settings, default="")
     correct_index = Integer(help=_("The index (as in list) for the correct answer"),
                             default=None,
-                            scope=Scope.content)
-    correct_answer = String(help=_("The answer for comparison"), scope=Scope.content, default="")
+                            scope=Scope.settings)
+    correct_answer = String(help=_("The answer for comparison"), scope=Scope.settings, default="")
+    platform_score = Integer(help=_(""), default=0, scope=Scope.user_state)
+    platform_attempt = Integer(help=_(""), default=0, scope=Scope.user_state)
+
 
 class CapaMixin(CapaFields):
     """
