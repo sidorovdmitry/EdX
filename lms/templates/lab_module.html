@@ -13,6 +13,8 @@
 
   <h4>${lab.name}</h4>
   <div>${lab.description}</div>
+
+  <!--
   <hr>
   <div>token: ${user_token.key}</div>
   <div>lab_id: ${lab_proxy.id}</div>
@@ -21,9 +23,11 @@
   <div>${module.location}</div>
   <div>${lab.name}</div>
   <hr>
-  <div><a id="showLab" href="#">Show</a></div>
+  -->
 
-  <div id="unityPlayer">
+  <div><a id="showLab" href="#">Play Lab</a></div>
+
+  <div id="unityPlayer" style="display:none">
     <div class="missing">
       <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
         <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
@@ -109,7 +113,7 @@
     var stopLab = function() {
     };
 
-    playLab();
+    // playLab();
   </script>
   <script>
     var messages = []
