@@ -480,9 +480,9 @@ def _duplicate_item(parent_usage_key, duplicate_source_usage_key, user, display_
         duplicate_metadata['display_name'] = display_name
     else:
         if source_item.display_name is None:
-            duplicate_metadata['display_name'] = _("Duplicate of {0}").format(source_item.category)
+            duplicate_metadata['display_name'] = _("{0}").format(source_item.category)
         else:
-            duplicate_metadata['display_name'] = _("Duplicate of '{0}'").format(source_item.display_name)
+            duplicate_metadata['display_name'] = _("'{0}'").format(source_item.display_name)
 
     dest_module = store.create_item(
         user.id,
