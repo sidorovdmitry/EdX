@@ -2,6 +2,11 @@
   <div>${errors}</div>
 % else:
 
+  <style>
+    .container {
+      max-width: 1360px;
+    }
+  </style>
   <script type="text/javascript">
   <!--
   var unityObjectUrl = "http://webplayer.unity3d.com/download_webplayer-3.x/3.0/uo/UnityObject2.js";
@@ -11,10 +16,10 @@
   -->
   </script>
 
+  <!--
   <h4>${lab.name}</h4>
   <div>${lab.description}</div>
 
-  <!--
   <hr>
   <div>token: ${user_token.key}</div>
   <div>lab_id: ${lab_proxy.id}</div>
@@ -23,9 +28,9 @@
   <div>${module.location}</div>
   <div>${lab.name}</div>
   <hr>
-  -->
 
   <div><a id="showLab" href="#">Play Lab</a></div>
+  -->
 
   <div id="unityPlayer">
     <div class="missing">
