@@ -85,6 +85,11 @@ FEATURES['AUTOMATIC_VERIFY_STUDENT_IDENTITY_FOR_TESTING'] = True
 FEATURES['ENABLE_PAYMENT_FAKE'] = True
 CC_PROCESSOR['CyberSource']['PURCHASE_ENDPOINT'] = '/shoppingcart/payment_fake/'
 
+########################### LABSTER ###########################################
+
+LABSTER_UNITY_URL_PREFIX = "https://labster.s3.amazonaws.com/unity/"
+LABSTER_UNITY_API_PREFIX = "http://localhost:8000"
+
 #####################################################################
 # See if the developer has any local overrides.
 try:
