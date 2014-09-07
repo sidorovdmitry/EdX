@@ -211,7 +211,7 @@ class CapaFields(object):
         scope=Scope.user_state)
     platform_xml = String(help=_("Parsed XML data for unity platform"), scope=Scope.settings, default="")
     correct_index = Integer(help=_("The index (as in list) for the correct answer"),
-                            default=None,
+                            default=-1,
                             scope=Scope.settings)
     correct_answer = String(help=_("The answer for comparison"), scope=Scope.settings, default="")
     platform_score = Integer(help=_(""), default=0, scope=Scope.user_state)
