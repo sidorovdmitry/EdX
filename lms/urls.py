@@ -269,6 +269,10 @@ if settings.COURSEWARE_ENABLED:
         url(r'^courses/{}/courseware/(?P<chapter>[^/]*)/(?P<section>[^/]*)/$'.format(settings.COURSE_ID_PATTERN),
             'courseware.views.index', name="courseware_section"),
 
+        url(r'^courses/{}/courseware/(?P<chapter>[^/]*)/(?P<section>[^/]*)/start_new_lab/$'.format(settings.COURSE_ID_PATTERN),
+            'labster.lms.views.start_new_lab', name="start_new_lab"),
+        url(r'^courses/{}/courseware/(?P<chapter>[^/]*)/(?P<section>[^/]*)/continue_lab/$'.format(settings.COURSE_ID_PATTERN),
+            'labster.lms.views.continue_lab', name="continue_lab"),
         url(r'^courses/{}/courseware/(?P<chapter>[^/]*)/(?P<section>[^/]*)/Settings.xml$'.format(settings.COURSE_ID_PATTERN),
             'labster.lms.views.settings_xml', name="labster_settings_xml"),
         url(r'^courses/{}/courseware/(?P<chapter>[^/]*)/(?P<section>[^/]*)/Server.xml$'.format(settings.COURSE_ID_PATTERN),
