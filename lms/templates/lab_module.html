@@ -27,18 +27,14 @@
   <div>user_id: ${module.scope_ids.user_id}</div>
   <div>${module.location}</div>
   <div>${lab.name}</div>
-  <hr>
-
-  <div><a id="showLab" href="#">Play Lab</a></div>
   -->
 
-  <div>
-    <a class="button" href="#">Start New</a>
-    <a class="button" href="#">Continue</a>
+  <div id="buttonContent">
+    <a class="button playLabButton" data-url="start_new_lab/" id="startNewButton" href="#">Start New</a>
+    <a class="button playLabButton" data-url="continue_lab/" id="continueButton" href="#">Continue</a>
   </div>
 
-  <%doc>
-  <div id="unityPlayer">
+  <div id="unityPlayer" style="display:none">
     <div class="missing">
       <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
         <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
@@ -88,21 +84,26 @@
   <script>
     var loaded = false;
 
-    jQuery("#showLab").click(function(ev) {
-      return false;
-      // ev.preventDefault();
-      // jQuery("#unityPlayer").fullScreen(true);
-    });
-
-    jQuery(document).bind("fullscreenchange", function() {
-      var isFull = $(document).fullScreen();
-      if (isFull) {
-        jQuery("#unityPlayer").show();
-        playLab();
-      } else {
-        jQuery("#unityPlayer").hide();
-        // window.location.reload(true);
-      }
+    jQuery(function() {
+      jQuery('.playLabButton').click(function(ev) {
+        ev.preventDefault();
+        var el = jQuery(ev.currentTarget);
+        var url = el.data('url');
+        jQuery('#buttonContent').empty().append("Loading &hellip;");
+        jQuery.ajax({
+          url: url,
+          method: 'GET',
+          success: function(response) {
+          },
+          error: function(response) {
+          },
+          complete: function(response) {
+            jQuery('#buttonContent').hide();
+            jQuery('#unityPlayer').show();
+            playLab();
+          }
+        });
+      });
     });
 
     var u;
@@ -124,9 +125,8 @@
 
     var stopLab = function() {
     };
-
-    playLab();
   </script>
+
   <script>
     var messages = []
     function Log(message) {
@@ -136,6 +136,5 @@
 
     function gaLogEvent(category, action, label, value, noninteract) {}
   </script>
-  </%doc>
 
 % endif
