@@ -217,6 +217,9 @@ class CapaFields(object):
     platform_score = Integer(help=_(""), default=0, scope=Scope.user_state)
     platform_attempt = Integer(help=_(""), default=0, scope=Scope.user_state)
 
+    quiz_id = String(help=_("Quiz ID"), scope=Scope.settings, default="")
+    read_more_url = String(help=_("Read more url"), scope=Scope.settings, default="")
+
 
 class CapaMixin(CapaFields):
     """
