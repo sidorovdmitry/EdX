@@ -186,7 +186,7 @@ class VideoExtension(markdown.Extension):
         self.add_inline(md, 'yahoo', Yahoo,
                         r'([^(]|^)http://video\.yahoo\.com/watch/(?P<yahoovid>\d+)/(?P<yahooid>\d+)')
         self.add_inline(md, 'youtube', Youtube,
-                        r'([^(]|^)http://www\.youtube\.com/watch\?\S*v=(?P<youtubeargs>[A-Za-z0-9_&=-]+)\S*')
+                        r'([^(]|^)http(s?)://www\.youtube\.com/watch\?\S*v=(?P<youtubeargs>[A-Za-z0-9_&=-]+)\S*')
 
 
 class Bliptv(markdown.inlinepatterns.Pattern):
