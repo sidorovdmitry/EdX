@@ -189,6 +189,8 @@ class VideoExtension(markdown.Extension):
                         r'([^(]|^)http://www\.youtube\.com/watch\?\S*v=(?P<youtubeargs>[A-Za-z0-9_&=-]+)\S*')
         self.add_inline(md, 'youtube', YoutubeSSL,
                         r'([^(]|^)https://www\.youtube\.com/watch\?\S*v=(?P<youtubeargs>[A-Za-z0-9_&=-]+)\S*')
+        self.add_inline(md, 'direct_ogg', DirectOgg,
+                        r'([^(]|^)http(s)?:(?P<videourl>//.+\.ogv)')
 
 
 class Bliptv(markdown.inlinepatterns.Pattern):
@@ -270,6 +272,12 @@ class YoutubeSSL(markdown.inlinepatterns.Pattern):
         return flash_object(url, width, height)
 
 
+class DirectOgg(markdown.inlinepatterns.Pattern):
+    def handleMatch(self, m):
+        url = m.group('videourl')
+        return video_object(url)
+
+
 def flash_object(url, width, height):
     obj = etree.Element('object')
     obj.set('type', 'application/x-shockwave-flash')
@@ -288,6 +296,14 @@ def flash_object(url, width, height):
     #param.set('name', 'allowScriptAccess')
     #param.set('value', 'sameDomain')
     #obj.append(param)
+    return obj
+
+
+def video_object(url):
+    obj = etree.Element('video')
+    obj.set('src', url)
+    obj.set('controls', 'true')
+    obj.text = "Your browser does not support the `video` element."
     return obj
 
 
