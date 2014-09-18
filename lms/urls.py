@@ -19,6 +19,8 @@ urlpatterns = ('',  # nopep8
     url(r'^login$', 'student.views.signin_user', name="signin_user"),
     url(r'^register$', 'student.views.register_user', name="register_user"),
 
+    url(r'buy_lab$', 'buy_labster.views.buy_lab', name="buy_labster"),
+
     url(r'^admin_dashboard$', 'dashboard.views.dashboard'),
 
     url(r'^change_email$', 'student.views.change_email_request', name="change_email"),
