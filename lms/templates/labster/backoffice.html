@@ -1,0 +1,58 @@
+<%! from django.utils.translation import ugettext as _ %>
+<%! from django.template import RequestContext %>
+<%! from third_party_auth import pipeline %>
+
+<%!
+  from django.core.urlresolvers import reverse
+  import waffle
+%>
+
+<%inherit file="../main.html" />
+
+<%namespace name='static' file='../static_content.html'/>
+
+<%block name="pagetitle">${_("Labs")}</%block>
+<%block name="bodyclass">view-dashboard is-authenticated</%block>
+<%block name="nav_skip">#my-courses</%block>
+
+<%block name="headextra">
+<link rel="stylesheet" href="${static.url('labster/css/backoffice.css')}">
+</%block>
+
+<%block name="js_extra">
+<script>
+window.request_user = {
+  id: "${user.id}",
+  email: "${user.email}",
+  name: "${user.profile.name}"
+};
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.min.js"></script>
+<script src="https://checkout.stripe.com/checkout.js"></script>
+<script src="${static.url('labster/js/backoffice.angular.js')}"></script>
+</%block>
+
+<section class="container dashboard labster-bo" id="dashboard-main" aria-hidden="false" ng-app="LabsterBackOffice">
+  <section class="profile-sidebar">
+    <header class="profile">
+      <h1 class="user-name">Labs Management</h1>
+    </header>
+    <section class="user-info">
+      <ul>
+        <li>
+          <span class="title">
+            <a href="#licenses">Licenses</a>
+            (<a href="#license/new">Buy New</a>)
+          </span>
+        </li>
+        <li>
+          <span class="title"><a href="#histories">Histories</a></span>
+        </li>
+      </ul>
+    </section>
+  </section>
+  <section class="my-courses" id="my-courses" ng-view>
+    {{ test_aja }}
+  </section>
+</section>

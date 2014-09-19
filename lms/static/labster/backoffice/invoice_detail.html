@@ -1,0 +1,61 @@
+<header>
+  <h2>Invoice #{{ invoiceId }}</h2>
+</header>
+<div class="labster-new-lab">
+  <p>
+  Status: <strong>unpaid</strong>
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Lab</th>
+        <th>Price</th>
+        <th>Licenses</th>
+        <th>$</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="lab in labs">
+        <td>{{ lab.name }}</td>
+        <td class="align-right">${{ lab.price }}</td>
+        <td class="align-right">{{ lab.license }}</td>
+        <td class="align-right">${{ lab.total }}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td>Total</td>
+        <td></td>
+        <td></td>
+        <td class="align-right">${{ totalPrice }}</td>
+      </tr>
+    </tfoot>
+  </table>
+  <p>
+    <button id="customButton" class="button">Pay with Stripe</button>
+    <stripe text="Pay with Stripe">
+  </p>
+</div>
+<script>
+  var handler = StripeCheckout.configure({
+    key: 'pk_test_mkeBcyfKdPD7qAdTn5zz8vTH',
+    image: 'http://www.labster.com/wp-content/uploads/2014/06/labster-logo.png',
+    token: function(token) {
+      // Use the token to create the charge with a server-side script.
+      // You can access the token ID with `token.id`
+      console.log('callback');
+      console.dir(token);
+    }
+  });
+
+  document.getElementById('customButton').addEventListener('click', function(e) {
+    // Open Checkout with further options
+    handler.open({
+      name: 'Demo Site',
+      description: '2 widgets ($20.00)',
+      amount: 2000,
+      email: 'kriwil@gmail.com'
+    });
+    e.preventDefault();
+  });
+</script>
