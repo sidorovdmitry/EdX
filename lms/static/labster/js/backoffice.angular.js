@@ -22,12 +22,17 @@ angular.module('LabsterBackOffice', ['ngRoute'])
                 templateUrl: window.baseUrl + 'labster/backoffice/invoice_detail.html'
             })
 
+            .when('/invoice/:invoiceId/paid', {
+                controller: 'InvoicePaidController',
+                templateUrl: window.baseUrl + 'labster/backoffice/invoice_paid.html'
+            })
+
             .otherwise({
                 redirectTo: '/'
             });
     })
 
-    .directive('stripe', function() {
+    .directive('stripe', function($location) {
         return {
             restrict: 'E',
             scope: {email: '@', amount: '@'},
@@ -37,7 +42,7 @@ angular.module('LabsterBackOffice', ['ngRoute'])
                     key: 'pk_test_mkeBcyfKdPD7qAdTn5zz8vTH',
                     // image: '/square-image.png',
                     token: function(token) {
-                        console.dir(token);
+                        window.location.href = '/labs/#/invoice/1/paid/';
                     }
                 });
 
@@ -63,11 +68,15 @@ angular.module('LabsterBackOffice', ['ngRoute'])
     })
 
     .controller('NewLicenseController', function($scope, $location) {
-        $scope.user = window.request_user;
-        $scope.labs = [
-            {name: "Bacterial Isolation", price: 14.99, license: 0, total: 0},
-            {name: "Cytogenetics", price: 14.99, license: 0, total: 0}
-        ];
+        $scope.labs = [];
+
+        angular.forEach(window.labList, function(lab) {
+            lab.license = 0;
+            lab.total = 0;
+
+            $scope.labs.push(lab);
+        });
+
         $scope.showLabForm = false;
         $scope.totalPrice = 0;
         $scope.isProcessing = false
@@ -134,6 +143,7 @@ angular.module('LabsterBackOffice', ['ngRoute'])
     })
 
     .controller('InvoiceDetailController', function($scope, $routeParams) {
+        $scope.user = window.requestUser;
         $scope.invoiceId = $routeParams.invoiceId;
         $scope.totalPrice = 299.80;
         $scope.labs = [
@@ -146,6 +156,10 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         });
 
         $scope.totalPrice = $scope.totalPrice.toFixed(2);
+    })
+
+    .controller('InvoicePaidController', function($scope) {
+        $scope.status = "paid";
     })
 
     .controller('HomeController', function($scope) {

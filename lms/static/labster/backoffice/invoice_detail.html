@@ -32,6 +32,6 @@
     </tfoot>
   </table>
   <p>
-    <stripe email="kriwil@gmail.com" amount="{{ totalPrice }}"></stripe>
+    <stripe email="{{ user.email }}" amount="{{ totalPrice }}"></stripe>
   </p>
 </div>

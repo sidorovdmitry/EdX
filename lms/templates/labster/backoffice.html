@@ -21,14 +21,16 @@
 
 <%block name="js_extra">
 <script>
-window.request_user = {
+window.requestUser = {
   id: "${user.id}",
   email: "${user.email}",
   name: "${user.profile.name}"
 };
+window.labList = JSON.parse('${lab_list}');
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-resource.min.js"></script>
 <script src="https://checkout.stripe.com/checkout.js"></script>
 <script src="${static.url('labster/js/backoffice.angular.js')}"></script>
 </%block>
