@@ -30,14 +30,30 @@ angular.module('LabsterBackOffice', ['ngRoute'])
     .directive('stripe', function() {
         return {
             restrict: 'E',
-            transclude: true,
-            scope: {},
-            controller: function($scope, $element) {
-                $scope.pay = function() {
-                    console.log(pay);
-                };
+            scope: {email: '@', amount: '@'},
+            link: function(scope, element, attr) {
+
+                var handler = StripeCheckout.configure({
+                    key: 'pk_test_mkeBcyfKdPD7qAdTn5zz8vTH',
+                    // image: '/square-image.png',
+                    token: function(token) {
+                        console.dir(token);
+                    }
+                });
+
+                element.on('click', function(ev) {
+                    ev.preventDefault();
+                    var priceInCent = scope.amount * 100;
+                    var description_text = "2 labs with 10 licenses";
+                    handler.open({
+                        name: 'Labster',
+                        description: description_text,
+                        amount: priceInCent,
+                        email: scope.email
+                    });
+                });
             },
-            template: '<button class="button" ng-click="pay()">Pay With Stripe</button>',
+            template: '<button class="button">Pay with Stripe</button>',
             replace: true
         };
     })
