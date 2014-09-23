@@ -23,30 +23,30 @@
     border-color: #1d9dd9;
 }
 
-.labster-new-lab {}
-.labster-new-lab table {
+.labster-lab-list {}
+.labster-lab-list table {
     margin: 20px 0;
 }
-.labster-new-lab table thead th,
-.labster-new-lab table tbody td {
+.labster-lab-list table thead th,
+.labster-lab-list table tbody td {
     border-bottom: 1px solid #ccc;
 }
-.labster-new-lab table thead th,
-.labster-new-lab table tbody td,
-.labster-new-lab table tfoot td {
+.labster-lab-list table thead th,
+.labster-lab-list table tbody td,
+.labster-lab-list table tfoot td {
     padding: 10px;
 }
-.labster-new-lab table thead th {
+.labster-lab-list table thead th {
     background-color: #efefef;
 }
-.labster-new-lab table tfoot td {
+.labster-lab-list table tfoot td {
     background-color: #efefef;
     font-weight: bold;
 }
-.labster-new-lab td.lab-license input {
+.labster-lab-list td.lab-license input {
     float: right;
 }
-.labster-new-lab label .label {
+.labster-lab-list label .label {
     display: inline-block;
     width: 100px;
 }

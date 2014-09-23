@@ -44,6 +44,16 @@ window.labList = JSON.parse('${lab_list}');
       <ul>
         <li>
           <span class="title">
+            <a href="#licenses">Licenses</a> |
+            <a href="#license/new">New</a>
+          </span>
+        </li>
+        <li>
+          <span class="title"><a href="#purchases">Purchases</a></span>
+        </li>
+        <!--
+        <li>
+          <span class="title">
             <a href="#licenses">Licenses</a>
             (<a href="#license/new">Buy New</a>)
           </span>
@@ -51,10 +61,9 @@ window.labList = JSON.parse('${lab_list}');
         <li>
           <span class="title"><a href="#histories">Histories</a></span>
         </li>
+        -->
       </ul>
     </section>
   </section>
-  <section class="my-courses" id="my-courses" ng-view>
-    {{ test_aja }}
-  </section>
+  <section class="my-courses" id="my-courses" ng-view>Loading &hellip;</section>
 </section>

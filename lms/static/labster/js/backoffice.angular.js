@@ -2,14 +2,19 @@ angular.module('LabsterBackOffice', ['ngRoute'])
 
     .config(function($routeProvider) {
         $routeProvider
-            .when('/', {
-                controller: 'HomeController',
-                templateUrl: window.baseUrl + 'labster/backoffice/home.html'
-            })
+            // .when('/', {
+            //     controller: 'HomeController',
+            //     templateUrl: window.baseUrl + 'labster/backoffice/home.html'
+            // })
 
             .when('/licenses', {
                 controller: 'LicenseListController',
-                templateUrl: window.baseUrl + 'labster/backoffice/licenses.html'
+                templateUrl: window.baseUrl + 'labster/backoffice/license_list.html'
+            })
+
+            .when('/purchases', {
+                controller: 'PurchaseListController',
+                templateUrl: window.baseUrl + 'labster/backoffice/purchase_list.html'
             })
 
             .when('/license/new', {
@@ -28,7 +33,7 @@ angular.module('LabsterBackOffice', ['ngRoute'])
             })
 
             .otherwise({
-                redirectTo: '/'
+                redirectTo: '/licenses'
             });
     })
 
@@ -63,8 +68,16 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         };
     })
 
+    .controller('PurchaseListController', function($scope) {
+        $scope.invoices = [
+            {lab: "Cytogenetics", id: "000001", status: "paid"}
+        ];
+    })
+
     .controller('LicenseListController', function($scope) {
-        $scope.test_aja = "license list";
+        $scope.licenses = [
+            {lab: "Cytogenetics", count: 10}
+        ];
     })
 
     .controller('NewLicenseController', function($scope, $location) {
@@ -163,5 +176,4 @@ angular.module('LabsterBackOffice', ['ngRoute'])
     })
 
     .controller('HomeController', function($scope) {
-        $scope.test_aja = "gitu ganti";
     });
