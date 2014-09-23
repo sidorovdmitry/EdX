@@ -524,6 +524,7 @@ if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
 # Labster
 if settings.FEATURES.get('LABSTER'):
     urlpatterns += (
+        url(r'^labs/$', 'labster.backoffice.views.home', name="labster_backoffice"),
         url('^labster/', include('labster.urls')),
     )
 

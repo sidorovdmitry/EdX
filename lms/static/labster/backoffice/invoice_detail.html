@@ -1,0 +1,37 @@
+<header>
+  <h2>Invoice #{{ invoiceId }}</h2>
+</header>
+<div class="labster-lab-list">
+  <p>
+  Status: <strong>unpaid</strong>
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Lab</th>
+        <th>Price</th>
+        <th>Licenses</th>
+        <th>$</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="lab in labs">
+        <td>{{ lab.name }}</td>
+        <td class="align-right">${{ lab.price }}</td>
+        <td class="align-right">{{ lab.license }}</td>
+        <td class="align-right">${{ lab.total }}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td>Total</td>
+        <td></td>
+        <td></td>
+        <td class="align-right">${{ totalPrice }}</td>
+      </tr>
+    </tfoot>
+  </table>
+  <p>
+    <stripe email="{{ user.email }}" amount="{{ totalPrice }}"></stripe>
+  </p>
+</div>

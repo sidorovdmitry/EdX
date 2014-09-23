@@ -1,0 +1,21 @@
+<header>
+  <h2>Purchases</h2>
+</header>
+<div class="labster-lab-list">
+  <table>
+    <thead>
+      <tr>
+        <th>Invoice No.</th>
+        <th>Lab</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="invoice in invoices">
+        <td>{{ invoice.id }}</td>
+        <td>{{ invoice.lab }}</td>
+        <td>{{ invoice.status }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
