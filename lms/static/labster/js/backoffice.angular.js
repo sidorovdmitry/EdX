@@ -172,15 +172,12 @@ angular.module('LabsterBackOffice', ['ngRoute'])
             })
 
             .success(function(data, status, headers, config) {
-                console.log('success');
-                console.log(status);
-                $location.url('/invoice/1')
+                console.dir(data);
+                var url = '/invoice/' + data.id;
+                $location.url(url);
             })
 
             .error(function(data, status, headers, config) {
-                console.log('error');
-                console.log(status);
-
             });
 
         }
