@@ -183,9 +183,10 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         }
     })
 
-    .controller('InvoiceDetailController', function($scope, $routeParams) {
+    .controller('InvoiceDetailController', function($scope, $routeParams, $http) {
         $scope.user = window.requestUser;
         $scope.invoiceId = $routeParams.invoiceId;
+
         $scope.totalPrice = 299.80;
         $scope.labs = [
             {name: "Bacterial Isolation", price: 14.99, license: 10, total: 149.90},
