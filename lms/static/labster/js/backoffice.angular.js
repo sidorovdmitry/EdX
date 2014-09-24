@@ -80,7 +80,7 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         ];
     })
 
-    .controller('NewLicenseController', function($scope, $location) {
+    .controller('NewLicenseController', function($scope, $location, $http) {
         $scope.labs = [];
 
         angular.forEach(window.labList, function(lab) {
@@ -151,7 +151,38 @@ angular.module('LabsterBackOffice', ['ngRoute'])
 
         $scope.buyLabs = function() {
             $scope.isProcessing = true;
-            $location.url('/invoice/1')
+            var url = window.backofficeUrls.buyLab;
+            data = {
+                user: window.requestUser.backoffice.user.id,
+                payment_type: "manual",
+                month_subscription: "6",
+                list_product: []
+            };
+
+            angular.forEach($scope.labs, function(lab) {
+                if (lab.selected) {
+                    data.list_product.push({product: lab.id, item_count: lab.license});
+                }
+            });
+
+            $http.post(url, data, {
+                headers: {
+                    'Authorization': "Token " + window.requestUser.backoffice.token
+                }
+            })
+
+            .success(function(data, status, headers, config) {
+                console.log('success');
+                console.log(status);
+                $location.url('/invoice/1')
+            })
+
+            .error(function(data, status, headers, config) {
+                console.log('error');
+                console.log(status);
+
+            });
+
         }
     })
 

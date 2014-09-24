@@ -24,7 +24,16 @@
 window.requestUser = {
   id: "${user.id}",
   email: "${user.email}",
-  name: "${user.profile.name}"
+  name: "${user.profile.name}",
+  backoffice: {
+    user: {
+      id: "${backoffice['user_id']}"
+    },
+    token: "${token}"
+  }
+};
+window.backofficeUrls = {
+  buyLab: "${backoffice_urls['buy_lab']}"
 };
 window.labList = JSON.parse('${lab_list}');
 </script>
