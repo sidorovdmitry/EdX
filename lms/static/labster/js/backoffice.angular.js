@@ -22,14 +22,14 @@ angular.module('LabsterBackOffice', ['ngRoute'])
                 templateUrl: window.baseUrl + 'labster/backoffice/new_license.html'
             })
 
-            .when('/invoice/:invoiceId', {
-                controller: 'InvoiceDetailController',
-                templateUrl: window.baseUrl + 'labster/backoffice/invoice_detail.html'
+            .when('/invoice/:paymentId', {
+                controller: 'PaymentDetailController',
+                templateUrl: window.baseUrl + 'labster/backoffice/payment_detail.html'
             })
 
-            .when('/invoice/:invoiceId/paid', {
-                controller: 'InvoicePaidController',
-                templateUrl: window.baseUrl + 'labster/backoffice/invoice_paid.html'
+            .when('/invoice/:paymentId/paid', {
+                controller: 'PaymentPaidController',
+                templateUrl: window.baseUrl + 'labster/backoffice/payment_paid.html'
             })
 
             .otherwise({
@@ -69,7 +69,7 @@ angular.module('LabsterBackOffice', ['ngRoute'])
     })
 
     .controller('PurchaseListController', function($scope) {
-        $scope.invoices = [
+        $scope.payments = [
             {lab: "Cytogenetics", id: "000001", status: "paid"}
         ];
     })
@@ -183,9 +183,9 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         }
     })
 
-    .controller('InvoiceDetailController', function($scope, $routeParams, $http) {
+    .controller('PaymentDetailController', function($scope, $routeParams, $http) {
         $scope.user = window.requestUser;
-        $scope.invoiceId = $routeParams.invoiceId;
+        var paymentId = $routeParams.paymentId;
 
         $scope.totalPrice = 299.80;
         $scope.labs = [
@@ -200,7 +200,7 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         $scope.totalPrice = $scope.totalPrice.toFixed(2);
     })
 
-    .controller('InvoicePaidController', function($scope) {
+    .controller('PaymentPaidController', function($scope) {
         $scope.status = "paid";
     })
 
