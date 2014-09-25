@@ -172,7 +172,6 @@ angular.module('LabsterBackOffice', ['ngRoute'])
             })
 
             .success(function(data, status, headers, config) {
-                console.dir(data);
                 var url = '/invoice/' + data.id;
                 $location.url(url);
             })
@@ -185,19 +184,22 @@ angular.module('LabsterBackOffice', ['ngRoute'])
 
     .controller('PaymentDetailController', function($scope, $routeParams, $http) {
         $scope.user = window.requestUser;
+        $scope.payment = null;
+
         var paymentId = $routeParams.paymentId;
+        var url = window.backofficeUrls.paymentDetail + paymentId;
 
-        $scope.totalPrice = 299.80;
-        $scope.labs = [
-            {name: "Bacterial Isolation", price: 14.99, license: 10, total: 149.90},
-            {name: "Cytogenetics", price: 14.99, license: 10, total: 149.90}
-        ];
+        $http.get(url)
+            .success(function(data, status, headers, config) {
+                $scope.payment = data;
+                $scope.totalPrice = data.total;  // .toFixed(2);
 
-        angular.forEach($scope.labs, function(lab) {
-            lab.total = lab.total.toFixed(2);
-        });
+                angular.forEach($scope.payment.products, function(lab) {
+                    lab.total = lab.price;  // .toFixed(2);
+                });
+            });
 
-        $scope.totalPrice = $scope.totalPrice.toFixed(2);
+        $scope.invoiceId = "00" + paymentId;
     })
 
     .controller('PaymentPaidController', function($scope) {

@@ -3,7 +3,9 @@
 </header>
 <div class="labster-lab-list">
   <p>
-  Status: <strong>unpaid</strong>
+  Status:
+  <strong ng-hide="payment.paid">unpaid</strong>
+  <strong ng-show="payment.paid">paid</strong>
   </p>
   <table>
     <thead>
@@ -15,7 +17,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="lab in labs">
+      <tr ng-repeat="lab in payment.products">
         <td>{{ lab.name }}</td>
         <td class="align-right">${{ lab.price }}</td>
         <td class="align-right">{{ lab.license }}</td>
