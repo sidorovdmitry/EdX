@@ -17,11 +17,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="lab in payment.products">
-        <td>{{ lab.name }}</td>
-        <td class="align-right">${{ lab.price }}</td>
-        <td class="align-right">{{ lab.license }}</td>
-        <td class="align-right">${{ lab.total }}</td>
+      <tr ng-repeat="payment_product in payment.payment_products">
+        <td>{{ payment_product.product.name }}</td>
+        <td class="align-right">${{ payment_product.price }}</td>
+        <td class="align-right">{{ payment_product.item_count }}</td>
+        <td class="align-right">${{ payment_product.total }}</td>
       </tr>
     </tbody>
     <tfoot>
@@ -29,7 +29,7 @@
         <td>Total</td>
         <td></td>
         <td></td>
-        <td class="align-right">${{ totalPrice }}</td>
+        <td class="align-right">${{ payment.total }}</td>
       </tr>
     </tfoot>
   </table>

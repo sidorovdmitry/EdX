@@ -202,11 +202,6 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         $http.get(url)
             .success(function(data, status, headers, config) {
                 $scope.payment = data;
-                $scope.totalPrice = data.total;  // .toFixed(2);
-
-                angular.forEach($scope.payment.products, function(lab) {
-                    lab.total = lab.price;  // .toFixed(2);
-                });
             });
 
         $scope.invoiceId = "00" + paymentId;

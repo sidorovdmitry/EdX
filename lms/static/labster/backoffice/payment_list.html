@@ -8,6 +8,7 @@
         <th>Invoice No.</th>
         <th>Date</th>
         <th>Labs</th>
+        <th>Total</th>
         <th>Status</th>
       </tr>
     </thead>
@@ -16,7 +17,11 @@
         <td>{{ payment.id }}</td>
         <td>{{ payment.created_at }}</td>
         <td>
+          <div ng-repeat="payment_product in payment.payment_products">
+            {{ payment_product.product.name }}
+          </div>
         </td>
+        <td>${{ payment.total }}</td>
         <td>
           <span ng-show="payment.paid">paid</span>
           <span ng-hide="payment.paid">unpaid</span>
