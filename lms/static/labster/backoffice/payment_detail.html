@@ -3,10 +3,11 @@
 </header>
 <div class="labster-lab-list">
   <p>
-  Status:
-  <strong ng-hide="payment.paid">unpaid</strong>
-  <strong ng-show="payment.paid">paid</strong>
+    Status:
+    <strong ng-hide="payment.paid">unpaid</strong>
+    <strong ng-show="payment.paid">paid</strong>
   </p>
+  <p>Date: {{ payment.created_date }}</p>
   <table>
     <thead>
       <tr>
@@ -33,7 +34,7 @@
       </tr>
     </tfoot>
   </table>
-  <p>
+  <p ng-show="payment.total < 500">
     <stripe email="{{ user.email }}" amount="{{ totalPrice }}"></stripe>
   </p>
 </div>

@@ -187,6 +187,11 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         })
 
         .success(function(data, status, headers, config) {
+            angular.forEach(data, function(payment) {
+                payment.detail_url = '#/invoice/' + payment.id;
+                payment.created_date = moment(payment.created_at).format('ll');
+            });
+
             $scope.payments = data;
         });
 
@@ -201,6 +206,8 @@ angular.module('LabsterBackOffice', ['ngRoute'])
 
         $http.get(url)
             .success(function(data, status, headers, config) {
+                data.total = parseFloat(data.total).toFixed(2);
+                data.created_date = moment(data.created_at).format('ll');
                 $scope.payment = data;
             });
 
