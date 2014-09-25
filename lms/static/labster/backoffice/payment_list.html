@@ -1,0 +1,27 @@
+<header>
+  <h2>Purchases</h2>
+</header>
+<div class="labster-lab-list" ng-show="payments.length > 0">
+  <table>
+    <thead>
+      <tr>
+        <th>Invoice No.</th>
+        <th>Date</th>
+        <th>Labs</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="payment in payments">
+        <td>{{ payment.id }}</td>
+        <td>{{ payment.created_at }}</td>
+        <td>
+        </td>
+        <td>
+          <span ng-show="payment.paid">paid</span>
+          <span ng-hide="payment.paid">unpaid</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

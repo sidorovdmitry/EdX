@@ -13,8 +13,8 @@ angular.module('LabsterBackOffice', ['ngRoute'])
             })
 
             .when('/purchases', {
-                controller: 'PurchaseListController',
-                templateUrl: window.baseUrl + 'labster/backoffice/purchase_list.html'
+                controller: 'PaymentListController',
+                templateUrl: window.baseUrl + 'labster/backoffice/payment_list.html'
             })
 
             .when('/license/new', {
@@ -66,12 +66,6 @@ angular.module('LabsterBackOffice', ['ngRoute'])
             template: '<button class="button">Pay with Stripe</button>',
             replace: true
         };
-    })
-
-    .controller('PurchaseListController', function($scope) {
-        $scope.payments = [
-            {lab: "Cytogenetics", id: "000001", status: "paid"}
-        ];
     })
 
     .controller('LicenseListController', function($scope) {
@@ -182,12 +176,28 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         }
     })
 
+    .controller('PaymentListController', function($scope, $http) {
+        $scope.payments = [];
+
+        var url = window.backofficeUrls.payment;
+        $http.get(url, {
+            headers: {
+                'Authorization': "Token " + window.requestUser.backoffice.token
+            }
+        })
+
+        .success(function(data, status, headers, config) {
+            $scope.payments = data;
+        });
+
+    })
+
     .controller('PaymentDetailController', function($scope, $routeParams, $http) {
         $scope.user = window.requestUser;
         $scope.payment = null;
 
         var paymentId = $routeParams.paymentId;
-        var url = window.backofficeUrls.paymentDetail + paymentId;
+        var url = window.backofficeUrls.payment + paymentId;
 
         $http.get(url)
             .success(function(data, status, headers, config) {
