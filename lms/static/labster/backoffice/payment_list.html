@@ -14,7 +14,7 @@
     </thead>
     <tbody>
       <tr ng-repeat="payment in payments">
-        <td><a href="{{ payment.detail_url }}">{{ payment.id }}</a></td>
+        <td><a href="{{ payment.detail_url }}">{{ payment.invoice_number }}</a></td>
         <td>{{ payment.created_date }}</td>
         <td>
           <div ng-repeat="payment_product in payment.payment_products">
