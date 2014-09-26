@@ -14,15 +14,15 @@
         <th>Lab</th>
         <th>Price</th>
         <th>Licenses</th>
-        <th>$</th>
+        <th>USD</th>
       </tr>
     </thead>
     <tbody>
       <tr ng-repeat="payment_product in payment.payment_products">
         <td>{{ payment_product.product.name }}</td>
-        <td class="align-right">${{ payment_product.price }}</td>
+        <td class="align-right">USD {{ payment_product.price }}</td>
         <td class="align-right">{{ payment_product.item_count }}</td>
-        <td class="align-right">${{ payment_product.total }}</td>
+        <td class="align-right">USD {{ payment_product.total }}</td>
       </tr>
     </tbody>
     <tfoot>
@@ -30,11 +30,14 @@
         <td>Total</td>
         <td></td>
         <td></td>
-        <td class="align-right">${{ payment.total }}</td>
+        <td class="align-right">USD {{ payment.total }}</td>
       </tr>
     </tfoot>
   </table>
-  <p ng-show="payment.total < 500">
+  <p ng-show="payment.total <= 500 && ! payment.paid">
     <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}"></stripe>
+  </p>
+  <p ng-show="payment.total > 500 && ! payment.paid">
+    Due to security reasons, we only allow purchase up to USD 500 for credit card.
   </p>
 </div>

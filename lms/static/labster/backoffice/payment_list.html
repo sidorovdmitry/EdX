@@ -21,7 +21,7 @@
             {{ payment_product.product.name }}
           </div>
         </td>
-        <td>${{ payment.total }}</td>
+        <td>USD {{ payment.total }}</td>
         <td>
           <span ng-show="payment.paid">paid</span>
           <span ng-hide="payment.paid">unpaid</span>

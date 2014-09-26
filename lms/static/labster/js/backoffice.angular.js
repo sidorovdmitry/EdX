@@ -27,7 +27,7 @@ angular.module('LabsterBackOffice', ['ngRoute'])
                 templateUrl: window.baseUrl + 'labster/backoffice/payment_detail.html'
             })
 
-            .when('/invoice/:paymentId/paid', {
+            .when('/invoice/:paymentId/thank-you', {
                 controller: 'PaymentPaidController',
                 templateUrl: window.baseUrl + 'labster/backoffice/payment_paid.html'
             })
@@ -56,7 +56,7 @@ angular.module('LabsterBackOffice', ['ngRoute'])
                     })
 
                     .success(function(data, status, headers, config) {
-                        var url = '/labs/#/invoice/' + scope.paymentId;
+                        var url = '/labs/#/invoice/' + scope.paymentId + '/thank-you';
                         window.location.href = url;
                     })
                 };
@@ -231,8 +231,9 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         $scope.invoiceId = "00" + paymentId;
     })
 
-    .controller('PaymentPaidController', function($scope) {
-        $scope.status = "paid";
+    .controller('PaymentPaidController', function($scope, $routeParams) {
+        var paymentId = $routeParams.paymentId;
+        $scope.detailUrl = window.backofficeUrls.payment + paymentId;
     })
 
     .controller('HomeController', function($scope) {
