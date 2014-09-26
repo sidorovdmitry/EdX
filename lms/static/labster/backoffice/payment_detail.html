@@ -35,6 +35,6 @@
     </tfoot>
   </table>
   <p ng-show="payment.total < 500">
-    <stripe email="{{ user.email }}" amount="{{ totalPrice }}"></stripe>
+    <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}"></stripe>
   </p>
 </div>

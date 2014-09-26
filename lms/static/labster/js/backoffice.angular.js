@@ -37,18 +37,34 @@ angular.module('LabsterBackOffice', ['ngRoute'])
             });
     })
 
-    .directive('stripe', function($location) {
+    .directive('stripe', function($location, $http) {
         return {
             restrict: 'E',
-            scope: {email: '@', amount: '@'},
+            scope: {paymentId: '@', email: '@', amount: '@'},
             link: function(scope, element, attr) {
 
-                var handler = StripeCheckout.configure({
-                    key: 'pk_test_mkeBcyfKdPD7qAdTn5zz8vTH',
-                    // image: '/square-image.png',
-                    token: function(token) {
-                        window.location.href = '/labs/#/invoice/1/paid/';
+                var submitStripe = function(token) {
+                    var url = window.backofficeUrls.payment + scope.paymentId + "/charge_stripe/";
+                    var post_data = {
+                        'stripe_token': token.id
                     }
+
+                    $http.post(url, post_data, {
+                        headers: {
+                            'Authorization': "Token " + window.requestUser.backoffice.token
+                        }
+                    })
+
+                    .success(function(data, status, headers, config) {
+                        var url = '/labs/#/invoice/' + scope.paymentId;
+                        window.location.href = url;
+                    })
+                };
+
+                var handler = StripeCheckout.configure({
+                    key: window.stripeKey,
+                    // image: '/square-image.png',
+                    token: submitStripe
                 });
 
                 element.on('click', function(ev) {
@@ -206,6 +222,7 @@ angular.module('LabsterBackOffice', ['ngRoute'])
 
         $http.get(url)
             .success(function(data, status, headers, config) {
+                data.total_in_cent = parseFloat(data.total) * 100;
                 data.total = parseFloat(data.total).toFixed(2);
                 data.created_date = moment(data.created_at).format('ll');
                 $scope.payment = data;
