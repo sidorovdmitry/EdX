@@ -165,13 +165,16 @@ angular.module('LabsterBackOffice', ['ngRoute'])
             data = {
                 user: window.requestUser.backoffice.user.id,
                 payment_type: "manual",
-                month_subscription: "6",
                 list_product: []
             };
 
             angular.forEach($scope.labs, function(lab) {
                 if (lab.selected) {
-                    data.list_product.push({product: lab.id, item_count: lab.license});
+                    data.list_product.push({
+                        product: lab.id,
+                        item_count: lab.license,
+                        month_subscription: "6"
+                    });
                 }
             });
 
