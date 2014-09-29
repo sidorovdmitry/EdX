@@ -84,10 +84,24 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         };
     })
 
-    .controller('LicenseListController', function($scope) {
-        $scope.licenses = [
-            {lab: "Cytogenetics", count: 10}
-        ];
+    .controller('LicenseListController', function($scope, $http) {
+        $scope.licenses = [];
+
+        var url = window.backofficeUrls.license;
+        $http.get(url, {
+            headers: {
+                'Authorization': "Token " + window.requestUser.backoffice.token
+            }
+        })
+
+        .success(function(data, status, headers, config) {
+            angular.forEach(data, function(item) {
+                item.end_date = moment(item.date_end_license).format('ll');
+            });
+
+            $scope.licenses = data;
+        });
+
     })
 
     .controller('NewLicenseController', function($scope, $location, $http) {
