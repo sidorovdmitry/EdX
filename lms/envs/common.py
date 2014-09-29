@@ -1454,6 +1454,7 @@ if FEATURES.get('LABSTER'):
     LABSTER_UNITY_URL_PREFIX = "https://labster.s3.amazonaws.com/unity/"
     LABSTER_UNITY_API_PREFIX = "https://edx.labster.com"
     LABSTER_BACKOFFICE_BASE_URL = "http://internal.labster.com"
+    LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
 
 
 ############################ ORA 2 ############################################
