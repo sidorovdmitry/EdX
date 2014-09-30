@@ -21,7 +21,7 @@
 
 <%block name="js_extra">
 <script>
-window.stripeKey = "pk_test_edxArDVA9OhfUHxDlxVZAQF0";  // publishable
+window.stripeKey = "${stripe_publishable_key}";  // publishable
 window.requestUser = {
   id: "${user.id}",
   email: "${user.email}",
