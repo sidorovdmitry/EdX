@@ -294,6 +294,9 @@ FEATURES['CLASS_DASHBOARD'] = True
 ### This settings is for the course registration code length ############
 REGISTRATION_CODE_LENGTH = 8
 
+## stripe
+STRIPE_PUBLISHABLE_KEY = 'pk_test_edxArDVA9OhfUHxDlxVZAQF0'
+
 #####################################################################
 # Lastly, see if the developer has any local overrides.
 try:
