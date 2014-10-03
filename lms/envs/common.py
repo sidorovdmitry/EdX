@@ -118,7 +118,7 @@ FEATURES = {
     'SHIB_DISABLE_TOS': False,
 
     # Can be turned off if course lists need to be hidden. Effects views and templates.
-    'COURSES_ARE_BROWSABLE': False,
+    'COURSES_ARE_BROWSABLE': True,
 
     # Enables ability to restrict enrollment in specific courses by the user account login method
     'RESTRICT_ENROLL_BY_REG_METHOD': False,
@@ -162,7 +162,7 @@ FEATURES = {
     'ENABLE_SERVICE_STATUS': False,
 
     # Toggle to indicate use of a custom theme
-    'USE_CUSTOM_THEME': False,
+    'USE_CUSTOM_THEME': True,
 
     # Don't autoplay videos for students
     'AUTOPLAY_VIDEOS': False,
@@ -1347,13 +1347,13 @@ EDXMKTG_COOKIE_NAME = 'edxloggedin'
 MKTG_URLS = {}
 MKTG_URL_LINK_MAP = {
     'ABOUT': 'about_edx',
-    'CONTACT': 'contact',
-    'FAQ': 'help_edx',
+    'CONTACT': None,  # 'contact',
+    'FAQ': None,  # 'help_edx',
     'COURSES': 'courses',
     'ROOT': 'root',
     'TOS': 'tos',
-    'HONOR': 'honor',
-    'PRIVACY': 'privacy_edx',
+    'HONOR': None,  # 'honor',
+    'PRIVACY': None,  # 'privacy_edx',
     'JOBS': 'jobs',
     'PRESS': 'press',
 
