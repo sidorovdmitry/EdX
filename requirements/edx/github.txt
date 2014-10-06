@@ -23,7 +23,7 @@
 -e git+https://github.com/jambonrose/markdown_subscript_extension.git@609d8bd797ab451cb1510e9b252c87b9194bda14#egg=MarkdownSubscript
 -e git+https://github.com/kriwil/markdown-newtab.git@59d00f0b4b4479ed06fa6bebc68311be892a33ae#egg=markdown-newtab
 -e git+https://github.com/Bodekaer/Labster.EdX.django-wiki.git@644154a455fc2e7dcf57210bb94a5530e6edfd18#egg=django-wiki
--e git+https://github.com/kriwil/labster.git@c914522159db0e11af36b38661749f79498dd838#egg=labster
+-e git+https://github.com/kriwil/labster.git@488bcb233d7d78c23380255bf6763d72f91369d5#egg=labster
 
 # Our libraries:
 -e git+https://github.com/edx/XBlock.git@aed7a2c51a59836e435259ad0fb41f8e865fa530#egg=XBlock
