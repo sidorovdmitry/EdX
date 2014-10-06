@@ -132,6 +132,7 @@ urlpatterns += patterns('', url(r'^admin/', include(admin.site.urls)),)
 if settings.FEATURES.get('LABSTER'):
     urlpatterns += (
         url('^labster/', include('labster.cms_urls')),
+        url(r'^profiler/', include('profiler.urls')),
     )
 
 # enable automatic login

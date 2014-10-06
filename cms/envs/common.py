@@ -639,7 +639,15 @@ MAX_FAILED_LOGIN_ATTEMPTS_LOCKOUT_PERIOD_SECS = 15 * 60
 
 ############################ Labster ##########################################
 if FEATURES.get('LABSTER'):
-    INSTALLED_APPS += ('labster',)
+    INSTALLED_APPS += (
+        'labster',
+        'profiler',
+    )
+
+    MIDDLEWARE_CLASSES += (
+        'labster.middleware.ProfileMiddleware',
+        'profiler.middleware.ProfilerMiddleware',
+    )
 
 
 ### Apps only installed in some instances
