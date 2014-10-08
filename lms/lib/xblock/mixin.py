@@ -53,3 +53,10 @@ class LmsBlockMixin(XBlockMixin):
         default=False,
         scope=Scope.settings,
     )
+    is_browsable = Boolean(
+        display_name=_("Course is Displayed in Front Page"),
+        help=_("Enter true or false. If true, the course is displayed. If false, the course is hidden."),
+        scope=Scope.settings,
+        default=False,
+    )
+
