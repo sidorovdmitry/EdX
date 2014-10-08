@@ -15,6 +15,9 @@ def get_visible_courses():
                if isinstance(c, CourseDescriptor)]
     courses = sorted(courses, key=lambda course: course.number)
 
+    # only browsable course
+    courses = [course for course in courses if course.is_browsable]
+
     subdomain = microsite.get_value('subdomain', 'default')
 
     # See if we have filtered course listings in this domain
