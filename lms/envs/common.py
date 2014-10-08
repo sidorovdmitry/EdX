@@ -118,7 +118,7 @@ FEATURES = {
     'SHIB_DISABLE_TOS': False,
 
     # Can be turned off if course lists need to be hidden. Effects views and templates.
-    'COURSES_ARE_BROWSABLE': False,
+    'COURSES_ARE_BROWSABLE': True,
 
     # Enables ability to restrict enrollment in specific courses by the user account login method
     'RESTRICT_ENROLL_BY_REG_METHOD': False,
@@ -1455,6 +1455,10 @@ if FEATURES.get('LABSTER'):
     LABSTER_UNITY_API_PREFIX = "https://edx.labster.com"
     LABSTER_BACKOFFICE_BASE_URL = "http://internal.labster.com"
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
+
+    PLATFORM_NAME = 'LabsterX'
+    THEME_NAME = 'labster'
+    FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
 
 
 ############################ ORA 2 ############################################
