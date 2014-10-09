@@ -286,6 +286,8 @@ class CourseInfoTab(CourseTab):
 
     type = 'course_info'
     is_movable = False
+    is_hidden = True
+    is_hideable = True
 
     def __init__(self, tab_dict=None):
         super(CourseInfoTab, self).__init__(
