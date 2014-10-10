@@ -23,6 +23,15 @@
 
 <%include file="_discussion_course_navigation.html" args="active_page='discussion'" />
 
+<script>
+$(function() {
+  $('.discussion-body').on('click', '.home-new-post-btn', function(ev) {
+    ev.preventDefault();
+    $('.course-tabs .new-post-btn').click();
+  });
+});
+</script>
+
 <article class="new-post-article"></article>
 
 <section class="discussion container" id="discussion-container"
