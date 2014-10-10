@@ -8,6 +8,7 @@ from .aws import * # pylint: disable=wildcard-import, unused-wildcard-import
 del DEFAULT_FILE_STORAGE
 MEDIA_ROOT = "/edx/var/edxapp/uploads"
 
+CMS_BASE = 'localhost:8001'
 
 DEBUG = True
 USE_I18N = True
