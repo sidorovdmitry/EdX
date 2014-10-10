@@ -689,7 +689,7 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
         "format": xblock.format,
         "course_graders": json.dumps([grader.get('type') for grader in graders]),
         "labster_labs": json.dumps(labster_labs),
-        "lab_id": xblock.lab_id,
+        "lab_id": getattr(xblock, 'lab_id', None),
     }
     if data is not None:
         xblock_info["data"] = data
