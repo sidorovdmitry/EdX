@@ -60,6 +60,9 @@
   <div id="labModuleContainer" style="display:none">
     <div class="lab-module-info">
       <h4>${lab.name}</h4>
+      % if lab.screenshot_url:
+      <img src="${lab.screenshot_url}" style="float:right">
+      % endif
       <p>You are now about to enter of the lab in Labster virtual labs.</p>
       % if user_save:
       <p>It appears that you have already used this specific lab in the past, and we have automatically stored your progress in the lab, so you don't have to start all from the beginning.</p>
