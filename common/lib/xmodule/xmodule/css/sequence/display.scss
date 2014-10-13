@@ -386,6 +386,44 @@ nav.sequence-bottom {
           background-position: center 15px;
         }
       }
+
+      &.prev-section, &.next-section {
+          width: 139px;
+
+          a {
+              background-repeat: no-repeat;
+              color: #000;
+              display: block;
+              line-height: 44px;
+
+              &:hover, &:focus {
+                  opacity: 0.5;
+              }
+          }
+      }
+
+      &.prev-section {
+          border-radius: 35px 0 0 35px;
+
+          a {
+              background-image: url('../images/sequence-nav/previous-icon.png');
+              background-position: 16px center;
+              padding-right: 16px;
+              text-align: right;
+          }
+
+      }
+
+      &.next-section {
+          border-radius: 0 35px 35px 0;
+          a {
+              background-image: url('../images/sequence-nav/next-icon.png');
+              background-position: 113px center;
+              padding-left: 16px;
+              text-align: left;
+          }
+      }
+
     }
   }
 }

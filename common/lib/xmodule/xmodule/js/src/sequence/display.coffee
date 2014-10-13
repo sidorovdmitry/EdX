@@ -9,7 +9,14 @@ class @Sequence
     @base_page_title = " | " + document.title
     @initProgress()
     @bind()
+
+    chapters = $('#accordion .chapter ul')
+    active = chapters.find('li.active')
+    @previous_section = active.prev()
+    @next_section = active.next()
+
     @render parseInt(@el.data('position'))
+    @section_bind()
 
     if @contents.length < 2
       $('.sequence-nav').hide()
@@ -19,6 +26,10 @@ class @Sequence
 
   bind: ->
     @$('#sequence-list a').click @goto
+
+  section_bind: ->
+    @$('.sequence-nav-buttons .prev-section a').click @goto_previous_section
+    @$('.sequence-nav-buttons .next-section a').click @goto_next_section
 
   initProgress: ->
     @progressTable = {}  # "#problem_#{id}" -> progress
@@ -78,19 +89,39 @@ class @Sequence
     if @contents.length == 0
       @$('.sequence-nav-buttons .prev a').addClass('disabled').attr('aria-hidden', 'true')
       @$('.sequence-nav-buttons .next a').addClass('disabled').attr('aria-hidden', 'true')
+
+      @$('.sequence-nav-buttons .prev').hide()
+      @$('.sequence-nav-buttons .next').hide()
+
+      @$('.sequence-nav-buttons .prev-section').show()
+      @$('.sequence-nav-buttons .next-section').show()
       return
 
     if @position == 1
       @$('.sequence-nav-buttons .prev a').addClass('disabled').attr('aria-hidden', 'true')
+      @$('.sequence-nav-buttons .prev').hide()
+      @$('.sequence-nav-buttons .prev-section').show()
     else
       @$('.sequence-nav-buttons .prev a').removeClass('disabled').attr('aria-hidden', 'false').click(@previous)
+      @$('.sequence-nav-buttons .prev').show()
+      @$('.sequence-nav-buttons .prev-section').hide()
 
     if @position == @contents.length
       @$('.sequence-nav-buttons .next a').addClass('disabled').attr('aria-hidden', 'true')
+      @$('.sequence-nav-buttons .next').hide()
+      @$('.sequence-nav-buttons .next-section').show()
     else
       @$('.sequence-nav-buttons .next a').removeClass('disabled').attr('aria-hidden', 'false').click(@next)
+      @$('.sequence-nav-buttons .next').show()
+      @$('.sequence-nav-buttons .next-section').hide()
 
   render: (new_position) ->
+
+    if @previous_section.length == 0
+      @$('.sequence-nav-buttons .prev-section a').addClass('disabled')
+    if @next_section.length == 0
+      @$('.sequence-nav-buttons .next-section a').addClass('disabled')
+
     if @position != new_position
       if @position != undefined
         @mark_visited @position
@@ -148,6 +179,16 @@ class @Sequence
       alert_template = gettext("Sequence error! Cannot navigate to tab %(tab_name)s in the current SequenceModule. Please contact the course staff.")
       alert_text = interpolate(alert_template, {tab_name: new_position}, true)
       alert alert_text
+
+  goto_previous_section: (event) =>
+    event.preventDefault()
+    url = @previous_section.find('a').attr('href')
+    window.location.href = url
+
+  goto_next_section: (event) =>
+    event.preventDefault()
+    url = @next_section.find('a').attr('href')
+    window.location.href = url
 
   next: (event) => @_change_sequential 'seq_next', event
   previous: (event) => @_change_sequential 'seq_prev', event
