@@ -26,7 +26,8 @@ from markupsafe import escape
 
 from courseware import grades
 from courseware.access import has_access
-from courseware.courses import get_courses, get_course, get_studio_url, get_course_with_access, sort_by_announcement
+from courseware.courses import get_courses, get_course, get_studio_url, get_course_with_access, sort_by_announcement, \
+    get_course_info_section
 from courseware.masquerade import setup_masquerade
 from courseware.model_data import FieldDataCache
 from .module_render import toc_for_course, get_module_for_descriptor, get_module
@@ -535,6 +536,11 @@ def course_info(request, course_id):
     masq = setup_masquerade(request, staff_access)    # allow staff to toggle masquerade on info page
     reverifications = fetch_reverify_banner_info(request, course_key)
     studio_url = get_studio_url(course_key, 'course_info')
+
+    updates = get_course_info_section(request, course, 'updates')
+    if updates.strip() == '<ol></ol>':
+        courseware = reverse('courseware', args=[course_id])
+        return redirect(courseware)
 
     context = {
         'request': request,
