@@ -778,7 +778,12 @@ class CourseTabList(List):
         Generator method for iterating through all tabs that can be displayed for the given course and
         the given user with the provided access settings.
         """
+        show_course_info = course.show_course_info
         for tab in course.tabs:
+            if tab.name.lower() == 'course info':
+                if not show_course_info:
+                    continue
+
             if tab.can_display(
                     course, settings, is_user_authenticated, is_user_staff
             ) and (not tab.is_hideable or not tab.is_hidden):

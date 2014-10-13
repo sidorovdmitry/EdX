@@ -59,4 +59,10 @@ class LmsBlockMixin(XBlockMixin):
         scope=Scope.settings,
         default=False,
     )
+    show_course_info = Boolean(
+        display_name=_("Course Info is Shown"),
+        help=_("Enter true or false. If true, the course course is displayed. If false, the course info is hidden."),
+        scope=Scope.settings,
+        default=True,
+    )
 
