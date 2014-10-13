@@ -6,6 +6,36 @@
     .container {
       max-width: 1360px;
     }
+    #unityPlayerContainer {
+      background-color: #000;
+      position: fixed;
+      height: 100%;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 2000;
+    }
+    #unityPlayerContainer .exit-lab {
+      background-color: #fff;
+      position: fixed;
+      right: 16px;
+      top: 16px;
+      padding: 16px;
+    }
+    #unityPlayer {
+      margin: 0 auto;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 957px;
+      height: 650px;
+    }
+    #unityPlayer .missing {
+      width: inherit;
+      height: inherit;
+      text-align: center;
+      line-height: 650px;
+    }
   </style>
   <script type="text/javascript">
   <!--
@@ -29,32 +59,33 @@
   <div>${lab.name}</div>
   -->
 
-  <div class="lab-module-info">
-    <h4>${lab.name}</h4>
-    <p>You are now about to enter of the Labster virtual labs.</p>
-    % if user_save:
-    <p>It appears that you have already used this specific lab in the past, and we have automatically stored your progress in the lab, so you don't have to start all from the beginning.</p>
-    <p>Please click the <strong>Continue from save game</strong> button below, if you would like to continue from the last position in the lab that was stored, or click <strong>Restart from beginning</strong> if you would like to play the whole lab from the start again.</p>
-    % else:
-    <p>Please click <strong>Start</strong> button to start playing.</p>
-    % endif
-  </div>
-  <div id="buttonContent">
-    % if user_save:
-    <a class="button playLabButton" data-url="start_new_lab/" id="startNewButton" href="#">Restart from beginning</a>
-    <a class="button playLabButton" data-url="continue_lab/" id="continueButton" href="#">Continue from save game</a>
-    % else:
-    <a class="button playLabButton" data-url="start_new_lab/" id="startNewButton" href="#">Start</a>
-    % endif
-  </div>
+  <div class="loading">Loading &hellip;</div>
+  <div id="labModuleContainer" style="display:none">
+    <div class="lab-module-info">
+      <h4>${lab.name}</h4>
+      <p>You are now about to enter of the Labster virtual labs.</p>
+      <p>It appears that you have already used this specific lab in the past, and we have automatically stored your progress in the lab, so you don't have to start all from the beginning.</p>
+      <p>Please click the <strong>Continue from save game</strong> button below, if you would like to continue from the last position in the lab that was stored, or click <strong>Restart from beginning</strong> if you would like to play the whole lab from the start again.</p>
+    </div>
+    <div id="buttonContent">
+      <a class="button playLabButton" data-url="start_new_lab/" id="startNewButton" href="#">Restart from beginning</a>
+      <a class="button playLabButton" data-url="continue_lab/" id="continueButton" href="#">Continue from save game</a>
+    </div>
 
-  <div id="unityPlayer" style="display:none">
-    <div class="missing">
-      <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
-        <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
-      </a>
+    <div id="unityPlayerContainer" style="display:none">
+      <a href="" class="exit-lab">Exit Lab</a>
+      <div id="unityPlayer">
+        <div class="missing">
+          <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
+            <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
+          </a>
+        </div>
+      </div>
     </div>
   </div>
+
+  <script id="unityPlayerTemplate" type="text/template">
+  </script>
 
   <!-- Segment.IO Start -->
   <script type="text/javascript">
@@ -103,7 +134,8 @@
         ev.preventDefault();
         var el = jQuery(ev.currentTarget);
         var url = el.data('url');
-        jQuery('#buttonContent').empty().append("Loading &hellip;");
+
+        jQuery('#unityPlayerContainer').show();
         jQuery.ajax({
           url: url,
           method: 'GET',
@@ -112,18 +144,33 @@
           error: function(response) {
           },
           complete: function(response) {
-            jQuery('#buttonContent').hide();
-            jQuery('#unityPlayer').show();
+            $('.loading').hide();
+            $('#labModuleContainer').show();
             playLab();
           }
         });
       });
+
+      jQuery('#unityPlayerContainer .exit-lab').click(function(ev) {
+        ev.preventDefault();
+        var sure = confirm("Are you sure you want to close the lab?");
+        if (sure) {
+          jQuery('#unityPlayerContainer').hide();
+          stopLab();
+        }
+      });
+
+      % if user_save:
+      $('#labModuleContainer').show();
+      $('.loading').hide();
+      % else:
+      jQuery('.playLabButton').click();
+      % endif
     });
 
     var u;
     var playLab = function() {
       if (! loaded) {
-        loaded = true;
         var config = {
           width: 957,
           height: 650,
@@ -134,10 +181,16 @@
         };
         u = new UnityObject2(config);
         u.initPlugin(jQuery("#unityPlayer")[0], "https://s3-us-west-2.amazonaws.com/labster/unity/${lab.engine_file}?token=${user_token.key}");
+        loaded = true;
       }
+
+      jQuery('#livechat-compact-container').hide();
     };
 
     var stopLab = function() {
+      jQuery('#unityPlayer').empty();
+      jQuery('#livechat-compact-container').show();
+      loaded = false;
     };
   </script>
 
