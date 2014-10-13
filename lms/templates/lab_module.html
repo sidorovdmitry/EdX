@@ -3,9 +3,6 @@
 % else:
 
   <style>
-    .container {
-      max-width: 1360px;
-    }
     #unityPlayerContainer {
       background-color: #000;
       position: fixed;
@@ -63,13 +60,19 @@
   <div id="labModuleContainer" style="display:none">
     <div class="lab-module-info">
       <h4>${lab.name}</h4>
-      <p>You are now about to enter of the Labster virtual labs.</p>
+      <p>You are now about to enter of the lab in Labster virtual labs.</p>
+      % if user_save:
       <p>It appears that you have already used this specific lab in the past, and we have automatically stored your progress in the lab, so you don't have to start all from the beginning.</p>
       <p>Please click the <strong>Continue from save game</strong> button below, if you would like to continue from the last position in the lab that was stored, or click <strong>Restart from beginning</strong> if you would like to play the whole lab from the start again.</p>
+      % endif
     </div>
     <div id="buttonContent">
+      % if user_save:
       <a class="button playLabButton" data-url="start_new_lab/" id="startNewButton" href="#">Restart from beginning</a>
-      <a class="button playLabButton" data-url="continue_lab/" id="continueButton" href="#">Continue from save game</a>
+      <a class="button button-labster-blue playLabButton" data-url="continue_lab/" id="continueButton" href="#">Continue from save game</a>
+      % else:
+      <a class="button button-labster-blue playLabButton" data-url="start_new_lab/" id="startNewButton" href="#">Enter the Lab</a>
+      % endif
     </div>
 
     <div id="unityPlayerContainer" style="display:none">
@@ -160,12 +163,8 @@
         }
       });
 
-      % if user_save:
       $('#labModuleContainer').show();
       $('.loading').hide();
-      % else:
-      jQuery('.playLabButton').click();
-      % endif
     });
 
     var u;
