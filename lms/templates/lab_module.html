@@ -141,7 +141,6 @@
         var el = jQuery(ev.currentTarget);
         var url = el.data('url');
 
-        jQuery('#unityPlayerContainer').show();
         jQuery.ajax({
           url: url,
           method: 'GET',
@@ -150,8 +149,9 @@
           error: function(response) {
           },
           complete: function(response) {
-            $('.loading').hide();
-            $('#labModuleContainer').show();
+            jQuery('.loading').hide();
+            jQuery('#unityPlayerContainer').show();
+            jQuery('#labModuleContainer').show();
             playLab();
           }
         });
@@ -166,8 +166,8 @@
         }
       });
 
-      $('#labModuleContainer').show();
-      $('.loading').hide();
+      jQuery('#labModuleContainer').show();
+      jQuery('.loading').hide();
     });
 
     var u;
