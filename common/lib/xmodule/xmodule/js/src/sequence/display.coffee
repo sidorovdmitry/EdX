@@ -11,6 +11,9 @@ class @Sequence
     @bind()
     @render parseInt(@el.data('position'))
 
+    if @contents.length < 2
+      $('.sequence-nav').hide()
+
   $: (selector) ->
     $(selector, @el)
 
