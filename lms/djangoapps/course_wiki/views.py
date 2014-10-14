@@ -37,7 +37,10 @@ def course_wiki_redirect(request, course_id):  # pylint: disable=W0613
     example, "/6.002x") to keep things simple.
     """
     course = get_course_by_id(SlashSeparatedCourseKey.from_deprecated_string(course_id))
-    course_slug = course_wiki_slug(course)
+    if course.main_wiki_page:
+        course_slug = course.main_wiki_page
+    else:
+        course_slug = course_wiki_slug(course)
 
     valid_slug = True
     if not course_slug:
