@@ -65,4 +65,9 @@ class LmsBlockMixin(XBlockMixin):
         scope=Scope.settings,
         default=True,
     )
-
+    main_wiki_page = String(
+        display_name=_("Main Wiki Page for the Course"),
+        help=_("Enter the page for the main page. If empty, it'll use default /wiki/course.id/"),
+        scope=Scope.settings,
+        default="",
+    )
