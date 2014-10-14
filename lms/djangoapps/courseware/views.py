@@ -538,7 +538,11 @@ def course_info(request, course_id):
     studio_url = get_studio_url(course_key, 'course_info')
 
     updates = get_course_info_section(request, course, 'updates')
-    if updates.strip() == '<ol></ol>':
+    possibles = [
+        '<ol></ol>',
+        '<section></section>',
+    ]
+    if updates.strip() in possibles:
         courseware = reverse('courseware', args=[course_id])
         return redirect(courseware)
 
