@@ -48,3 +48,25 @@
 {% block footer_prepend %}
   <p><em>{% trans "This article was last modified:" %} {{ article.current_revision.modified }}</em></p>
 {% endblock %}
+
+{% block jsextra %}
+<script>
+(function($) {
+  $.fn.coursify = function(course_id) {
+    return this.each(function() {
+      var el = $(this);
+      var href = el.attr('href');
+      href = "/courses/" + course_id + href;
+      el.attr('href', href);
+    });
+  };
+}(jQuery));
+
+$(function() {
+  var course_id = "{{ course_id }}";
+  if (course_id) {
+    $('.wikipath').coursify(course_id);
+  }
+});
+</script>
+{% endblock %}
