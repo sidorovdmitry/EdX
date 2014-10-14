@@ -3,6 +3,11 @@
 % else:
 
   <style>
+    #course-content {
+      background-image: url('https://labsterim.s3.amazonaws.com/media/uploads/labster/labster2_small.png');
+      background-repeat: no-repeat;
+      background-position: bottom -100px right -90px;
+    }
     #unityPlayerContainer {
       background-color: #000;
       position: fixed;
@@ -60,13 +65,12 @@
   <div id="labModuleContainer" style="display:none">
     <div class="lab-module-info">
       <h4>${lab.name}</h4>
-      % if lab.screenshot_url:
-      <img src="${lab.screenshot_url}" style="float:right">
-      % endif
-      <p>You are now about to enter of the lab in Labster virtual labs.</p>
+      <p>In this section, you will be using one of the virtual Labster labs.</p>
       % if user_save:
       <p>It appears that you have already used this specific lab in the past, and we have automatically stored your progress in the lab, so you don't have to start all from the beginning.</p>
       <p>Please click the <strong>Continue from save game</strong> button below, if you would like to continue from the last position in the lab that was stored, or click <strong>Restart from beginning</strong> if you would like to play the whole lab from the start again.</p>
+      % else:
+      <p>Please click the button below, to begin the exercise and enter the virtual lab.</p>
       % endif
     </div>
     <div id="buttonContent">
