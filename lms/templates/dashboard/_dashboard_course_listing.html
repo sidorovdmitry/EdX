@@ -128,6 +128,9 @@
           <a href="${course_target}" class="enter-course archived">${_('View Archived Course')}</a>
         % else:
           <a href="${course_target}" class="enter-course">${_('View Course')}</a>
+          % if course.labster_demo:
+          <a href="#invite-students-modal" class="invite-students" rel="leanModal" data-course-name="${course.display_name_with_default}" data-course-location="${course.location.to_deprecated_string()}">${_('Invite Students')}</a>
+          % endif
         % endif
       % endif
 

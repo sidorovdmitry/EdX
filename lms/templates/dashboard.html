@@ -6,6 +6,7 @@
   from django.core.urlresolvers import reverse
   import waffle
 %>
+<%! from staticfiles.storage import staticfiles_storage %>
 
 <%
   cert_name_short = settings.CERT_NAME_SHORT
@@ -179,6 +180,7 @@
     });
   });
   </script>
+  <script type="text/javascript" src="${staticfiles_storage.url('js/invite_students.js')}"></script>
 </%block>
 
 % if reverifications["must_reverify"] or reverifications["denied"]:
@@ -203,7 +205,7 @@
   % endif
 
   <section class="profile-sidebar">
-    <a href="${marketing_link('COURSES')}" class="sidebar-button">Add More Courses</a>
+    <a href="${marketing_link('COURSES')}" class="sidebar-button">Find More Courses</a>
     <header class="profile">
       <h1 class="user-name">${ user.username }</h1>
     </header>
@@ -519,3 +521,55 @@
     </form>
   </div>
 </section>
+
+<section id="invite-students-modal" class="modal invite-students-modal" aria-hidden="true">
+  <div class="inner-wrapper" role="alertdialog" aria-labelledy="invite-students-modal-title">
+    <button class="close-modal">
+      <i class="icon-remove"></i>
+      <span class="sr">
+        ${_('Close')}
+      </span>
+    </button>
+
+    <header>
+      <h2 id="invite-students-modal-title">
+        ${_("Invite Students to Try")} <span id="invite-students-course-name"></span>
+        <span class="sr">,
+          ${_("window open")}
+        </span>
+      </h2>
+      <h2 id="invite-students-complete-title" style="display:none">
+        Invitations sent successfully!
+      </h2>
+      <hr/>
+    </header>
+    <div id="invite-students-error" class="modal-form-error"></div>
+    <div id="invite-students-content">
+      <form id="invite-students-form" method="post" data-remote="true" action="">
+        <input id="invite-students-course-location" type="hidden" value="" name="course_location">
+        <p>You can invite up to 3 students or colleagues to try the Labster labs
+        for free, and help evaluate the fit with your science courses.</p>
+        <p>This is a great way to quickly hear from your own students,
+        how they like Labster.</p>
+        <p>
+          <div><input type="email" name="student_emails" placeholder="1st student email" required></div>
+          <div><input type="email" name="student_emails" placeholder="2nd student email"></div>
+          <div><input type="email" name="student_emails" placeholder="3rd student email"></div>
+        </p>
+        <div class="submit">
+          <input name="submit" type="submit" value="${_('Send invitation to students')}" />
+        </div>
+      </form>
+      <form id="invite-students-complete" style="display:none" action="#">
+        <p>Your students have now received an invitation to try Labster for free.</p>
+        <p>Once you and your students have evaluated it, you can buy more licenses for all your students easily using the "Buy student licenses" and a credit card.</p>
+        <p>We will also contact you one of the coming days, to hear more about how your evaluation of Labster is going. </p>
+        <p>If you have any questions, please feel free to call us or email us at any time.</p>
+        <p>We are here ready to help you get going with Labster.</p>
+        <p>You can see our contact info on our support page here:<br>
+        <a href="http://labster.com/support">http://labster.com/support</a></p>
+      </form>
+    </div>
+  </div>
+</section>
+

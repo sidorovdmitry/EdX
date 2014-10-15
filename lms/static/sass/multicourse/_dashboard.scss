@@ -444,7 +444,7 @@
           }
         }
 
-        .enter-course {
+        .enter-course, .invite-students {
           @include button(simple, $button-color);
           @include box-sizing(border-box);
           border-radius: 3px;
@@ -470,6 +470,10 @@
             text-decoration: none;
           }
         }
+      }
+
+      .invite-students {
+          margin-left: 10px;
       }
 
       // "enrolled as" status
