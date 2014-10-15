@@ -61,7 +61,7 @@ class LmsBlockMixin(XBlockMixin):
     )
     show_course_info = Boolean(
         display_name=_("Course Info is Shown"),
-        help=_("Enter true or false. If true, the course course is displayed. If false, the course info is hidden."),
+        help=_("Enter true or false. If true, the course is displayed. If false, the course info is hidden."),
         scope=Scope.settings,
         default=True,
     )
@@ -70,4 +70,10 @@ class LmsBlockMixin(XBlockMixin):
         help=_("Enter the page for the main page. If empty, it'll use default /wiki/course.id/"),
         scope=Scope.settings,
         default="",
+    )
+    labster_demo = Boolean(
+        display_name=_("Labster Demo Course"),
+        help=_("Enter true or false. If true, the will have all demo features."),
+        scope=Scope.settings,
+        default=False,
     )
