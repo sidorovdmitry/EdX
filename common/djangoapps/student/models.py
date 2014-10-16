@@ -250,6 +250,14 @@ class UserProfile(models.Model):
     goals = models.TextField(blank=True, null=True)
     allow_certificate = models.BooleanField(default=1)
 
+    USER_TYPE_STUDENT = 1
+    USER_TYPE_TEACHER = 2
+    USER_TYPE_CHOICES = (
+        (USER_TYPE_STUDENT, ugettext_noop('Student')),
+        (USER_TYPE_TEACHER, ugettext_noop('Teacher')),
+    )
+    user_type = models.IntegerField(choices=USER_TYPE_CHOICES, blank=True, null=True)
+
     def get_meta(self):
         js_str = self.meta
         if not js_str:
