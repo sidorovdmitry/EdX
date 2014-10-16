@@ -1394,9 +1394,9 @@ REGISTRATION_EXTRA_FIELDS = {
     'level_of_education': 'optional',
     'gender': 'optional',
     'year_of_birth': 'optional',
-    'mailing_address': 'optional',
-    'goals': 'optional',
-    'honor_code': 'required',
+    'mailing_address': 'hidden',
+    'goals': 'hidden',
+    'honor_code': 'hidden',
     'city': 'optional',
     'country': 'optional',
 }
