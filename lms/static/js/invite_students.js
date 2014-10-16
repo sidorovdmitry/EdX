@@ -32,15 +32,41 @@ $(function() {
 
         var el = $(event.currentTarget);
 
-        var course_location = $("#invite-students-course-location").val();
-        var url = '//' + window.cms_base + '/labster/api/course/duplicate/';
-        console.log(url);
-        var data = {
-            source: course_location
-        };
-        postJSON(url, data, function(response) {
-            console.log(response);
+        var duplicate_course = function() {
+            var course_location = $("#invite-students-course-location").val();
+            var url = '//' + window.cms_base + '/labster/api/course/duplicate/';
+            var data = {
+                source: course_location
+            };
 
+            postJSON(url, data, invite_students);
+        };
+
+        var invite_students = function(response) {
+            $("#invite-students-complete").prop("action", "/courses/" + response.course_id);
+
+            var emails = [];
+            $.each(el.find('input[type=email]'), function(index, input) {
+                var input_el = $(input);
+                if (input_el.val()) {
+                    emails.push(input_el.val());
+                }
+            });
+
+            var url = "/courses/" + response.course_id + "/instructor/api/students_update_enrollment";
+            var data = {
+                action: "enroll",
+                auto_enroll: true,
+                email_students: true,
+                identifiers: emails.join(",")
+            }
+
+            $.get(url, data, function(response) {
+                show_success();
+            });
+        };
+
+        var show_success = function(response) {
             el.find("input[type=email]").val("");
 
             $("#invite-students-run").hide();
@@ -48,8 +74,9 @@ $(function() {
 
             $("#invite-students-complete").show();
             $("#invite-students-complete-title").show();
+        }
 
-        });
+        duplicate_course();
         return false;
     });
 });
