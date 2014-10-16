@@ -542,7 +542,7 @@ def course_info(request, course_id):
         '<ol></ol>',
         '<section></section>',
     ]
-    if updates.strip() in possibles:
+    if not updates or updates.strip() in possibles:
         courseware = reverse('courseware', args=[course_id])
         return redirect(courseware)
 
