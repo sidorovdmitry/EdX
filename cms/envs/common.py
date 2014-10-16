@@ -648,6 +648,12 @@ if FEATURES.get('LABSTER'):
         'profiler',
     )
 
+    MIDDLEWARE_CLASSES = (
+        'corsheaders.middleware.CorsMiddleware',
+    ) + MIDDLEWARE_CLASSES
+
+    CORS_ORIGIN_ALLOW_ALL = True
+
     MIDDLEWARE_CLASSES += (
         'labster.middleware.ProfileMiddleware',
         'profiler.middleware.ProfilerMiddleware',
