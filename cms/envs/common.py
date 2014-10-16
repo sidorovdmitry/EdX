@@ -644,6 +644,7 @@ if FEATURES.get('LABSTER'):
         'corsheaders',
         'rest_framework',
         'rest_framework.authtoken',
+        'widget_tweaks',
         'profiler',
     )
 
