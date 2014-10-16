@@ -276,6 +276,12 @@ class UserProfile(models.Model):
         self.set_meta(meta)
         self.save()
 
+    @property
+    def token_key(self):
+        from rest_framework.authtoken.models import Token
+        token, _ = Token.objects.get_or_create(user=self.user)
+        return token.key
+
 
 class UserSignupSource(models.Model):
     """
@@ -724,7 +730,7 @@ class CourseEnrollment(models.Model):
 
             else:
                 unenroll_done.send(sender=None, course_enrollment=self)
-                
+
                 self.emit_event(EVENT_NAME_ENROLLMENT_DEACTIVATED)
 
                 dog_stats_api.increment(
