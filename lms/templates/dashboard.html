@@ -180,6 +180,10 @@
     });
   });
   </script>
+  <script>
+    window.cms_base = "${settings.CMS_BASE}";
+    window.user_token_key = "${request.user.profile.token_key}";
+  </script>
   <script type="text/javascript" src="${staticfiles_storage.url('js/invite_students.js')}"></script>
 </%block>
 
@@ -539,6 +543,9 @@
           ${_("window open")}
         </span>
       </h2>
+      <h2 id="invite-students-run-title" style="display:none">
+        Preparing the Course
+      </h2>
       <h2 id="invite-students-complete-title" style="display:none">
         Invitations sent successfully!
       </h2>
@@ -546,6 +553,10 @@
     </header>
     <div id="invite-students-error" class="modal-form-error"></div>
     <div id="invite-students-content">
+      <form id="invite-students-run" style="display:none" action="">
+        <p>Please wait while we are preparing the course for you</p>
+        <p><progress style="width:100%"></progress></p>
+      </form>
       <form id="invite-students-form" method="post" data-remote="true" action="">
         <input id="invite-students-course-location" type="hidden" value="" name="course_location">
         <p>You can invite up to 3 students or colleagues to try the Labster labs

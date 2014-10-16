@@ -4,8 +4,11 @@ $(function() {
             url: url,
             dataType: 'json',
             data: data,
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("Authorization", "Token " + window.user_token_key);
+            },
             success: callback,
-            headers : {'X-CSRFToken':$.cookie('csrftoken')}
+            headers : {'X-CSRFToken': $.cookie('csrftoken')}
         });
     }
 
@@ -20,23 +23,33 @@ $(function() {
     });
 
     $("#invite-students-form").submit(function(event) {
+        event.preventDefault();
+        $("#invite-students-form").hide();
+        $("#invite-students-modal-title").hide();
+
+        $("#invite-students-run").show();
+        $("#invite-students-run-title").show();
+
         var el = $(event.currentTarget);
 
         var course_location = $("#invite-students-course-location").val();
-        var url = '/labster/duplicate-course/';
+        var url = '//' + window.cms_base + '/labster/api/course/duplicate/';
+        console.log(url);
         var data = {
             source: course_location
         };
         postJSON(url, data, function(response) {
             console.log(response);
+
+            el.find("input[type=email]").val("");
+
+            $("#invite-students-run").hide();
+            $("#invite-students-run-title").hide();
+
+            $("#invite-students-complete").show();
+            $("#invite-students-complete-title").show();
+
         });
-
-        el.find("input[type=email]").val("");
-
-        $("#invite-students-form").hide();
-        $("#invite-students-modal-title").hide();
-        $("#invite-students-complete").show();
-        $("#invite-students-complete-title").show();
         return false;
     });
 });
