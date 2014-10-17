@@ -645,7 +645,7 @@ if FEATURES.get('LABSTER'):
         'rest_framework',
         'rest_framework.authtoken',
         'widget_tweaks',
-        'profiler',
+        # 'profiler',
     )
 
     MIDDLEWARE_CLASSES = (
@@ -654,10 +654,10 @@ if FEATURES.get('LABSTER'):
 
     CORS_ORIGIN_ALLOW_ALL = True
 
-    MIDDLEWARE_CLASSES += (
-        'labster.middleware.ProfileMiddleware',
-        'profiler.middleware.ProfilerMiddleware',
-    )
+    # MIDDLEWARE_CLASSES += (
+    #     'labster.middleware.ProfileMiddleware',
+    #     'profiler.middleware.ProfilerMiddleware',
+    # )
 
 
 ### Apps only installed in some instances
