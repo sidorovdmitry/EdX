@@ -60,12 +60,43 @@
       el.attr('href', href);
     });
   };
+
+  $.fn.prevlink = function() {
+    return this.each(function() {
+      var el = $(this);
+      el.css({
+        float: 'left',
+        display: 'block',
+        width: '50%'
+      });
+    });
+  };
+
+  $.fn.nextlink = function() {
+    return this.each(function() {
+      var el = $(this);
+      el.css({
+        float: 'right',
+        display: 'block',
+        width: '50%',
+        'text-align': 'right'
+      });
+
+      el.parent().next().css({
+        clear: 'both',
+        'padding-top': '16px'
+      });
+    });
+  };
+
 }(jQuery));
 
 $(function() {
   var course_id = "{{ course_id }}";
   if (course_id) {
     $('.wikipath').coursify(course_id);
+    $('.wikiprevpath').prevlink();
+    $('.wikinextpath').nextlink();
   }
 });
 </script>
