@@ -92,12 +92,12 @@
 }(jQuery));
 
 $(function() {
-  var course_id = "{{ course_id }}";
+  var course_id = "{{ course_id|default:"" }}";
   if (course_id) {
     $('.wikipath').coursify(course_id);
-    $('.wikiprevpath').prevlink();
-    $('.wikinextpath').nextlink();
   }
+  $('.wikiprevpath').prevlink();
+  $('.wikinextpath').nextlink();
 });
 </script>
 {% endblock %}
