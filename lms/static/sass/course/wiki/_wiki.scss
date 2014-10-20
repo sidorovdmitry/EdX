@@ -203,7 +203,7 @@ section.wiki {
       font-family: Monaco, monospace;
     }
 
-    p + table, ul + table, ol + table, table + p, table + ul, table + ol {
+    p + table, ul + table, ol + table, table + p, table + ul, table + ol, table + h2 {
       margin-top: 20px;
     }
 
