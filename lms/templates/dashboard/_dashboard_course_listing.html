@@ -28,6 +28,7 @@
   %endif
     <%
       course_target = reverse('info', args=[course.id.to_deprecated_string()])
+      membership_url = "{}#view-membership".format(reverse('instructor_dashboard', args=[course.id.to_deprecated_string()]))
     %>
 
     % if show_courseware_link:
@@ -130,6 +131,8 @@
           <a href="${course_target}" class="enter-course">${_('View Course')}</a>
           % if course.labster_demo:
           <a href="#invite-students-modal" class="invite-students" rel="leanModal" data-course-name="${course.display_name_with_default}" data-course-location="${course.location.org}/${course.location.course}/${course.location.run}">${_('Invite Students to Try Course')}</a>
+          % elif staff_access:
+          <a href="${membership_url}" class="invite-students">Manage Students</a>
           % endif
         % endif
       % endif
