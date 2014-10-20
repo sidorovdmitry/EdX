@@ -64,6 +64,59 @@ class MemberListWidget
       @$container.find selector
 
 
+class StudentListWidget
+  # create a MemberListWidget `$container` is a jquery object to embody.
+  # `params` holds template parameters. `params` should look like the defaults below.
+  constructor: (@$container, params={}) ->
+    params = _.defaults params,
+      title: "Member List"
+      info: """
+        Use this list to manage members.
+      """
+      labels: ["field1", "field2", "field3"]
+      add_placeholder: "Enter name"
+      add_btn_label: "Add Member"
+      add_handler: (input) ->
+
+    template_html = $("#student-list-widget-template").html()
+    @$container.html Mustache.render template_html, params
+
+    # bind add button
+    @$('input[type="button"].add').click =>
+      params.add_handler? @$('.add-field').val()
+
+  # clear the input text field
+  clear_input: -> @$('.add-field').val ''
+
+  # clear all table rows
+  clear_rows: -> @$('table tbody').empty()
+
+  # takes a table row as an array items are inserted as text, unless detected
+  # as a jquery objects in which case they are inserted directly. if an
+  # element is a jquery object
+  add_row: (row_array) ->
+    $tbody = @$('table tbody')
+    $tr = $ '<tr>'
+    for item in row_array
+      $td = $ '<td>'
+      if item instanceof jQuery
+        $td.append item
+      else
+        $td.text item
+      $tr.append $td
+    $tbody.append $tr
+
+  # local selector
+  $: (selector) ->
+    if @debug?
+      s = @$container.find selector
+      if s?.length != 1
+        console.warn "local selector '#{selector}' found (#{s.length}) results"
+      s
+    else
+      @$container.find selector
+
+
 class AuthListWidget extends MemberListWidget
   constructor: ($container, @rolename, @$error_section) ->
     super $container,
@@ -173,6 +226,107 @@ class AuthListWidget extends MemberListWidget
       @show_errors gettext "Error: You cannot remove yourself from the Instructor group!"
     else
       @reload_list()
+
+
+class StudentListWidget extends StudentListWidget
+  constructor: ($container, @rolename) ->
+    super $container,
+      title: $container.data 'display-name'
+      info: $container.data 'info-text'
+      labels: [gettext("Username"), gettext("Email")]
+      add_placeholder: gettext("Enter username or email")
+      add_btn_label: $container.data 'add-button-label'
+      add_handler: (input) => @add_handler input
+
+    @debug = true
+    @list_endpoint = $container.data 'list-endpoint'
+    @modify_endpoint = $container.data 'modify-endpoint'
+    unless @rolename?
+      throw "StudentListWidget missing @rolename"
+
+    @reload_list()
+
+  # action to do when is reintroduced into user's view
+  re_view: ->
+    @clear_errors()
+    @clear_input()
+    @reload_list()
+
+  # handle clicks on the add button
+  add_handler: (input) ->
+    if input? and input isnt ''
+      @modify_member_access input, 'allow', (error) =>
+        # abort on error
+        return @show_errors error unless error is null
+        @clear_errors()
+        @clear_input()
+        @reload_list()
+    else
+      @show_errors gettext "Please enter a username or email."
+
+  # reload the list of members
+  reload_list: ->
+    # @clear_rows()
+    @get_member_list (error, member_list) =>
+      # abort on error
+      return @show_errors error unless error is null
+
+      # only show the list of there are members
+      @clear_rows()
+
+      # use _.each instead of 'for' so that member
+      # is bound in the button callback.
+      _.each member_list, (member) =>
+        # if there are members, show the list
+        @add_row [member.username, member.email]
+
+  # clear error display
+  clear_errors: -> @$error_section?.text ''
+
+  # set error display
+  show_errors: (msg) -> @$error_section?.text msg
+
+  # send ajax request to list members
+  # `cb` is called with cb(error, member_list)
+  get_member_list: (cb) ->
+    $.ajax
+      dataType: 'json'
+      url: @list_endpoint
+      data: rolename: @rolename
+      success: (data) => cb? null, data[@rolename]
+      error: std_ajax_err => 
+        `// Translators: A rolename appears this sentence. A rolename is something like "staff" or "beta tester".`
+        cb? gettext("Error fetching list for role") + " '#{@rolename}'"
+
+  # send ajax request to modify access
+  # (add or remove them from the list)
+  # `action` can be 'allow' or 'revoke'
+  # `cb` is called with cb(error, data)
+  modify_member_access: (unique_student_identifier, action, cb) ->
+    $.ajax
+      dataType: 'json'
+      url: @modify_endpoint
+      data:
+        unique_student_identifier: unique_student_identifier
+        rolename: @rolename
+        action: action
+      success: (data) => @member_response data
+      error: std_ajax_err => cb? gettext "Error changing user's permissions."
+
+  member_response: (data) ->
+    @clear_errors()
+    @clear_input()
+    if data.userDoesNotExist
+      msg = gettext("Could not find a user with username or email address '<%= identifier %>'.")
+      @show_errors _.template(msg, {identifier: data.unique_student_identifier})
+    else if data.inactiveUser
+      msg = gettext("Error: User '<%= username %>' has not yet activated their account. Users must create and activate their accounts before they can be assigned a role.")
+      @show_errors _.template(msg, {username: data.unique_student_identifier})
+    else if data.removingSelfAsInstructor
+      @show_errors gettext "Error: You cannot remove yourself from the Instructor group!"
+    else
+      @reload_list()
+
 
 
 class BetaTesterBulkAddition
@@ -581,6 +735,11 @@ class Membership
     
     # initialize BetaTesterBulkAddition subsection
     plantTimeout 0, => new BetaTesterBulkAddition @$section.find '.batch-beta-testers'
+
+    @$student_list_containers = @$section.find '.student-list-container'
+    @student_lists = _.map (@$student_list_containers), (student_list_container) =>
+      rolename = $(student_list_container).data 'rolename'
+      new StudentListWidget $(student_list_container), rolename
 
     # gather elements
     @$list_selector = @$section.find 'select#member-lists-selector'

@@ -9,6 +9,8 @@ urlpatterns = patterns('',  # nopep8
         'instructor.views.api.students_update_enrollment', name="students_update_enrollment"),
     url(r'^list_course_role_members$',
         'instructor.views.api.list_course_role_members', name="list_course_role_members"),
+    url(r'^list_course_students$',
+        'instructor.views.api.list_course_students', name="list_course_students"),
     url(r'^modify_access$',
         'instructor.views.api.modify_access', name="modify_access"),
     url(r'^bulk_beta_modify_access$',

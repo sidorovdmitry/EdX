@@ -40,7 +40,7 @@ from django_comment_common.models import (
 from edxmako.shortcuts import render_to_response
 from courseware.models import StudentModule
 from shoppingcart.models import Coupon, CourseRegistrationCode, RegistrationCodeRedemption
-from student.models import CourseEnrollment, unique_id_for_user, anonymous_id_for_user
+from student.models import CourseEnrollment, unique_id_for_user, anonymous_id_for_user, CourseEnrollmentAllowed
 import instructor_task.api
 from instructor_task.api_helper import AlreadyRunningError
 from instructor_task.models import ReportStore
@@ -530,6 +530,68 @@ def list_course_role_members(request, course_id):
         rolename: map(extract_user_info, list_with_level(
             course, rolename
         )),
+    }
+    return JsonResponse(response_payload)
+
+
+@ensure_csrf_cookie
+@cache_control(no_cache=True, no_store=True, must_revalidate=True)
+@require_level('instructor')
+def list_course_students(request, course_id):
+    """
+    List students
+    Requires instructor access.
+
+    rolename is 'student'
+
+    Returns JSON of the form {
+        "course_id": "some/course/id",
+        "student": [
+            {
+                "username": "staff1",
+                "email": "staff1@example.org",
+                "first_name": "Joe",
+                "last_name": "Shmoe",
+            }
+        ]
+    }
+    """
+    course_id = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+    course = get_course_with_access(
+        request.user, 'instructor', course_id, depth=None
+    )
+
+    rolename = 'student'  # request.GET.get('rolename')
+
+    def extract_user_info(user):
+        """ convert user into dicts for json view """
+        return {
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+        }
+
+    def get_students(course):
+        ceas = CourseEnrollmentAllowed.objects.filter(course_id=course)
+        emails = ceas.values_list('email', flat=True)
+        users = User.objects.filter(email__in=emails)
+        users_by_email = {user.email: user for user in users}
+        students = []
+        for email in emails:
+            user = users_by_email.get(email)
+            if not user:
+                username = ''
+                user = User(username=username, email=email)
+
+            students.append(user)
+        return students
+
+    students = get_students(course_id)
+
+    response_payload = {
+        'course_id': course_id.to_deprecated_string(),
+        rolename: map(extract_user_info, students),
     }
     return JsonResponse(response_payload)
 

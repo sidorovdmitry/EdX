@@ -26,6 +26,28 @@
   </div>
 </script>
 
+<script type="text/template" id="student-list-widget-template">
+  <div class="member-list-widget">
+    <div class="header">
+      <div class="title"> {{title}} </div>
+    </div>
+    <div class="info"> {{info}} </div>
+    <div class="member-list">
+      <table>
+        <thead>
+          <tr>
+            {{#labels}}
+              <td class="label">{{.}}</td>
+            {{/labels}}
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</script>
+
+
 <div class="vert-left">
 <div class="batch-enrollment">
   <h2> ${_("Batch Enrollment")} </h2>
@@ -115,6 +137,19 @@
 </div>
 
 <div class="vert-right member-lists-management">
+  <div>
+    <h2> ${_("Students")} </h2>
+
+    <div class="student-list-container active"
+      data-rolename="student"
+      data-display-name="${_("Students")}"
+      data-info-text="
+        ${_("List of students invited to the course.")}"
+      data-list-endpoint="${ section_data['list_course_students_url'] }"
+    ></div>
+
+  </div>
+
   ## Translators: an "Administration List" is a list, such as Course Staff, that users can be added to.
   <h2> ${_("Administration List Management")} </h2>
 
