@@ -43,7 +43,7 @@ $(function() {
         };
 
         var invite_students = function(response) {
-            $("#invite-students-complete").prop("action", "/courses/" + response.course_id);
+            $("#invite-students-complete").prop("action", "/courses/" + response.course_id + "/instructor#view-membership");
 
             var emails = [];
             $.each(el.find('input[type=email]'), function(index, input) {
