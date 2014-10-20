@@ -178,9 +178,16 @@
         % elif not is_shib_course and not can_enroll:
           <span class="register disabled">${_("Enrollment is Closed")}</span>
         %else:
+
+          % if course.labster_demo:
+          <a href="#try-course-modal" rel="leanModal" class="try-course">
+            ${_("Try for Course")}
+          </a>
+          % else:
           <a href="#" class="register">
             ${_("Register for Course")}
           </a>
+          % endif
           <div id="register_error"></div>
         %endif
         </div>
@@ -359,3 +366,32 @@
 %endif
 
 <%include file="../video_modal.html" />
+
+<section id="try-course-modal" class="modal try-course-modal">
+  <div class="inner-wrapper" role="alertdialog" aria-labelledy="try-course-modal-title">
+    <button class="close-modal">
+      <i class="icon-remove"></i>
+      <span class="sr">
+        ${_('Close')}
+      </span>
+    </button>
+    <header>
+      <h2>
+        ${_("Course Trial Version")}
+        <span class="sr">,
+          ${_("window open")}
+        </span>
+      </h2>
+      <hr/>
+    </header>
+    <form id="" action="#" method="get">
+      <p><strong>Important:</strong><br>
+         You are about to try a trial version of this course for testing purposes only.</p>
+      <p>If you are a student, who have been invited by your teacher to use Labster, please use the link provided in the email to register directly for the full course.</p>
+      <p>If you are a teacher, wanting to evaluate Labster, please proceed by clicking "Continue" below.</p>
+      <div class="submit">
+        <input name="submit" type="submit" class="register" value="${_('Continue')}" />
+      </div>
+    </form>
+  </div>
+</section>
