@@ -194,7 +194,6 @@
 % endif
 
 <section class="container dashboard" id="dashboard-main" aria-hidden="false">
-
   %if message:
     <section class="dashboard-banner">
       ${message}
@@ -589,3 +588,37 @@
   </div>
 </section>
 
+% if not user.is_active:
+<a id="user-inactive-link" href="#user-inactive-modal" rel="leanModal" style="display:none">show</a>
+<section id="user-inactive-modal" class="modal user-inactive-modal" aria-hidden="true">
+  <div class="inner-wrapper" role="alertdialog" aria-labelledy="user-inactive-modal-title">
+    <button class="close-modal">
+      <i class="icon-remove"></i>
+      <span class="sr">
+        ${_('Close')}
+      </span>
+    </button>
+
+    <header>
+      <h2 id="user-inactive-modal-title">
+        ${_("Your Account has been Created")}
+        <span class="sr">,
+          ${_("window open")}
+        </span>
+      </h2>
+      <hr/>
+    </header>
+    <form id="" action="">
+      <p>To access your courses, please now check your email for an activation email, and click the link in the email to activate your account.<br>
+      Then you will be able to start the course.</p>
+    </form>
+  </div>
+</section>
+<script>
+$(function() {
+  setTimeout(function()  {
+    $('#user-inactive-link').click();
+  }, 1000);
+});
+</script>
+% endif
