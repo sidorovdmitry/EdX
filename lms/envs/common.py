@@ -1447,6 +1447,7 @@ if FEATURES.get('LABSTER'):
     )
 
     MIDDLEWARE_CLASSES = (
+        'labster.middleware.IEDetectionMiddleware',
         'corsheaders.middleware.CorsMiddleware',
     ) + MIDDLEWARE_CLASSES
 
