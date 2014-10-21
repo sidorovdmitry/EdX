@@ -44,13 +44,16 @@
         <tbody></tbody>
       </table>
     </div>
+    <div class="bottom-bar">
+      <input type="button" name="add" class="add" value="{{add_btn_label}}">
+    </div>
   </div>
 </script>
 
 
 <div class="vert-left">
 <div class="batch-enrollment">
-  <h2> ${_("Batch Enrollment")} </h2>
+  <h2> ${_("Student Batch Enrollment")} </h2>
   <p>
     <label for="student-ids">
       ${_("Enter email addresses and/or usernames separated by new lines or commas.")}
@@ -93,7 +96,7 @@
 
 %if section_data['access']['instructor']:
 <div class="batch-beta-testers">
-  <h2> ${_("Batch Beta Tester Addition")} </h2>
+  <h2> ${_("Student Batch Beta Tester Addition")} </h2>
   <p>
     <label for="student-ids-for-beta">
       ${_("Enter email addresses and/or usernames separated by new lines or commas.")}<br/>

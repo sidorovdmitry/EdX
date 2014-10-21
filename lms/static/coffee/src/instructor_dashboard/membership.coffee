@@ -75,7 +75,7 @@ class StudentListWidget
       """
       labels: ["field1", "field2", "field3"]
       add_placeholder: "Enter name"
-      add_btn_label: "Add Member"
+      add_btn_label: "Add Student"
       add_handler: (input) ->
 
     template_html = $("#student-list-widget-template").html()
@@ -83,7 +83,8 @@ class StudentListWidget
 
     # bind add button
     @$('input[type="button"].add').click =>
-      params.add_handler? @$('.add-field').val()
+      $('.batch-enrollment textarea').focus()
+      $('.batch-enrollment textarea').prev('label').css('color', 'green')
 
   # clear the input text field
   clear_input: -> @$('.add-field').val ''
