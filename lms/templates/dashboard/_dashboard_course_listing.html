@@ -1,4 +1,4 @@
-<%page args="course, enrollment, show_courseware_link, cert_status, show_email_settings, course_mode_info, show_refund_option, is_paid_course" />
+<%page args="course, enrollment, show_courseware_link, cert_status, show_email_settings, course_mode_info, show_refund_option, is_paid_course, user_course_role" />
 
 <%! from django.utils.translation import ugettext as _ %>
 <%!
@@ -131,7 +131,7 @@
           <a href="${course_target}" class="enter-course">${_('View Course')}</a>
           % if course.labster_demo:
           <a href="#invite-students-modal" class="invite-students" rel="leanModal" data-course-name="${course.display_name_with_default}" data-course-location="${course.location.org}/${course.location.course}/${course.location.run}">${_('Invite Students to Try Course')}</a>
-          % elif staff_access:
+          % elif 'staff' in user_course_role:
           <a href="${membership_url}" class="invite-students">Manage Students</a>
           % endif
         % endif
