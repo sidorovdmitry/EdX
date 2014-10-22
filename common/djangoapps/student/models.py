@@ -1027,6 +1027,11 @@ class CourseEnrollment(models.Model):
             return True
 
 
+
+class CourseEnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course_id', 'mode', 'created', 'is_active')
+
+
 class CourseEnrollmentAllowed(models.Model):
     """
     Table of users (specified by email address strings) who are allowed to enroll in a specified course.
