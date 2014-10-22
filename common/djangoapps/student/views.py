@@ -46,7 +46,8 @@ from student.models import (
     Registration, UserProfile, PendingNameChange,
     PendingEmailChange, CourseEnrollment, unique_id_for_user,
     CourseEnrollmentAllowed, UserStanding, LoginFailures,
-    create_comments_service_user, PasswordHistory, UserSignupSource
+    create_comments_service_user, PasswordHistory, UserSignupSource,
+    CourseAccessRole
 )
 from student.forms import PasswordResetFormNoActive
 
@@ -518,6 +519,15 @@ def dashboard(request):
         # if the user doesn't have a preference, use the default language
         current_language = settings.LANGUAGE_DICT[settings.LANGUAGE_CODE]
 
+    # user's role
+    def get_user_role(user, course):
+        cars = CourseAccessRole.objects.filter(user=user, course_id=course.id)
+        if cars:
+            return list(cars.values_list('role', flat=True))
+        return []
+
+    user_course_roles = {course.id: get_user_role(user, course) for course, _ in course_enrollment_pairs}
+
     context = {
         'course_enrollment_pairs': course_enrollment_pairs,
         'course_optouts': course_optouts,
@@ -544,6 +554,7 @@ def dashboard(request):
         'platform_name': settings.PLATFORM_NAME,
         'enrolled_courses_either_paid': enrolled_courses_either_paid,
         'provider_states': [],
+        'user_course_roles': user_course_roles,
     }
 
     if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
