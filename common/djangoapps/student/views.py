@@ -1103,6 +1103,7 @@ def _do_create_account(post_vars, extended_profile=None):
     profile.city = post_vars.get('city')
     profile.country = post_vars.get('country')
     profile.goals = post_vars.get('goals')
+    profile.user_type = post_vars.get('user_type')
 
     # add any extended profile information in the denormalized 'meta' field in the profile
     if extended_profile:
@@ -1207,7 +1208,7 @@ def create_account(request, post_override=None):  # pylint: disable-msg=too-many
         required_post_vars.append('terms_of_service')
 
     for field_name in required_post_vars:
-        if field_name in ('gender', 'level_of_education'):
+        if field_name in ('gender', 'level_of_education', 'user_type'):
             min_length = 1
         else:
             min_length = 2
@@ -1226,7 +1227,8 @@ def create_account(request, post_override=None):  # pylint: disable-msg=too-many
                 'mailing_address': _('Your mailing address is required'),
                 'goals': _('A description of your goals is required'),
                 'city': _('A city is required'),
-                'country': _('A country is required')
+                'country': _('A country is required'),
+                'user_type': _('Your occupation is required'),
             }
 
             if field_name in error_str:

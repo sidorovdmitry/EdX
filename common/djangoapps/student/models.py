@@ -252,9 +252,11 @@ class UserProfile(models.Model):
 
     USER_TYPE_STUDENT = 1
     USER_TYPE_TEACHER = 2
+    USER_TYPE_OTHER = 3
     USER_TYPE_CHOICES = (
         (USER_TYPE_STUDENT, ugettext_noop('Student')),
         (USER_TYPE_TEACHER, ugettext_noop('Teacher')),
+        (USER_TYPE_OTHER, ugettext_noop('Other')),
     )
     user_type = models.IntegerField(choices=USER_TYPE_CHOICES, blank=True, null=True)
 

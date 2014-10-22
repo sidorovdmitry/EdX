@@ -1399,6 +1399,7 @@ REGISTRATION_EXTRA_FIELDS = {
     'honor_code': 'hidden',
     'city': 'optional',
     'country': 'optional',
+    'user_type': 'required',
 }
 
 ########################## CERTIFICATE NAME ########################
