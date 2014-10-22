@@ -584,10 +584,12 @@ def list_course_students(request, course_id):
                 username = ''
                 user = User(username=username, email=email)
 
+            user.is_enrolled = False
             students.append(user)
         return students
 
-    students = get_students(course_id)
+    students = list(CourseEnrollment.users_enrolled_in(course_id))
+    students.extend(get_students(course_id))
 
     response_payload = {
         'course_id': course_id.to_deprecated_string(),
