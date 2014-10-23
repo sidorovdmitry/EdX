@@ -126,35 +126,38 @@
         % endif
       % endif
 
-      % if is_paid_course and show_refund_option:
-        ## Translators: The course's name will be added to the end of this sentence.
-        <a href="#unenroll-modal" class="unenroll" rel="leanModal" data-course-id="${course.id.to_deprecated_string()}" data-course-number="${course.number}" onclick="document.getElementById('track-info').innerHTML='${_("Are you sure you want to unregister from the purchased course")}';
-        document.getElementById('refund-info').innerHTML=gettext('You will be refunded the amount you paid.')">
-          ${_('Unregister')}
-        </a>
-      % elif is_paid_course and not show_refund_option:
-        ## Translators: The course's name will be added to the end of this sentence.
-        <a href="#unenroll-modal" class="unenroll" rel="leanModal" data-course-id="${course.id.to_deprecated_string()}" data-course-number="${course.number}" onclick="document.getElementById('track-info').innerHTML='${_("Are you sure you want to unregister from the purchased course")}';
-        document.getElementById('refund-info').innerHTML=gettext('You will not be refunded the amount you paid.')">
-          ${_('Unregister')}
-        </a>
-      % elif enrollment.mode != "verified":
-        ## Translators: The course's name will be added to the end of this sentence.
-        <a href="#unenroll-modal" class="unenroll" rel="leanModal" data-course-id="${course.id.to_deprecated_string()}" data-course-number="${course.number}" onclick="document.getElementById('track-info').innerHTML='${_("Are you sure you want to unregister from")}'; document.getElementById('refund-info').innerHTML=''">
-          ${_('Unregister')}
-        </a>
-      % elif show_refund_option:
-        ## Translators: The course's name will be added to the end of this sentence.
-        <a href="#unenroll-modal" class="unenroll" rel="leanModal" data-course-id="${course.id.to_deprecated_string()}" data-course-number="${course.number}" onclick="document.getElementById('track-info').innerHTML='${_("Are you sure you want to unregister from the verified {cert_name_long} track of").format(cert_name_long=cert_name_long)}';
-        document.getElementById('refund-info').innerHTML=gettext('You will be refunded the amount you paid.')">
-          ${_('Unregister')}
-        </a>
-      % else:
-        ## Translators: The course's name will be added to the end of this sentence.
-        <a href="#unenroll-modal" class="unenroll" rel="leanModal" data-course-id="${course.id.to_deprecated_string()}" data-course-number="${course.number}" onclick="document.getElementById('track-info').innerHTML='${_("Are you sure you want to unregister from the verified {cert_name_long} track of").format(cert_name_long=cert_name_long)}';
-        document.getElementById('refund-info').innerHTML=gettext('The refund deadline for this course has passed, so you will not receive a refund.')">
-          ${_('Unregister')}
-        </a>
+      <!-- Hide unregister link for staff -->
+      % if not 'staff' in user_course_role:
+        % if is_paid_course and show_refund_option:
+          ## Translators: The course's name will be added to the end of this sentence.
+          <a href="#unenroll-modal" class="unenroll" rel="leanModal" data-course-id="${course.id.to_deprecated_string()}" data-course-number="${course.number}" onclick="document.getElementById('track-info').innerHTML='${_("Are you sure you want to unregister from the purchased course")}';
+          document.getElementById('refund-info').innerHTML=gettext('You will be refunded the amount you paid.')">
+            ${_('Unregister')}
+          </a>
+        % elif is_paid_course and not show_refund_option:
+          ## Translators: The course's name will be added to the end of this sentence.
+          <a href="#unenroll-modal" class="unenroll" rel="leanModal" data-course-id="${course.id.to_deprecated_string()}" data-course-number="${course.number}" onclick="document.getElementById('track-info').innerHTML='${_("Are you sure you want to unregister from the purchased course")}';
+          document.getElementById('refund-info').innerHTML=gettext('You will not be refunded the amount you paid.')">
+            ${_('Unregister')}
+          </a>
+        % elif enrollment.mode != "verified":
+          ## Translators: The course's name will be added to the end of this sentence.
+          <a href="#unenroll-modal" class="unenroll" rel="leanModal" data-course-id="${course.id.to_deprecated_string()}" data-course-number="${course.number}" onclick="document.getElementById('track-info').innerHTML='${_("Are you sure you want to unregister from")}'; document.getElementById('refund-info').innerHTML=''">
+            ${_('Unregister')}
+          </a>
+        % elif show_refund_option:
+          ## Translators: The course's name will be added to the end of this sentence.
+          <a href="#unenroll-modal" class="unenroll" rel="leanModal" data-course-id="${course.id.to_deprecated_string()}" data-course-number="${course.number}" onclick="document.getElementById('track-info').innerHTML='${_("Are you sure you want to unregister from the verified {cert_name_long} track of").format(cert_name_long=cert_name_long)}';
+          document.getElementById('refund-info').innerHTML=gettext('You will be refunded the amount you paid.')">
+            ${_('Unregister')}
+          </a>
+        % else:
+          ## Translators: The course's name will be added to the end of this sentence.
+          <a href="#unenroll-modal" class="unenroll" rel="leanModal" data-course-id="${course.id.to_deprecated_string()}" data-course-number="${course.number}" onclick="document.getElementById('track-info').innerHTML='${_("Are you sure you want to unregister from the verified {cert_name_long} track of").format(cert_name_long=cert_name_long)}';
+          document.getElementById('refund-info').innerHTML=gettext('The refund deadline for this course has passed, so you will not receive a refund.')">
+            ${_('Unregister')}
+          </a>
+        % endif
       % endif
 
 % if show_email_settings:
