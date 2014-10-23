@@ -568,8 +568,7 @@ def list_course_students(request, course_id):
         return {
             'username': user.username,
             'email': user.email,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
+            'last_login': user.last_login.strftime('%c') if user.last_login else '',
         }
 
     def get_students(course):
@@ -582,7 +581,12 @@ def list_course_students(request, course_id):
             user = users_by_email.get(email)
             if not user:
                 username = ''
-                user = User(username=username, email=email)
+                user = User(
+                    first_name='',
+                    last_name='',
+                    last_login=None,
+                    username=username,
+                    email=email)
 
             user.is_enrolled = False
             students.append(user)

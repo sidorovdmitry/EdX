@@ -234,7 +234,7 @@ class StudentListWidget extends StudentListWidget
     super $container,
       title: $container.data 'display-name'
       info: $container.data 'info-text'
-      labels: [gettext("Username"), gettext("Email")]
+      labels: [gettext("Email"), gettext("Last Logged In")]
       add_placeholder: gettext("Enter username or email")
       add_btn_label: $container.data 'add-button-label'
       add_handler: (input) => @add_handler input
@@ -279,7 +279,7 @@ class StudentListWidget extends StudentListWidget
       # is bound in the button callback.
       _.each member_list, (member) =>
         # if there are members, show the list
-        @add_row [member.username, member.email]
+        @add_row [member.email, member.last_login]
 
   # clear error display
   clear_errors: -> @$error_section?.text ''
