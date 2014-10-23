@@ -1,6 +1,9 @@
 <%! from django.utils.translation import ugettext as _ %>
 <%page args="section_data"/>
 
+<script>
+window.course_id = '${course.id}';
+</script>
 <script type="text/template" id="member-list-widget-template">
   <div class="member-list-widget">
     <div class="header">

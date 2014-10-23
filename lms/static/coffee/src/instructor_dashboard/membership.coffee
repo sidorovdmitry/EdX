@@ -64,7 +64,7 @@ class MemberListWidget
       @$container.find selector
 
 
-class StudentListWidget
+class StudentListBaseWidget
   # create a MemberListWidget `$container` is a jquery object to embody.
   # `params` holds template parameters. `params` should look like the defaults below.
   constructor: (@$container, params={}) ->
@@ -232,12 +232,12 @@ class AuthListWidget extends MemberListWidget
       @reload_list()
 
 
-class StudentListWidget extends StudentListWidget
+class StudentListWidget extends StudentListBaseWidget
   constructor: ($container, @rolename) ->
     super $container,
       title: $container.data 'display-name'
       info: $container.data 'info-text'
-      labels: [gettext("Email"), gettext("Last Logged In")]
+      labels: [gettext("Email"), gettext("Last Logged In"), gettext("Unenroll")]
       add_placeholder: gettext("Enter username or email")
       add_btn_label: $container.data 'add-button-label'
       add_handler: (input) => @add_handler input
@@ -282,7 +282,18 @@ class StudentListWidget extends StudentListWidget
       # is bound in the button callback.
       _.each member_list, (member) =>
         # if there are members, show the list
-        @add_row [member.email, member.last_login]
+        # create revoke button and insert it into the row
+        label_trans = gettext("Unenroll")
+        $revoke_btn = $ _.template('<div class="revoke"><i class="icon-remove-sign"></i> <%= label %></div>', {label: label_trans}),
+          class: 'revoke'
+        $revoke_btn.click =>
+            @unenroll_user member.email, (error) =>
+              # abort on error
+              return @show_errors error unless error is null
+              @clear_errors()
+              @reload_list()
+
+        @add_row [member.email, member.last_login, $revoke_btn]
 
   # clear error display
   clear_errors: -> @$error_section?.text ''
@@ -316,6 +327,22 @@ class StudentListWidget extends StudentListWidget
         action: action
       success: (data) => @member_response data
       error: std_ajax_err => cb? gettext "Error changing user's permissions."
+
+  unenroll_user: (email, cb) ->
+    ok = confirm("are you sure you want to unenroll this student (" + email + ")?")
+    if ok
+      $.ajax
+        method: 'GET'
+        url: '/courses/' + window.course_id + '/instructor/api/students_update_enrollment'
+        data:
+          action: "unenroll"
+          auto_enroll: true
+          email_students: true
+          identifiers: email
+        success: (data) =>
+          @clear_errors()
+          @reload_list()
+        error: std_ajax_err => cb? gettext "Error changing user's permissions."
 
   member_response: (data) ->
     @clear_errors()
