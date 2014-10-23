@@ -84,7 +84,10 @@ class StudentListWidget
     # bind add button
     @$('input[type="button"].add').click =>
       $('.batch-enrollment textarea').focus()
-      $('.batch-enrollment textarea').prev('label').css('color', 'green')
+      $('.batch-enrollment textarea')
+        .prev('label')
+        .css('color', 'green')
+        .addClass('animated bounce');
 
   # clear the input text field
   clear_input: -> @$('.add-field').val ''
