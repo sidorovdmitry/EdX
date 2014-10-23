@@ -86,11 +86,6 @@
         'text-align': 'right'
       });
 
-      el.parent().next().css({
-        clear: 'both',
-        'padding-top': '16px'
-      });
-
       var content = el.html();
       content = 'Next (' + content + ') &#8594;';
       el.empty().append(content);
@@ -100,6 +95,10 @@
   $.fn.backlink = function() {
     return this.each(function() {
       var el = $(this);
+      el.parent().css({
+        clear: 'both',
+        'padding-top': '16px'
+      });
 
       var content = el.html();
       content = '&#8656; Back (' + content + ')';
