@@ -615,6 +615,9 @@ class BatchEnrollment
       render_list gettext("These users were not affiliated with the course so could not be unenrolled:"),
         (sr.identifier for sr in notunenrolled)
 
+    Membership $('#membership')
+          
+
 # Wrapper for auth list subsection.
 # manages a list of users who have special access.
 # these could be instructors, staff, beta users, or forum roles.
