@@ -239,7 +239,7 @@ def _section_membership(course_key, access):
     """ Provide data for the corresponding dashboard section """
     section_data = {
         'section_key': 'membership',
-        'section_display_name': _('Student and Teacher'),
+        'section_display_name': _('Students and Teachers'),
         'access': access,
         'enroll_button_url': reverse('students_update_enrollment', kwargs={'course_id': course_key.to_deprecated_string()}),
         'unenroll_button_url': reverse('students_update_enrollment', kwargs={'course_id': course_key.to_deprecated_string()}),
