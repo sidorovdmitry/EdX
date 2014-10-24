@@ -20,8 +20,11 @@ angular.module('LabsterBackOffice')
 
   })
 
-  .controller('NewPersonalLicenseController', function ($scope, $location, $http){
+  .controller('NewPersonalLicenseController', function ($scope, $location, $http) {
     $scope.labs = [];
+    $scope.showLabForm = false;
+    $scope.totalPrice = 0;
+    $scope.isProcessing = false
 
     angular.forEach(window.labList, function (lab) {
       lab.license = 0;
@@ -30,7 +33,55 @@ angular.module('LabsterBackOffice')
       $scope.labs.push(lab);
     });
 
-    console.log($scope.labs);
+    $scope.updateTotal = function () {
+      $scope.totalPrice = 0;
+      angular.forEach($scope.labs, function (lab) {
+        lab_license = lab.license;
+        if (!lab_license) {
+          lab_license = 0;
+        }
+
+        lab.total = lab_license * lab.price;
+        $scope.totalPrice += lab.total;
+        lab.total = lab.total.toFixed(2);
+      });
+      $scope.totalPrice = $scope.totalPrice.toFixed(2);
+    };
+
+    $scope.buyLabs = function () {
+      $scope.isProcessing = true;
+      var url = window.backofficeUrls.buyLab;
+      data = {
+        user: window.requestUser.backoffice.user.id,
+        payment_type: "manual",
+        list_product: []
+      };
+
+      angular.forEach($scope.labs, function (lab) {
+        if (lab.selected) {
+          data.list_product.push({
+            product: lab.id,
+            item_count: lab.license,
+            month_subscription: "6"
+          });
+        }
+      });
+
+      $http.post(url, data, {
+        headers: {
+          'Authorization': "Token " + window.requestUser.backoffice.token
+        }
+      })
+
+        .success(function (data, status, headers, config) {
+          var url = '/invoice/' + data.id;
+          $location.url(url);
+        })
+
+        .error(function (data, status, headers, config) {
+        });
+
+    }
   })
 
   .controller('NewLicenseController', function ($scope, $location, $http) {
@@ -164,7 +215,7 @@ angular.module('LabsterBackOffice')
     $scope.payment = null;
 
     var paymentId = $routeParams.paymentId;
-    var url = window.backofficeUrls.payment + paymentId;
+    var url = window.backofficeUrls.payment + paymentId + "/";
 
     $http.get(url)
       .success(function (data, status, headers, config) {
@@ -172,6 +223,7 @@ angular.module('LabsterBackOffice')
         data.total = parseFloat(data.total).toFixed(2);
         data.created_date = moment(data.created_at).format('ll');
         $scope.payment = data;
+        //console.log(data);
       });
 
     $scope.invoiceId = "00" + paymentId;

@@ -1,6 +1,9 @@
 .align-right {
     text-align: right;
 }
+.align-center {
+    text-align: center;
+}
 .labster-bo {}
 .labster-bo table {
     border: 1px solid #ccc;
@@ -55,6 +58,10 @@
 .labster-lab-list img {
     width: 150px;
     margin-right: 20px;
+}
+
+.labster-lab-list .lab-name {
+    vertical-align: middle;
 }
 
 .labster-box {

@@ -19,13 +19,13 @@
     </thead>
     <tbody>
     <tr ng-repeat="lab in labs">
-      <td><img src="{{ lab.image_url }}" /> {{ lab.name }}</td>
-      <td class="align-right">{{ lab.price|currency:"$" }}</td>
+      <td class="lab-name"><img src="{{ lab.image_url }}" /> {{ lab.name }}</td>
+      <td class="align-center">{{ lab.price|currency:"$" }}</td>
       <td class="lab-license">
-        <input ng-disabled="isProcessing" class="align-right" size="5" maxlength="5" type="text"
+        <input ng-disabled="isProcessing" class="align-center" size="5" maxlength="5" type="text"
                ng-model="lab.license" ng-change="updateTotal()">
       </td>
-      <td class="align-right">{{ lab.total|currency:"$" }}</td>
+      <td class="align-center">{{ lab.total|currency:"$" }}</td>
       <td>
         <a href="" ng-click="deselect(lab)">x</a>
       </td>
@@ -36,15 +36,13 @@
       <td>Total</td>
       <td></td>
       <td></td>
-      <td class="align-right">{{ totalPrice|currency:"$" }}</td>
+      <td class="align-center">{{ totalPrice|currency:"$" }}</td>
       <td></td>
     </tr>
     </tfoot>
   </table>
   <div ng-show="totalPrice > 0">
-    <button ng-disabled="isProcessing" ng-hide="isProcessing" type="button" class="button" ng-click="buyLabs()">
-      Checkout
-    </button>
+    <button ng-disabled="isProcessing" ng-hide="isProcessing" type="button" class="button" ng-click="buyLabs()">Checkout</button>
     <span ng-show="isProcessing">Processing &hellip;</span>
   </div>
 </div>
