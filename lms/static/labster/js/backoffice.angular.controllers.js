@@ -1,4 +1,5 @@
 angular.module('LabsterBackOffice')
+angular.module('LabsterBackOffice')
 
     .controller('LicenseListController', function($scope, $http) {
         $scope.licenses = [];

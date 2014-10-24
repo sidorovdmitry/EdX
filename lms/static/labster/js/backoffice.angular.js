@@ -2,10 +2,10 @@ angular.module('LabsterBackOffice', ['ngRoute'])
 
     .config(function($routeProvider) {
         $routeProvider
-            // .when('/', {
-            //     controller: 'HomeController',
-            //     templateUrl: window.baseUrl + 'labster/backoffice/home.html'
-            // })
+            .when('/', {
+                 controller: 'HomeController',
+                 templateUrl: window.baseUrl + 'labster/backoffice/home.html'
+            })
 
             .when('/licenses', {
                 controller: 'LicenseListController',
@@ -33,7 +33,7 @@ angular.module('LabsterBackOffice', ['ngRoute'])
             })
 
             .otherwise({
-                redirectTo: '/licenses'
+                redirectTo: '/'
             });
     })
 
