@@ -1,0 +1,37 @@
+{% if list_labs %}
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Objective</th>
+				<th>Url</th>
+				<th>Wiki Url</th>
+				<th>Picture</th>
+                <th>Languages</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for lab in list_labs %}
+				<tr>
+					<td>{{ lab.name }}</td>
+					<td>{{ lab.description }}</td>
+					<td>{{ lab.objective }}</td>
+					<td>{{ lab.url }}</td>
+					<td>{{ lab.wiki_url }}</td>
+					<td>{{ lab.screenshot }}</td>
+                    <td>{{ lab.languages }}</td>
+					<td>
+                        <a href="/labster/labs/{{ lab.id }}/update/">Update</a> |
+                        <a href="/labster/labs/{{ lab.id }}/delete/">Delete</a>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	<p>There is no labs available</p>
+{% endif %}
+
+<a href="/labster/labs/add/">Add Lab</a>

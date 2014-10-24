@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GameSaveFileDetails id="{{ user_save.id }}">
+    <UserId>{{ user_save.user.id }}</UserId>
+    <UserEmail>{{ user_save.user.email }}</UserEmail>
+    <LabId>{{ user_save.lab_proxy.id }}</LabId>
+    <FileName>{% if user_save.save_file %}{{ user_save.save_file.url }}{% endif %}</FileName>
+</GameSaveFileDetails>

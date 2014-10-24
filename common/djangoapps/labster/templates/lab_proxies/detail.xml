@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lab proxy="{{ lab_proxy.id }}" name="{{ lab_proxy.lab.name }}">
+    {% for quizblock_id, quizblock_data in problemset.items %}
+    <quizblock id="{{ quizblock_id }}" description="{{ quizblock_data.description }}">
+        {% for problem in quizblock_data.problems %}
+        <item id="{{ problem.location.name }}">
+            {{ problem.data|safe }}
+        </item>
+        {% endfor %}
+    </quizblock>
+    {% endfor %}
+</lab>
