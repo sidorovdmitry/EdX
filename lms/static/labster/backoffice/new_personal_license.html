@@ -1,0 +1,50 @@
+<header>
+  <h2>BUY NEW LICENSES</h2>
+</header>
+
+<p><strong>Purchase Individual Labs</strong></p>
+<p>Find the labs below, and enter the number of students licenses you would like to order.</p>
+<p>The total price is then automatically calculated at the bottom of the page</p>
+
+<div class="labster-lab-list">
+  <table>
+    <thead>
+    <tr>
+      <th>Lab</th>
+      <th>Price</th>
+      <th>Licenses</th>
+      <th>Total</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="lab in labs">
+      <td><img src="{{ lab.image_url }}" /> {{ lab.name }}</td>
+      <td class="align-right">{{ lab.price|currency:"$" }}</td>
+      <td class="lab-license">
+        <input ng-disabled="isProcessing" class="align-right" size="5" maxlength="5" type="text"
+               ng-model="lab.license" ng-change="updateTotal()">
+      </td>
+      <td class="align-right">{{ lab.total|currency:"$" }}</td>
+      <td>
+        <a href="" ng-click="deselect(lab)">x</a>
+      </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+      <td>Total</td>
+      <td></td>
+      <td></td>
+      <td class="align-right">{{ totalPrice|currency:"$" }}</td>
+      <td></td>
+    </tr>
+    </tfoot>
+  </table>
+  <div ng-show="totalPrice > 0">
+    <button ng-disabled="isProcessing" ng-hide="isProcessing" type="button" class="button" ng-click="buyLabs()">
+      Checkout
+    </button>
+    <span ng-show="isProcessing">Processing &hellip;</span>
+  </div>
+</div>
