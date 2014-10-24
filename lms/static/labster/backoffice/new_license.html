@@ -26,11 +26,11 @@
     <tbody>
       <tr ng-repeat="lab in labs" ng-show="lab.selected">
         <td>{{ lab.name }}</td>
-        <td class="align-right">${{ lab.price }}</td>
+        <td class="align-right">{{ lab.price|currency:"$" }}</td>
         <td class="lab-license">
           <input ng-disabled="isProcessing" class="align-right" size="5" maxlength="5" type="text" ng-model="lab.license" ng-change="updateTotal()">
         </td>
-        <td class="align-right">${{ lab.total }}</td>
+        <td class="align-right">{{ lab.total|currency:"$" }}</td>
         <td>
           <a href="" ng-click="deselect(lab)">x</a>
         </td>
@@ -41,7 +41,7 @@
         <td>Total</td>
         <td></td>
         <td></td>
-        <td class="align-right">${{ totalPrice }}</td>
+        <td class="align-right">{{ totalPrice|currency:"$" }}</td>
         <td></td>
       </tr>
     </tfoot>
