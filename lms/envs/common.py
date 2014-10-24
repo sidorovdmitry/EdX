@@ -1458,6 +1458,7 @@ if FEATURES.get('LABSTER'):
     LABSTER_UNITY_API_PREFIX = "https://edx.labster.com"
     LABSTER_BACKOFFICE_BASE_URL = "http://internal.labster.com"
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
+    LABSTER_ENABLE_NUTSHELL = False
 
     PLATFORM_NAME = 'LabsterX'
     THEME_NAME = 'labster'
