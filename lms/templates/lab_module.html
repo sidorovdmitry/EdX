@@ -9,6 +9,14 @@
       background-repeat: no-repeat;
       padding-right: 270px;
     }
+    #missingUnityContainer h2,
+    #missingUnityContainer h3,
+    #missingUnityContainer h4,
+    #missingUnityContainer p,
+    #labModuleContainer h2,
+    #labModuleContainer p {
+      margin-bottom: 16px;
+    }
     #unityPlayerContainer {
       background-color: #000;
       position: fixed;
@@ -64,9 +72,35 @@
   -->
 
   <div class="loading">Loading &hellip;</div>
+  <div id="missingUnityContainer" style="display:none">
+    <h2>${lab.name}</h2>
+    <h3>How to Play Our Labs</h3>
+    <p>To help you get started using our labs for the first time, please read through these quick guides below. If you have already used our labs in the past, you can skip these steps, and go directly to the next section.</p>
+    <h3>Supported Browsers</h3>
+    <p>For Labster's virtual labs we recommend using modern browsers like Chrome, Firefox or Safari, as the experience is much better with these browser. Therefore, if you are currently using e.g. Internet Explorer, please download Google Chrome <a href="https://www.google.com/chrome/browser/" target="_blank">here</a>, and then go back to Labster here using that browser. </p>
+    <h3>Unity3D Player</h3>
+    <p>You may also need to install the Unity Player plugin in the browser in order to play Labster. This will only happen the first time you try one of our labs, and to help guide you through the process, please have a quick look at the video below.</p>
+    <h4>Run Blocked Plug-ins</h4>
+    <p>You can run some plug-ins even if they are blocked by Chrome. Chrome will ask you for permission to run a plug-in and you should only run plug-ins on sites that you trust.</p>
+    <p>To let the plug-in run on the site, follow these steps:</p>
+    <ul>
+      <li>To run the plug-in just this once, click Run this time. The plug-in will run, but if you visit the site later, you'll be asked for permission to run the plug-in again.</li>
+      <li>To always allow the current site to run the plug-in, click Always run on this site. Subsequent visits to the site will run the plug-in without asking again.</li>
+      <li>To always allow this type of plug-in to run, go to chrome://plugins, find the plug-in and check the box next to Always allowed.</li>
+    </ul>
+    <h3>How to Install Unity Player</h3>
+    <p><iframe width="560" height="315" src="//www.youtube.com/embed/7iVtAmiqIaE" frameborder="0" allowfullscreen></iframe></p>
+    <div id="unityPlayerTest">
+      <div class="missing">
+        <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
+          <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
+        </a>
+      </div>
+    </div>
+  </div>
   <div id="labModuleContainer" style="display:none">
     <div class="lab-module-info">
-      <h4>${lab.name}</h4>
+      <h2>${lab.name}</h2>
       <p>In this section, you will be using one of the virtual Labster labs.</p>
       % if user_save:
       <p>It appears that you have already used this specific lab in the past, and we have automatically stored your progress in the lab, so you don't have to start all from the beginning.</p>
@@ -94,6 +128,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
   <script id="unityPlayerTemplate" type="text/template">
@@ -139,7 +174,20 @@
   <!-- Segment.IO End -->
 
   <script>
+
+    function detectUnityWebPlayer() {
+      var tInstalled = false;
+      if (navigator.mimeTypes && navigator.mimeTypes["application/vnd.unity"]){
+        if (navigator.mimeTypes["application/vnd.unity"].enabledPlugin &&
+            navigator.plugins && navigator.plugins["Unity Player"]) {
+          tInstalled = true;
+        }
+      }
+      return tInstalled;
+    }
+
     var loaded = false;
+    var hasUnity = detectUnityWebPlayer();
 
     jQuery(function() {
       jQuery('.playLabButton').click(function(ev) {
@@ -172,8 +220,13 @@
         }
       });
 
-      jQuery('#labModuleContainer').show();
-      jQuery('.loading').hide();
+      if (hasUnity) {
+        jQuery('#labModuleContainer').show();
+        jQuery('.loading').hide();
+      } else {
+        jQuery('#missingUnityContainer').show();
+        jQuery('.loading').hide();
+      }
     });
 
     var u;
