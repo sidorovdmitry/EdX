@@ -34,7 +34,6 @@ class Nutshell:
             'Authorization': 'Basic {}'.format(self.auth_header),
         }
         response = requests.post(self.endpoint, payload, headers=headers)
-        print method, response.json()['result']['id']
         return response.json()['result']
 
     def _get_api_endpoint_for_user(self, username):
@@ -55,15 +54,19 @@ class Nutshell:
     def _generate_request_id(self):
         return hashlib.md5(os.urandom(8)).hexdigest()[:8]
 
-    def new_contact(self, name, phone, email):
+    def new_contact(self, name, email, phone):
         params = {
             'contact': {
                 'name': name,
-                'phone': [phone],
                 'email': [email]
             }
         }
-        return nutshell.call('newContact', params)
+
+        if phone:
+            params['contact'].update({
+                'phone': [phone],
+            })
+        return self.call('newContact', params)
 
     def new_account(self, contact_id, name):
         params = {
@@ -74,7 +77,7 @@ class Nutshell:
                 ]
             }
         }
-        return nutshell.call('newAccount', params)
+        return self.call('newAccount', params)
 
     def new_lead(self, contact_id, account_id):
         params = {
@@ -85,7 +88,15 @@ class Nutshell:
                 ]
             }
         }
-        return nutshell.call('newLead', params)
+        return self.call('newLead', params)
+
+
+def create_new_lead(name, email, phone=''):
+    nutshell = Nutshell(USERNAME, API_KEY)
+    contact = nutshell.new_contact(name, email, phone)
+    account = nutshell.new_account(contact['id'], name)
+    lead = nutshell.new_lead(contact['id'], account['id'])
+    return lead['id']
 
 
 def demo():

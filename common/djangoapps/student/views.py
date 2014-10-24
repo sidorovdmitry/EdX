@@ -1134,6 +1134,12 @@ def _do_create_account(post_vars, extended_profile=None):
 
     UserPreference.set_preference(user, LANGUAGE_KEY, get_language())
 
+    try:
+        from labster.tasks import create_nutshell_data
+        create_nutshell_data(user.id)
+    except:
+        pass
+
     return (user, profile, registration)
 
 
