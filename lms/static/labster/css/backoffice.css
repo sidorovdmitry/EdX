@@ -52,12 +52,28 @@
 }
 
 .labster-box {
-    border: 2px solid #E6E6E6;
-    padding: 10px;
+    border: 1px solid #b9b9b9;
     width: 27%;
     border-radius: 6px;
     float: left;
     margin-right: 20px;
     margin-top: 20px;
     text-align: center;
+}
+
+.labster-box .labster-box-content, .labster-box header {
+    padding: 10px;
+}
+
+.labster-box .labster-box-content {
+    height: 170px;
+}
+
+.labster-box header {
+    height: 100px;
+    border-bottom: 1px solid #b9b9b9;
+    display: table-cell;
+    vertical-align: middle;
+    width: inherit;
+    background: #F4F4F4;
 }
