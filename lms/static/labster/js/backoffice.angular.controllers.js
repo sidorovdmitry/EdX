@@ -48,6 +48,12 @@ angular.module('LabsterBackOffice')
       $scope.totalPrice = $scope.totalPrice.toFixed(2);
     };
 
+    $scope.resetCount = function(lab) {
+      lab.license = 0;
+      lab.total = 0;
+      $scope.updateTotal();
+    };
+
     $scope.buyLabs = function () {
       $scope.isProcessing = true;
       var url = window.backofficeUrls.buyLab;
@@ -58,7 +64,7 @@ angular.module('LabsterBackOffice')
       };
 
       angular.forEach($scope.labs, function (lab) {
-        if (lab.selected) {
+        if (lab.license > 0) {
           data.list_product.push({
             product: lab.id,
             item_count: lab.license,
