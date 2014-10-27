@@ -653,6 +653,7 @@ if FEATURES.get('LABSTER'):
     ) + MIDDLEWARE_CLASSES
 
     CORS_ORIGIN_ALLOW_ALL = True
+    LABSTER_ENABLE_NUTSHELL = False
 
     # MIDDLEWARE_CLASSES += (
     #     'labster.middleware.ProfileMiddleware',
