@@ -17,11 +17,6 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         templateUrl: window.baseUrl + 'labster/backoffice/payment_list.html'
       })
 
-      .when('/license/new', {
-        controller: 'NewLicenseController',
-        templateUrl: window.baseUrl + 'labster/backoffice/new_license.html'
-      })
-
       .when('/license/new/personal', {
         controller: 'NewPersonalLicenseController',
         templateUrl: window.baseUrl + 'labster/backoffice/new_personal_license.html'
