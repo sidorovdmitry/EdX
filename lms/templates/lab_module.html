@@ -203,6 +203,56 @@
       return tInstalled;
     }
 
+    function setPlayerSize() {
+      var player = jQuery('#unityPlayer');
+      var max_width = 1170;
+      var max_height = 760;
+      var browser_width = $(document).width();
+      var browser_height = $(document).height();
+      var unity_width = 0;
+      var unity_height = 0;
+      var margin_left = 0;
+      var margin_top = 0;
+
+      var diff_width = browser_width - max_width;
+      var diff_height = browser_height - max_height;
+
+      // width & height are larger than max
+      if (diff_width > 0 && diff_height > 0) {
+        unity_width = max_width;
+        unity_height = max_height;
+
+        margin_top = diff_height / 2;
+        margin_left = diff_width / 2;
+
+      // set width to 100%
+      } else if (diff_width < 0) {
+        unity_width = browser_width;
+        unity_height = (unity_width * max_height) / max_width;
+
+        diff_height = browser_height - unity_height;
+        margin_top = diff_height / 2;
+
+      // set height to 100%
+      } else if (diff_height < 0) {
+        unity_height = browser_height;
+        unity_width = (unity_height * max_width) / max_height;
+
+        diff_width = browser_width - unity_width;
+        margin_left = diff_width / 2;
+      }
+
+      var styles = {
+        'width': unity_width + 'px',
+        'height': unity_height + 'px',
+        'margin-left': margin_left + 'px',
+        'margin-top': margin_top + 'px'
+      };
+
+      player.css(styles);
+    }
+
+
     var loaded = false;
     var hasUnity = detectUnityWebPlayer();
 
@@ -232,6 +282,7 @@
             jQuery('.loading').hide();
             jQuery('#unityPlayerContainer').show();
             jQuery('#labModuleContainer').show();
+            setPlayerSize();
             playLab();
           }
         });
@@ -269,12 +320,18 @@
       }
 
       jQuery('#livechat-compact-container').hide();
+
+      // jQuery('window').bind('resize', function(event) {
+      //   setPlayerSize();
+      // });
     };
 
     var stopLab = function() {
       jQuery('#unityPlayer').empty();
       jQuery('#livechat-compact-container').show();
       loaded = false;
+
+      // jQuery('window').unbind('resize');
     };
   </script>
 
