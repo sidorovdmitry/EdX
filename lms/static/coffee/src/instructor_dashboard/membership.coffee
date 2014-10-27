@@ -87,7 +87,9 @@ class StudentListBaseWidget
       $('.batch-enrollment textarea')
         .prev('label')
         .css('color', 'green')
-        .addClass('animated bounce');
+        .addClass('animated bounce')
+        .one 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', () ->
+          $(this).removeClass()
 
   # clear the input text field
   clear_input: -> @$('.add-field').val ''

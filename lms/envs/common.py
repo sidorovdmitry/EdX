@@ -939,7 +939,7 @@ PIPELINE_CSS = {
             'css/vendor/jquery.qtip.min.css',
             'css/vendor/responsive-carousel/responsive-carousel.css',
             'css/vendor/responsive-carousel/responsive-carousel.slide.css',
-            'css/vendor/animate.min.css',
+            'css/vendor/animate.css',
         ],
         'output_filename': 'css/lms-style-vendor.css',
     },

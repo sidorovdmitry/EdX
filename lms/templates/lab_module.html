@@ -48,6 +48,12 @@
       text-align: center;
       line-height: 650px;
     }
+    .download-chrome img {
+      height: 24px;
+      margin-top: -4px;
+      margin-right: 5px;
+      margin-left: -4px;
+    }
   </style>
   <script type="text/javascript">
   <!--
@@ -76,25 +82,36 @@
     <h2>${lab.name}</h2>
     <h3>How to Play Our Labs</h3>
     <p>To help you get started using our labs for the first time, please read through these quick guides below. If you have already used our labs in the past, you can skip these steps, and go directly to the next section.</p>
-    <h3>Supported Browsers</h3>
-    <p>For Labster's virtual labs we recommend using modern browsers like Chrome, Firefox or Safari, as the experience is much better with these browser. Therefore, if you are currently using e.g. Internet Explorer, please download Google Chrome <a href="https://www.google.com/chrome/browser/" target="_blank">here</a>, and then go back to Labster here using that browser. </p>
-    <h3>Unity3D Player</h3>
-    <p>You may also need to install the Unity Player plugin in the browser in order to play Labster. This will only happen the first time you try one of our labs, and to help guide you through the process, please have a quick look at the video below.</p>
-    <h4>Run Blocked Plug-ins</h4>
-    <p>You can run some plug-ins even if they are blocked by Chrome. Chrome will ask you for permission to run a plug-in and you should only run plug-ins on sites that you trust.</p>
-    <p>To let the plug-in run on the site, follow these steps:</p>
-    <ul>
-      <li>To run the plug-in just this once, click Run this time. The plug-in will run, but if you visit the site later, you'll be asked for permission to run the plug-in again.</li>
-      <li>To always allow the current site to run the plug-in, click Always run on this site. Subsequent visits to the site will run the plug-in without asking again.</li>
-      <li>To always allow this type of plug-in to run, go to chrome://plugins, find the plug-in and check the box next to Always allowed.</li>
-    </ul>
-    <h3>How to Install Unity Player</h3>
-    <p><iframe width="560" height="315" src="//www.youtube.com/embed/7iVtAmiqIaE" frameborder="0" allowfullscreen></iframe></p>
-    <div id="unityPlayerTest">
-      <div class="missing">
-        <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
-          <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
-        </a>
+    <div class="browser ie opera" style="display:none">
+      <h3>Please Use Modern Browser</h3>
+      <p>For Labster's virtual labs we recommend using modern browsers like Chrome, Firefox or Safari, as the experience is much better with these browser.</p>
+      <p>Therefore, if you already have installed one of the browsers above, please launch the browser, and login again to this course from that browser.</p>
+      <p>If you do not have one of these browsers above, please download Google Chrome using the button below, and then login to Labster again, with the new browser.</p>
+      <p><a target="_blank" href="https://google.com/chrome/browser/" class="button-labster-blue download-chrome">
+        <span><img src="https://labsterim.s3.amazonaws.com/media/uploads/edx/chrome_0.png"></span>
+        Download Google Chrome</a></p>
+    </div>
+    <div class="browser chrome firefox safari" style="display:none">
+      <h3>Unity3D Player</h3>
+      <p>You may also need to install the Unity Player plugin in the browser in order to play Labster. This will only happen the first time you try one of our labs, and to help guide you through the process, please have a quick look at the video below.</p>
+      <h4>Run Blocked Plug-ins</h4>
+      <p>You can run some plug-ins even if they are blocked by Chrome. Chrome will ask you for permission to run a plug-in and you should only run plug-ins on sites that you trust.</p>
+      <p>To let the plug-in run on the site, follow these steps:</p>
+      <ul>
+        <li>To run the plug-in just this once, click Run this time. The plug-in will run, but if you visit the site later, you'll be asked for permission to run the plug-in again.</li>
+        <li>To always allow the current site to run the plug-in, click Always run on this site. Subsequent visits to the site will run the plug-in without asking again.</li>
+        <li>To always allow this type of plug-in to run, go to chrome://plugins, find the plug-in and check the box next to Always allowed.</li>
+      </ul>
+      <h3>How to Install Unity Player</h3>
+      <p><iframe width="560" height="315" src="//www.youtube.com/embed/7iVtAmiqIaE" frameborder="0" allowfullscreen></iframe></p>
+      <h3>Install Unity Player Now</h3>
+      <p>Please click the button below, to start the Unity player install.</p>
+      <div id="unityPlayerTest">
+        <div class="missing">
+          <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
+            <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -111,7 +128,7 @@
     </div>
     <div id="buttonContent">
       % if user_save:
-      <a class="button playLabButton" data-url="start_new_lab/" id="startNewButton" href="#">Restart from beginning</a>
+      <a class="button button-labster-grey playLabButton" data-url="start_new_lab/" id="startNewButton" href="#">Restart from beginning</a>
       <a class="button button-labster-blue playLabButton" data-url="continue_lab/" id="continueButton" href="#">Continue from save game</a>
       % else:
       <a class="button button-labster-blue playLabButton" data-url="start_new_lab/" id="startNewButton" href="#">Enter the Lab</a>
@@ -186,10 +203,59 @@
       return tInstalled;
     }
 
+    function setPlayerSize() {
+      var player = jQuery('#unityPlayer');
+      var max_width = 1170;
+      var max_height = 760;
+      var browser_width = $(document).width();
+      var browser_height = $(document).height();
+      var unity_width = '100%';
+      var unity_height = '100%';
+      var margin_left = 0;
+      var margin_top = 0;
+
+      var diff_width = browser_width - max_width;
+      var diff_height = browser_height - max_height;
+
+      // width & height are larger than max
+      if (diff_width > 0 && diff_height > 0) {
+        unity_width = max_width;
+        unity_height = max_height;
+
+        margin_top = diff_height / 2;
+        margin_left = diff_width / 2;
+
+        unity_width = unity_width + 'px';
+        unity_height = unity_height + 'px';
+        margin_top = margin_top + 'px';
+        margin_left = margin_left + 'px';
+
+      }
+
+      var styles = {
+        'width': unity_width,
+        'height': unity_height,
+        'margin-left': margin_left,
+        'margin-top': margin_top
+      };
+
+      player.css(styles);
+    }
+
+
     var loaded = false;
     var hasUnity = detectUnityWebPlayer();
 
     jQuery(function() {
+      var browser = jQuery.browser;
+      if (browser.webkit || browser.mozilla) {
+        jQuery('.browser.chrome').show();
+        jQuery('#course-content').css(
+            'background-position', 'top -50px right -90px');
+      } else {
+        jQuery('.browser.ie').show();
+      }
+ 
       jQuery('.playLabButton').click(function(ev) {
         ev.preventDefault();
         var el = jQuery(ev.currentTarget);
@@ -206,6 +272,7 @@
             jQuery('.loading').hide();
             jQuery('#unityPlayerContainer').show();
             jQuery('#labModuleContainer').show();
+            setPlayerSize();
             playLab();
           }
         });
@@ -243,12 +310,18 @@
       }
 
       jQuery('#livechat-compact-container').hide();
+
+      // jQuery('window').bind('resize', function(event) {
+      //   setPlayerSize();
+      // });
     };
 
     var stopLab = function() {
       jQuery('#unityPlayer').empty();
       jQuery('#livechat-compact-container').show();
       loaded = false;
+
+      // jQuery('window').unbind('resize');
     };
   </script>
 
