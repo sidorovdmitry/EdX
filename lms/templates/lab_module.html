@@ -209,8 +209,8 @@
       var max_height = 760;
       var browser_width = $(document).width();
       var browser_height = $(document).height();
-      var unity_width = 0;
-      var unity_height = 0;
+      var unity_width = '100%';
+      var unity_height = '100%';
       var margin_left = 0;
       var margin_top = 0;
 
@@ -225,28 +225,18 @@
         margin_top = diff_height / 2;
         margin_left = diff_width / 2;
 
-      // set width to 100%
-      } else if (diff_width < 0) {
-        unity_width = browser_width;
-        unity_height = (unity_width * max_height) / max_width;
+        unity_width = unity_width + 'px';
+        unity_height = unity_height + 'px';
+        margin_top = margin_top + 'px';
+        margin_left = margin_left + 'px';
 
-        diff_height = browser_height - unity_height;
-        margin_top = diff_height / 2;
-
-      // set height to 100%
-      } else if (diff_height < 0) {
-        unity_height = browser_height;
-        unity_width = (unity_height * max_width) / max_height;
-
-        diff_width = browser_width - unity_width;
-        margin_left = diff_width / 2;
       }
 
       var styles = {
-        'width': unity_width + 'px',
-        'height': unity_height + 'px',
-        'margin-left': margin_left + 'px',
-        'margin-top': margin_top + 'px'
+        'width': unity_width,
+        'height': unity_height,
+        'margin-left': margin_left,
+        'margin-top': margin_top
       };
 
       player.css(styles);
