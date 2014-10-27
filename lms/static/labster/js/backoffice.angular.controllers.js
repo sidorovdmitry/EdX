@@ -64,7 +64,7 @@ angular.module('LabsterBackOffice')
       };
 
       angular.forEach($scope.labs, function (lab) {
-        if (lab.selected) {
+        if (lab.license > 0) {
           data.list_product.push({
             product: lab.id,
             item_count: lab.license,
