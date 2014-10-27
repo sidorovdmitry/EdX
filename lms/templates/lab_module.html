@@ -210,6 +210,8 @@
       var browser = jQuery.browser;
       if (browser.webkit || browser.mozilla) {
         jQuery('.browser.chrome').show();
+        jQuery('#course-content').css(
+            'background-position', 'top -50px right -90px');
       } else {
         jQuery('.browser.ie').show();
       }
