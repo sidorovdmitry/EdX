@@ -128,14 +128,14 @@ angular.module('LabsterBackOffice')
         $scope.payment = data;
       });
 
-    $scope.payment_description = function(payment_products) {
+    $scope.payment_description = function(payment_products, total) {
       var lab_count = 0;
       var total_license = 0;
       angular.forEach(payment_products, function (product) {
         lab_count++;
         total_license += product.item_count;
       });
-      return "Payment for " + lab_count + " labs with " + total_license + " licenses";
+      return lab_count + " labs with " + total_license + " licenses. ($" + total + ")";
     };
 
     $scope.invoiceId = "00" + paymentId;
