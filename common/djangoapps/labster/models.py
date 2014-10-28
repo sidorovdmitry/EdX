@@ -48,6 +48,12 @@ class LanguageLab(models.Model):
         return self.language_name
 
 
+class LabManager(models.Manager):
+    def get_query_set(self):
+        qs = super(LabManager, self).get_query_set()
+        return qs.filter(is_active=True)
+
+
 class Lab(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(default='')
@@ -69,6 +75,9 @@ class Lab(models.Model):
     url = models.URLField(max_length=120, blank=True, default="")
     wiki_url = models.URLField(max_length=120, blank=True, default="")
     questions = models.TextField(default='', blank=True)
+
+    all_objects = models.Manager()
+    objects = LabManager()
 
     def __unicode__(self):
         return self.name
