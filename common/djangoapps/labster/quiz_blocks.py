@@ -5,6 +5,7 @@ from lxml import etree
 import requests
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from labster.constants import COURSE_ID, ADMIN_USER_ID
 from labster.models import Lab, ProblemProxy, LabProxy
@@ -236,9 +237,7 @@ def update_master_lab(lab, user=None, course=None,
 
 
 def update_course_lab(user, course, section_name, sub_section_name,
-                      lab_name=None,
-                      command=None,
-                      force_update=False):
+                      command=None, force_update=False):
 
     section_dicts = {section.display_name: section for section in course.get_children()}
 
@@ -291,8 +290,8 @@ def update_course_lab(user, course, section_name, sub_section_name,
                 continue
 
             problem_xblock = problem_dicts[name]
-            platform_xml = etree.tostring(quiz, pretty_print=True)
 
+            platform_xml = etree.tostring(quiz, pretty_print=True)
             quiz_parser = QuizParser(quiz)
 
             edx_xml = platform_xml
@@ -492,3 +491,48 @@ def sync_surveys(course, user, master_survey):
             section.location, sub_section.location, user=user,
             display_name=sub_section.display_name)
         get_modulestore().publish(new_location, user.id)
+
+
+def update_lab_quiz_block(lab, user):
+    UsageKey = get_usage_key()
+
+    lab_proxies = LabProxy.objects.filter(lab=lab)
+
+    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.final_quiz_block_file)
+    response = requests.get(quizblock_xml)
+    assert response.status_code == 200, "missing quizblocks xml"
+
+    for lab_proxy in lab_proxies:
+        usage_key = UsageKey.from_string(lab_proxy.location)
+        item = get_modulestore().get_item(usage_key)
+
+        # for unit in item.get_children():
+        #     get_modulestore().delete_item(unit.location, user.id)
+
+        tree = etree.fromstring(response.content)
+
+        for quizblock in tree.getchildren():
+            unit_name = quizblock.attrib.get('Id')
+            unit = create_xblock(user, 'vertical', lab_proxy.location, name=unit_name)
+            unit_location = unit.location.to_deprecated_string()
+
+            for quiz in quizblock.getchildren():
+                component_name = quiz.attrib.get('Id')
+                extra_post = {'boilerplate': "multiplechoice.yaml"}
+                problem = create_xblock(user, 'problem', unit_location, extra_post=extra_post)
+
+                platform_xml = etree.tostring(quiz, pretty_print=True)
+                quiz_parser = QuizParser(quiz)
+
+                edx_xml = platform_xml
+                update_problem(
+                    user,
+                    problem,
+                    data=edx_xml,
+                    name=component_name,
+                    platform_xml=platform_xml,
+                    correct_index=quiz_parser.correct_index,
+                    correct_answer=quiz_parser.correct_answer,
+                )
+
+    Lab.update_quiz_block_last_updated(lab.id)
