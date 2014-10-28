@@ -54,6 +54,8 @@ class Lab(models.Model):
     engine_xml = models.CharField(max_length=128, blank=True, default="")
     engine_file = models.CharField(max_length=128, blank=True, default="labster.unity3d")
     use_quiz_blocks = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
     screenshot = models.ImageField(upload_to='edx/labster/lab/images', blank=True)
     screenshot_url = models.URLField(max_length=500, blank=True, default="")
 
@@ -63,6 +65,7 @@ class Lab(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
 
+    # unused
     url = models.URLField(max_length=120, blank=True, default="")
     wiki_url = models.URLField(max_length=120, blank=True, default="")
     questions = models.TextField(default='', blank=True)
