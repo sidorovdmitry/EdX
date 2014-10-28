@@ -12,6 +12,8 @@ from django.db.models import Count
 from django.db.models.signals import pre_save, post_save
 from django.utils import timezone
 
+from xmodule_django.models import CourseKeyField, LocationKeyField
+
 
 PLATFORM_NAME = 'platform'
 
@@ -63,11 +65,11 @@ class Lab(models.Model):
     quiz_block_file = models.CharField(max_length=128, blank=True, default="")
     quiz_block_last_updated = models.DateTimeField(blank=True, null=True)
 
+    demo_course_id = CourseKeyField(max_length=255, db_index=True, blank=True,
+                                    null=True)
+
     use_quiz_blocks = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-
-    screenshot = models.ImageField(upload_to='edx/labster/lab/images', blank=True)
-    screenshot_url = models.URLField(max_length=500, blank=True, default="")
 
     # lab can have many languages
     languages = models.ManyToManyField(LanguageLab)
@@ -76,6 +78,8 @@ class Lab(models.Model):
     modified_at = models.DateTimeField(default=timezone.now)
 
     # unused
+    screenshot = models.ImageField(upload_to='edx/labster/lab/images', blank=True)
+    screenshot_url = models.URLField(max_length=500, blank=True, default="")
     url = models.URLField(max_length=120, blank=True, default="")
     wiki_url = models.URLField(max_length=120, blank=True, default="")
     questions = models.TextField(default='', blank=True)
