@@ -48,12 +48,20 @@ class LanguageLab(models.Model):
         return self.language_name
 
 
+class LabManager(models.Manager):
+    def get_query_set(self):
+        qs = super(LabManager, self).get_query_set()
+        return qs.filter(is_active=True)
+
+
 class Lab(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(default='')
     engine_xml = models.CharField(max_length=128, blank=True, default="")
     engine_file = models.CharField(max_length=128, blank=True, default="labster.unity3d")
     use_quiz_blocks = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
     screenshot = models.ImageField(upload_to='edx/labster/lab/images', blank=True)
     screenshot_url = models.URLField(max_length=500, blank=True, default="")
 
@@ -63,9 +71,13 @@ class Lab(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
 
+    # unused
     url = models.URLField(max_length=120, blank=True, default="")
     wiki_url = models.URLField(max_length=120, blank=True, default="")
     questions = models.TextField(default='', blank=True)
+
+    all_objects = models.Manager()
+    objects = LabManager()
 
     def __unicode__(self):
         return self.name
