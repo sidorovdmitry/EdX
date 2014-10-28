@@ -77,9 +77,9 @@
     text-align: center;
 }
 
-/*.labster-box .labster-box-content, .labster-box header {*/
-    /*padding: 10px;*/
-/*}*/
+.labster-box header {
+    padding: 10px;
+}
 
 .labster-box .labster-box-content {
     height: 220px;
@@ -100,7 +100,6 @@
     padding: 10px 0;
     font-size: 14px;
     color: #555;
-    /*line-height: 24px;*/
 }
 
 .labster-box-content .header {
@@ -121,14 +120,6 @@
     vertical-align: middle;
     width: inherit;
     background: #F4F4F4;
-}
-
-.labster-mild-blue-button {
-    border: 1px solid #b9b9b9;
-    border-radius: 6px;
-    text-align: center;
-    background: #7E94D8;
-    height: 35px;
 }
 
 .btn-labster {
