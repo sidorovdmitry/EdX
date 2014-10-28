@@ -69,7 +69,7 @@
 
 .labster-box {
     border: 1px solid #b9b9b9;
-    width: 27%;
+    width: 29%;
     border-radius: 6px;
     float: left;
     margin-right: 20px;
@@ -77,12 +77,41 @@
     text-align: center;
 }
 
-.labster-box .labster-box-content, .labster-box header {
-    padding: 10px;
-}
+/*.labster-box .labster-box-content, .labster-box header {*/
+    /*padding: 10px;*/
+/*}*/
 
 .labster-box .labster-box-content {
-    height: 170px;
+    height: 220px;
+    position: relative;
+}
+
+.labster-box-content ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    line-height: 1.5;
+    height: 100%;
+}
+
+.labster-box-content li {
+    display: block;
+    padding: 10px 0;
+    font-size: 14px;
+    color: #555;
+    /*line-height: 24px;*/
+}
+
+.labster-box-content .header {
+    height: 30px;
+}
+
+.labster-box-content .footer {
+    bottom: 0;
+    margin-bottom: 10px;
+    position: absolute;
+    width: 100%
 }
 
 .labster-box header {
@@ -92,4 +121,27 @@
     vertical-align: middle;
     width: inherit;
     background: #F4F4F4;
+}
+
+.labster-mild-blue-button {
+    border: 1px solid #b9b9b9;
+    border-radius: 6px;
+    text-align: center;
+    background: #7E94D8;
+    height: 35px;
+}
+
+.btn-labster {
+    bottom: 0;
+    margin-bottom: 10px;
+    position: absolute;
+    width: 100%
+
+}
+
+.btn-labster button {
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: none;
+    width: 230px;
 }
