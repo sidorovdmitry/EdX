@@ -1,0 +1,103 @@
+{% load url from future %}
+<html>
+  <head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <style>
+      .container.manage-lab table tr td {
+        width: 25%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container manage-lab">
+      <h1>Update Lab's QuizBlock</h1>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Lab</th>
+            <th>Course Count</th>
+            <th>Quiz Block Last Update</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for lab in labs %}
+          <tr data-lab-id="{{ lab.id }}">
+            <td>{{ lab.name }}</td>
+            <td>{{ lab.labproxy_count }}</td>
+            <td class="moment" data-time="{% if lab.quiz_block_last_updated %}{{ lab.quiz_block_last_updated.isoformat }}{% endif %}">
+            </td>
+            <td>
+              <progress class="hide"></progress>
+              <a class="update-lab-link" href="#" data-update-url="{% url 'labster_update_quiz_block' lab.id %}">update</a>
+            </td>
+          </tr>
+          <!--
+          <tr>
+            <td id="lab-{{ lab.id }}-log" colspan="4">
+              <div>updating master course ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+            </td>
+          </tr>
+          -->
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
+    <script>
+    var csrf_token = '{{ csrf_token }}';
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrf_token);
+        }
+      }
+    });
+
+    $.fn.localTime = function() {
+      return this.each(function() {
+          var el = $(this);
+          var time = el.data('time');
+          var text = '';
+
+          if (time) {
+            var m = moment(time);
+            text = m.format('LLL');
+          }
+          el.empty().append(text);
+      });
+    };
+
+    $(function() {
+      $('.moment').localTime();
+
+      $('.update-lab-link').click(function(ev) {
+        var el = $(ev.currentTarget);
+
+        var update_url = el.data('update-url');
+
+        el.addClass('hide').prev().removeClass('hide');
+        $.post(update_url, function(response) {
+          el.removeClass('hide').prev().addClass('hide');
+          el.parent('td').prev('td').data('time', response.quiz_block_last_updated);
+          el.parent('td').prev('td').localTime();
+        });
+      });
+    });
+    </script>
+  </body>
+</html>

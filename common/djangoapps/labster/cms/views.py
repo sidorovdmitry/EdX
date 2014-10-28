@@ -1,9 +1,14 @@
+import json
+
 from django import forms
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.shortcuts import redirect
-from django.views.generic import FormView
+from django.views.decorators.csrf import csrf_protect
+from django.views.generic import FormView, TemplateView, View
 
 from labster.edx_bridge import duplicate_lab_content, duplicate_course
+from labster.quiz_blocks import update_lab_quiz_block, update_master_lab
+from labster.models import Lab
 
 
 def duplicate_lab(request):
@@ -57,4 +62,43 @@ class CourseDuplicate(FormView):
         return url
 
 
+
+class ManageLab(TemplateView):
+    template_name = "labster/cms/manage_lab.html"
+
+    def get_context_data(self, **kwargs):
+        assert self.request.user.is_authenticated() and self.request.user.is_superuser
+        context = super(ManageLab, self).get_context_data(**kwargs)
+
+        labs = Lab.fetch_with_lab_proxies()
+        context.update({
+            'labs': labs,
+        })
+
+        return context
+
+
+class UpdateQuizBlock(View):
+
+    def post(self, request, *args, **kwargs):
+        assert self.request.user.is_authenticated() and self.request.user.is_superuser
+        lab_id = kwargs.get('lab_id')
+        try:
+            lab = Lab.objects.get(id=lab_id)
+        except Lab.DoesNotExist:
+            raise Http404
+
+        update_lab_quiz_block(lab, request.user)
+        update_master_lab(lab, request.user, force_update=True)
+        lab = Lab.objects.get(id=lab_id)
+
+        response = {
+            'quiz_block_last_updated': lab.quiz_block_last_updated.isoformat(),
+        }
+        response = json.dumps(response)
+        return HttpResponse(response, content_type='application/json')
+
+
 duplicate_course_view = CourseDuplicate.as_view()
+manage_lab_view = csrf_protect(ManageLab.as_view())
+update_quiz_block_view = UpdateQuizBlock.as_view()
