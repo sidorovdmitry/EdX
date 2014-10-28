@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container">
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Lab</th>
+            <th>Course Count</th>
+            <th>Quiz Block Last Update</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for lab in labs %}
+          <tr data-lab-id="{{ lab.id }}">
+            <td>{{ lab.name }}</td>
+            <td>{{ lab.labproxy_count }}</td>
+            <td>{{ lab.quiz_block_last_updated|default:"" }}</td>
+            <td>
+              <span class="hide">updating</span>
+              <a href="#">update</a>
+            </td>
+          </tr>
+          <!--
+          <tr>
+            <td id="lab-{{ lab.id }}-log" colspan="4">
+              <div>updating master course ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+            </td>
+          </tr>
+          -->
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
+  </body>
+</html>

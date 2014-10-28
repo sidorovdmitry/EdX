@@ -1,9 +1,10 @@
 from django import forms
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
-from django.views.generic import FormView
+from django.views.generic import FormView, TemplateView
 
 from labster.edx_bridge import duplicate_lab_content, duplicate_course
+from labster.models import Lab
 
 
 def duplicate_lab(request):
@@ -57,4 +58,21 @@ class CourseDuplicate(FormView):
         return url
 
 
+
+class ManageLab(TemplateView):
+    template_name = "labster/cms/manage_lab.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ManageLab, self).get_context_data(**kwargs)
+
+        labs = Lab.fetch_with_lab_proxies()
+
+        context.update({
+            'labs': labs,
+        })
+
+        return context
+
+
 duplicate_course_view = CourseDuplicate.as_view()
+manage_lab_view = ManageLab.as_view()
