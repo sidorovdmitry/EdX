@@ -8,6 +8,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Count
 from django.db.models.signals import pre_save, post_save
 from django.utils import timezone
 
@@ -48,9 +49,9 @@ class LanguageLab(models.Model):
         return self.language_name
 
 
-class LabManager(models.Manager):
+class ActiveManager(models.Manager):
     def get_query_set(self):
-        qs = super(LabManager, self).get_query_set()
+        qs = super(ActiveManager, self).get_query_set()
         return qs.filter(is_active=True)
 
 
@@ -60,6 +61,7 @@ class Lab(models.Model):
     engine_xml = models.CharField(max_length=128, blank=True, default="")
     engine_file = models.CharField(max_length=128, blank=True, default="labster.unity3d")
     quiz_block_file = models.CharField(max_length=128, blank=True, default="")
+    quiz_block_last_updated = models.DateTimeField(blank=True, null=True)
 
     use_quiz_blocks = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -79,7 +81,12 @@ class Lab(models.Model):
     questions = models.TextField(default='', blank=True)
 
     all_objects = models.Manager()
-    objects = LabManager()
+    objects = ActiveManager()
+
+    @classmethod
+    def fetch_with_lab_proxies(self):
+        labs = Lab.objects.annotate(labproxy_count=Count('labproxy'))
+        return labs
 
     def __unicode__(self):
         return self.name
@@ -114,6 +121,9 @@ class LabProxy(models.Model):
 
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
+
+    all_objects = models.Manager()
+    objects = ActiveManager()
 
     class Meta:
         verbose_name_plural = 'Lab proxies'
