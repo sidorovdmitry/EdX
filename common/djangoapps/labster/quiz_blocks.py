@@ -301,7 +301,10 @@ def update_course_lab(user, course, section_name, sub_section_name,
                            correct_answer=quiz_parser.correct_answer)
 
 
-def update_quizblocks(course=None, user=None, section_name='Labs', command=None, is_master=False, force_update=False):
+def update_quizblocks(
+        course=None, user=None, section_name='Labs', command=None, is_master=False,
+        force_update=False):
+
     """
     updates sub sections (quizblocks) of master course
 
@@ -506,8 +509,8 @@ def update_lab_quiz_block(lab, user):
         usage_key = UsageKey.from_string(lab_proxy.location)
         item = get_modulestore().get_item(usage_key)
 
-        # for unit in item.get_children():
-        #     get_modulestore().delete_item(unit.location, user.id)
+        for unit in item.get_children():
+            get_modulestore().delete_item(unit.location, user.id)
 
         tree = etree.fromstring(response.content)
 
