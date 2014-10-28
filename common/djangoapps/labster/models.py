@@ -8,8 +8,11 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Count
 from django.db.models.signals import pre_save, post_save
 from django.utils import timezone
+
+from xmodule_django.models import CourseKeyField, LocationKeyField
 
 
 PLATFORM_NAME = 'platform'
@@ -48,9 +51,9 @@ class LanguageLab(models.Model):
         return self.language_name
 
 
-class LabManager(models.Manager):
+class ActiveManager(models.Manager):
     def get_query_set(self):
-        qs = super(LabManager, self).get_query_set()
+        qs = super(ActiveManager, self).get_query_set()
         return qs.filter(is_active=True)
 
 
@@ -59,11 +62,14 @@ class Lab(models.Model):
     description = models.TextField(default='')
     engine_xml = models.CharField(max_length=128, blank=True, default="")
     engine_file = models.CharField(max_length=128, blank=True, default="labster.unity3d")
+    quiz_block_file = models.CharField(max_length=128, blank=True, default="")
+    quiz_block_last_updated = models.DateTimeField(blank=True, null=True)
+
+    demo_course_id = CourseKeyField(max_length=255, db_index=True, blank=True,
+                                    null=True)
+
     use_quiz_blocks = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-
-    screenshot = models.ImageField(upload_to='edx/labster/lab/images', blank=True)
-    screenshot_url = models.URLField(max_length=500, blank=True, default="")
 
     # lab can have many languages
     languages = models.ManyToManyField(LanguageLab)
@@ -72,12 +78,23 @@ class Lab(models.Model):
     modified_at = models.DateTimeField(default=timezone.now)
 
     # unused
+    screenshot = models.ImageField(upload_to='edx/labster/lab/images', blank=True)
+    screenshot_url = models.URLField(max_length=500, blank=True, default="")
     url = models.URLField(max_length=120, blank=True, default="")
     wiki_url = models.URLField(max_length=120, blank=True, default="")
     questions = models.TextField(default='', blank=True)
 
     all_objects = models.Manager()
-    objects = LabManager()
+    objects = ActiveManager()
+
+    @classmethod
+    def fetch_with_lab_proxies(self):
+        labs = Lab.objects.annotate(labproxy_count=Count('labproxy'))
+        return labs
+
+    @classmethod
+    def update_quiz_block_last_updated(self, lab_id):
+        Lab.objects.filter(id=lab_id).update(quiz_block_last_updated=timezone.now())
 
     def __unicode__(self):
         return self.name
@@ -88,6 +105,25 @@ class Lab(models.Model):
             'name': self.name,
             'template_location': '',
         }
+
+    @property
+    def slug(self):
+        """
+        converts `Engine_CrimeScene_OVR.xml`
+        to `CrimeScene_OVR`
+        """
+
+        try:
+            return self.engine_xml.split('Engine_')[1].split('.xml')[0]
+        except:
+            return ''
+
+    @property
+    def final_quiz_block_file(self):
+        if self.quiz_block_file:
+            return self.quiz_block_file
+
+        return 'QuizBlocks_{}.xml'.format(self.slug)
 
     @property
     def studio_detail_url(self):
@@ -112,6 +148,9 @@ class LabProxy(models.Model):
 
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
+
+    all_objects = models.Manager()
+    objects = ActiveManager()
 
     class Meta:
         verbose_name_plural = 'Lab proxies'
