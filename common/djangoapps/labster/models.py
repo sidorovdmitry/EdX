@@ -103,6 +103,25 @@ class Lab(models.Model):
         }
 
     @property
+    def slug(self):
+        """
+        converts `Engine_CrimeScene_OVR.xml`
+        to `CrimeScene_OVR`
+        """
+
+        try:
+            return self.engine_xml.split('Engine_')[1].split('.xml')[0]
+        except:
+            return ''
+
+    @property
+    def final_quiz_block_file(self):
+        if self.quiz_block_file:
+            return self.quiz_block_file
+
+        return 'QuizBlocks_{}.xml'.format(self.slug)
+
+    @property
     def studio_detail_url(self):
         return "/labster/labs/{}/".format(self.id)
 

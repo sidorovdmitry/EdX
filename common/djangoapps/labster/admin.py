@@ -13,7 +13,7 @@ class BaseAdmin(admin.ModelAdmin):
 
 class LabAdmin(BaseAdmin):
     list_display = (
-        'name', 'engine_xml', 'engine_file', 'quiz_block_file',
+        'name', 'engine_xml', 'engine_file', 'final_quiz_block_file',
         'use_quiz_blocks', 'demo_course_id', 'is_active')
     fields = (
         'name', 'description', 'engine_xml', 'languages', 'engine_file',
