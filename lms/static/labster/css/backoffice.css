@@ -1,6 +1,9 @@
 .pull-right {
     float: right;
 }
+.align-left {
+    text-align: left;
+}
 .align-right {
     text-align: right;
 }
@@ -51,7 +54,7 @@
     font-weight: bold;
 }
 .labster-lab-list td.lab-license input {
-    float: right;
+    width: 100%;
 }
 .labster-lab-list label .label {
     display: inline-block;
@@ -60,7 +63,6 @@
 
 .labster-lab-list img {
     width: 150px;
-    margin-right: 20px;
 }
 
 .labster-lab-list .lab-name {
