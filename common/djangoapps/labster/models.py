@@ -59,6 +59,8 @@ class Lab(models.Model):
     description = models.TextField(default='')
     engine_xml = models.CharField(max_length=128, blank=True, default="")
     engine_file = models.CharField(max_length=128, blank=True, default="labster.unity3d")
+    quiz_block_file = models.CharField(max_length=128, blank=True, default="")
+
     use_quiz_blocks = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
