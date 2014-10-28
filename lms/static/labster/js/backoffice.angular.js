@@ -40,14 +40,14 @@ angular.module('LabsterBackOffice', ['ngRoute'])
   .directive('stripe', function ($location, $http) {
     return {
       restrict: 'E',
-      scope: {paymentId: '@', email: '@', amount: '@'},
+      scope: {paymentId: '@', email: '@', amount: '@', description: '@'},
       link: function (scope, element, attr) {
 
         var submitStripe = function (token) {
           var url = window.backofficeUrls.payment + scope.paymentId + "/charge_stripe/";
           var post_data = {
             'stripe_token': token.id
-          }
+          };
 
           $http.post(url, post_data, {
             headers: {
@@ -70,10 +70,9 @@ angular.module('LabsterBackOffice', ['ngRoute'])
         element.on('click', function (ev) {
           ev.preventDefault();
           var priceInCent = scope.amount * 100;
-          var description_text = "2 labs with 10 licenses";
           handler.open({
             name: 'Labster',
-            description: description_text,
+            description: scope.description,
             amount: priceInCent,
             email: scope.email
           });

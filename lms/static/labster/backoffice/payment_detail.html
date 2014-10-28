@@ -35,7 +35,7 @@
     </tfoot>
   </table>
   <p ng-show="payment.total <= 500 && ! payment.paid">
-    <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}"></stripe>
+    <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}" description="{{ payment_description(payment.payment_products) }}"></stripe>
   </p>
   <p ng-show="payment.total > 500 && ! payment.paid">
     Due to security reasons, we only allow purchase up to USD 500 for credit card.
