@@ -92,6 +92,10 @@ class Lab(models.Model):
         labs = Lab.objects.annotate(labproxy_count=Count('labproxy'))
         return labs
 
+    @classmethod
+    def update_quiz_block_last_updated(self, lab_id):
+        Lab.objects.filter(id=lab_id).update(quiz_block_last_updated=timezone.now())
+
     def __unicode__(self):
         return self.name
 
