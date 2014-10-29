@@ -21,7 +21,7 @@
     <tbody>
     <tr ng-repeat="lab in labs">
       <td class="lab-name">
-        <img src="{{ lab.image_url }}" />
+        <img ng-src="{{ lab.image_url }}" />
       </td>
       <td class="align-left"><strong> {{ lab.name }} </strong> <br/>
         {{ lab.description }}
