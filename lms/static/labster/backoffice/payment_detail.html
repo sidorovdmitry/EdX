@@ -19,18 +19,18 @@
     </thead>
     <tbody>
       <tr ng-repeat="payment_product in payment.payment_products">
-        <td class="align-center">{{ payment_product.product.name }}</td>
-        <td class="align-center">{{ payment_product.price|currency:"USD " }}</td>
-        <td class="align-center">{{ payment_product.item_count }}</td>
-        <td class="align-center">{{ payment_product.total|currency:"USD " }}</td>
+        <td>{{ payment_product.product.name }}</td>
+        <td>{{ payment_product.price|currency:"USD " }}</td>
+        <td>{{ payment_product.item_count }}</td>
+        <td>{{ payment_product.total|currency:"USD " }}</td>
       </tr>
     </tbody>
     <tfoot>
       <tr>
-        <td class="align-center">Total</td>
+        <td>Total</td>
         <td></td>
         <td></td>
-        <td class="align-center">{{ payment.total|currency:"USD " }}</td>
+        <td>{{ payment.total|currency:"USD " }}</td>
       </tr>
     </tfoot>
   </table>

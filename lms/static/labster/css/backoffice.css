@@ -5,13 +5,13 @@
     float: left;
 }
 .align-left {
-    text-align: left;
+    text-align: left !important;
 }
 .align-right {
-    text-align: right;
+    text-align: right !important;
 }
 .align-center {
-    text-align: center;
+    text-align: center !important;
 }
 .table-no-border, .table-no-border td, .table-invoice, .table-invoice td {
     border: 0 !important;
@@ -53,6 +53,7 @@
 .labster-lab-list table thead th,
 .labster-lab-list table tbody td {
     border-bottom: 1px solid #ccc;
+    text-align: center;
 }
 .labster-lab-list table thead th,
 .labster-lab-list table tbody td,

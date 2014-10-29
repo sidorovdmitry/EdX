@@ -23,7 +23,7 @@
       <td class="lab-name">
         <img src="{{ lab.image_url }}" />
       </td>
-      <td><strong> {{ lab.name }} </strong> <br/>
+      <td class="align-left"><strong> {{ lab.name }} </strong> <br/>
         {{ lab.description }}
       </td>
       <td class="align-right">{{ lab.price|currency:"$" }}</td>
@@ -31,7 +31,7 @@
         <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
                ng-model="lab.license" ng-change="updateTotal()">
       </td>
-      <td class="align-center">{{ lab.total|currency:"$" }}</td>
+      <td>{{ lab.total|currency:"$" }}</td>
       <td>
         <a href="" ng-click="resetCount(lab)">x</a>
       </td>
@@ -40,6 +40,7 @@
     <tfoot>
     <tr>
       <td>Total</td>
+      <td></td>
       <td></td>
       <td></td>
       <td class="align-center">{{ totalPrice|currency:"$" }}</td>
