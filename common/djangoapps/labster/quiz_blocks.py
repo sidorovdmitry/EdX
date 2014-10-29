@@ -5,6 +5,7 @@ from lxml import etree
 import requests
 
 from django.contrib.auth.models import User
+from django.db import IntegrityError
 from django.utils import timezone
 
 from labster.constants import COURSE_ID, ADMIN_USER_ID
@@ -462,10 +463,13 @@ def get_problem_proxy_by_question(lab_proxy, question):
             _hashed = hashlib.md5(_question.encode('utf-8').strip()).hexdigest()
             _location = str(_problem.location)
 
-            new_obj, _ = ProblemProxy.objects.get_or_create(
-                lab_proxy=lab_proxy, question=_hashed,
-                defaults={'location': _location},
-            )
+            try:
+                new_obj, _ = ProblemProxy.objects.get_or_create(
+                    lab_proxy=lab_proxy, question=_hashed,
+                    defaults={'location': _location},
+                )
+            except IntegrityError:
+                new_obj = ProblemProxy.objects.get(lab_proxy=lab_proxy, question=_hashed)
 
             if hashed == _hashed:
                 obj = new_obj
