@@ -26,6 +26,7 @@ window.requestUser = {
   id: "${user.id}",
   email: "${user.email}",
   name: "${user.profile.name}",
+  token: "${user.profile.token_key}",
   backoffice: {
     user: {
       id: "${backoffice['user_id']}"
@@ -34,6 +35,7 @@ window.requestUser = {
   }
 };
 window.backofficeUrls = {
+  duplicateLabs: "${backoffice_urls['duplicate_labs']}",
   buyLab: "${backoffice_urls['buy_lab']}",
   payment: "${backoffice_urls['payment']}",
   license: "${backoffice_urls['license']}"

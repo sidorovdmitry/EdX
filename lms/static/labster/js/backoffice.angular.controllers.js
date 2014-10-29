@@ -57,7 +57,30 @@ angular.module('LabsterBackOffice')
       $scope.updateTotal();
     };
 
+    var duplicateLabs = function(list_product, callback) {
+      var labs = [],
+          post_data;
+      angular.forEach(list_product, function(item) {
+        labs.push({
+          lab_id: item.product,
+          license_count: item.item_count
+        });
+      });
+
+      var post_data = {labs: labs};
+      var url = window.backofficeUrls.duplicateLabs;
+      $http.post(url, post_data, {
+        headers: {
+          'Authorization': "Token " + window.requestUser.token
+        }
+      }).success(function(data, status, headers, config) {
+        callback();
+      }).error(function (data, status, headers, config) {});
+    };
+
     $scope.buyLabs = function () {
+      var list_product;
+
       $scope.isProcessing = true;
       var url = window.backofficeUrls.buyLab;
       data = {
@@ -76,6 +99,7 @@ angular.module('LabsterBackOffice')
         }
       });
 
+      list_product = data.list_product;
       $http.post(url, data, {
         headers: {
           'Authorization': "Token " + window.requestUser.backoffice.token
@@ -83,8 +107,10 @@ angular.module('LabsterBackOffice')
       })
 
         .success(function (data, status, headers, config) {
-          var url = '/invoice/' + data.id;
-          $location.url(url);
+          duplicateLabs(list_product, function() {
+            var url = '/invoice/' + data.id;
+            $location.url(url);
+          });
         })
 
         .error(function (data, status, headers, config) {
