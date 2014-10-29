@@ -1,4 +1,6 @@
+from django.http import Http404
 from django.utils import timezone
+
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -33,5 +35,42 @@ class CourseDuplicate(APIView):
         unregister_course(request.user, source)
 
         response_data = {'course_id': str(course.id)}
+        return Response(response_data)
 
+
+class CourseDuplicateFromLabs(APIView):
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+
+    def post(self, request, *args, **kwargs):
+        """
+        [
+            {'lab_id': 1, 'licence_count': 10},
+            {'lab_id': 2, 'licence_count': 10},
+            {'lab_id': 3, 'licence_count': 10},
+        ]
+        """
+
+        labs = request.DATA.get('labs', [])
+        labs_by_id = {str(each['lab_id']): each for each in labs}
+        lab_ids = labs_by_id.keys()
+
+        labs = Lab.objects.filter(id__in=lab_ids)
+
+        course_ids = []
+        for lab in labs:
+            lab_data = labs_by_id[str(lab.id)]
+            licence_count = int(lab_data['license_count'])
+            extra_fields = {
+                'invitation_only': True,
+                'max_student_enrollments_allowed': license_count,
+            }
+
+            scheme = 'https' if request.is_secure() else 'http'
+            source = target = lab.demo_course_id
+            course = duplicate_course(source, target, request.user, extra_fields,
+                                    http_protocol=scheme)
+
+            course_ids.append(str(course.id))
+
+        response_data = {'courses': course_ids}
         return Response(response_data)
