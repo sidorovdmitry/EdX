@@ -294,7 +294,7 @@ DEFAULT_FROM_EMAIL = 'registration@example.com'
 DEFAULT_FEEDBACK_EMAIL = 'feedback@example.com'
 SERVER_EMAIL = 'devops@example.com'
 ADMINS = (
-    ('aldi', 'aldi@labster.com'),
+    ('edX Developers', 'edx@labster.com'),
 )
 MANAGERS = ADMINS
 
