@@ -1,6 +1,9 @@
 .pull-right {
     float: right;
 }
+.pull-left {
+    float: left;
+}
 .align-left {
     text-align: left;
 }
@@ -10,6 +13,17 @@
 .align-center {
     text-align: center;
 }
+.table-no-border, .table-no-border td, .table-invoice, .table-invoice td {
+    border: 0 !important;
+}
+.table-invoice td {
+    padding: 8px !important;
+}
+.table-invoice tr td:first-child {
+    width: 20%;
+    font-weight: bold;
+}
+
 .labster-bo {}
 .labster-bo table {
     border: 1px solid #ccc;
