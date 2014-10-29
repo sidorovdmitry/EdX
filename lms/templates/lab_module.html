@@ -255,6 +255,17 @@
       } else {
         jQuery('.browser.ie').show();
       }
+
+      var resizeProc = undefined;
+      jQuery(window).resize(function() {
+        if (resizeProc != undefined) {
+          clearTimeout(resizeProc);
+        }
+
+        resizeProc = setTimeout(function() {
+          setPlayerSize();
+        }, 500);
+      });
  
       jQuery('.playLabButton').click(function(ev) {
         ev.preventDefault();
