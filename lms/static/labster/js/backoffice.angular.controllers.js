@@ -13,6 +13,7 @@ angular.module('LabsterBackOffice')
       .success(function (data, status, headers, config) {
         angular.forEach(data, function (item) {
           item.end_date = moment(item.date_end_license).format('ll');
+          item.date_bought = moment(item.date_bought).format('ll');
         });
 
         $scope.licenses = data;
@@ -24,7 +25,7 @@ angular.module('LabsterBackOffice')
     $scope.labs = [];
     $scope.showLabForm = false;
     $scope.totalPrice = 0;
-    $scope.isProcessing = false
+    $scope.isProcessing = false;
 
     angular.forEach(window.labList, function (lab) {
       lab.license = 0;
@@ -70,7 +71,7 @@ angular.module('LabsterBackOffice')
           data.list_product.push({
             product: lab.id,
             item_count: lab.license,
-            month_subscription: "6"
+            month_subscription: lab.month_subscription
           });
         }
       });

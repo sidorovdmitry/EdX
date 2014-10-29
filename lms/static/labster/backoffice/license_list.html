@@ -6,14 +6,18 @@
     <thead>
       <tr>
         <th>Lab</th>
+        <th>Buy Date</th>
         <th>End Date</th>
-        <th>Count</th>
+        <th>Subscription</th>
+        <th>Licenses</th>
       </tr>
     </thead>
     <tbody>
       <tr ng-repeat="license in licenses">
         <td>{{ license.product_name }}</td>
+        <td>{{ license.date_bought }}</td>
         <td>{{ license.end_date }}</td>
+        <td>{{ license.month_subscription }} months</td>
         <td>{{ license.item_count }}</td>
       </tr>
     </tbody>

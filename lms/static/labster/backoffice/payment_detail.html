@@ -14,6 +14,7 @@
         <th>Lab</th>
         <th>Price</th>
         <th>Licenses</th>
+        <th>Subscriptions</th>
         <th>USD</th>
       </tr>
     </thead>
@@ -22,15 +23,17 @@
         <td>{{ payment_product.product.name }}</td>
         <td>{{ payment_product.price|currency:"USD " }}</td>
         <td>{{ payment_product.item_count }}</td>
+        <td>{{ payment_product.month_subscription }} months</td>
         <td>{{ payment_product.total|currency:"USD " }}</td>
       </tr>
     </tbody>
     <tfoot>
       <tr>
-        <td>Total</td>
+        <td class="align-center">Total</td>
         <td></td>
         <td></td>
-        <td>{{ payment.total|currency:"USD " }}</td>
+        <td></td>
+        <td class="align-center">{{ payment.total|currency:"USD " }}</td>
       </tr>
     </tfoot>
   </table>
