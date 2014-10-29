@@ -527,7 +527,7 @@ def update_lab_quiz_block(lab, user):
                 platform_xml = etree.tostring(quiz, pretty_print=True)
                 quiz_parser = QuizParser(quiz)
 
-                edx_xml = platform_xml
+                edx_xml = quiz_parser.parsed_as_string
                 update_problem(
                     user,
                     problem,
@@ -537,5 +537,23 @@ def update_lab_quiz_block(lab, user):
                     correct_index=quiz_parser.correct_index,
                     correct_answer=quiz_parser.correct_answer,
                 )
+
+                problem = get_modulestore().get_item(problem.location)
+                get_modulestore().publish(problem.location, user.id)
+
+                # create ProblemProxy
+                question = quiz.attrib.get('Sentence')
+                hashed = get_hashed_question(question)
+                obj, created = ProblemProxy.objects.get_or_create(
+                    lab_proxy=lab_proxy,
+                    question=hashed,
+                    defaults={'location': str(problem.location)},
+                )
+
+                if obj.location != str(problem.location):
+                    obj.location = str(problem.location)
+                    obj.save()
+
+            get_modulestore().publish(unit.location, user.id)
 
     Lab.update_quiz_block_last_updated(lab.id)

@@ -63,7 +63,19 @@ class CourseDuplicate(FormView):
 
 
 
-class ManageLab(TemplateView):
+class AdminOnlyMixin(object):
+
+    def dispatch(self, request, *args, **kwargs):
+        allowed = [request.user.is_authenticated(),
+                   request.user.is_superuser]
+
+        if not all(allowed):
+            return HttpResponseForbidden()
+
+        return super(AdminOnlyMixin, self).dispatch(request, *args, **kwargs)
+
+
+class ManageLab(AdminOnlyMixin, TemplateView):
     template_name = "labster/cms/manage_lab.html"
 
     def get_context_data(self, **kwargs):
@@ -78,7 +90,7 @@ class ManageLab(TemplateView):
         return context
 
 
-class UpdateQuizBlock(View):
+class UpdateQuizBlock(AdminOnlyMixin, View):
 
     def post(self, request, *args, **kwargs):
         assert self.request.user.is_authenticated() and self.request.user.is_superuser
