@@ -29,7 +29,7 @@
       <td class="align-right">{{ lab.price|currency:"$" }}</td>
       <td class="align-right lab-license">
         <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
-               ng-model="lab.license" ng-change="updateTotal()">
+               ng-model="lab.license" ng-change="updateTotal()" numeric>
       </td>
       <td class="align-right">{{ lab.total|currency:"$" }}</td>
       <td>
