@@ -48,8 +48,7 @@
     </tr>
     </tfoot>
   </table>
-  <div ng-show="totalPrice > 0">
-    <button ng-disabled="isProcessing" ng-hide="isProcessing" type="button" class="button pull-right" ng-click="buyLabs()">Checkout</button>
-    <span ng-show="isProcessing">Processing &hellip;</span>
+  <div>
+    <button ng-disabled="isProcessing" type="button" class="button pull-right" ng-click="buyLabs()">{{ checkout_button }}</button>
   </div>
 </div>
