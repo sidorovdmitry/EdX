@@ -5,24 +5,24 @@
   <table>
     <thead>
       <tr>
-        <th>Invoice No.</th>
-        <th>Date</th>
-        <th>Labs</th>
-        <th>Total</th>
-        <th>Status</th>
+        <th class="align-right">Invoice No.</th>
+        <th class="align-center">Date</th>
+        <th class="align-left">Labs</th>
+        <th class="align-right">Total</th>
+        <th class="align-right">Status</th>
       </tr>
     </thead>
     <tbody>
       <tr ng-repeat="payment in payments">
-        <td><a href="{{ payment.detail_url }}">{{ payment.invoice_number }}</a></td>
-        <td>{{ payment.created_date }}</td>
-        <td>
+        <td class="align-right"><a href="{{ payment.detail_url }}">{{ payment.invoice_number }}</a></td>
+        <td class="align-center">{{ payment.created_date }}</td>
+        <td class="align-left">
           <div ng-repeat="payment_product in payment.payment_products">
             {{ payment_product.product.name }}
           </div>
         </td>
-        <td>USD {{ payment.total }}</td>
-        <td>
+        <td class="align-right">USD {{ payment.total }}</td>
+        <td class="align-right">
           <span ng-show="payment.paid">paid</span>
           <span ng-hide="payment.paid">unpaid</span>
         </td>

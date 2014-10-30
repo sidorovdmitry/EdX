@@ -53,7 +53,7 @@
 .labster-lab-list table thead th,
 .labster-lab-list table tbody td {
     border-bottom: 1px solid #ccc;
-    text-align: center;
+    text-align: left;
 }
 .labster-lab-list table thead th,
 .labster-lab-list table tbody td,
