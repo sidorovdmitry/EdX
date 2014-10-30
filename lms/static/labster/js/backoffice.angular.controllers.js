@@ -37,16 +37,16 @@ angular.module('LabsterBackOffice')
     $scope.updateTotal = function () {
       $scope.totalPrice = 0;
       angular.forEach($scope.labs, function (lab) {
-        if (lab.license > 0) {
-          lab_license = lab.license;
-          if (!lab_license) {
-            lab_license = 0;
-          }
-
-          lab.total = lab_license * lab.price;
-          $scope.totalPrice += lab.total;
-          lab.total = lab.total.toFixed(2);
+        // set default value to 0 if the field is empty
+        var length = lab.license.toString().length;
+        if (length == 0) {
+          lab.license = 0;
         }
+
+        lab.total = lab.license * lab.price;
+        $scope.totalPrice += lab.total;
+        lab.total = lab.total.toFixed(2);
+
       });
       $scope.totalPrice = $scope.totalPrice.toFixed(2);
     };
