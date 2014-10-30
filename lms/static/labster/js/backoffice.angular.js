@@ -78,7 +78,7 @@ angular.module('LabsterBackOffice', ['ngRoute'])
           });
         });
       },
-      template: '<button class="button">Pay with Credit Card</button>',
+      template: '<button class="button">Credit Card</button>',
       replace: true
     };
   })

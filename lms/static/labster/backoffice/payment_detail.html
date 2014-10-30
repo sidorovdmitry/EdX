@@ -44,7 +44,7 @@
           <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}" description="{{ payment_description(payment.payment_products, payment.total) }}"></stripe>
         </td>
         <td>
-          <button class="button" slide-toggle="#labster_bank">Manual Payment</button>
+          <button class="button" slide-toggle="#labster_bank">Wire Transfer</button>
         </td>
       </tr>
     </tbody>
@@ -79,7 +79,7 @@
         </tr>
         <tr>
           <td>Message</td>
-          <td>Invoice #{{ payment.invoice_number }} (please include invoice number this for us to identify your transaction)</td>
+          <td>Invoice #{{ payment.invoice_number }} <i>(please include invoice number this for us to identify your transaction)</i></td>
         </tr>
         <tr>
           <td>VAT/CVR</td>
