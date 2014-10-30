@@ -50,8 +50,8 @@ You may use the wire transfer information below, to transfer the amount to our b
         <td ng-show="payment.total <= 500 && ! payment.paid">
           <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}" description="{{ payment_description(payment.payment_products, payment.total) }}"></stripe>
         </td>
-        <td ng-show="payment.total > 500 && ! payment.paid">
-          <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}" description="{{ payment_description(payment.payment_products, payment.total) }}"></stripe>
+        <td>
+          <button class="button" ng-click="pop_up_open()">Pop up</button>
         </td>
         <td>
           <button class="button" slide-toggle="#labster_bank">Wire Transfer</button>
@@ -90,7 +90,9 @@ You may use the wire transfer information below, to transfer the amount to our b
       </tbody>
     </table>
   </div>
-  <!--<p ng-show="payment.total > 500 && ! payment.paid">-->
-    <!--Due to security reasons, we only allow purchase up to USD 500 for credit card.-->
-  <!--</p>-->
 </div>
+
+<script type="text/ng-template" id="invoice_information">
+    <h1>Heading</h1>
+    <p>Due to security reasons, we only allow purchase up to USD 500 for credit card.</p>
+</script>

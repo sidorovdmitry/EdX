@@ -142,12 +142,16 @@ angular.module('LabsterBackOffice')
 
   })
 
-  .controller('PaymentDetailController', function ($scope, $routeParams, $http) {
+  .controller('PaymentDetailController', function ($scope, $routeParams, $http, ngDialog) {
     $scope.user = window.requestUser;
     $scope.payment = null;
 
     var paymentId = $routeParams.paymentId;
     var url = window.backofficeUrls.payment + paymentId + "/";
+
+    $scope.pop_up_open = function () {
+      ngDialog.open({ template: "invoice_information" });
+    };
 
     $http.get(url)
       .success(function (data, status, headers, config) {

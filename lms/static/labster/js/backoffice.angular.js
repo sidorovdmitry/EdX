@@ -1,4 +1,4 @@
-angular.module('LabsterBackOffice', ['ngRoute'])
+angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog'])
 
   .config(function ($routeProvider) {
     $routeProvider

@@ -17,6 +17,8 @@
 
 <%block name="headextra">
 <link rel="stylesheet" href="${static.url('labster/css/backoffice.css')}">
+<link rel="stylesheet" href="${static.url('labster/css/ngDialog.min.css')}">
+<link rel="stylesheet" href="${static.url('labster/css/ngDialog-theme-default.min.css')}">
 </%block>
 
 <%block name="js_extra">
@@ -47,6 +49,7 @@ window.labList = JSON.parse('${lab_list}');
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-resource.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
 <script src="https://checkout.stripe.com/checkout.js"></script>
+<script src="${static.url('labster/lib/ngDialog.min.js')}"></script>
 <script src="${static.url('labster/js/backoffice.angular.js')}"></script>
 <script src="${static.url('labster/js/backoffice.angular.controllers.js')}"></script>
 </%block>
