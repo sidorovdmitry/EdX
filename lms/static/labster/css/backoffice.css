@@ -13,6 +13,7 @@
 .align-center {
     text-align: center !important;
 }
+
 .table-no-border, .table-no-border td, .table-invoice, .table-invoice td {
     border: 0 !important;
 }
@@ -70,16 +71,18 @@
 }
 .labster-lab-list td.lab-license input {
     width: 100%;
+    text-align: center;
+}
+.labster-lab-list td.lab-total {
+    min-width: 100px;
 }
 .labster-lab-list label .label {
     display: inline-block;
     width: 100px;
 }
-
 .labster-lab-list img {
     width: 150px;
 }
-
 .labster-lab-list .lab-name {
     vertical-align: middle;
 }
@@ -93,16 +96,13 @@
     margin-top: 20px;
     text-align: center;
 }
-
 .labster-box header {
     padding: 10px;
 }
-
 .labster-box .labster-box-content {
     height: 220px;
     position: relative;
 }
-
 .labster-box-content ul {
     list-style: none;
     margin: 0;
@@ -111,25 +111,21 @@
     line-height: 1.5;
     height: 100%;
 }
-
 .labster-box-content li {
     display: block;
     padding: 10px 0;
     font-size: 14px;
     color: #555;
 }
-
 .labster-box-content .header {
     height: 30px;
 }
-
 .labster-box-content .footer {
     bottom: 0;
     margin-bottom: 10px;
     position: absolute;
     width: 100%
 }
-
 .labster-box header {
     height: 100px;
     border-bottom: 1px solid #b9b9b9;
@@ -146,10 +142,13 @@
     width: 100%
 
 }
-
 .btn-labster button {
     font-size: 16px;
     font-weight: bold;
     text-transform: none;
     width: 230px;
+}
+
+.text-decor-none a:hover {
+    text-decoration: none;
 }

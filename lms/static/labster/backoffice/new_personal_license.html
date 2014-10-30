@@ -31,8 +31,8 @@
         <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
                ng-model="lab.license" ng-change="updateTotal()" numeric>
       </td>
-      <td class="align-right">{{ lab.total|currency:"$" }}</td>
-      <td>
+      <td class="align-right lab-total">{{ lab.total|currency:"$" }}</td>
+      <td class="text-decor-none">
         <a href="" ng-click="resetCount(lab)">x</a>
       </td>
     </tr>
