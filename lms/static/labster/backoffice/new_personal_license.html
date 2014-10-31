@@ -19,7 +19,40 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="lab in labs">
+    <tr>
+      <td><strong>University Labs</strong></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr ng-repeat="lab in labs | filter: {product_type:'univ'}">
+      <td class="lab-name">
+        <img ng-src="{{ lab.image_url }}" />
+      </td>
+      <td class="align-left"><strong> {{ lab.name }} </strong> <br/>
+        {{ lab.description }}
+      </td>
+      <td class="align-right">{{ lab.price|currency:"$" }}</td>
+      <td class="align-right lab-license">
+        <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
+               ng-model="lab.license" ng-change="updateTotal()" numeric>
+      </td>
+      <td class="align-right lab-total">{{ lab.total|currency:"$" }}</td>
+      <td class="text-decor-none">
+        <a href="" ng-click="resetCount(lab)">x</a>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>High School Labs</strong></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr ng-repeat="lab in labs | filter: {product_type:'hs'}">
       <td class="lab-name">
         <img ng-src="{{ lab.image_url }}" />
       </td>
