@@ -73,6 +73,9 @@
     width: 100%;
     text-align: center;
 }
+.labster-lab-list td.lab-description {
+    line-height: 25px;
+}
 .labster-lab-list td.lab-total {
     min-width: 100px;
 }
