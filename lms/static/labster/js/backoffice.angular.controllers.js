@@ -59,6 +59,9 @@ angular.module('LabsterBackOffice')
     };
 
     var duplicateLabs = function(list_product, callback) {
+      callback();
+      return;
+
       var labs = [],
           post_data;
       angular.forEach(list_product, function(item) {
