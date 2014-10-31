@@ -1245,4 +1245,11 @@ def enforce_single_login(sender, request, user, signal, **kwargs):
             key = request.session.session_key
         else:
             key = None
-        user.profile.set_login_session(key)
+
+        profile = user.profile
+        if not profile:
+            name = user.get_full_name()
+            if not name:
+                name = user.username
+            profile = UserProfile.objects.create(user=user, name=name)
+        profile.set_login_session(key)
