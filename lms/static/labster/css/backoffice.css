@@ -99,9 +99,6 @@
     margin-top: 20px;
     text-align: center;
 }
-.labster-box header {
-    padding: 10px;
-}
 .labster-box .labster-box-content {
     height: 220px;
     position: relative;
@@ -116,7 +113,7 @@
 }
 .labster-box-content li {
     display: block;
-    padding: 10px 0;
+    padding: 10px;
     font-size: 14px;
     color: #555;
 }
@@ -130,12 +127,13 @@
     width: 100%
 }
 .labster-box header {
-    height: 100px;
+    height: 50px;
     border-bottom: 1px solid #b9b9b9;
     display: table-cell;
     vertical-align: middle;
     width: inherit;
     background: #F4F4F4;
+    padding: 10px;
 }
 
 .btn-labster {
