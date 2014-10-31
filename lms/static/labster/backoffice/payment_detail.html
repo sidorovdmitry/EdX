@@ -56,12 +56,43 @@ You may use the wire transfer information below, to transfer the amount to our b
           <button class="button labster-disabled-btn" ng-click="pop_up_open()">Credit Card</button>
         </td>
         <td>
-          <button class="button" slide-toggle="#labster_bank">Wire Transfer</button>
+          <button ng-disabled="payment.total > 500" class="button" slide-toggle="#labster_bank">Wire Transfer</button>
         </td>
       </tr>
     </tbody>
   </table>
   <div id="labster_bank" class="slideable">
+    <strong>Payments via Wire Transfer:</strong>
+    <table class="table-invoice">
+      <tbody>
+        <tr>
+          <td>Bank name</td><td>Danske Bank</td>
+        </tr>
+        <tr>
+          <td>IBAN</td><td>DK0530000011397980</td>
+        </tr>
+        <tr>
+          <td>SWIFT/BIC</td><td>DABADKKK</td>
+        </tr>
+        <tr>
+          <td>Account No</td><td>0011397980</td>
+        </tr>
+        <tr>
+          <td>Registration No</td><td>4180</td>
+        </tr>
+        <tr>
+          <td>Beneficiary name</td><td>Labster ApS, Njalsgade 19D, 2300 Copenhagen S, Denmark</td>
+        </tr>
+        <tr>
+          <td>Message</td><td>Invoice #{{ payment.invoice_number }} <i>(please include invoice number this for us to identify your transaction)</i></td>
+        </tr>
+        <tr>
+          <td>VAT/CVR</td><td>DK34457808</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div ng-show="payment.total > 500">
     <strong>Payments via Wire Transfer:</strong>
     <table class="table-invoice">
       <tbody>
