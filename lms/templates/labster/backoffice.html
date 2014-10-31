@@ -51,7 +51,7 @@ window.labList = JSON.parse('${lab_list}');
 <script src="https://checkout.stripe.com/checkout.js"></script>
 <script src="${static.url('labster/lib/ngDialog.min.js')}"></script>
 <script src="${static.url('labster/js/backoffice.angular.js')}"></script>
-<script src="${static.url('labster/js/backoffice.directives.js')}"></script>
+<script src="${static.url('labster/js/backoffice.angular.directives.js')}"></script>
 <script src="${static.url('labster/js/backoffice.angular.controllers.js')}"></script>
 </%block>
 
@@ -63,10 +63,10 @@ window.labList = JSON.parse('${lab_list}');
     <section class="user-info">
       <ul>
         <li>
-          <span class="title">
-            <a href="#/">Home</a> |
-            <a href="#licenses">Licenses</a>
-          </span>
+          <span class="title"><a href="#/">Home</a></span>
+        </li>
+        <li>
+          <span class="title"><a href="#licenses">Licenses</a></span>
         </li>
         <li>
           <span class="title"><a href="#purchases">Purchases</a></span>
