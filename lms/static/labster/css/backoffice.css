@@ -79,6 +79,12 @@
 .labster-lab-list td.lab-total {
     min-width: 100px;
 }
+.labster-lab-list tr.edu-level {
+    height: 60px;
+}
+.labster-lab-list .edu-level td {
+    font-size: 1.6em;
+}
 .labster-lab-list label .label {
     display: inline-block;
     width: 100px;
@@ -100,7 +106,7 @@
     text-align: center;
 }
 .labster-box .labster-box-content {
-    height: 240px;
+    height: 245px;
     position: relative;
 }
 .labster-box-content ul {
