@@ -26,7 +26,7 @@ angular.module('LabsterBackOffice')
     $scope.showLabForm = false;
     $scope.totalPrice = 0;
     $scope.isProcessing = false;
-    $scope.checkout_button = "Checkout";
+    $scope.checkoutButton = "Checkout";
 
     angular.forEach(window.labList, function (lab) {
       lab.license = 0;
@@ -59,6 +59,9 @@ angular.module('LabsterBackOffice')
     };
 
     var duplicateLabs = function(list_product, callback) {
+      callback();
+      return;
+
       var labs = [],
           post_data;
       angular.forEach(list_product, function(item) {
@@ -83,7 +86,7 @@ angular.module('LabsterBackOffice')
       var list_product;
 
       $scope.isProcessing = true;
-      $scope.checkout_button = "Processing";
+      $scope.checkoutButton = "Processing";
       var url = window.backofficeUrls.buyLab;
       data = {
         user: window.requestUser.backoffice.user.id,

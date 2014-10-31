@@ -99,7 +99,7 @@ FEATURES = {
     'ALLOW_UNICODE_COURSE_ID': True,
 
     # Prevent concurrent logins per user
-    'PREVENT_CONCURRENT_LOGINS': False,
+    'PREVENT_CONCURRENT_LOGINS': True,
 
     # Turn off Advanced Security by default
     'ADVANCED_SECURITY': False,

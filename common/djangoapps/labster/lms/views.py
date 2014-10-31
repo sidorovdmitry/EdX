@@ -6,6 +6,7 @@ except ImportError:
     StringIO = six.StringIO
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import render, render_to_response
@@ -114,7 +115,7 @@ class SettingsXml(LabProxyXMLView):
 
     def get_root_attributes(self):
         lab_proxy = self.get_lab_proxy()
-        user = self.request.user
+        user = User.objects.get(id=self.request.user.id)
 
         engine_xml = self.get_engine_xml(lab_proxy, user)
 
@@ -207,7 +208,7 @@ class StartNewLab(PlayLab):
 
     def get(self, request, *args, **kwargs):
         lab_proxy = self.get_lab_proxy()
-        user = request.user
+        user = User.objects.get(id=self.request.user.id)
         user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
         if user_attempt:
             user_attempt.is_finished = True
