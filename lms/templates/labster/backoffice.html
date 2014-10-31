@@ -22,6 +22,10 @@
 </%block>
 
 <%block name="js_extra">
+<%
+  user_type = user.profile.get_user_type_display() if user.profile.user_type else ''
+  user_type_id = user.profile.user_type
+%>
 <script>
 window.stripeKey = "${stripe_publishable_key}";  // publishable
 window.requestUser = {
@@ -29,6 +33,10 @@ window.requestUser = {
   email: "${user.email}",
   name: "${user.profile.name}",
   token: "${user.profile.token_key}",
+  user_type: {
+    label: "${user_type}",
+    id: "${user_type_id}"
+  },
   backoffice: {
     user: {
       id: "${backoffice['user_id']}"

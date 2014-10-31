@@ -1,5 +1,6 @@
 import requests
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 
@@ -41,6 +42,21 @@ def create_user(user, format='json'):
     return resp.json()
 
 
+def get_backoffice_urls():
+    base_url = settings.LABSTER_BACKOFFICE_JS_BASE_URL
+    duplicate_labs_url = '//{}/labster/api/course/duplicate-from-labs/'\
+        .format(settings.CMS_BASE)
+
+    urls = {
+        'buy_lab': '{}/api/payments/create/'.format(base_url),
+        'payment': '{}/api/payments/'.format(base_url),
+        'license': '{}/api/licenses/'.format(base_url),
+        'duplicate_labs': duplicate_labs_url,
+    }
+
+    return urls
+
+
 @login_required
 def home(request):
     if not request.user.is_superuser and not request.user.is_staff:
@@ -55,18 +71,7 @@ def home(request):
         'user_id': bo_user['id']
     }
 
-    from django.conf import settings
-    base_url = settings.LABSTER_BACKOFFICE_JS_BASE_URL
-    duplicate_labs_url = '//{}/labster/api/course/duplicate-from-labs/'\
-        .format(settings.CMS_BASE)
-
-    backoffice_urls = {
-        'buy_lab': '{}/api/payments/create/'.format(base_url),
-        'payment': '{}/api/payments/'.format(base_url),
-        'license': '{}/api/licenses/'.format(base_url),
-        'duplicate_labs': duplicate_labs_url,
-    }
-
+    backoffice_urls = get_backoffice_urls()
     stripe_publishable_key = settings.STRIPE_PUBLISHABLE_KEY
     context = {
         'lab_list': lab_list,
