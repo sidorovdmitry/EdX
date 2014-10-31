@@ -152,3 +152,7 @@
 .text-decor-none a:hover {
     text-decoration: none;
 }
+
+.labster-disabled-btn {
+    opacity: 0.5;
+}

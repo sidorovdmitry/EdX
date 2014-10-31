@@ -44,14 +44,16 @@ Please note, that if we have not received the payment within 14 days, the licens
 
 You may use the wire transfer information below, to transfer the amount to our bank account.
   </p>
+  <br/>
+  <h1 class="align-left">Payment Method</h1>
   <table class="table-no-border">
     <tbody>
       <tr>
         <td ng-show="payment.total <= 500 && ! payment.paid">
           <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}" description="{{ payment_description(payment.payment_products, payment.total) }}"></stripe>
         </td>
-        <td>
-          <button class="button" ng-click="pop_up_open()">Pop up</button>
+        <td ng-show="payment.total > 500 && ! payment.paid">
+          <button class="button labster-disabled-btn" ng-click="pop_up_open()">Credit Card</button>
         </td>
         <td>
           <button class="button" slide-toggle="#labster_bank">Wire Transfer</button>
@@ -93,6 +95,8 @@ You may use the wire transfer information below, to transfer the amount to our b
 </div>
 
 <script type="text/ng-template" id="invoice_information">
-    <h1>Heading</h1>
-    <p>Due to security reasons, we only allow purchase up to USD 500 for credit card.</p>
+    <h2 class="align-center">Credit card payment is disabled for this payment</h2>
+    <hr>
+    <p>Credit Card can only be used for transactions up to 500 USD.
+Please use Wire Transfer instead for larger transactions.</p>
 </script>
