@@ -18,7 +18,7 @@
         <td class="align-center">{{ payment.created_date }}</td>
         <td>
           <div ng-repeat="payment_product in payment.payment_products">
-            {{ payment_product.product.name }}
+            {{ payment_product.product_name }}
           </div>
         </td>
         <td class="align-right">USD {{ payment.total }}</td>
