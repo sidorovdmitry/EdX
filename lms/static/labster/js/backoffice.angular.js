@@ -1,4 +1,4 @@
-angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog'])
+angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate'])
 
   .config(function ($routeProvider) {
     $routeProvider
@@ -35,4 +35,20 @@ angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog'])
       .otherwise({
         redirectTo: '/'
       });
-  });
+  })
+
+.animation('.slide', function() {
+    var NG_HIDE_CLASS = 'ng-hide';
+    return {
+        beforeAddClass: function(element, className, done) {
+            if(className === NG_HIDE_CLASS) {
+                element.slideUp(done);
+            }
+        },
+        removeClass: function(element, className, done) {
+            if(className === NG_HIDE_CLASS) {
+                element.hide().slideDown(done);
+            }
+        }
+    }
+});

@@ -148,6 +148,7 @@ angular.module('LabsterBackOffice')
   .controller('PaymentDetailController', function ($scope, $routeParams, $http, ngDialog) {
     $scope.user = window.requestUser;
     $scope.payment = null;
+    $scope.show_information = false;
 
     var paymentId = $routeParams.paymentId;
     var url = window.backofficeUrls.payment + paymentId + "/";
