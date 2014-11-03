@@ -84,11 +84,15 @@
 .labster-lab-list td.lab-total {
     min-width: 100px;
 }
-.labster-lab-list tr.edu-level {
+.labster-lab-list tr.edu-level,
+.labster-lab-list tr.edu-level-invoice{
     height: 60px;
 }
 .labster-lab-list .edu-level td {
     font-size: 1.6em;
+}
+.labster-lab-list .edu-level-invoice td {
+    font-size: 1.3em;
 }
 .labster-lab-list label .label {
     display: inline-block;
