@@ -57,12 +57,12 @@ You may use the wire transfer information below, to transfer the amount to our b
           <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}" description="{{ payment_description(payment.payment_products, payment.total) }}"></stripe>
         </td>
         <td ng-show="payment.total > 500 && ! payment.paid">
-          <button class="button labster-disabled-btn" ng-click="pop_up_open()">Credit Card</button>
+          <a class="labster-disabled-btn btn-labster-invoice" ng-click="pop_up_open()">Credit Card</a>
         </td>
       </tr>
       <tr>
         <td>
-          <button ng-disabled="payment.total > 500" ng-click="show_information = !show_information" class="button">Wire Transfer</button>
+          <a ng-disabled="payment.total > 500" ng-click="show_information = !show_information" class="btn-labster-invoice">Wire Transfer</a>
         </td>
       </tr>
     </tbody>
