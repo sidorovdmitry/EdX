@@ -19,6 +19,25 @@ angular.module('LabsterBackOffice')
         $scope.licenses = data;
       });
 
+    $scope.payments = [];
+
+    // unpaid payment url
+    var url_payment = window.backofficeUrls.payment + '?status=0';
+    $http.get(url_payment, {
+      headers: {
+        'Authorization': "Token " + window.requestUser.backoffice.token
+      }
+    })
+
+      .success(function (data, status, headers, config) {
+        angular.forEach(data, function (payment) {
+          payment.detail_url = '#/invoice/' + payment.id;
+          payment.created_date = moment(payment.created_at).format('ll');
+        });
+
+        $scope.payments = data;
+      });
+
   })
 
   .controller('NewPersonalLicenseController', function ($scope, $location, $http) {
@@ -52,19 +71,19 @@ angular.module('LabsterBackOffice')
       $scope.totalPrice = $scope.totalPrice.toFixed(2);
     };
 
-    $scope.resetCount = function(lab) {
+    $scope.resetCount = function (lab) {
       lab.license = 0;
       lab.total = 0;
       $scope.updateTotal();
     };
 
-    var duplicateLabs = function(list_product, callback) {
+    var duplicateLabs = function (list_product, callback) {
       callback();
       return;
 
       var labs = [],
-          post_data;
-      angular.forEach(list_product, function(item) {
+        post_data;
+      angular.forEach(list_product, function (item) {
         labs.push({
           lab_id: item.product,
           license_count: item.item_count
@@ -77,9 +96,10 @@ angular.module('LabsterBackOffice')
         headers: {
           'Authorization': "Token " + window.requestUser.token
         }
-      }).success(function(data, status, headers, config) {
+      }).success(function (data, status, headers, config) {
         callback();
-      }).error(function (data, status, headers, config) {});
+      }).error(function (data, status, headers, config) {
+      });
     };
 
     $scope.buyLabs = function () {
@@ -112,7 +132,7 @@ angular.module('LabsterBackOffice')
       })
 
         .success(function (data, status, headers, config) {
-          duplicateLabs(list_product, function() {
+          duplicateLabs(list_product, function () {
             var url = '/invoice/' + data.id;
             $location.url(url);
           });
@@ -165,7 +185,7 @@ angular.module('LabsterBackOffice')
         $scope.payment = data;
       });
 
-    $scope.payment_description = function(payment_products, total) {
+    $scope.payment_description = function (payment_products, total) {
       var lab_count = 0;
       var total_license = 0;
       angular.forEach(payment_products, function (product) {

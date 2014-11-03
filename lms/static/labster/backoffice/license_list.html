@@ -2,6 +2,7 @@
   <h2>Licenses</h2>
 </header>
 <div class="labster-lab-list">
+  <h3>Active Licenses</h3>
   <table>
     <thead>
       <tr>
@@ -22,4 +23,35 @@
       </tr>
     </tbody>
   </table>
+
+  <div class="labster-lab-list padding-top40" ng-show="payments.length > 0">
+    <h3>Unpaid Invoices</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Invoice No.</th>
+          <th class="align-center">Purchase Date</th>
+          <th>Labs</th>
+          <th class="align-right">Total Price</th>
+          <th class="align-right">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="payment in payments">
+          <td><a href="{{ payment.detail_url }}">{{ payment.invoice_number }}</a></td>
+          <td class="align-center">{{ payment.created_date }}</td>
+          <td>
+            <div ng-repeat="payment_product in payment.payment_products">
+              {{ payment_product.product_name }}
+            </div>
+          </td>
+          <td class="align-right">USD {{ payment.total }}</td>
+          <td class="align-right">
+            <span ng-show="payment.paid">paid</span>
+            <span ng-hide="payment.paid">unpaid</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
