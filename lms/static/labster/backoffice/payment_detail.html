@@ -38,60 +38,48 @@
     </tfoot>
   </table>
   <p>
-    Your order has now been registered, and you will receive an email with the invoice attached shortly.
-Your licenses have also now been activated, and you can already now invite students to your course.
+    Your order has now been registered, and you will receive an email with the invoice attached shortly. Your licenses have also now been activated, and you can already now invite students to your course.
   </p>
   <p>
-Please note, that if we have not received the payment within 14 days, the licenses will be disabled again.
-
-You may use the wire transfer information below, to transfer the amount to our bank account.
+    Please note, that if we have not received the payment within 14 days, the licenses will be disabled again.
   </p>
-  <br/>
+  <br/><br/>
   <h1 class="align-left">Payment Method</h1>
   <table class="table-no-border">
     <tbody>
+      <tr><td>Please choose your preferred payment methods below:</td></tr>
       <tr>
         <td ng-show="payment.total <= 500 && ! payment.paid">
           <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}" description="{{ payment_description(payment.payment_products, payment.total) }}"></stripe>
         </td>
         <td ng-show="payment.total > 500 && ! payment.paid">
-          <button class="button labster-disabled-btn" ng-click="pop_up_open()">Credit Card</button>
+          <a class="labster-disabled-btn btn-labster-invoice" ng-click="pop_up_open()">Credit Card</a>
         </td>
+      </tr>
+      <tr>
         <td>
-          <button ng-disabled="payment.total > 500" ng-click="show_information = !show_information" class="button">Wire Transfer</button>
+          <a ng-disabled="payment.total > 500" ng-click="show_information = !show_information" class="btn-labster-invoice">Wire Transfer</a>
         </td>
       </tr>
     </tbody>
   </table>
 
   <div class="slide" ng-show="show_information || payment.total > 500">
-    <strong>Payments via Wire Transfer:</strong>
+    <h2 class="no-text-transform"><strong>Payments via Wire Transfer:</strong></h2>
+    <p>
+      You may use the wire transfer information below, to transfer the amount to our bank account. <br/>
+      We will then daily check for the incoming wire transfer, which usually take 5-7 business day for international transfer.
+    </p>
     <table class="table-invoice">
       <tbody>
-        <tr>
-          <td>Bank name</td><td>Danske Bank</td>
-        </tr>
-        <tr>
-          <td>IBAN</td><td>DK0530000011397980</td>
-        </tr>
-        <tr>
-          <td>SWIFT/BIC</td><td>DABADKKK</td>
-        </tr>
-        <tr>
-          <td>Account No</td><td>0011397980</td>
-        </tr>
-        <tr>
-          <td>Registration No</td><td>4180</td>
-        </tr>
-        <tr>
-          <td>Beneficiary name</td><td>Labster ApS, Njalsgade 19D, 2300 Copenhagen S, Denmark</td>
-        </tr>
-        <tr>
-          <td>Message</td><td>Invoice #{{ payment.invoice_number }} <i>(please include invoice number this for us to identify your transaction)</i></td>
-        </tr>
-        <tr>
-          <td>VAT/CVR</td><td>DK34457808</td>
-        </tr>
+        <tr><td>Bank name</td><td>Danske Bank</td></tr>
+        <tr><td>IBAN</td><td>DK0530000011397980</td></tr>
+        <tr><td>SWIFT/BIC</td><td>DABADKKK</td></tr>
+        <tr><td>Account No</td><td>0011397980</td></tr>
+        <tr><td>Registration No</td><td>4180</td></tr>
+        <tr><td>Beneficiary name</td><td>Labster ApS, Njalsgade 19D, 2300 Copenhagen S, Denmark</td></tr>
+        <tr><td>Message</td><td>Invoice #{{ payment.invoice_number }} <i>(please include invoice number this for us to identify your transaction)</i></td></tr>
+        <tr><td>VAT/CVR</td><td>DK34457808</td></tr>
       </tbody>
     </table>
   </div>

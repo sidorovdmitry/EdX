@@ -41,7 +41,7 @@ angular.module('LabsterBackOffice')
           });
         });
       },
-      template: '<button class="button">Credit Card</button>',
+      template: '<a class="btn-labster-invoice">Credit Card</a>',
       replace: true
     };
   })
