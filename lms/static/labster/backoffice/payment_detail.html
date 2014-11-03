@@ -20,7 +20,7 @@
     </thead>
     <tbody>
       <tr ng-repeat="payment_product in payment.payment_products">
-        <td>{{ payment_product.product.name }}</td>
+        <td>{{ payment_product.product_name }}</td>
         <td class="align-right">{{ payment_product.price|currency:"USD " }}</td>
         <td class="align-right">{{ payment_product.item_count }}</td>
         <td class="align-right">{{ payment_product.month_subscription }} months</td>
