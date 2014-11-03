@@ -14,8 +14,27 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="license in licenses">
+      <tr ng-show="(licenses | filter: {product_type:'univ'}).length > 0" class="edu-level-invoice">
+        <td colspan="2"><strong>University & College Labs</strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr ng-repeat="license in licenses | filter: {product_type:'univ'}">
         <td>{{ license.product_name }}</td>
+        <td>{{ license.date_bought }}</td>
+        <td>{{ license.end_date }}</td>
+        <td>{{ license.month_subscription }} months</td>
+        <td class="align-right">{{ license.item_count }}</td>
+      </tr>
+      <tr ng-show=" (licenses | filter: {product_type:'hs'}).length > 0" class="edu-level-invoice">
+        <td colspan="2"><strong>High School</strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr ng-repeat="license in licenses | filter: {product_type:'hs'}">
+        <td>{{ licenses[1].product_name }}</td>
         <td>{{ license.date_bought }}</td>
         <td>{{ license.end_date }}</td>
         <td>{{ license.month_subscription }} months</td>

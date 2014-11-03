@@ -19,7 +19,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-show=" {{ (payment.payment_products | filter: { product_type: 'univ'}).length }} > 0" class="edu-level-invoice">
+      <tr ng-show=" (payment.payment_products | filter: { product_type: 'univ'}).length > 0" class="edu-level-invoice">
         <td colspan="2"><strong>University & College Labs</strong></td>
         <td></td>
         <td></td>
@@ -32,7 +32,7 @@
         <td class="align-right">{{ payment_product.month_subscription }} months</td>
         <td class="align-right">{{ payment_product.total|currency:"USD " }}</td>
       </tr>
-      <tr ng-show=" {{ (payment.payment_products | filter: { product_type: 'hs'}).length }} > 0" class="edu-level-invoice">
+      <tr ng-show=" (payment.payment_products | filter: { product_type: 'hs'}).length > 0" class="edu-level-invoice">
         <td colspan="2"><strong>High School</strong></td>
         <td></td>
         <td></td>

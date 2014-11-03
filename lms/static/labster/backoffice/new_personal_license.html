@@ -19,7 +19,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-show=" {{ (labs | filter: {product_type:'univ'}).length }} > 0" class="edu-level">
+    <tr ng-show=" (labs | filter: {product_type:'univ'}).length > 0" class="edu-level">
       <td colspan="2"><strong>University & College Labs</strong></td>
       <td></td>
       <td></td>
@@ -43,7 +43,7 @@
         <a href="" ng-click="resetCount(lab)">x</a>
       </td>
     </tr>
-    <tr ng-show="{{ (labs | filter: {product_type:'hs'}).length > 0 }}" class="edu-level">
+    <tr ng-show="(labs | filter: {product_type:'hs'}).length > 0" class="edu-level">
       <td colspan="2"><strong>High School Labs</strong></td>
       <td></td>
       <td></td>
