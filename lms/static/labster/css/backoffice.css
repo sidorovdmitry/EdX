@@ -16,6 +16,9 @@
 .no-text-transform {
     text-transform: none;
 }
+.padding-top40{
+    padding-top: 40px;
+}
 .table-no-border, .table-no-border td, .table-invoice, .table-invoice td {
     border: 0 !important;
 }
@@ -169,7 +172,10 @@
     opacity: 0.5;
 }
 
-a.btn-labster, a.btn-labster-invoice {
+a.btn-labster,
+a.btn-labster-invoice,
+a.btn-labster-checkout,
+a.btn-labster-paid{
     cursor: pointer;
     border: 1px solid #08111b;
     border-radius: 3px;
@@ -192,16 +198,23 @@ a.btn-labster, a.btn-labster-invoice {
     text-align: center;
     padding: 7px 18px;
 }
+a.btn-labster:hover,
+a.btn-labster-invoice:hover,
+a.btn-labster-checkout:hover,
+a.btn-labster-paid:hover{
+    text-decoration: none;
+}
 a.btn-labster {
     position: absolute;
     bottom: 0;
     width: 100%;
     display: block;
 }
-a.btn-labster:hover {
-    text-decoration: none;
-}
 a.btn-labster-invoice {
     width: 150px;
+    display: block;
+}
+a.btn-labster-checkout {
+    font-size: 20px;
     display: block;
 }

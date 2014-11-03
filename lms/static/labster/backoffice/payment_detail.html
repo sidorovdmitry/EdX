@@ -58,7 +58,8 @@
       </tr>
       <tr>
         <td>
-          <a ng-disabled="payment.total > 500" ng-click="show_information = !show_information" class="btn-labster-invoice">Wire Transfer</a>
+          <a ng-show="payment.total <= 500" ng-click="show_information = !show_information" class="btn-labster-invoice">Wire Transfer</a>
+          <a ng-show="payment.total > 500" class="btn-labster-invoice labster-disabled-btn">Wire Transfer</a>
         </td>
       </tr>
     </tbody>
