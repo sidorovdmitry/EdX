@@ -75,6 +75,16 @@ angular.module('LabsterBackOffice')
       });
     }
 
+    $scope.group_type_name = function() {
+      if(group_type == 'univ') {
+        return 'University & College'
+      } else if(group_type == 'hs')
+      {
+        return 'High School'
+      }
+
+    };
+
     $scope.updateTotal = function () {
       $scope.totalPrice = 0;
       angular.forEach($scope.labs, function (lab) {

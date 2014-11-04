@@ -2,11 +2,12 @@
   <h2>BUY NEW LICENSES</h2>
 </header>
 
-<p><strong>Purchase Individual Labs</strong></p>
+<p><strong>Purchase {{ group_type_name() }} Labs</strong></p>
 <p>Find the labs below, and enter the number of students licenses you would like to order.</p>
 <p>The total price is then automatically calculated at the bottom of the page</p>
 
 <div class="labster-lab-list">
+  <h2>{{ group_type_name() }} Labs</h2>
   <table>
     <thead>
     <tr>
@@ -19,28 +20,23 @@
     </tr>
     </thead>
     <tbody>
-    <tr>
-      <td colspan="2"><strong>University & College Labs</strong></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr ng-repeat="lab in labs">
-      <td class="lab-name">
-        <img ng-src="{{ lab.image_url }}" />
+    <tr ng-repeat="group in labs">
+      <td>
+        {{ group.name }}
       </td>
-      <td class="align-left lab-description"><strong> {{ lab.name }} </strong> <br/>
-        {{ lab.description }}
+      <td class="lab-description">
+        <div ng-repeat="lab in group.products">
+          {{ lab.name }}
+        </div>
       </td>
-      <td class="align-right">{{ lab.price|currency:"$" }}</td>
+      <td class="align-right">{{ group.price|currency:"$" }}</td>
       <td class="align-right lab-license">
         <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
-               ng-model="lab.license" ng-change="updateTotal()" numeric>
+               ng-model="group.license" ng-change="updateTotal()" numeric>
       </td>
-      <td class="align-right lab-total">{{ lab.total|currency:"$" }}</td>
+      <td class="align-right lab-total">{{ group.total|currency:"$" }}</td>
       <td class="text-decor-none">
-        <a href="" ng-click="resetCount(lab)">x</a>
+        <a href="" ng-click="resetCount(group)">x</a>
       </td>
     </tr>
     </tbody>
