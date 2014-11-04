@@ -40,19 +40,40 @@ angular.module('LabsterBackOffice')
 
   })
 
-  .controller('NewPersonalLicenseController', function ($scope, $location, $http) {
+  .controller('NewPersonalLicenseController', function ($scope, $routeParams, $location, $http) {
     $scope.labs = [];
     $scope.showLabForm = false;
     $scope.totalPrice = 0;
     $scope.isProcessing = false;
     $scope.checkoutButton = "Checkout";
 
-    angular.forEach(window.labList, function (lab) {
-      lab.license = 0;
-      lab.total = 0;
+    var group_type = $routeParams.group_type;
 
-      $scope.labs.push(lab);
-    });
+    if (group_type != undefined) {
+      var url_group_type = window.backofficeUrls.product_group + '?group_type=' + group_type;
+
+      $http.get(url_group_type, {
+        headers: {
+          'Authorization': "Token " + window.requestUser.backoffice.token
+        }
+      })
+
+        .success(function (data, status, headers, config) {
+          angular.forEach(data, function (lab) {
+            lab.license = 0;
+            lab.total = 0;
+
+            $scope.labs.push(lab);
+          });
+        });
+    } else {
+      angular.forEach(window.labList, function (lab) {
+        lab.license = 0;
+        lab.total = 0;
+
+        $scope.labs.push(lab);
+      });
+    }
 
     $scope.updateTotal = function () {
       $scope.totalPrice = 0;
