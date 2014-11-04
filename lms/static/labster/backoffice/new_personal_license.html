@@ -36,7 +36,7 @@
       <td class="align-right">{{ lab.price|currency:"$" }}</td>
       <td class="align-right lab-license">
         <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
-               ng-model="lab.license" ng-change="updateTotal()" numeric>
+               ng-model="lab.license" ng-change="updateTotal()" numeric select-all>
       </td>
       <td class="align-right lab-total">{{ lab.total|currency:"$" }}</td>
       <td class="text-decor-none">
@@ -60,7 +60,7 @@
       <td class="align-right">{{ lab.price|currency:"$" }}</td>
       <td class="align-right lab-license">
         <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
-               ng-model="lab.license" ng-change="updateTotal()" numeric>
+               ng-model="lab.license" ng-change="updateTotal()" numeric select-all>
       </td>
       <td class="align-right lab-total">{{ lab.total|currency:"$" }}</td>
       <td class="text-decor-none">
