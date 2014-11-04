@@ -60,5 +60,25 @@ angular.module('LabsterBackOffice')
         }
         ngModelCtrl.$parsers.push(fromUser);
       }
-    };
+    }
+
+  })
+
+  .directive('selectAll', function() {
+    return function(scope, element, attr) {
+      element.on('focus', function(ev) {
+        $(this)
+          .one('mouseup', function () {
+            $(this).select();
+            return false;
+          })
+        .select();
+      });
+
+      element.on('keyup', function(ev) {
+        if ($(this).val() == '0') {
+          $(this).select();
+        }
+      });
+    }
   });
