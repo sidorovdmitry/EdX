@@ -14,6 +14,8 @@ from django.utils import timezone
 
 from xmodule_django.models import CourseKeyField, LocationKeyField
 
+# from labster.models.licenses import LabsterUserLicense
+
 
 PLATFORM_NAME = 'platform'
 
@@ -289,6 +291,7 @@ class ProblemProxy(models.Model):
     """
     lab_proxy = models.ForeignKey(LabProxy)
     question = models.CharField(max_length=100, db_index=True, help_text='Question in md5')
+    question_text = models.TextField(default='')
     location = models.CharField(max_length=200)
     correct_answer = models.TextField()
 
