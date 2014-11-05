@@ -49,11 +49,10 @@ angular.module('LabsterBackOffice')
 
     var group_type = $routeParams.group_type;
 
-    $scope.group_type_name = function() {
-      if(group_type == 'univ') {
+    $scope.group_type_name = function () {
+      if (group_type == 'univ') {
         return 'University & College'
-      } else if(group_type == 'hs')
-      {
+      } else if (group_type == 'hs') {
         return 'High School'
       }
       return "";
@@ -84,13 +83,22 @@ angular.module('LabsterBackOffice')
     }
 
     $scope.load_individual_lab = function () {
-      angular.forEach(window.labList, function (lab) {
-        lab.license = 0;
-        lab.total = 0;
-        lab.lab_type = "individual";
+      var url_individual = window.backofficeUrls.product + '?product_type=' + group_type;
+      $http.get(url_individual, {
+        headers: {
+          'Authorization': "Token " + window.requestUser.backoffice.token
+        }
+      })
 
-        $scope.labs.push(lab);
-      });
+        .success(function (data, status, headers, config) {
+          angular.forEach(data, function (lab) {
+            lab.license = 0;
+            lab.total = 0;
+            lab.lab_type = "individual";
+
+            $scope.labs.push(lab);
+          });
+        });
     };
 
     $scope.updateTotal = function () {
