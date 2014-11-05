@@ -7,12 +7,13 @@
 <p>The total price is then automatically calculated at the bottom of the page</p>
 
 <div class="labster-lab-list">
-  <h2>{{ group_type_name() }} Labs</h2>
+  <p><h2>{{ group_type_name() }} Labs</h2></p>
   <table>
     <thead>
     <tr>
       <th></th>
       <th class="align-left">Lab</th>
+      <th>Type</th>
       <th class="align-right">Price</th>
       <th class="align-right">Licenses</th>
       <th class="align-right">Total</th>
@@ -20,23 +21,24 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="group in labs">
+    <tr ng-repeat="lab in labs">
+      <td class="lab-name">
+        <img ng-src="{{ lab.image_url }}" />
+      </td>
+      <td class="align-left lab-description"><strong> {{ lab.name }} </strong> <br/>
+        {{ lab.description }}
+      </td>
       <td>
-        {{ group.name }}
+        {{ lab.lab_type }}
       </td>
-      <td class="lab-description">
-        <div ng-repeat="lab in group.products">
-          {{ lab.name }}
-        </div>
-      </td>
-      <td class="align-right">{{ group.price|currency:"$" }}</td>
+      <td class="align-right">{{ lab.price|currency:"$" }}</td>
       <td class="align-right lab-license">
         <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
-               ng-model="group.license" ng-change="updateTotal()" numeric>
+               ng-model="lab.license" ng-change="updateTotal()" numeric select-all>
       </td>
-      <td class="align-right lab-total">{{ group.total|currency:"$" }}</td>
+      <td class="align-right lab-total">{{ lab.total|currency:"$" }}</td>
       <td class="text-decor-none">
-        <a href="" ng-click="resetCount(group)">x</a>
+        <a href="" ng-click="resetCount(lab)">x</a>
       </td>
     </tr>
     </tbody>
@@ -44,6 +46,7 @@
     <tr>
       <td></td>
       <td>Total</td>
+      <td></td>
       <td></td>
       <td></td>
       <td class="align-right">{{ totalPrice|currency:"$" }}</td>
