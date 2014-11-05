@@ -1227,35 +1227,37 @@ def calculate_grades_csv(request, course_id):
 @require_level('staff')
 def student_quiz_detail_csv(request, course_id):
     from courseware.views import get_problems_student_in_course
+    from labster.models import LabProxy, UserAnswer
 
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
     course = modulestore().get_course(course_key)
-    course_enrollments = CourseEnrollment.objects.filter(course_id=course_key, is_active=True)
+    locations = []
 
-    csv_headers = ['name', 'email', 'number', 'question', 'attempt_count', 'completion_time', 'score']
+    for section in course.get_children():
+        for sub_section in section.get_children():
+            if sub_section.lab_id:
+                locations.append(sub_section.location)
+
+    lab_proxies = LabProxy.objects.filter(location__in=locations)
+    user_answers = UserAnswer.objects.filter(problem_proxy__lab_proxy__in=lab_proxies)
+    csv_headers = ['name', 'email', 'lab', 'question', 'attempt_count', 'completion_time', 'score']
 
     response = HttpResponse(content_type='text/csv')
     writer = csv.DictWriter(response, fieldnames=csv_headers)
     writer.writeheader()
-
-    for each in course_enrollments:
-        student_id = each.user_id
-        student_user = User.objects.get(id=int(student_id))
-        problems = get_problems_student_in_course(request, student_user, course, course_key)
-        for problem in problems:
-            question = strip_tags(problem['problem'])
-            question = question.encode('utf-8')
-            csv_item = {
-                'number': 1,
-                'name': student_user.get_full_name(),
-                'email': student_user.email,
-                'question': question,
-                'attempt_count': problem['attempts'],
-                'completion_time': problem['time_spent'],
-                'score': problem['score'],
-            }
-
-            writer.writerow(csv_item)
+    for user_answer in user_answers:
+        lab = user_answer.problem_proxy.lab_proxy.lab
+        user = user_answer.user
+        csv_item = {
+                'lab': lab.name,
+                'name': user.get_full_name(),
+                'email': user.email,
+                'question': user_answer.problem_proxy.question_text,
+                'attempt_count': user_answer.attempt_count,
+                'completion_time': user_answer.completion_time,
+                'score': user_answer.score,
+        }
+        writer.writerow(csv_item)
 
     now = datetime.now()
     datetime_as_string = re.sub(r'\W+', '', now.isoformat())

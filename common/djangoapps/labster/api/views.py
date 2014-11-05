@@ -749,6 +749,8 @@ class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
 
 class AnswerProblem(ParserMixin, AuthMixin, APIView):
 
+    renderer_classes = (JSONRenderer,)
+
     def __init__(self, *args, **kwargs):
         self.usage_key = get_usage_key()
         self.modulestore = get_modulestore()
@@ -835,6 +837,8 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
 
 class UnityPlayLab(ParserMixin, AuthMixin, APIView):
 
+    renderer_classes = (JSONRenderer,)
+
     def post(self, request, *args, **kwargs):
         lab_id = kwargs.get('lab_id')
         lab_proxy = get_object_or_404(LabProxy, id=lab_id)
@@ -857,12 +861,13 @@ class UnityPlayLab(ParserMixin, AuthMixin, APIView):
             user_attempt.is_finished = True
             user_attempt.save()
 
-        response_data = ''
-
-        return Response(response_data, status=status.HTTP_204_NO_CONTENT)
+        response_data = {'status': 'ok'}
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
 
 class CreateLog(ParserMixin, AuthMixin, APIView):
+
+    renderer_classes = (JSONRenderer,)
 
     def post(self, request, *args, **kwargs):
         log_type = kwargs.get('log_type')
@@ -876,4 +881,5 @@ class CreateLog(ParserMixin, AuthMixin, APIView):
 
         UnityLog.new(user, lab_proxy,
                      log_type, message, url, request_method)
-        return Response('', status=status.HTTP_204_NO_CONTENT)
+        response_data = {'status': 'ok'}
+        return Response(response_data, status=status.HTTP_201_CREATED)

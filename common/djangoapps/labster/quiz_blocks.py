@@ -554,6 +554,10 @@ def update_lab_quiz_block(lab, user):
                     defaults={'location': str(problem.location)},
                 )
 
+                if not obj.question_text:
+                    obj.question_text = question
+                    obj.save()
+
                 if obj.location != str(problem.location):
                     obj.location = str(problem.location)
                     obj.save()
