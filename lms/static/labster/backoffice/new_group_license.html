@@ -27,6 +27,12 @@
       </td>
       <td class="align-left lab-description"><strong> {{ lab.name }} </strong> <br/>
         {{ lab.description }}
+        <div ng-show="lab.products.length > 0">
+          Labs included in this package:
+          <ul>
+            <li ng-repeat="product in lab.products">{{ product.name }}</li>
+          </ul>
+        </div>
       </td>
       <td>
         {{ lab.lab_type }}

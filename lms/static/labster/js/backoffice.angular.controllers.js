@@ -77,17 +77,21 @@ angular.module('LabsterBackOffice')
 
             $scope.labs.push(lab);
           });
+
+          // load individual lab
+          $scope.load_individual_lab();
         });
     }
 
-    // load individual lab
-    angular.forEach(window.labList, function (lab) {
-      lab.license = 0;
-      lab.total = 0;
-      lab.lab_type = "Individual";
+    $scope.load_individual_lab = function () {
+      angular.forEach(window.labList, function (lab) {
+        lab.license = 0;
+        lab.total = 0;
+        lab.lab_type = "Individual Lab";
 
-      $scope.labs.push(lab);
-    });
+        $scope.labs.push(lab);
+      });
+    };
 
     $scope.updateTotal = function () {
       $scope.totalPrice = 0;
