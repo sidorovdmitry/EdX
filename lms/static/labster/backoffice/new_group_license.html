@@ -13,7 +13,6 @@
     <tr>
       <th></th>
       <th class="align-left">Lab</th>
-      <th>Type</th>
       <th class="align-right">Price</th>
       <th class="align-right">Licenses</th>
       <th class="align-right">Total</th>
@@ -21,7 +20,14 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="lab in labs">
+    <tr class="edu-level">
+      <td colspan="2"><strong>Packages Labs</strong></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr ng-repeat="lab in labs | filter: {lab_type:'packages'}">
       <td class="lab-name">
         <img ng-src="{{ lab.image_url }}" />
       </td>
@@ -34,8 +40,35 @@
           </ul>
         </div>
       </td>
-      <td>
-        {{ lab.lab_type }}
+      <td class="align-right">{{ lab.price|currency:"$" }}</td>
+      <td class="align-right lab-license">
+        <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
+               ng-model="lab.license" ng-change="updateTotal()" numeric select-all>
+      </td>
+      <td class="align-right lab-total">{{ lab.total|currency:"$" }}</td>
+      <td class="text-decor-none">
+        <a href="" ng-click="resetCount(lab)">x</a>
+      </td>
+    </tr>
+    <tr class="edu-level">
+      <td colspan="2"><strong>Individual Labs</strong></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr ng-repeat="lab in labs | filter: {lab_type:'individual'}">
+      <td class="lab-name">
+        <img ng-src="{{ lab.image_url }}" />
+      </td>
+      <td class="align-left lab-description"><strong> {{ lab.name }} </strong> <br/>
+        {{ lab.description }}
+        <div ng-show="lab.products.length > 0">
+          Labs included in this package:
+          <ul>
+            <li ng-repeat="product in lab.products">{{ product.name }}</li>
+          </ul>
+        </div>
       </td>
       <td class="align-right">{{ lab.price|currency:"$" }}</td>
       <td class="align-right lab-license">
@@ -52,7 +85,6 @@
     <tr>
       <td></td>
       <td>Total</td>
-      <td></td>
       <td></td>
       <td></td>
       <td class="align-right">{{ totalPrice|currency:"$" }}</td>

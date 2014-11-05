@@ -73,7 +73,7 @@ angular.module('LabsterBackOffice')
           angular.forEach(data, function (lab) {
             lab.license = 0;
             lab.total = 0;
-            lab.lab_type = "Packages Lab";
+            lab.lab_type = "packages";
 
             $scope.labs.push(lab);
           });
@@ -87,7 +87,7 @@ angular.module('LabsterBackOffice')
       angular.forEach(window.labList, function (lab) {
         lab.license = 0;
         lab.total = 0;
-        lab.lab_type = "Individual Lab";
+        lab.lab_type = "individual";
 
         $scope.labs.push(lab);
       });
