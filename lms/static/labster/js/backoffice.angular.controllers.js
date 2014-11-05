@@ -49,7 +49,17 @@ angular.module('LabsterBackOffice')
 
     var group_type = $routeParams.group_type;
 
+    $scope.group_type_name = function () {
+      if (group_type == 'univ') {
+        return 'University & College'
+      } else if (group_type == 'hs') {
+        return 'High School'
+      }
+      return "";
+    };
+
     if (group_type != undefined) {
+      // load hs and univ packages labs
       var url_group_type = window.backofficeUrls.product_group + '?group_type=' + group_type;
 
       $http.get(url_group_type, {
@@ -62,27 +72,33 @@ angular.module('LabsterBackOffice')
           angular.forEach(data, function (lab) {
             lab.license = 0;
             lab.total = 0;
+            lab.lab_type = "packages";
+
+            $scope.labs.push(lab);
+          });
+
+          // load individual lab
+          $scope.load_individual_lab();
+        });
+    }
+
+    $scope.load_individual_lab = function () {
+      var url_individual = window.backofficeUrls.product + '?product_type=' + group_type;
+      $http.get(url_individual, {
+        headers: {
+          'Authorization': "Token " + window.requestUser.backoffice.token
+        }
+      })
+
+        .success(function (data, status, headers, config) {
+          angular.forEach(data, function (lab) {
+            lab.license = 0;
+            lab.total = 0;
+            lab.lab_type = "individual";
 
             $scope.labs.push(lab);
           });
         });
-    } else {
-      angular.forEach(window.labList, function (lab) {
-        lab.license = 0;
-        lab.total = 0;
-
-        $scope.labs.push(lab);
-      });
-    }
-
-    $scope.group_type_name = function() {
-      if(group_type == 'univ') {
-        return 'University & College'
-      } else if(group_type == 'hs')
-      {
-        return 'High School'
-      }
-
     };
 
     $scope.updateTotal = function () {

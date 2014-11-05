@@ -81,6 +81,9 @@
 .labster-lab-list td.lab-description {
     line-height: 25px;
 }
+.labster-lab-list td.lab-description ul {
+    display: table-cell;
+}
 .labster-lab-list td.lab-total {
     min-width: 100px;
 }
@@ -104,15 +107,23 @@
 .labster-lab-list .lab-name {
     vertical-align: middle;
 }
-
+.labster-row {
+    width: 100%;
+}
+.labster-container {
+    margin: 0 auto;
+    text-align: center;
+}
 .labster-box {
     border: 1px solid #b9b9b9;
-    width: 29%;
+    width: 270px;
     border-radius: 6px;
-    float: left;
-    margin-right: 20px;
-    margin-top: 20px;
-    text-align: center;
+    /*float: left;*/
+    /*margin-right: 20px;*/
+    /*margin-top: 20px;*/
+    display: inline-block;
+    margin: 10px;
+    /*text-align: center;*/
 }
 .labster-box .labster-box-content {
     height: 245px;
@@ -153,20 +164,6 @@
     background: #F4F4F4;
     padding: 10px;
 }
-
-/*.btn-labster {*/
-    /*bottom: 0;*/
-    /*margin-bottom: 10px;*/
-    /*position: absolute;*/
-    /*width: 100%*/
-
-/*}*/
-/*.btn-labster button {*/
-    /*font-size: 16px;*/
-    /*font-weight: bold;*/
-    /*text-transform: none;*/
-    /*width: 230px;*/
-/*}*/
 
 .text-decor-none a:hover {
     text-decoration: none;
@@ -210,9 +207,13 @@ a.btn-labster-paid:hover{
 }
 a.btn-labster {
     position: absolute;
-    bottom: 0;
-    width: 100%;
-    display: block;
+    bottom: 14px;
+    width: 210px;
+    /*display: block;*/
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
 }
 a.btn-labster-invoice {
     width: 150px;
