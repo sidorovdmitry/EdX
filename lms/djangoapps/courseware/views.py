@@ -937,7 +937,7 @@ def get_problems_student_in_course(request, student, course, course_key):
         if each.plugin_name == 'problem' and each.data:
             field_name = "{tag}-{org}-{course}-{category}-{name}_2_1"
             field_key = {
-                'tag': each.location.tag,
+                'tag': 'i4x',
                 'org': each.location.org,
                 'course': each.location.course,
                 'category': each.location.category,
