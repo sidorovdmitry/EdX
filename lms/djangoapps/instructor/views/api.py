@@ -1252,7 +1252,7 @@ def student_quiz_detail_csv(request, course_id):
                 'lab': lab.name,
                 'name': user.get_full_name(),
                 'email': user.email,
-                'question': user_answer.problem_proxy.question_text,
+                'question': user_answer.problem_proxy.question_text.encode('utf-8'),
                 'attempt_count': user_answer.attempt_count,
                 'completion_time': user_answer.completion_time,
                 'score': user_answer.score,
