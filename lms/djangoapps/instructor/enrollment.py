@@ -100,6 +100,7 @@ def enroll_email(course_id, student_email, auto_enroll=False, email_students=Fal
             send_mail_to_student(student_email, email_params)
 
     after_state = EmailEnrollmentState(course_id, student_email)
+    LabsterUserLicense.objects.get_or_create(course_id=course_id, email=student_email)
 
     return previous_state, after_state
 
