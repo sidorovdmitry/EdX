@@ -444,7 +444,7 @@
           }
         }
 
-        .enter-course, .invite-students {
+        .enter-course, .invite-students, .buy-licenses {
           @include button(simple, $button-color);
           @include box-sizing(border-box);
           border-radius: 3px;
@@ -454,7 +454,7 @@
           letter-spacing: 0;
           padding: 6px 32px 7px;
           text-align: center;
-          margin-top: 16px;
+          margin-top: 1px;
 
           &.archived {
             @include button(simple, $button-archive-color);
