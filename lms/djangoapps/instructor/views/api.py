@@ -566,9 +566,11 @@ def list_course_students(request, course_id):
     def extract_user_info(user):
         """ convert user into dicts for json view """
         return {
+            'id': user.id,
             'username': user.username,
             'email': user.email,
             'last_login': user.last_login.strftime('%c') if user.last_login else '',
+            'is_enrolled': user.is_enrolled,
         }
 
     def get_students(course):
@@ -592,8 +594,18 @@ def list_course_students(request, course_id):
             students.append(user)
         return students
 
-    students = list(CourseEnrollment.users_enrolled_in(course_id))
-    students.extend(get_students(course_id))
+    students = []
+    enrolled_students = CourseEnrollment.users_enrolled_in(course_id)
+    more_students = []
+
+    for student in enrolled_students:
+        student.is_enrolled = True
+        students.append(student)
+
+    for student in get_students(course_id):
+        if not student in students:
+            more_students.append(student)
+    students.extend(more_students)
 
     response_payload = {
         'course_id': course_id.to_deprecated_string(),

@@ -285,7 +285,10 @@ class StudentListWidget extends StudentListBaseWidget
       _.each member_list, (member) =>
         # if there are members, show the list
         # create revoke button and insert it into the row
-        label_trans = gettext("Unenroll")
+        if member.is_enrolled
+          label_trans = gettext("Unenroll")
+        else
+          label_trans = gettext("Remove")
         $revoke_btn = $ _.template('<div class="revoke"><i class="icon-remove-sign"></i> <%= label %></div>', {label: label_trans}),
           class: 'revoke'
         $revoke_btn.click =>
