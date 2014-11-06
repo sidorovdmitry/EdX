@@ -412,12 +412,19 @@ def sync_quiz_xml(course, user, section_name='Labs', sub_section_name='', comman
                 # create ProblemProxy
                 tree = etree.fromstring(component.platform_xml)
                 question = tree.attrib.get('Sentence')
+                if not question:
+                    continue
+
                 hashed = get_hashed_question(question)
                 obj, created = ProblemProxy.objects.get_or_create(
                     lab_proxy=lab_proxy,
                     question=hashed,
                     defaults={'location': str(component.location)},
                 )
+
+                if not obj.question_text:
+                    obj.question_text = question
+                    obj.save()
 
                 if obj.location != str(component.location):
                     obj.location = str(component.location)
