@@ -35,7 +35,7 @@
         {{ lab.description }}
         <div ng-show="lab.products.length > 0">
           Labs included in this package:
-          <ul>
+          <ul class="table-cell">
             <li ng-repeat="product in lab.products">{{ product.name }}</li>
           </ul>
         </div>
@@ -63,12 +63,6 @@
       </td>
       <td class="align-left lab-description"><strong> {{ lab.name }} </strong> <br/>
         {{ lab.description }}
-        <div ng-show="lab.products.length > 0">
-          Labs included in this package:
-          <ul>
-            <li ng-repeat="product in lab.products">{{ product.name }}</li>
-          </ul>
-        </div>
       </td>
       <td class="align-right">{{ lab.price|currency:"$" }}</td>
       <td class="align-right lab-license">
