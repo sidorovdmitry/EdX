@@ -163,11 +163,21 @@ angular.module('LabsterBackOffice')
 
       angular.forEach($scope.labs, function (lab) {
         if (lab.license > 0) {
-          data.list_product.push({
-            product: lab.id,
-            item_count: lab.license,
-            month_subscription: lab.month_subscription
-          });
+          if (lab.lab_type == "individual") {
+            // include individual lab
+            data.list_product.push({
+              product: lab.id,
+              item_count: lab.license,
+              month_subscription: lab.month_subscription
+            });
+          } else {
+            // include group package lab
+            data.list_product.push({
+              product_group: lab.id,
+              item_count: lab.license,
+              month_subscription: lab.month_subscription
+            });
+          }
         }
       });
 
