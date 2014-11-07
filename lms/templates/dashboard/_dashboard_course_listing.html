@@ -5,6 +5,12 @@
   from django.core.urlresolvers import reverse
   from courseware.courses import course_image_url, get_course_about_section
   import waffle
+
+  from labster.models import LabsterUserLicense
+%>
+
+<%
+  course_used_licenses = LabsterUserLicense.course_licenses_count(course.id)
 %>
 
 <%
@@ -66,6 +72,29 @@
     % endif
 
     <section class="info">
+
+      % if 'staff' in user_course_role:
+        % if course.labster_license:
+        <div class="license-overview">
+          <h4>License Overview</h4>
+          <p>Enrolled Students:
+            <span class="green">${course_used_licenses}</span>
+          </p>
+          <p>Licenses Available:
+            <%
+            licenses_left = course.max_student_enrollments_allowed - course_used_licenses
+            %>
+            % if licenses_left:
+            <span>${licenses_left}</span>
+            % else:
+            <span class="red">0</span>
+            % endif
+          </p>
+          <!-- <p class="buy-licenses-container"><a href="${reverse('labster_backoffice')}" class="buy-licenses">Buy Licenses</a></p> -->
+        </div>
+        % endif
+      % endif
+
       <hgroup>
         <h2 class="university">${get_course_about_section(course, 'university')}</h2>
         <h3>
@@ -113,6 +142,7 @@
         </div>
       %endif
 
+
       % if show_courseware_link:
         % if course.has_ended():
           <a href="${course_target}" class="enter-course archived">${_('View Archived Course')}</a>
@@ -158,12 +188,12 @@
             ${_('Unregister')}
           </a>
         % endif
+
+        % if show_email_settings:
+                <a href="#email-settings-modal" class="email-settings" rel="leanModal" data-course-id="${course.id.to_deprecated_string()}" data-course-number="${course.number}" data-optout="${course.id.to_deprecated_string() in course_optouts}">${_('Email Settings')}</a>
+        % endif
+
       % endif
-
-% if show_email_settings:
-        <a href="#email-settings-modal" class="email-settings" rel="leanModal" data-course-id="${course.id.to_deprecated_string()}" data-course-number="${course.number}" data-optout="${course.id.to_deprecated_string() in course_optouts}">${_('Email Settings')}</a>
-% endif
-
 
 
   </section>

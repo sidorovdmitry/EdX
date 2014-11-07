@@ -11,6 +11,8 @@ urlpatterns = patterns('',  # nopep8
         'instructor.views.api.list_course_role_members', name="list_course_role_members"),
     url(r'^list_course_students$',
         'instructor.views.api.list_course_students', name="list_course_students"),
+    url(r'^list_course_licenses$',
+        'instructor.views.api.list_course_licenses', name="list_course_licenses"),
     url(r'^modify_access$',
         'instructor.views.api.modify_access', name="modify_access"),
     url(r'^bulk_beta_modify_access$',

@@ -123,6 +123,95 @@ class StudentListBaseWidget
       @$container.find selector
 
 
+class LicenseListBaseWidget
+  # create a MemberListWidget `$container` is a jquery object to embody.
+  # `params` holds template parameters. `params` should look like the defaults below.
+  constructor: (@$container, params={}) ->
+    params = _.defaults params,
+      title: "Member List"
+      info: """
+        Use this list to manage members.
+      """
+      labels: ["field1", "field2"]
+      add_placeholder: "Enter name"
+      add_btn_label: "Add Student"
+      add_handler: (input) ->
+
+    template_html = $("#license-list-widget-template").html()
+    @$container.html Mustache.render template_html, params
+
+  # clear the input text field
+  clear_input: -> @$('.add-field').val ''
+
+  # clear all table rows
+  clear_rows: -> @$('table tbody').empty()
+
+  # takes a table row as an array items are inserted as text, unless detected
+  # as a jquery objects in which case they are inserted directly. if an
+  # element is a jquery object
+  add_row: (row_array) ->
+    $ul = @$('ul')
+    $li = $ '<li>'
+    $span = $ '<span ' + row_array[2] + '>'
+    $span.text row_array[1]
+
+    $li.append row_array[0] + ": "
+    $li.append $span
+    $ul.append $li
+
+  # local selector
+  $: (selector) ->
+    if @debug?
+      s = @$container.find selector
+      if s?.length != 1
+        console.warn "local selector '#{selector}' found (#{s.length}) results"
+      s
+    else
+      @$container.find selector
+
+
+class LicenseListWidget extends LicenseListBaseWidget
+  constructor: ($container, @rolename) ->
+    super $container,
+      title: $container.data 'display-name'
+      info: $container.data 'info-text'
+      labels: [gettext("Licenses"), gettext("Amount")]
+
+    @debug = false
+    @list_endpoint = $container.data 'list-endpoint'
+    @modify_endpoint = $container.data 'modify-endpoint'
+
+    @reload_list()
+
+  re_view: ->
+    @clear_errors()
+    @clear_input()
+    @reload_list()
+
+  reload_list: ->
+    @get_member_list (error, member_list) =>
+      return @show_errors error unless error is null
+
+      @clear_rows()
+
+      _.each member_list, (member) =>
+        @add_row [member.label, member.amount, member.attrs]
+
+  clear_errors: -> @$error_section?.text ''
+
+  show_errors: (msg) -> @$error_section?.text msg
+
+  get_member_list: (cb) ->
+    $.ajax
+      dataType: 'json'
+      url: @list_endpoint
+      data: rolename: 'license'
+      success: (data) => cb? null, data['license']
+      error: std_ajax_err => 
+        `// Translators: A rolename appears this sentence. A rolename is something like "staff" or "beta tester".`
+        cb? gettext("Error fetching list for role")
+
+
 class AuthListWidget extends MemberListWidget
   constructor: ($container, @rolename, @$error_section) ->
     super $container,
@@ -285,7 +374,10 @@ class StudentListWidget extends StudentListBaseWidget
       _.each member_list, (member) =>
         # if there are members, show the list
         # create revoke button and insert it into the row
-        label_trans = gettext("Unenroll")
+        if member.is_enrolled
+          label_trans = gettext("Unenroll")
+        else
+          label_trans = gettext("Remove")
         $revoke_btn = $ _.template('<div class="revoke"><i class="icon-remove-sign"></i> <%= label %></div>', {label: label_trans}),
           class: 'revoke'
         $revoke_btn.click =>
@@ -776,6 +868,11 @@ class Membership
     @student_lists = _.map (@$student_list_containers), (student_list_container) =>
       rolename = $(student_list_container).data 'rolename'
       new StudentListWidget $(student_list_container), rolename
+
+    @$license_list_containers = @$section.find '.license-list-container'
+    @license_lists = _.map (@$license_list_containers), (license_list_container) =>
+      rolename = $(license_list_container).data 'rolename'
+      new LicenseListWidget $(license_list_container), rolename
 
     # gather elements
     @$list_selector = @$section.find 'select#member-lists-selector'

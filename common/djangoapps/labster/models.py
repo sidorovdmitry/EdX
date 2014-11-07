@@ -8,14 +8,11 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.db.models.signals import pre_save, post_save
 from django.utils import timezone
 
 from xmodule_django.models import CourseKeyField, LocationKeyField
-
-# from labster.models.licenses import LabsterUserLicense
-
 
 PLATFORM_NAME = 'platform'
 
@@ -350,3 +347,35 @@ pre_save.connect(update_modified_at, sender=Lab)
 pre_save.connect(update_modified_at, sender=LabProxy)
 pre_save.connect(update_modified_at, sender=UserSave)
 pre_save.connect(update_modified_at, sender=Lab)
+
+
+class LabsterUserLicense(models.Model):
+    """
+    Tracks user's licenses against course
+    """
+    course_id = CourseKeyField(max_length=255, db_index=True)
+    email = models.EmailField(max_length=255)
+
+    created_at = models.DateTimeField(default=timezone.now)
+    expired_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ('course_id', 'email')
+
+    @classmethod
+    def course_licenses_count(cls, course_id):
+        now = timezone.now()
+        no_expired = {'course_id': course_id, 'expired_at': None}
+        expired = {'course_id': course_id, 'expired_at__gte': now}
+        return LabsterUserLicense.objects.filter(Q(**no_expired) | Q(**expired)).count()
+
+    def __unicode__(self):
+        return "{} - {}".format(self.course_id, self.email)
+
+    @property
+    def is_expired(self):
+        return self.expired_at and timezone.now() > self.expired_at
+
+    def renew_to(self, expired_at):
+        self.expired_at = expired_at
+        self.save()

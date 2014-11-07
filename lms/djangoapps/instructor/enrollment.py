@@ -19,6 +19,8 @@ from student.models import anonymous_id_for_user
 
 from microsite_configuration import microsite
 
+from labster.models import LabsterUserLicense
+
 
 class EmailEnrollmentState(object):
     """ Store the complete enrollment state of an email in a class """
@@ -100,6 +102,7 @@ def enroll_email(course_id, student_email, auto_enroll=False, email_students=Fal
             send_mail_to_student(student_email, email_params)
 
     after_state = EmailEnrollmentState(course_id, student_email)
+    LabsterUserLicense.objects.get_or_create(course_id=course_id, email=student_email)
 
     return previous_state, after_state
 
@@ -134,6 +137,10 @@ def unenroll_email(course_id, student_email, email_students=False, email_params=
             send_mail_to_student(student_email, email_params)
 
     after_state = EmailEnrollmentState(course_id, student_email)
+    try:
+        LabsterUserLicense.objects.get(course_id=course_id, email=student_email).delete()
+    except LabsterUserLicense.DoesNotExist:
+        pass
 
     return previous_state, after_state
 
