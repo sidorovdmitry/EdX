@@ -374,6 +374,41 @@
         @include clearfix;
         padding: 0 10px 0 230px;
 
+        .license-overview {
+          float: right;
+          font-size: 14px;
+          height: 119px;
+          line-height: 16px;
+          position: relative;
+          text-align: right;
+          width: 200px;
+
+          h4 {
+            color: #578fbf;
+            margin: 0;
+            padding: 0;
+          }
+
+          p {
+            margin: 0;
+            padding: 0;
+          }
+
+          .red {
+            color: red;
+          }
+
+          .green {
+            color: green;
+          }
+
+          .buy-licenses-container {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+          }
+        }
+
         > hgroup {
           padding: 0;
           width: 100%;

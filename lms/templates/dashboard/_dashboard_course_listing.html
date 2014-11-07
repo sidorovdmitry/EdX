@@ -69,41 +69,12 @@
 
       % if 'staff' in user_course_role:
       <style>
-.license-overview {
-  float: right;
-  font-size: 14px;
-  height: 119px;
-  line-height: 16px;
-  position: relative;
-  text-align: right;
-  width: 200px;
-}
-.license-overview h4 {
-  color: #578fbf;
-  margin: 0;
-  padding: 0;
-}
-.license-overview p {
-  margin: 0;
-  padding: 0;
-}
-.license-overview .red {
-  color: red;
-}
-.license-overview .green {
-  color: green;
-}
-.license-overview .buy-licenses-container {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-}
       </style>
       <div class="license-overview">
         <h4>License Overview</h4>
         <p>Enrolled Students: <span class="green">10</span></p>
         <p>Licenses Available: <span class="red">0</span></p>
-        <p class="buy-licenses-container"><a href="${reverse('labster_backoffice')}" class="buy-licenses">Buy Licenses</a></p>
+        <!-- <p class="buy-licenses-container"><a href="${reverse('labster_backoffice')}" class="buy-licenses">Buy Licenses</a></p> -->
       </div>
       % endif
 
