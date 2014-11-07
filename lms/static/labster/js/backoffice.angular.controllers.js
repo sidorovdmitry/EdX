@@ -46,6 +46,7 @@ angular.module('LabsterBackOffice')
     $scope.totalPrice = 0;
     $scope.isProcessing = false;
     $scope.checkoutButton = "Checkout";
+    $scope.is_personal = true;
 
     var group_type = $routeParams.group_type;
 
