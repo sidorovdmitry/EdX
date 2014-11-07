@@ -618,12 +618,28 @@ def list_course_students(request, course_id):
 @cache_control(no_cache=True, no_store=True, must_revalidate=True)
 @require_level('instructor')
 def list_course_licenses(request, course_id):
+    from labster.models import LabsterUserLicense
+
+    course_id = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+    course = get_course_with_access(
+        request.user, 'instructor', course_id, depth=None
+    )
+
+    total = course.max_student_enrollments_allowed
+    used = LabsterUserLicense.course_licenses_count(course_id)
+    available = total - used
+
+    used_attrs = "style='color:green'"
+    available_attrs = ""
+    if available < 1:
+        available_attrs = "style='color:red'"
+
     licenses = [
-        {'label': "Used", 'amount': 10},
-        {'label': "Available", 'amount': 10},
+        {'label': "Used", 'amount': used, 'attrs': used_attrs},
+        {'label': "Available", 'amount': available, 'attrs': available_attrs},
     ]
     response_payload = {
-        'course_id': course_id,
+        'course_id': course_id.to_deprecated_string(),
         'license': licenses,
     }
     return JsonResponse(response_payload)
