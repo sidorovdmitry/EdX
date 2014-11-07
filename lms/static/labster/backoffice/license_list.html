@@ -21,7 +21,14 @@
         <td></td>
       </tr>
       <tr ng-repeat="license in licenses | filter: {product_type:'univ'}">
-        <td>{{ license.product_name }}</td>
+        <td class="lab-description">{{ license.product_name }}
+            <div ng-show="license.list_products.length > 0">
+              Lab included in this package:
+              <ul class="table-cell">
+                <li ng-repeat="lab in license.list_products">{{ lab }}</li>
+              </ul>
+            </div>
+        </td>
         <td>{{ license.date_bought }}</td>
         <td>{{ license.end_date }}</td>
         <td>{{ license.month_subscription }} months</td>
@@ -34,7 +41,14 @@
         <td></td>
       </tr>
       <tr ng-repeat="license in licenses | filter: {product_type:'hs'}">
-        <td>{{ licenses[1].product_name }}</td>
+        <td class="lab-description">{{ license.product_name }}
+            <div ng-show="license.list_products.length > 0">
+              Lab included in this package:
+              <ul class="table-cell">
+                <li ng-repeat="lab in license.list_products">{{ lab }}</li>
+              </ul>
+            </div>
+        </td>
         <td>{{ license.date_bought }}</td>
         <td>{{ license.end_date }}</td>
         <td>{{ license.month_subscription }} months</td>
