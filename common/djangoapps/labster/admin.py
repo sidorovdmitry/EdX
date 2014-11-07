@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from labster.models import (
     LanguageLab, Lab, ErrorInfo, DeviceInfo, UserSave, Token, LabProxy,
-    UnityLog, UserAnswer, ProblemProxy)
+    UnityLog, UserAnswer, ProblemProxy, LabsterUserLicense)
 
 
 class BaseAdmin(admin.ModelAdmin):
@@ -85,6 +85,11 @@ class ProblemProxyAdmin(admin.ModelAdmin):
         return obj.lab_proxy.lab.name
 
 
+
+class LabsterUserLicenseAdmin(admin.ModelAdmin):
+    list_display = ('course_id', 'email', 'created_at', 'expired_at')
+
+
 admin.site.register(LanguageLab)
 admin.site.register(ErrorInfo, ErrorInfoAdmin)
 admin.site.register(DeviceInfo, DeviceInfoAdmin)
@@ -95,6 +100,7 @@ admin.site.register(Lab, LabAdmin)
 admin.site.register(LabProxy, LabProxyAdmin)
 admin.site.register(ProblemProxy, ProblemProxyAdmin)
 admin.site.register(UnityLog, UnityLogAdmin)
+admin.site.register(LabsterUserLicense, LabsterUserLicenseAdmin)
 
 
 # remove defaul UserAdmin and replace it
