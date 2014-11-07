@@ -1,51 +1,46 @@
 angular.module('LabsterBackOffice')
 
-  .controller('LicenseListController', function ($scope, $http) {
-    $scope.licenses = [];
-
-    var url = window.backofficeUrls.license;
-    $http.get(url, {
-      headers: {
-        'Authorization': "Token " + window.requestUser.backoffice.token
-      }
-    })
-
-      .success(function (data, status, headers, config) {
-        angular.forEach(data, function (item) {
-          item.end_date = moment(item.date_end_license).format('ll');
-          item.date_bought = moment(item.date_bought).format('ll');
-        });
-
-        $scope.licenses = data;
-      });
-
-    $scope.payments = [];
-
-    // unpaid payment url
-    var url_payment = window.backofficeUrls.payment + '?status=0';
-    $http.get(url_payment, {
-      headers: {
-        'Authorization': "Token " + window.requestUser.backoffice.token
-      }
-    })
-
-      .success(function (data, status, headers, config) {
-        angular.forEach(data, function (payment) {
-          payment.detail_url = '#/invoice/' + payment.id;
-          payment.created_date = moment(payment.created_at).format('ll');
-        });
-
-        $scope.payments = data;
-      });
-
-  })
-
   .controller('NewPersonalLicenseController', function ($scope, $routeParams, $location, $http) {
     $scope.labs = [];
     $scope.showLabForm = false;
+    $scope.subTotalPrice = 0;
+    $scope.tax = 0;
     $scope.totalPrice = 0;
     $scope.isProcessing = false;
     $scope.checkoutButton = "Checkout";
+    $scope.is_personal = true;
+
+    $scope.eu_countries = [
+      {id:15, name:'Austria'},
+      {id:22, name:'Belgium'},
+      {id:35, name:'Bulgaria'},
+
+      {id:56, name:'Croatia'},
+      {id:59, name:'Cyprus'},
+      {id:60, name:'Czech Republic'},
+      {id:61, name:'Denmark'},
+      {id:70, name:'Estonia'},
+      {id:75, name:'Finland'},
+      {id:76, name:'France'},
+      {id:83, name:'Germany'},
+      {id:86, name:'Greece'},
+      {id:101, name:'Hungary'},
+      {id:107, name:'Ireland'},
+      {id:110, name:'Italy'},
+      {id:123, name:'Latvia'},
+      {id:129, name:'Lithuania'},
+      {id:130, name:'Luxembourg'},
+      {id:138, name:'Malta'},
+      {id:157, name:'Netherlands'},
+      {id:177, name:'Poland'},
+      {id:178, name:'Portugal'},
+      {id:182, name:'Romania'},
+      {id:202, name:'Slovakia'},
+      {id:203, name:'Slovenia'},
+      {id:208, name:'Spain'},
+      {id:214, name:'Sweden'},
+      {id:234, name:'United Kingdom'},
+    ];
 
     var group_type = $routeParams.group_type;
 
@@ -101,8 +96,15 @@ angular.module('LabsterBackOffice')
         });
     };
 
+    var url_country = window.backofficeUrls.country;
+    $http.get(url_country)
+      .success(function (data, status, headers, config) {
+        $scope.countries = data;
+        $scope.country = $scope.countries[0];
+      });
+
     $scope.updateTotal = function () {
-      $scope.totalPrice = 0;
+      $scope.subTotalPrice = 0;
       angular.forEach($scope.labs, function (lab) {
         // set default value to 0 if the field is empty
         var length = lab.license.toString().length;
@@ -111,11 +113,11 @@ angular.module('LabsterBackOffice')
         }
 
         lab.total = lab.license * lab.price;
-        $scope.totalPrice += lab.total;
+        $scope.subTotalPrice += lab.total;
         lab.total = lab.total.toFixed(2);
 
       });
-      $scope.totalPrice = $scope.totalPrice.toFixed(2);
+      $scope.subTotalPrice = $scope.subTotalPrice.toFixed(2);
     };
 
     $scope.resetCount = function (lab) {
@@ -199,66 +201,4 @@ angular.module('LabsterBackOffice')
         });
 
     }
-  })
-
-  .controller('PaymentListController', function ($scope, $http) {
-    $scope.payments = [];
-
-    var url = window.backofficeUrls.payment;
-    $http.get(url, {
-      headers: {
-        'Authorization': "Token " + window.requestUser.backoffice.token
-      }
-    })
-
-      .success(function (data, status, headers, config) {
-        angular.forEach(data, function (payment) {
-          payment.detail_url = '#/invoice/' + payment.id;
-          payment.created_date = moment(payment.created_at).format('ll');
-        });
-
-        $scope.payments = data;
-      });
-
-  })
-
-  .controller('PaymentDetailController', function ($scope, $routeParams, $http, ngDialog) {
-    $scope.user = window.requestUser;
-    $scope.payment = null;
-    $scope.show_information = false;
-
-    var paymentId = $routeParams.paymentId;
-    var url = window.backofficeUrls.payment + paymentId + "/";
-
-    $scope.pop_up_open = function () {
-      ngDialog.open({ template: "invoice_information" });
-    };
-
-    $http.get(url)
-      .success(function (data, status, headers, config) {
-        data.total_in_cent = parseFloat(data.total) * 100;
-        data.total = parseFloat(data.total).toFixed(2);
-        data.created_date = moment(data.created_at).format('ll');
-        $scope.payment = data;
-      });
-
-    $scope.payment_description = function (payment_products, total) {
-      var lab_count = 0;
-      var total_license = 0;
-      angular.forEach(payment_products, function (product) {
-        lab_count++;
-        total_license += product.item_count;
-      });
-      return lab_count + " labs with " + total_license + " licenses. ($" + total + ")";
-    };
-
-    $scope.invoiceId = "00" + paymentId;
-  })
-
-  .controller('PaymentPaidController', function ($scope, $routeParams) {
-    var paymentId = $routeParams.paymentId;
-    $scope.detailUrl = window.backofficeUrls.payment + paymentId;
-  })
-
-  .controller('HomeController', function ($scope) {
   });

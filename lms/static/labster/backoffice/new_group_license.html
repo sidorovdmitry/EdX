@@ -7,7 +7,9 @@
 <p>The total price is then automatically calculated at the bottom of the page</p>
 
 <div class="labster-lab-list">
-  <p><h2>{{ group_type_name() }} Labs</h2></p>
+  <p>
+
+  <h2>{{ group_type_name() }} Labs</h2></p>
   <table>
     <thead>
     <tr>
@@ -29,7 +31,7 @@
     </tr>
     <tr ng-repeat="lab in labs | filter: {lab_type:'packages'}">
       <td class="lab-name">
-        <img ng-src="{{ lab.image_url }}" />
+        <img ng-src="{{ lab.image_url }}"/>
       </td>
       <td class="align-left lab-description"><strong> {{ lab.name }} </strong> <br/>
         {{ lab.description }}
@@ -59,7 +61,7 @@
     </tr>
     <tr ng-repeat="lab in labs | filter: {lab_type:'individual'}">
       <td class="lab-name">
-        <img ng-src="{{ lab.image_url }}" />
+        <img ng-src="{{ lab.image_url }}"/>
       </td>
       <td class="align-left lab-description"><strong> {{ lab.name }} </strong> <br/>
         {{ lab.description }}
@@ -81,12 +83,36 @@
       <td>Total</td>
       <td></td>
       <td></td>
-      <td class="align-right">{{ totalPrice|currency:"$" }}</td>
+      <td class="align-right">{{ subTotalPrice|currency:"$" }}</td>
       <td></td>
     </tr>
     </tfoot>
   </table>
+  <div class="labster-row">
+    <label>Personal type</label>
+    <div class="radio">
+      <label>
+        <input type="radio" ng-model="is_personal" ng-value="true"> Personal
+      </label>
+      <label>
+        <input type="radio" ng-model="is_personal" ng-value="false"> Company
+      </label>
+    </div>
+    <div class="form-group" ng-hide="is_personal">
+      <label>Company Name</label>
+      <input type="text" class="form-control" ng-model="company_name">
+    </div>
+    <div class="form-group">
+      <label>Country</label>
+      <select class="form-control" ng-model="country" ng-options="country.name for country in countries">
+      </select>
+    </div>
+    <div class="align-right">
+      Subtotal : {{ subTotalPrice }}
+    </div>
+  </div>
   <div>
-    <a ng-disabled="isProcessing" type="button" class="btn-labster-checkout pull-right" ng-click="buyLabs()">{{ checkoutButton }}</a>
+    <a ng-disabled="isProcessing" type="button" class="btn-labster-checkout pull-right" ng-click="buyLabs()">{{
+      checkoutButton }}</a>
   </div>
 </div>
