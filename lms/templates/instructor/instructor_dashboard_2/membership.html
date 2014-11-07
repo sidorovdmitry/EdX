@@ -53,6 +53,16 @@ window.course_id = '${course.id}';
   </div>
 </script>
 
+<script type="text/template" id="license-list-widget-template">
+  <div class="member-list-widget">
+    <div class="header">
+      <div class="title"> {{title}} </div>
+    </div>
+    <div class="member-list">
+      <ul></ul>
+    </div>
+  </div>
+</script>
 
 <div class="vert-left">
 <div class="batch-enrollment">
@@ -143,6 +153,17 @@ window.course_id = '${course.id}';
 </div>
 
 <div class="vert-right member-lists-management">
+  <div>
+    <h2> ${_("Licenses")} </h2>
+    <div class="license-list-container active"
+      data-rolename="license"
+      data-display-name="${_("Licenses")}"
+      data-info-text="
+        ${_("Number of licenses.")}"
+      data-list-endpoint="${ section_data['list_course_licenses_url'] }"
+    ></div>
+  </div>
+
   <div>
     <h2> ${_("Students")} </h2>
 
