@@ -616,6 +616,21 @@ def list_course_students(request, course_id):
 
 @ensure_csrf_cookie
 @cache_control(no_cache=True, no_store=True, must_revalidate=True)
+@require_level('instructor')
+def list_course_licenses(request, course_id):
+    licenses = [
+        {'label': "Used", 'amount': 10},
+        {'label': "Available", 'amount': 10},
+    ]
+    response_payload = {
+        'course_id': course_id,
+        'license': licenses,
+    }
+    return JsonResponse(response_payload)
+
+
+@ensure_csrf_cookie
+@cache_control(no_cache=True, no_store=True, must_revalidate=True)
 @require_level('staff')
 def get_grading_config(request, course_id):
     """
