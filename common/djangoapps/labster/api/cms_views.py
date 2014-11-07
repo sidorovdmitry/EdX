@@ -28,6 +28,7 @@ class CourseDuplicate(APIView):
         extra_fields = {
             'invitation_only': True,
             'max_student_enrollments_allowed': 3,
+            'labster_license': True,
         }
         scheme = 'https' if request.is_secure() else 'http'
         course = duplicate_course(source, target, request.user, extra_fields,
@@ -64,6 +65,7 @@ class CourseDuplicateFromLabs(APIView):
             extra_fields = {
                 'invitation_only': True,
                 'max_student_enrollments_allowed': license_count,
+                'labster_license': True,
             }
 
             scheme = 'https' if request.is_secure() else 'http'
