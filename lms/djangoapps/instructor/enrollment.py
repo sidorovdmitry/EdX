@@ -137,6 +137,10 @@ def unenroll_email(course_id, student_email, email_students=False, email_params=
             send_mail_to_student(student_email, email_params)
 
     after_state = EmailEnrollmentState(course_id, student_email)
+    try:
+        LabsterUserLicense.objects.get(course_id=course_id, email=student_email).delete()
+    except LabsterUserLicense.DoesNotExist:
+        pass
 
     return previous_state, after_state
 
