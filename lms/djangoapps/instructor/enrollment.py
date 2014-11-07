@@ -19,6 +19,8 @@ from student.models import anonymous_id_for_user
 
 from microsite_configuration import microsite
 
+from labster.models import LabsterUserLicense
+
 
 class EmailEnrollmentState(object):
     """ Store the complete enrollment state of an email in a class """
