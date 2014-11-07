@@ -53,27 +53,3 @@ class LmsBlockMixin(XBlockMixin):
         default=False,
         scope=Scope.settings,
     )
-    is_browsable = Boolean(
-        display_name=_("Course is Displayed in Front Page"),
-        help=_("Enter true or false. If true, the course is displayed. If false, the course is hidden."),
-        scope=Scope.settings,
-        default=False,
-    )
-    show_course_info = Boolean(
-        display_name=_("Course Info is Shown"),
-        help=_("Enter true or false. If true, the course is displayed. If false, the course info is hidden."),
-        scope=Scope.settings,
-        default=True,
-    )
-    main_wiki_page = String(
-        display_name=_("Main Wiki Page for the Course"),
-        help=_("Enter the page for the main page. If empty, it'll use default /wiki/course.id/"),
-        scope=Scope.settings,
-        default="",
-    )
-    labster_demo = Boolean(
-        display_name=_("Labster Demo Course"),
-        help=_("Enter true or false. If true, the will have all demo features."),
-        scope=Scope.settings,
-        default=False,
-    )
