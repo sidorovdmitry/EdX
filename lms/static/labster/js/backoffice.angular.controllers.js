@@ -43,7 +43,9 @@ angular.module('LabsterBackOffice')
   .controller('NewPersonalLicenseController', function ($scope, $routeParams, $location, $http) {
     $scope.labs = [];
     $scope.showLabForm = false;
-    $scope.totalPrice = 0;
+    $scope.subTotalPrice = 0;
+    $scope.tax = 0;
+    $scope.totalPrice = 0
     $scope.isProcessing = false;
     $scope.checkoutButton = "Checkout";
     $scope.is_personal = true;
@@ -110,7 +112,7 @@ angular.module('LabsterBackOffice')
       });
 
     $scope.updateTotal = function () {
-      $scope.totalPrice = 0;
+      $scope.subTotalPrice = 0;
       angular.forEach($scope.labs, function (lab) {
         // set default value to 0 if the field is empty
         var length = lab.license.toString().length;
@@ -119,11 +121,11 @@ angular.module('LabsterBackOffice')
         }
 
         lab.total = lab.license * lab.price;
-        $scope.totalPrice += lab.total;
+        $scope.subTotalPrice += lab.total;
         lab.total = lab.total.toFixed(2);
 
       });
-      $scope.totalPrice = $scope.totalPrice.toFixed(2);
+      $scope.subTotalPrice = $scope.subTotalPrice.toFixed(2);
     };
 
     $scope.resetCount = function (lab) {

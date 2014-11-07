@@ -83,7 +83,7 @@
       <td>Total</td>
       <td></td>
       <td></td>
-      <td class="align-right">{{ totalPrice|currency:"$" }}</td>
+      <td class="align-right">{{ subTotalPrice|currency:"$" }}</td>
       <td></td>
     </tr>
     </tfoot>
@@ -106,6 +106,9 @@
       <label>Country</label>
       <select class="form-control" ng-model="country" ng-options="country.name for country in countries">
       </select>
+    </div>
+    <div class="align-right">
+      Subtotal : {{ subTotalPrice }}
     </div>
   </div>
   <div>
