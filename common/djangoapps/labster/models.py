@@ -8,7 +8,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.db.models.signals import pre_save, post_save
 from django.utils import timezone
 
@@ -361,6 +361,13 @@ class LabsterUserLicense(models.Model):
 
     class Meta:
         unique_together = ('course_id', 'email')
+
+    @classmethod
+    def course_licenses_count(cls, course_id):
+        now = timezone.now()
+        no_expired = {'course_id': course_id, 'expired_at': None}
+        expired = {'course_id': course_id, 'expired_at__gte': now}
+        return LabsterUserLicense.objects.filter(Q(**no_expired) | Q(**expired)).count()
 
     def __unicode__(self):
         return "{} - {}".format(self.course_id, self.email)
