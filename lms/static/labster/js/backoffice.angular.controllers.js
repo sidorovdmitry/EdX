@@ -102,6 +102,13 @@ angular.module('LabsterBackOffice')
         });
     };
 
+    var url_country = window.backofficeUrls.country;
+    $http.get(url_country)
+      .success(function (data, status, headers, config) {
+        $scope.countries = data;
+        $scope.country = $scope.countries[0];
+      });
+
     $scope.updateTotal = function () {
       $scope.totalPrice = 0;
       angular.forEach($scope.labs, function (lab) {
