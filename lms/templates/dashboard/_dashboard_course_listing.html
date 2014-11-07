@@ -5,6 +5,12 @@
   from django.core.urlresolvers import reverse
   from courseware.courses import course_image_url, get_course_about_section
   import waffle
+
+  from labster.models import LabsterUserLicense
+%>
+
+<%
+  course_used_licenses = LabsterUserLicense.course_licenses_count(course.id)
 %>
 
 <%
@@ -68,14 +74,25 @@
     <section class="info">
 
       % if 'staff' in user_course_role:
-      <style>
-      </style>
-      <div class="license-overview">
-        <h4>License Overview</h4>
-        <p>Enrolled Students: <span class="green">10</span></p>
-        <p>Licenses Available: <span class="red">0</span></p>
-        <!-- <p class="buy-licenses-container"><a href="${reverse('labster_backoffice')}" class="buy-licenses">Buy Licenses</a></p> -->
-      </div>
+        % if course.labster_license:
+        <div class="license-overview">
+          <h4>License Overview</h4>
+          <p>Enrolled Students:
+            <span class="green">${course_used_licenses}</span>
+          </p>
+          <p>Licenses Available:
+            <%
+            licenses_left = course.max_student_enrollments_allowed - course_used_licenses
+            %>
+            % if licenses_left:
+            <span>${licenses_left}</span>
+            % else:
+            <span class="red">0</span>
+            % endif
+          </p>
+          <!-- <p class="buy-licenses-container"><a href="${reverse('labster_backoffice')}" class="buy-licenses">Buy Licenses</a></p> -->
+        </div>
+        % endif
       % endif
 
       <hgroup>
