@@ -2,19 +2,22 @@ angular.module('LabsterBackOffice')
 
   .controller('NewPersonalLicenseController', function ($scope, $routeParams, $location, $http) {
     $scope.labs = [];
-    $scope.showLabForm = false;
     $scope.subTotalPrice = 0;
     $scope.tax = 0;
     $scope.totalPrice = 0;
     $scope.isProcessing = false;
-    $scope.checkoutButton = "Checkout";
+    $scope.showLabForm = false;
+    $scope.is_eu_country = false;
     $scope.is_personal = true;
+    $scope.is_public_institution = true;
+    $scope.checkoutButton = "Checkout";
+    $scope.institution = "";
+    $scope.country = null;
 
     $scope.eu_countries = [
       {id:15, name:'Austria'},
       {id:22, name:'Belgium'},
       {id:35, name:'Bulgaria'},
-
       {id:56, name:'Croatia'},
       {id:59, name:'Cyprus'},
       {id:60, name:'Czech Republic'},
@@ -117,8 +120,60 @@ angular.module('LabsterBackOffice')
         lab.total = lab.total.toFixed(2);
 
       });
-      $scope.subTotalPrice = $scope.subTotalPrice.toFixed(2);
+      //$scope.subTotalPrice = $scope.subTotalPrice.toFixed(2);
+      if ($scope.subTotalPrice > 0) {
+        $scope.checkVat();
+      }
     };
+
+    $scope.checkVat = function () {
+      /*
+      apply tax if:
+      1. Private person within EU
+      2. Private institution/school in Denmark
+      */
+      //if ($scope.country != null || $scope.country != undefined) {
+        $scope.totalPrice = 0;
+        $scope.tax = 0;
+        var is_eu_country = checkEuCountry($scope.country);
+        if ((is_eu_country && $scope.is_personal) ||
+          ($scope.country.name == "Denmark" && !$scope.is_public_institution)) {
+          $scope.tax = 25/100 * $scope.subTotalPrice;
+        }
+        $scope.totalPrice = $scope.tax + $scope.subTotalPrice;
+//        $scope.subTotalPrice = $scope.subTotalPrice.toFixed(2);
+//        $scope.totalPrice = $scope.totalPrice.toFixed(2);
+      //}
+    };
+
+    $scope.checkCountry2 = function(country) {
+      for(var i = $scope.eu_countries.length -1; i >= 0; i--) {
+        var item = $scope.eu_countries[i];
+        if(item.id == country.id) {
+          $scope.is_eu_country = true;
+          break;
+        } else {
+          $scope.is_eu_country = false;
+        }
+      }
+    };
+
+    function applyTax() {
+      $scope.tax = 25/100;
+      $scope.totalPrice = ($scope.tax * $scope.subTotalPrice) + $scope.subTotalPrice;
+    }
+
+    function checkEuCountry(country) {
+      if (country != null || country != undefined) {
+        for(var i = $scope.eu_countries.length -1; i >= 0; i--) {
+          var item = $scope.eu_countries[i];
+          if(item.id == country.id) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
 
     $scope.resetCount = function (lab) {
       lab.license = 0;
@@ -149,7 +204,7 @@ angular.module('LabsterBackOffice')
         callback();
       }).error(function (data, status, headers, config) {
       });
-    };
+    }; // end of duplicateLabs
 
     $scope.buyLabs = function () {
       var list_product;
@@ -199,6 +254,5 @@ angular.module('LabsterBackOffice')
 
         .error(function (data, status, headers, config) {
         });
-
-    }
+    };  // end of buy lab function
   });

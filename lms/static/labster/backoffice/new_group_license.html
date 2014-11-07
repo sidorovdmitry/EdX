@@ -95,20 +95,22 @@
         <input type="radio" ng-model="is_personal" ng-value="true"> Personal
       </label>
       <label>
-        <input type="radio" ng-model="is_personal" ng-value="false"> Company
+        <input type="radio" ng-model="is_personal" ng-value="false"> Institution
       </label>
     </div>
     <div class="form-group" ng-hide="is_personal">
-      <label>Company Name</label>
+      <label>Institution Name</label>
       <input type="text" class="form-control" ng-model="company_name">
     </div>
     <div class="form-group">
       <label>Country</label>
-      <select class="form-control" ng-model="country" ng-options="country.name for country in countries">
+      <select class="form-control" ng-change="checkVat()" ng-model="country" ng-options="country.name for country in countries">
       </select>
     </div>
     <div class="align-right">
-      Subtotal : {{ subTotalPrice }}
+      Subtotal : {{ subTotalPrice|currency:"$" }} <br/>
+      Tax : {{ tax|currency:"$" }} <br/>
+      Total : {{ totalPrice|currency:"$" }}
     </div>
   </div>
   <div>
