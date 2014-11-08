@@ -10,6 +10,7 @@ angular.module('LabsterBackOffice')
     $scope.is_eu_country = false;
     $scope.is_personal = true;
     $scope.is_public_institution = true;
+    $scope.is_denmark = false;
     $scope.checkoutButton = "Checkout";
     $scope.institution = "";
     $scope.country = null;
@@ -132,18 +133,20 @@ angular.module('LabsterBackOffice')
       1. Private person within EU
       2. Private institution/school in Denmark
       */
-      //if ($scope.country != null || $scope.country != undefined) {
-        $scope.totalPrice = 0;
-        $scope.tax = 0;
-        var is_eu_country = checkEuCountry($scope.country);
-        if ((is_eu_country && $scope.is_personal) ||
-          ($scope.country.name == "Denmark" && !$scope.is_public_institution)) {
-          $scope.tax = 25/100 * $scope.subTotalPrice;
-        }
-        $scope.totalPrice = $scope.tax + $scope.subTotalPrice;
-//        $scope.subTotalPrice = $scope.subTotalPrice.toFixed(2);
-//        $scope.totalPrice = $scope.totalPrice.toFixed(2);
-      //}
+      $scope.totalPrice = 0;
+      $scope.tax = 0;
+      $scope.is_denmark = false;
+      var is_eu_country = checkEuCountry($scope.country);
+
+      if ($scope.country.name == "Denmark") {
+        $scope.is_denmark = true;
+      }
+
+      if ((is_eu_country && $scope.is_personal) ||
+        ( $scope.is_denmark && !$scope.is_public_institution)) {
+        $scope.tax = 25/100 * $scope.subTotalPrice;
+      }
+      $scope.totalPrice = $scope.tax + $scope.subTotalPrice;
     };
 
     $scope.checkCountry2 = function(country) {

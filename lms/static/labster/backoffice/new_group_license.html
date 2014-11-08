@@ -89,6 +89,11 @@
     </tfoot>
   </table>
   <div class="labster-row">
+    <div class="form-group">
+      <label>Country</label>
+      <select class="form-control" ng-change="checkVat()" ng-model="country" ng-options="country.name for country in countries">
+      </select>
+    </div>
     <label>Personal type</label>
     <div class="radio">
       <label>
@@ -98,14 +103,24 @@
         <input type="radio" ng-model="is_personal" ng-value="false"> Institution
       </label>
     </div>
-    <div class="form-group" ng-hide="is_personal">
-      <label>Institution Name</label>
-      <input type="text" class="form-control" ng-model="company_name">
-    </div>
-    <div class="form-group">
-      <label>Country</label>
-      <select class="form-control" ng-change="checkVat()" ng-model="country" ng-options="country.name for country in countries">
-      </select>
+    <div ng-hide="is_personal">
+      <label>Institution type</label>
+      <div class="radio">
+        <label>
+          <input type="radio" ng-model="is_public_institution" ng-value="true"> Public School
+        </label>
+        <label>
+          <input type="radio" ng-model="is_public_institution" ng-value="false"> Private School
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Institution Name</label>
+        <input type="text" class="form-control" ng-model="company_name">
+      </div>
+      <div class="form-group" ng-show="!is_public_institution && is_denmark">
+        <label>VAT Number</label>
+        <input type="text" class="form-control" ng-model="institution_vat_number">
+      </div>
     </div>
     <div class="align-right">
       Subtotal : {{ subTotalPrice|currency:"$" }} <br/>
