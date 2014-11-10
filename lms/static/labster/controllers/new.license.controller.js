@@ -1,17 +1,16 @@
 angular.module('LabsterBackOffice')
 
-  .controller('NewPersonalLicenseController', function ($scope, $routeParams, $location, $http) {
+  .controller('NewLicenseController', function ($scope, $routeParams, $location, $http) {
     $scope.labs = [];
     $scope.subTotalPrice = 0;
     $scope.tax = 0;
     $scope.totalPrice = 0;
     $scope.isProcessing = false;
-    $scope.showLabForm = false;
+    $scope.showLabForm = true;
     $scope.is_eu_country = false;
-    $scope.is_personal = true;
-    $scope.is_public_institution = true;
     $scope.is_denmark = false;
-    $scope.checkoutButton = "Checkout";
+    $scope.checkoutButton = "Continue to Checkout";
+    $scope.institution_type = "personal";
     $scope.institution = "";
     $scope.country = null;
 
@@ -121,7 +120,6 @@ angular.module('LabsterBackOffice')
         lab.total = lab.total.toFixed(2);
 
       });
-      //$scope.subTotalPrice = $scope.subTotalPrice.toFixed(2);
       if ($scope.subTotalPrice > 0) {
         $scope.checkVat();
       }
@@ -136,35 +134,19 @@ angular.module('LabsterBackOffice')
       $scope.totalPrice = 0;
       $scope.tax = 0;
       $scope.is_denmark = false;
-      var is_eu_country = checkEuCountry($scope.country);
+      $scope.is_eu_country = checkEuCountry($scope.country);
 
       if ($scope.country.name == "Denmark") {
         $scope.is_denmark = true;
       }
 
-      if ((is_eu_country && $scope.is_personal) ||
-        ( $scope.is_denmark && !$scope.is_public_institution)) {
+      if (($scope.is_eu_country && $scope.institution_type == "personal") ||
+        ( $scope.is_denmark && $scope.institution_type == "private_school")) {
         $scope.tax = 25/100 * $scope.subTotalPrice;
       }
+
       $scope.totalPrice = $scope.tax + $scope.subTotalPrice;
     };
-
-    $scope.checkCountry2 = function(country) {
-      for(var i = $scope.eu_countries.length -1; i >= 0; i--) {
-        var item = $scope.eu_countries[i];
-        if(item.id == country.id) {
-          $scope.is_eu_country = true;
-          break;
-        } else {
-          $scope.is_eu_country = false;
-        }
-      }
-    };
-
-    function applyTax() {
-      $scope.tax = 25/100;
-      $scope.totalPrice = ($scope.tax * $scope.subTotalPrice) + $scope.subTotalPrice;
-    }
 
     function checkEuCountry(country) {
       if (country != null || country != undefined) {
@@ -258,4 +240,16 @@ angular.module('LabsterBackOffice')
         .error(function (data, status, headers, config) {
         });
     };  // end of buy lab function
+
+    $scope.checkout_btn_class = function() {
+      if ($scope.subTotalPrice > 0) {
+        return "btn-labster-checkout pull-right";
+      } else {
+        return "btn-labster-checkout pull-right labster-disabled-btn"
+      }
+    };
+
+    $scope.showVat = function() {
+      $scope.showLabForm = false;
+    }
   });

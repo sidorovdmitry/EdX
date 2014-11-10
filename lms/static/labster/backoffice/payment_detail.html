@@ -26,14 +26,7 @@
         <td></td>
       </tr>
       <tr ng-repeat="payment_product in payment.payment_products | filter: { product_type: 'univ'}">
-        <td class="lab-description">{{ payment_product.product_name }}
-          <div ng-show="payment_product.list_products.length > 0">
-            Lab included in this package:
-            <ul>
-              <li ng-repeat="lab in payment_product.list_products">{{ lab }}</li>
-            </ul>
-          </div>
-        </td>
+        <td class="lab-description">{{ payment_product.product_name }}</td>
         <td class="align-right">{{ payment_product.price|currency:"USD " }}</td>
         <td class="align-right">{{ payment_product.item_count }}</td>
         <td class="align-right">{{ payment_product.month_subscription }} months</td>
@@ -46,14 +39,7 @@
         <td></td>
       </tr>
       <tr ng-repeat="payment_product in payment.payment_products | filter: { product_type: 'hs'}">
-        <td class="lab-description">{{ payment_product.product_name }}
-          <div ng-show="payment_product.list_products.length > 0">
-            Lab included in this package:
-            <ul class="table-cell">
-              <li ng-repeat="lab in payment_product.list_products">{{ lab }}</li>
-            </ul>
-          </div>
-        </td>
+        <td class="lab-description">{{ payment_product.product_name }}</td>
         <td class="align-right">{{ payment_product.price|currency:"USD " }}</td>
         <td class="align-right">{{ payment_product.item_count }}</td>
         <td class="align-right">{{ payment_product.month_subscription }} months</td>
