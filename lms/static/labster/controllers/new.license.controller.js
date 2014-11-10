@@ -9,7 +9,7 @@ angular.module('LabsterBackOffice')
     $scope.showLabForm = true;
     $scope.is_eu_country = false;
     $scope.is_denmark = false;
-    $scope.checkoutButton = "Checkout";
+    $scope.checkoutButton = "Continue to Checkout";
     $scope.institution_type = "personal";
     $scope.institution = "";
     $scope.country = null;
