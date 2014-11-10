@@ -169,6 +169,8 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
         # fetch labs
         try:
             from labster.models import Lab
+            from student.models import UserProfile
+
             lab = Lab.objects.get(id=self.lab_id)
         except Lab.DoesNotExist:
             params['errors'] = "Lab doesn't no exist"
@@ -186,11 +188,14 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                                                  is_finished=False)
             except UserSave.DoesNotExist:
                 user_save = None
+
+            user_profile = UserProfile.objects.get(user_id=user_id)
             params.update({
                 'lab': lab,
                 'lab_proxy': lab_proxy,
                 'user_token': token,
                 'user_save': user_save,
+                'user_profile': user_profile,
             })
 
         fragment.add_content(self.system.render_template('lab_module.html', params))
