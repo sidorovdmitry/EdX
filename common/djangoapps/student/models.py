@@ -297,6 +297,11 @@ class UserProfile(models.Model):
         token, _ = Token.objects.get_or_create(user=self.user)
         return token.key
 
+    @property
+    def is_labster_verified(self):
+        reqs = [languge, date_of_birth, nationality, unique_id]
+        return all(reqs)
+
 
 class UserSignupSource(models.Model):
     """
