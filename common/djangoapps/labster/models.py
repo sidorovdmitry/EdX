@@ -69,6 +69,7 @@ class Lab(models.Model):
 
     use_quiz_blocks = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    verified_only = models.BooleanField(default=False)
 
     # lab can have many languages
     languages = models.ManyToManyField(LanguageLab)
