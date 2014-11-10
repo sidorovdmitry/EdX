@@ -44,16 +44,20 @@ class CourseDuplicateFromLabs(APIView):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
 
     def post(self, request, *args, **kwargs):
-        """
-        [
-            {'lab_id': 1, 'license_count': 10},
-            {'lab_id': 2, 'license_count': 10},
-            {'lab_id': 3, 'license_count': 10},
-        ]
-        """
-
         labs = request.DATA.get('labs', [])
-        labs_by_id = {str(each['lab_id']): each for each in labs}
+        payment_id = request.DATA.get('payment_id')
+        token = request.DATA.get('token')
+
+        payment = get_payment(payment_id, token)
+        labs_by_id = {}
+        for payment_product in payment['payment_products']:
+            lab_id = payment_product['product_external_id']
+            license_id = payment_product['license_id']
+            if not lab_id or not license_id:
+                continue
+
+            labs_by_id[lab_id] = payment_product
+
         lab_ids = labs_by_id.keys()
 
         labs = Lab.objects.filter(id__in=lab_ids)
@@ -61,7 +65,9 @@ class CourseDuplicateFromLabs(APIView):
         course_ids = []
         for lab in labs:
             lab_data = labs_by_id[str(lab.id)]
-            license_count = int(lab_data['license_count'])
+            license_count = int(lab_data['item_count'])
+            license_id = int(lab_data['license_id'])
+
             extra_fields = {
                 'invitation_only': True,
                 'max_student_enrollments_allowed': license_count,
