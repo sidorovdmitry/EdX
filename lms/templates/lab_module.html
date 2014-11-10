@@ -1,3 +1,11 @@
+<%! from django_countries.countries import COUNTRIES %>
+<%
+DEFAULT_LANGUAGE = 'en'
+LANGUAGES = [
+  ('dk', "Danish"),
+  ('en', "English"),
+]
+%>
 % if errors:
   <div>${errors}</div>
 % else:
@@ -54,6 +62,18 @@
       margin-right: 5px;
       margin-left: -4px;
     }
+    .labster-verified-form .input-group {
+      margin-bottom: 10px;
+    }
+    .labster-verified-form .input-group.error input {
+      border-color: red;
+    }
+    .labster-verified-form .input-group.error label {
+      color: red;
+    }
+    .labster-verified-form .button-group {
+      margin-top: 20px;
+    }
   </style>
   <script type="text/javascript">
   <!--
@@ -77,7 +97,48 @@
   <div>${lab.name}</div>
   -->
 
-  <div class="loading">Loading &hellip;</div>
+  % if not user_profile.is_labster_verified:
+  <div id="labsterVerifiedForm" class="labster-verified-form" style="display:none">
+    <p>In order to continue, you need to enter you details in the form below.
+    </p>
+    <form>
+      <div class="input-group">
+        <label>Nationality</label>
+        <select name="nationality" value="${user_profile.nationality}">
+          <option value="">--</option>
+          %for code, country_name in COUNTRIES:
+          <option value="${code}">${ unicode(country_name) }</option>
+          %endfor
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Language</label>
+        <select name="language" value="${user_profile.language}">
+          <option value="">--</option>
+          % for code, label in LANGUAGES:
+            % if code == DEFAULT_LANGUAGE:
+            <option value="${code}" selected>${label}</option>
+            % else:
+            <option value="${code}">${label}</option>
+            % endif
+          % endfor
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Social Security Number</label>
+        <input type="text" name="unique_id" value="${user_profile.unique_id}">
+      </div>
+      <div class="input-group">
+        <label>Date of Birth</label>
+        <input type="text" class="datepicker" name="date_of_birth" value="${user_profile.date_of_birth}">
+      </div>
+      <div class="button-group">
+        <button class="button-labster-blue" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+  % endif
+  <div class="loading" style="display:none">Loading &hellip;</div>
   <div id="missingUnityContainer" style="display:none">
     <h2>${lab.name}</h2>
     <h3>How to Play Our Labs</h3>
@@ -190,7 +251,83 @@
   </script>
   <!-- Segment.IO End -->
 
+  <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/labster/static/pikaday/pikaday.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
+  <script src="https://s3-us-west-2.amazonaws.com/labster/static/pikaday/pikaday.js"></script>
   <script>
+    % if lab.verified_only:
+    var isVerifiedLab = true;
+    % else:
+    var isVerifiedLab = false;
+    % endif
+
+    % if user_profile.is_labster_verified:
+    var isVerifiedLabster = true;
+    % else:
+    var isVerifiedLabster = false;
+    % endif
+
+    function initVerifiedForm(callback) {
+      var $ = jQuery,
+        token = "${user_token.key}",
+        csrf_token = "${csrf_token}",
+        put_url = "/labster/api/users/${module.scope_ids.user_id}/",
+        picker,
+        form;
+
+      $('#labsterVerifiedForm').show();
+
+      picker = new Pikaday({
+        field: $('.datepicker')[0],
+        format: "YYYY-MM-DD"
+      });
+
+      form = $('.labster-verified-form form');
+      form.submit(function(ev) {
+        var post_data = {},
+          form_data,
+          inputs,
+          is_valid = true;
+
+        form.find('button[type=submit]').text('Saving').prop('disabled', true);
+        form_data = form.serializeArray();
+        $.each(form_data, function(index, item) {
+          post_data[item.name] = item.value;
+        });
+
+        inputs = form.find('input[type=text], select');
+
+        inputs.each(function(index, el) {
+          var el = $(el);
+          el.closest('.input-group').removeClass('error');
+          if ( ! el.val()) {
+            el.closest('.input-group').addClass('error');
+            is_valid = false;
+          }
+        });
+
+        if (is_valid) {
+          $.ajax({
+            url: put_url,
+            type: "PUT",
+            contentType: "application/json",
+            dataType: "json",
+            beforeSend: function(xhr, settings) {
+              xhr.setRequestHeader("X-CSRFToken", csrf_token);
+            },
+            data: JSON.stringify(post_data)
+          }).success(function(response) {
+            $('#labsterVerifiedForm').hide();
+            callback();
+          }).error(function(response) {
+          });
+        } else {
+          form.find('button[type=submit]').text('Save').prop('disabled', false);
+        }
+
+        return false;
+      });
+    }
 
     function detectUnityWebPlayer() {
       var tInstalled = false;
@@ -298,12 +435,25 @@
         }
       });
 
-      if (hasUnity) {
-        jQuery('#labModuleContainer').show();
-        jQuery('.loading').hide();
+      if (isVerifiedLab && ! isVerifiedLabster) {
+        initVerifiedForm(function() {
+          if (hasUnity) {
+            jQuery('#labModuleContainer').show();
+            jQuery('.loading').hide();
+          } else {
+            jQuery('#missingUnityContainer').show();
+            jQuery('.loading').hide();
+          }
+        });
+
       } else {
-        jQuery('#missingUnityContainer').show();
-        jQuery('.loading').hide();
+        if (hasUnity) {
+          jQuery('#labModuleContainer').show();
+          jQuery('.loading').hide();
+        } else {
+          jQuery('#missingUnityContainer').show();
+          jQuery('.loading').hide();
+        }
       }
     });
 
@@ -337,7 +487,7 @@
   </script>
 
   <script>
-    var messages = []
+    var messages = [];
     function Log(message) {
       console.log(message);
       messages.push(message);

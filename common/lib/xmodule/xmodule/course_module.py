@@ -581,6 +581,12 @@ class CourseFields(object):
         scope=Scope.settings,
         default=False,
     )
+    labster_verified = Boolean(
+        display_name=_("Labster Verified Lab"),
+        help=_("Enter true or false. If true, it will check for user's verified status before showing the lab."),
+        scope=Scope.settings,
+        default=False,
+    )
 
 class CourseDescriptor(CourseFields, SequenceDescriptor):
     module_class = SequenceModule

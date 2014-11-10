@@ -206,7 +206,6 @@ class UserProfile(models.Model):
 
     # Location is no longer used, but is held here for backwards compatibility
     # for users imported from our first class.
-    language = models.CharField(blank=True, max_length=255, db_index=True)
     location = models.CharField(blank=True, max_length=255, db_index=True)
 
     # Optional demographic data we started capturing from Fall 2012
@@ -260,6 +259,12 @@ class UserProfile(models.Model):
     )
     user_type = models.IntegerField(choices=USER_TYPE_CHOICES, blank=True, null=True)
 
+    # labster verified account
+    language = models.CharField(blank=True, max_length=255, db_index=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    nationality = CountryField(blank=True, null=True)
+    unique_id = models.CharField(max_length=100, blank=True, db_index=True)
+
     def get_meta(self):
         js_str = self.meta
         if not js_str:
@@ -291,6 +296,11 @@ class UserProfile(models.Model):
         from rest_framework.authtoken.models import Token
         token, _ = Token.objects.get_or_create(user=self.user)
         return token.key
+
+    @property
+    def is_labster_verified(self):
+        reqs = [self.language, self.date_of_birth, self.nationality, self.unique_id]
+        return all(reqs)
 
 
 class UserSignupSource(models.Model):

@@ -17,7 +17,8 @@ class LabAdmin(BaseAdmin):
         'use_quiz_blocks', 'demo_course_id', 'is_active')
     fields = (
         'name', 'description', 'engine_xml', 'languages', 'engine_file',
-        'quiz_block_file', 'use_quiz_blocks', 'is_active', 'demo_course_id')
+        'quiz_block_file', 'use_quiz_blocks', 'is_active', 'demo_course_id',
+        'verified_only')
     filter_horizontal = ('languages',)
     list_filter = ('is_active', 'engine_file')
 
