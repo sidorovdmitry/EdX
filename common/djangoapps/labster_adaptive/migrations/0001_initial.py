@@ -25,34 +25,38 @@ class Migration(SchemaMigration):
         # Adding model 'Problem'
         db.create_table('labster_adaptive_problem', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('lab', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['labster.Lab'])),
-            ('item_number', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('lab', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['labster.Lab'], null=True, blank=True)),
+            ('item_number', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50)),
             ('answer_type', self.gf('django.db.models.fields.IntegerField')()),
             ('number_of_destractors', self.gf('django.db.models.fields.IntegerField')()),
             ('question', self.gf('django.db.models.fields.TextField')()),
             ('content', self.gf('django.db.models.fields.TextField')(default='')),
+            ('feedback', self.gf('django.db.models.fields.TextField')(default='')),
             ('time', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('cd_time', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
+            ('sd_time', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
             ('discrimination', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
             ('guessing', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
+            ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('modified_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
         ))
         db.send_create_signal('labster_adaptive', ['Problem'])
 
-        # Adding M2M table for field scale on 'Problem'
-        db.create_table('labster_adaptive_problem_scale', (
+        # Adding M2M table for field scales on 'Problem'
+        db.create_table('labster_adaptive_problem_scales', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
             ('problem', models.ForeignKey(orm['labster_adaptive.problem'], null=False)),
             ('scale', models.ForeignKey(orm['labster_adaptive.scale'], null=False))
         ))
-        db.create_unique('labster_adaptive_problem_scale', ['problem_id', 'scale_id'])
+        db.create_unique('labster_adaptive_problem_scales', ['problem_id', 'scale_id'])
 
-        # Adding M2M table for field station on 'Problem'
-        db.create_table('labster_adaptive_problem_station', (
+        # Adding M2M table for field stations on 'Problem'
+        db.create_table('labster_adaptive_problem_stations', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
             ('problem', models.ForeignKey(orm['labster_adaptive.problem'], null=False)),
             ('station', models.ForeignKey(orm['labster_adaptive.station'], null=False))
         ))
-        db.create_unique('labster_adaptive_problem_station', ['problem_id', 'station_id'])
+        db.create_unique('labster_adaptive_problem_stations', ['problem_id', 'station_id'])
 
         # Adding model 'Answer'
         db.create_table('labster_adaptive_answer', (
@@ -60,6 +64,10 @@ class Migration(SchemaMigration):
             ('problem', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['labster_adaptive.Problem'])),
             ('answer', self.gf('django.db.models.fields.TextField')()),
             ('difficulty', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
+            ('is_correct', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('modified_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
         ))
         db.send_create_signal('labster_adaptive', ['Answer'])
 
@@ -74,11 +82,11 @@ class Migration(SchemaMigration):
         # Deleting model 'Problem'
         db.delete_table('labster_adaptive_problem')
 
-        # Removing M2M table for field scale on 'Problem'
-        db.delete_table('labster_adaptive_problem_scale')
+        # Removing M2M table for field scales on 'Problem'
+        db.delete_table('labster_adaptive_problem_scales')
 
-        # Removing M2M table for field station on 'Problem'
-        db.delete_table('labster_adaptive_problem_station')
+        # Removing M2M table for field stations on 'Problem'
+        db.delete_table('labster_adaptive_problem_stations')
 
         # Deleting model 'Answer'
         db.delete_table('labster_adaptive_answer')
@@ -116,24 +124,32 @@ class Migration(SchemaMigration):
         'labster_adaptive.answer': {
             'Meta': {'object_name': 'Answer'},
             'answer': ('django.db.models.fields.TextField', [], {}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'difficulty': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'is_correct': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'modified_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'problem': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster_adaptive.Problem']"})
         },
         'labster_adaptive.problem': {
             'Meta': {'object_name': 'Problem'},
             'answer_type': ('django.db.models.fields.IntegerField', [], {}),
-            'cd_time': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'content': ('django.db.models.fields.TextField', [], {'default': "''"}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'discrimination': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'feedback': ('django.db.models.fields.TextField', [], {'default': "''"}),
             'guessing': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'item_number': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'lab': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.Lab']"}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'item_number': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
+            'lab': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.Lab']", 'null': 'True', 'blank': 'True'}),
+            'modified_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'number_of_destractors': ('django.db.models.fields.IntegerField', [], {}),
             'question': ('django.db.models.fields.TextField', [], {}),
-            'scale': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['labster_adaptive.Scale']", 'symmetrical': 'False', 'blank': 'True'}),
-            'station': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['labster_adaptive.Station']", 'symmetrical': 'False', 'blank': 'True'}),
+            'scales': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['labster_adaptive.Scale']", 'symmetrical': 'False', 'blank': 'True'}),
+            'sd_time': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'stations': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['labster_adaptive.Station']", 'symmetrical': 'False', 'blank': 'True'}),
             'time': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
         },
         'labster_adaptive.scale': {
