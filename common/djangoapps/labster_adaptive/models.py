@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from labster.models import Lab
 
@@ -18,8 +19,8 @@ class Station(models.Model):
 
 
 class Problem(models.Model):
-    lab = models.ForeignKey(Lab)
-    item_number = models.CharField(max_length=50)
+    lab = models.ForeignKey(Lab, blank=True, null=True)
+    item_number = models.CharField(max_length=50, unique=True)
 
     ANSWER_TYPE_CHOICES = (
         (1, 'dichotomous'),
@@ -32,16 +33,32 @@ class Problem(models.Model):
     number_of_destractors = models.IntegerField()
     question = models.TextField()
     content = models.TextField(default="")
+    feedback = models.TextField(default="")
     time = models.FloatField(blank=True, null=True)
-    cd_time = models.FloatField(blank=True, null=True)
+    sd_time = models.FloatField(blank=True, null=True)
     discrimination = models.IntegerField(blank=True, null=True)
     guessing = models.FloatField(blank=True, null=True)
 
-    scale = models.ManyToManyField(Scale, blank=True)
-    station = models.ManyToManyField(Station, blank=True)
+    scales = models.ManyToManyField(Scale, blank=True)
+    stations = models.ManyToManyField(Station, blank=True)
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
+
+    def __unicode__(self):
+        return self.question
 
 
 class Answer(models.Model):
     problem = models.ForeignKey(Problem)
     answer = models.TextField()
     difficulty = models.IntegerField(blank=True, null=True)
+    is_correct = models.BooleanField(default=False)
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
+
+    def __unicode__(self):
+        return "{}: {}".format(self.problem, self.answer)
