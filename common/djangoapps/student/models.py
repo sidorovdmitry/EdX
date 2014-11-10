@@ -299,7 +299,7 @@ class UserProfile(models.Model):
 
     @property
     def is_labster_verified(self):
-        reqs = [languge, date_of_birth, nationality, unique_id]
+        reqs = [self.language, self.date_of_birth, self.nationality, self.unique_id]
         return all(reqs)
 
 

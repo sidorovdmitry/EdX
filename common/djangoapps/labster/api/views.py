@@ -14,11 +14,13 @@ from django.http.multipartparser import parse_header, ChunkIter
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
+from student.models import UserProfile
+
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ParseError
-from rest_framework.generics import ListCreateAPIView, CreateAPIView
+from rest_framework.generics import ListCreateAPIView, CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.parsers import DataAndFiles
 from rest_framework.parsers import FormParser, MultiPartParser, BaseParser
 from rest_framework.permissions import IsAuthenticated
@@ -29,7 +31,7 @@ from rest_framework.views import APIView
 
 from labster.api.serializers import (
     ErrorInfoSerializer, DeviceInfoSerializer,
-    UserAttemptSerializer, FinishLabSerializer)
+    UserAttemptSerializer, FinishLabSerializer, LabsterUserSerializer)
 from labster.authentication import GetTokenAuthentication
 from labster.models import (
     UserSave, ErrorInfo, DeviceInfo, LabProxy, UserAttempt, UnityLog,
@@ -294,6 +296,20 @@ class UserAuth(RendererMixin, APIView):
             http_status = status.HTTP_400_BAD_REQUEST
 
         return Response(response_data, status=http_status)
+
+
+class UserView(AuthMixin, RetrieveUpdateAPIView):
+
+    serializer_class = LabsterUserSerializer
+
+    def get_object(self):
+        try:
+            return self.get_queryset().get(user__id=self.kwargs.get('user_id'))
+        except UserProfile.DoesNotExist:
+            raise Http404
+
+    def get_queryset(self):
+        return UserProfile.objects.all()
 
 
 class CustomFileUploadParser(BaseParser):

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from labster.models import UserSave, ErrorInfo, DeviceInfo, UserAttempt
+from student.models import UserProfile
 
 
 class LabSerializer(serializers.Serializer):
@@ -83,3 +84,18 @@ class DeviceInfoSerializer(serializers.ModelSerializer):
             'ram', 'processor', 'cores', 'gpu', 'memory', 'fill_rate',
             'shader_level', 'quality', 'misc', 'created_at')
         read_only_fields = ('user', 'created_at')
+
+
+class LabsterUserSerializer(serializers.ModelSerializer):
+
+    user_id = serializers.Field('user.id')
+    is_labster_verified = serializers.Field('is_labster_verified')
+    nationality_name = serializers.Field('nationality.name')
+
+    class Meta:
+        model = UserProfile
+        fields = (
+            'user_id', 'date_of_birth', 'nationality', 'language', 'unique_id',
+            'is_labster_verified',
+            'nationality_name',
+        )

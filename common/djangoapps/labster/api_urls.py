@@ -3,6 +3,7 @@ from django.conf.urls import patterns, url
 # from rest_framework.urlpatterns import format_suffix_patterns
 
 from labster.api.views import APIRoot
+from labster.api.views import UserView
 from labster.api.views import CreateSave, CreateError, CreateDevice
 from labster.api.views import LabProxyView, AnswerProblem, Wiki, ArticleSlug
 from labster.api.views import UserAuth, PlayLab, FinishLab, LabSettings
@@ -13,6 +14,7 @@ urlpatterns = patterns('',  # nopep8
 
     url('^$', APIRoot.as_view(), name='root'),
     url('auth/$', UserAuth.as_view(), name='auth'),
+    url('^users/(?P<user_id>\d+)/$', UserView.as_view(), name='users'),
 
     url('^labs/(?P<lab_id>\d+)/questions/$', LabProxyView.as_view(), name='questions'),
     url('^labs/(?P<lab_id>\d+)/answer/$', AnswerProblem.as_view(), name='answer'),
