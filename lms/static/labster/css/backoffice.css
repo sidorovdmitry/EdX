@@ -1,3 +1,6 @@
+.vertical-align-baseline {
+    vertical-align: baseline !important;
+}
 .pull-right {
     float: right;
 }
