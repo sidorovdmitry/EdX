@@ -206,7 +206,6 @@ class UserProfile(models.Model):
 
     # Location is no longer used, but is held here for backwards compatibility
     # for users imported from our first class.
-    language = models.CharField(blank=True, max_length=255, db_index=True)
     location = models.CharField(blank=True, max_length=255, db_index=True)
 
     # Optional demographic data we started capturing from Fall 2012
@@ -259,6 +258,12 @@ class UserProfile(models.Model):
         (USER_TYPE_OTHER, ugettext_noop('Other')),
     )
     user_type = models.IntegerField(choices=USER_TYPE_CHOICES, blank=True, null=True)
+
+    # labster verified account
+    language = models.CharField(blank=True, max_length=255, db_index=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    nationality = CountryField(blank=True, null=True)
+    unique_id = models.CharField(max_length=100, blank=True, db_index=True)
 
     def get_meta(self):
         js_str = self.meta
