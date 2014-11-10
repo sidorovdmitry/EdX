@@ -130,7 +130,7 @@
     <tr ng-hide="institution_type == 'personal'">
       <td>VAT Number</td>
       <td>
-        <input type="text" class="form-control" ng-model="institution_vat_number">
+        <input type="text" class="form-control" ng-model="institution_vat_number" ng-change="checkVatFormat()">
       </td>
     </tr>
     </tbody>
