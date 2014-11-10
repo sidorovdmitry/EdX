@@ -303,11 +303,20 @@ class UserAnswer(models.Model):
     problem_proxy = models.ForeignKey(ProblemProxy)
     created_at = models.DateTimeField(default=timezone.now)
 
-    attempt_count = models.IntegerField(blank=True, null=True)
-    score = models.IntegerField(blank=True, null=True)
+    answer_string = models.TextField(default='')
+    correct_answer = models.TextField(default='')
+    is_correct = models.BooleanField(default=True)
+
+    start_time = models.DateTimeField(blank=True, null=True)
+    end_time = models.DateTimeField(blank=True, null=True)
     completion_time = models.FloatField(blank=True, null=True)
-    is_view_theory_clicked = models.BooleanField(default=False)
+
+    attempt_count = models.IntegerField(blank=True, null=True)
     play_count = models.IntegerField(blank=True, null=True)
+
+    score = models.IntegerField(blank=True, null=True)
+
+    is_view_theory_clicked = models.BooleanField(default=False)
 
 
 def fetch_labs_as_json():
