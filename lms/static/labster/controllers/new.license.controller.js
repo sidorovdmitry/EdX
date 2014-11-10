@@ -196,49 +196,55 @@ angular.module('LabsterBackOffice')
 
       $scope.isProcessing = true;
       $scope.checkoutButton = "Processing";
-      var url = window.backofficeUrls.buyLab;
-      data = {
-        user: window.requestUser.backoffice.user.id,
-        payment_type: "manual",
-        list_product: []
-      };
+      if ($scope.institution_type != "personal") {
+        $scope.checkVatFormat();
+        $scope.checkInsitution();
+      }
+      if (!$scope.is_error) {
+        var url = window.backofficeUrls.buyLab;
+        data = {
+          user: window.requestUser.backoffice.user.id,
+          payment_type: "manual",
+          list_product: []
+        };
 
-      angular.forEach($scope.labs, function (lab) {
-        if (lab.license > 0) {
-          if (lab.lab_type == "individual") {
-            // include individual lab
-            data.list_product.push({
-              product: lab.id,
-              item_count: lab.license,
-              month_subscription: lab.month_subscription
-            });
-          } else {
-            // include group package lab
-            data.list_product.push({
-              product_group: lab.id,
-              item_count: lab.license,
-              month_subscription: lab.month_subscription
-            });
+        angular.forEach($scope.labs, function (lab) {
+          if (lab.license > 0) {
+            if (lab.lab_type == "individual") {
+              // include individual lab
+              data.list_product.push({
+                product: lab.id,
+                item_count: lab.license,
+                month_subscription: lab.month_subscription
+              });
+            } else {
+              // include group package lab
+              data.list_product.push({
+                product_group: lab.id,
+                item_count: lab.license,
+                month_subscription: lab.month_subscription
+              });
+            }
           }
-        }
-      });
+        });
 
-      list_product = data.list_product;
-      $http.post(url, data, {
-        headers: {
-          'Authorization': "Token " + window.requestUser.backoffice.token
-        }
-      })
-
-        .success(function (data, status, headers, config) {
-          duplicateLabs(list_product, data.id, function () {
-            var url = '/invoice/' + data.id;
-            $location.url(url);
-          });
+        list_product = data.list_product;
+        $http.post(url, data, {
+          headers: {
+            'Authorization': "Token " + window.requestUser.backoffice.token
+          }
         })
 
-        .error(function (data, status, headers, config) {
-        });
+          .success(function (data, status, headers, config) {
+            duplicateLabs(list_product, data.id, function () {
+              var url = '/invoice/' + data.id;
+              $location.url(url);
+            });
+          })
+
+          .error(function (data, status, headers, config) {
+          });
+      }
     };  // end of buy lab function
 
     $scope.checkout_btn_class = function () {
@@ -254,10 +260,33 @@ angular.module('LabsterBackOffice')
     };
 
     $scope.institution_vat_number = "";
+    $scope.institution_name = "";
+    $scope.vat_error = "";
+    $scope.is_error = false;
+    $scope.insitution_error = "";
 
     $scope.checkVatFormat = function () {
-      if (checkVATNumber($scope.institution_vat_number)) {
-        alert("hakuna banana");
+      if (!$scope.institution_vat_number.length) {
+        $scope.vat_error = "Please insert your VAT number";
+        $scope.is_error = true;
+      } else if (checkVATNumber($scope.institution_vat_number)) {
+        // validated
+        $scope.is_error = false;
+        $scope.vat_error = "";
+      } else {
+        $scope.vat_error = "The VAT number is invalid";
+        $scope.is_error = true;
       }
     };
+
+    $scope.checkInsitution = function () {
+      if (!$scope.institution_name.length) {
+        $scope.is_error = true;
+        $scope.insitution_error = "Please insert your school/university name";
+      } else {
+        $scope.is_error = false;
+        $scope.institution_error = "";
+      }
+    };
+
   });

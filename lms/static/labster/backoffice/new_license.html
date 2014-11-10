@@ -125,12 +125,16 @@
     </tr>
     <tr ng-hide="institution_type == 'personal'">
       <td>Institution Name</td>
-      <td><input type="text" class="form-control" ng-model="company_name"></td>
+      <td>
+        <input type="text" class="form-control" ng-model="institution_name">
+        <div ng-show="insitution_error"><i>{{ insitution_error }}</i></div>
+      </td>
     </tr>
     <tr ng-hide="institution_type == 'personal'">
       <td>VAT Number</td>
       <td>
-        <input type="text" class="form-control" ng-model="institution_vat_number" ng-change="checkVatFormat()">
+        <input type="text" class="form-control" ng-model="institution_vat_number" >
+        <div ng-show="vat_error"><i>{{ vat_error }}</i></div>
       </td>
     </tr>
     </tbody>
@@ -150,5 +154,5 @@
     </tfoot>
   </table>
   <a type="button"
-     ng-class="checkout_btn_class()" ng-click="subTotalPrice <= 0 || buyLabs()">Continue to Payment</a>
+     class="btn-labster-checkout pull-right" ng-click="buyLabs()">Continue to Payment</a>
 </div>
