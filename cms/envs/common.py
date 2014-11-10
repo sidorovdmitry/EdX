@@ -643,6 +643,7 @@ MAX_FAILED_LOGIN_ATTEMPTS_LOCKOUT_PERIOD_SECS = 15 * 60
 if FEATURES.get('LABSTER'):
     INSTALLED_APPS += (
         'labster',
+        'labster_adaptive',
         'corsheaders',
         'rest_framework',
         'rest_framework.authtoken',

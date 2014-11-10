@@ -1446,6 +1446,7 @@ LINKEDIN_API = {
 if FEATURES.get('LABSTER'):
     INSTALLED_APPS += (
         'labster',
+        'labster_adaptive',
         'corsheaders',
         'rest_framework.authtoken',
     )
