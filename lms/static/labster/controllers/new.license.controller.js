@@ -141,9 +141,10 @@ angular.module('LabsterBackOffice')
       }
 
       if (($scope.is_eu_country && $scope.institution_type == "personal") ||
-        ( $scope.is_denmark && $scope.institution_type == "pubic_school")) {
+        ( $scope.is_denmark && $scope.institution_type == "private_school")) {
         $scope.tax = 25/100 * $scope.subTotalPrice;
       }
+
       $scope.totalPrice = $scope.tax + $scope.subTotalPrice;
     };
 
