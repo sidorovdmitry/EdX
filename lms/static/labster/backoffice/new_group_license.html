@@ -97,20 +97,20 @@
     <label>Personal type</label>
     <div class="radio">
       <label>
-        <input type="radio" ng-model="is_personal" ng-value="true"> Personal
+        <input type="radio" ng-model="is_personal" ng-change="checkVat()" ng-value="true"> Personal
       </label>
       <label>
-        <input type="radio" ng-model="is_personal" ng-value="false"> Institution
+        <input type="radio" ng-model="is_personal" ng-change="checkVat()" ng-value="false"> Institution
       </label>
     </div>
     <div ng-hide="is_personal">
       <label>Institution type</label>
       <div class="radio">
         <label>
-          <input type="radio" ng-model="is_public_institution" ng-value="true"> Public School
+          <input type="radio" ng-model="is_public_institution" ng-change="checkVat()" ng-value="true"> Public School
         </label>
         <label>
-          <input type="radio" ng-model="is_public_institution" ng-value="false"> Private School
+          <input type="radio" ng-model="is_public_institution" ng-change="checkVat()" ng-value="false"> Private School
         </label>
       </div>
       <div class="form-group">
