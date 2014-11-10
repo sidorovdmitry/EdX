@@ -1,6 +1,8 @@
 import json
 from lxml import etree
 
+from dateutil import parser
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -10,6 +12,7 @@ from django.http import Http404
 from django.http import QueryDict
 from django.http.multipartparser import parse_header, ChunkIter
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
@@ -798,26 +801,38 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
 
         question = request.POST.get('QuizQuestion')
         score = request.POST.get('Score')
-        time_spent = request.POST.get('CompletionTime')
-        answer = request.POST.get('CorrectAnswer')
+        completion_time = request.POST.get('CompletionTime')
+        correct_answer = request.POST.get('CorrectAnswer')
+        chosen_answer = request.POST.get('ChosenAnswer')
+        start_time = request.POST.get('StartTime')
         play_count = request.POST.get('PlayCount')
         attempt_count = request.POST.get('AttemptCount')
 
-        if not all([request, score, time_spent, answer, play_count]):
+        start_time = parser.parse(start_time).replace(tzinfo=timezone.utc)
+        end_time = start_time + timedelta(seconds=completion_time)
+        is_correct = correct_answer.strip() == chosen_answer.strip()
+
+        if not all([
+                request, score, completion_time, correct_answer, play_count,
+                start_time, end_time,
+                ]):
+
             return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
 
         problem_proxy = get_problem_proxy_by_question(lab_proxy, question)
-        try:
-            UserAnswer.objects.create(
-                problem_proxy=problem_proxy,
-                user=request.user,
-                attempt_count=attempt_count,
-                play_count=play_count,
-                score=score,
-                completion_time=time_spent,
-            )
-        except:
-            pass
+        UserAnswer.objects.create(
+            answer_string=chosen_answer,
+            correct_answer=correct_answer,
+            attempt_count=attempt_count,
+            completion_time=completion_time,
+            end_time=end_time,
+            is_correct=is_correct,
+            play_count=play_count,
+            problem_proxy=problem_proxy,
+            score=score,
+            start_time=start_time,
+            user=request.user,
+        )
 
         problem_id = problem_proxy.location
         problem_locator, problem_descriptor = self.get_problem_locator_descriptor(problem_id)
@@ -826,7 +841,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
 
         course_id = problem_descriptor.location.course_key.to_deprecated_string()
         result = self.call_xblock_handler(request, course_id,
-                                          problem_locator, answer_value, time_spent)
+                                          problem_locator, answer_value, completion_time)
         content = json.loads(result.content)
         response_data = {
             'correct': content.get('success') == 'correct',
