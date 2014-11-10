@@ -1,6 +1,6 @@
 angular.module('LabsterBackOffice')
 
-  .controller('NewPersonalLicenseController', function ($scope, $routeParams, $location, $http) {
+  .controller('NewLicenseController', function ($scope, $routeParams, $location, $http) {
     $scope.labs = [];
     $scope.subTotalPrice = 0;
     $scope.tax = 0;

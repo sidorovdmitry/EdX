@@ -23,8 +23,8 @@ angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate'])
       })
 
       .when('/license/new/group/:group_type', {
-        controller: 'NewPersonalLicenseController',
-        templateUrl: window.baseUrl + 'labster/backoffice/new_group_license.html'
+        controller: 'NewLicenseController',
+        templateUrl: window.baseUrl + 'labster/backoffice/new_license.html'
       })
 
       .when('/invoice/:paymentId', {
