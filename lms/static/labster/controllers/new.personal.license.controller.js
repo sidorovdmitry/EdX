@@ -184,7 +184,7 @@ angular.module('LabsterBackOffice')
       $scope.updateTotal();
     };
 
-    var duplicateLabs = function (list_product, callback) {
+    var duplicateLabs = function (list_product, payment_id, callback) {
       callback();
       return;
 
@@ -197,7 +197,7 @@ angular.module('LabsterBackOffice')
         });
       });
 
-      var post_data = {labs: labs};
+      var post_data = {labs: labs, payment_id: payment_id, token: window.requestUser.token};
       var url = window.backofficeUrls.duplicateLabs;
       $http.post(url, post_data, {
         headers: {
@@ -249,7 +249,7 @@ angular.module('LabsterBackOffice')
       })
 
         .success(function (data, status, headers, config) {
-          duplicateLabs(list_product, function () {
+          duplicateLabs(list_product, data.id, function () {
             var url = '/invoice/' + data.id;
             $location.url(url);
           });

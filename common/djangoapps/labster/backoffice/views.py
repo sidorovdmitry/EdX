@@ -26,6 +26,19 @@ def get_labs(token, format='json'):
     return resp.json
 
 
+def get_payment(payment_id, token, format='josn'):
+    headers = {
+        'authorization': "Token {}".format(token),
+    }
+    payment_url = '{}/api/payments/{}/'.format(get_base_url(), payment_id)
+    resp = requests.get(payment_url, headers=headers)
+    assert resp.status_code == 200, resp.status_code
+
+    if format == 'string':
+        return resp.content
+    return resp.json
+
+
 def create_user(user, format='json'):
     post_data = {
         'email': user.email,
