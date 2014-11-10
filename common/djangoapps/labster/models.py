@@ -367,7 +367,7 @@ class LabsterUserLicense(models.Model):
         now = timezone.now()
         no_expired = {'course_id': course_id, 'expired_at': None}
         expired = {'course_id': course_id, 'expired_at__gte': now}
-        return LabsterUserLicense.objects.filter(Q(**no_expired) | Q(**expired)).count()
+        return cls.objects.filter(Q(**no_expired) | Q(**expired)).count()
 
     def __unicode__(self):
         return "{} - {}".format(self.course_id, self.email)
@@ -379,3 +379,12 @@ class LabsterUserLicense(models.Model):
     def renew_to(self, expired_at):
         self.expired_at = expired_at
         self.save()
+
+
+class LabsterCourseLicense(models.Model):
+    user = models.ForeignKey(User)  # the teacher
+    course_id = CourseKeyField(max_length=255, db_index=True)
+    license_id = models.IntegerField(unique=True)
+
+    class Meta:
+        unique_together = ('user', 'course_id')
