@@ -6,7 +6,7 @@ angular.module('LabsterBackOffice')
     $scope.tax = 0;
     $scope.totalPrice = 0;
     $scope.isProcessing = false;
-    //$scope.showLabForm = false;
+    $scope.showLabForm = true;
     $scope.is_eu_country = false;
     $scope.is_denmark = false;
     $scope.checkoutButton = "Checkout";
@@ -246,5 +246,9 @@ angular.module('LabsterBackOffice')
       } else {
         return "btn-labster-checkout pull-right labster-disabled-btn"
       }
+    };
+
+    $scope.showVat = function() {
+      $scope.showLabForm = false;
     }
   });
