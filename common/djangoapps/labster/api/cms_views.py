@@ -81,5 +81,8 @@ class CourseDuplicateFromLabs(APIView):
 
             course_ids.append(str(course.id))
 
+            LabsterCourseLicense.objects.create(
+                user=request.user, course_id=course.id, license_id=license_id)
+
         response_data = {'courses': course_ids}
         return Response(response_data)
