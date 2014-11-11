@@ -48,6 +48,20 @@
     </tbody>
     <tfoot>
       <tr>
+        <td>Subtotal</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="align-right">{{ payment.total_before_tax|currency:"USD " }}</td>
+      </tr>
+      <tr>
+        <td>VAT</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="align-right">{{ payment.total_tax|currency:"USD " }}</td>
+      </tr>
+      <tr>
         <td>Total</td>
         <td></td>
         <td></td>

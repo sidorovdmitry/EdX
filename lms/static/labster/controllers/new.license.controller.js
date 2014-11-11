@@ -1,6 +1,12 @@
 angular.module('LabsterBackOffice')
 
   .controller('NewLicenseController', function ($scope, $routeParams, $location, $http) {
+    /*
+    $scope.institution_type
+    personal = 1
+    private = 2
+    public = 3
+     */
     $scope.labs = [];
     $scope.subTotalPrice = 0;
     $scope.tax = 0;
@@ -9,8 +15,8 @@ angular.module('LabsterBackOffice')
     $scope.showLabForm = true;
     $scope.is_eu_country = false;
     $scope.is_denmark = false;
-    $scope.checkoutButton = "Continue to Checkout";
-    $scope.institution_type = "personal";
+    $scope.checkoutButton = "Continue to Payment";
+    $scope.institution_type = 1;
     $scope.institution = "";
     $scope.country = null;
 
@@ -140,8 +146,8 @@ angular.module('LabsterBackOffice')
         $scope.is_denmark = true;
       }
 
-      if (($scope.is_eu_country && $scope.institution_type == "personal") ||
-        ( $scope.is_denmark && $scope.institution_type == "private")) {
+      if (($scope.is_eu_country && $scope.institution_type == 1) ||
+        ( $scope.is_denmark && $scope.institution_type == 2)) {
         $scope.tax = 25 / 100 * $scope.subTotalPrice;
       }
 
@@ -195,16 +201,20 @@ angular.module('LabsterBackOffice')
       var list_product;
 
       $scope.isProcessing = true;
-      $scope.checkoutButton = "Processing";
-      if ($scope.institution_type != "personal") {
+      $scope.checkoutButton = "Processing...";
+      if ($scope.institution_type != 1) {
         $scope.checkVatFormat();
         $scope.checkInsitution();
       }
-      if (!$scope.is_error) {
+      if (!$scope.institution_error.length || !$scope.vat_error.length) {
         var url = window.backofficeUrls.buyLab;
         data = {
           user: window.requestUser.backoffice.user.id,
           payment_type: "manual",
+          institution_type : $scope.institution_type,
+          institution_name : $scope.institution_name,
+          country : $scope.country.id,
+          total_before_tax : $scope.subTotalPrice,
           list_product: []
         };
 
@@ -262,29 +272,25 @@ angular.module('LabsterBackOffice')
     $scope.institution_vat_number = "";
     $scope.institution_name = "";
     $scope.vat_error = "";
-    $scope.is_error = false;
-    $scope.insitution_error = "";
+    $scope.institution_error = "";
 
     $scope.checkVatFormat = function () {
       if (!$scope.institution_vat_number.length) {
         $scope.vat_error = "Please insert your VAT number";
-        $scope.is_error = true;
       } else if (checkVATNumber($scope.institution_vat_number)) {
         // validated
-        $scope.is_error = false;
         $scope.vat_error = "";
       } else {
         $scope.vat_error = "The VAT number is invalid";
-        $scope.is_error = true;
       }
     };
 
     $scope.checkInsitution = function () {
       if (!$scope.institution_name.length) {
-        $scope.is_error = true;
-        $scope.insitution_error = "Please insert your school/university name";
+//        $scope.is_error = true;
+        $scope.institution_error = "Please insert your school/university name";
       } else {
-        $scope.is_error = false;
+//        $scope.is_error = false;
         $scope.institution_error = "";
       }
     };
