@@ -200,7 +200,7 @@ angular.module('LabsterBackOffice')
         $scope.checkVatFormat();
         $scope.checkInsitution();
       }
-      if (!$scope.is_error) {
+      if (!$scope.institution_error.length || !$scope.vat_error.length) {
         var url = window.backofficeUrls.buyLab;
         data = {
           user: window.requestUser.backoffice.user.id,
@@ -262,29 +262,25 @@ angular.module('LabsterBackOffice')
     $scope.institution_vat_number = "";
     $scope.institution_name = "";
     $scope.vat_error = "";
-    $scope.is_error = false;
-    $scope.insitution_error = "";
+    $scope.institution_error = "";
 
     $scope.checkVatFormat = function () {
       if (!$scope.institution_vat_number.length) {
         $scope.vat_error = "Please insert your VAT number";
-        $scope.is_error = true;
       } else if (checkVATNumber($scope.institution_vat_number)) {
         // validated
-        $scope.is_error = false;
         $scope.vat_error = "";
       } else {
         $scope.vat_error = "The VAT number is invalid";
-        $scope.is_error = true;
       }
     };
 
     $scope.checkInsitution = function () {
       if (!$scope.institution_name.length) {
-        $scope.is_error = true;
-        $scope.insitution_error = "Please insert your school/university name";
+//        $scope.is_error = true;
+        $scope.institution_error = "Please insert your school/university name";
       } else {
-        $scope.is_error = false;
+//        $scope.is_error = false;
         $scope.institution_error = "";
       }
     };
