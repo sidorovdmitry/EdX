@@ -114,27 +114,27 @@
       <td class="vertical-align-baseline">Institution type</td>
       <td>
         <label>
-          <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="personal"> Personal <br/>
+          <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="1"> Personal <br/>
         </label>
         <label>
-          <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="private"> Private School <br/>
+          <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="2"> Private School <br/>
         </label>
         <label>
-          <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="public"> Public School <br/>
+          <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="3"> Public School <br/>
         </label>
       </td>
     </tr>
     <tr class="edu-level">
       <td colspan="2"><strong>Billing Information</strong></td>
     </tr>
-    <tr ng-hide="institution_type == 'personal'">
+    <tr ng-hide="institution_type == 1">
       <td>Institution Name</td>
       <td>
         <input type="text" class="form-control" ng-model="institution_name">
         <i>{{ institution_error }}</i>
       </td>
     </tr>
-    <tr ng-hide="institution_type == 'personal'">
+    <tr ng-hide="institution_type == 1">
       <td>VAT Number</td>
       <td>
         <input type="text" class="form-control" ng-model="institution_vat_number" >

@@ -1,6 +1,12 @@
 angular.module('LabsterBackOffice')
 
   .controller('NewLicenseController', function ($scope, $routeParams, $location, $http) {
+    /*
+    $scope.institution_type
+    personal = 1
+    private = 2
+    public = 3
+     */
     $scope.labs = [];
     $scope.subTotalPrice = 0;
     $scope.tax = 0;
@@ -10,7 +16,7 @@ angular.module('LabsterBackOffice')
     $scope.is_eu_country = false;
     $scope.is_denmark = false;
     $scope.checkoutButton = "Continue to Checkout";
-    $scope.institution_type = "personal";
+    $scope.institution_type = 1;
     $scope.institution = "";
     $scope.country = null;
 
@@ -140,8 +146,8 @@ angular.module('LabsterBackOffice')
         $scope.is_denmark = true;
       }
 
-      if (($scope.is_eu_country && $scope.institution_type == "personal") ||
-        ( $scope.is_denmark && $scope.institution_type == "private")) {
+      if (($scope.is_eu_country && $scope.institution_type == 1) ||
+        ( $scope.is_denmark && $scope.institution_type == 2)) {
         $scope.tax = 25 / 100 * $scope.subTotalPrice;
       }
 
@@ -196,7 +202,7 @@ angular.module('LabsterBackOffice')
 
       $scope.isProcessing = true;
       $scope.checkoutButton = "Processing";
-      if ($scope.institution_type != "personal") {
+      if ($scope.institution_type != 1) {
         $scope.checkVatFormat();
         $scope.checkInsitution();
       }
