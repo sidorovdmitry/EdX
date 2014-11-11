@@ -19,7 +19,6 @@ class Category(models.Model):
 
 
 class Problem(models.Model):
-    lab = models.ForeignKey(Lab, blank=True, null=True)
     item_number = models.CharField(max_length=50, unique=True)
 
     ANSWER_TYPE_CHOICES = (
@@ -29,8 +28,8 @@ class Problem(models.Model):
         # (4, '5 response options'),
         # (5, '6 response options'),
     )
-    answer_type = models.IntegerField(choices=ANSWER_TYPE_CHOICES)
-    number_of_destractors = models.IntegerField()
+    answer_type = models.IntegerField(choices=ANSWER_TYPE_CHOICES, blank=True, null=True)
+    number_of_destractors = models.IntegerField(blank=True, null=True)
     question = models.TextField()
     content = models.TextField(default="")
     feedback = models.TextField(default="")
@@ -38,6 +37,8 @@ class Problem(models.Model):
     sd_time = models.FloatField(blank=True, null=True)
     discrimination = models.IntegerField(blank=True, null=True)
     guessing = models.FloatField(blank=True, null=True)
+    order = models.IntegerField(default=0)
+    image_url = models.URLField(max_length=500, blank=True, default="")
 
     scales = models.ManyToManyField(Scale, blank=True)
     categories = models.ManyToManyField(Category, blank=True)
@@ -45,6 +46,9 @@ class Problem(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ('order',)
 
     def __unicode__(self):
         return self.question
