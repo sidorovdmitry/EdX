@@ -92,8 +92,7 @@
       </tfoot>
     </table>
     <a type="button"
-       ng-class="checkout_btn_class()" ng-click="subTotalPrice <= 0 || showVat()">{{
-      checkoutButton }}</a>
+       ng-class="checkout_btn_class()" ng-click="subTotalPrice <= 0 || showVat()">Continue to Checkout</a>
   </div>
 </div>
 <div ng-show="!showLabForm" class="labster-lab-list">
@@ -158,5 +157,5 @@
     </tfoot>
   </table>
   <a type="button"
-     class="btn-labster-checkout pull-right" ng-click="buyLabs()">Continue to Payment</a>
+     class="btn-labster-checkout pull-right" ng-click="buyLabs()">{{ checkoutButton }}</a>
 </div>

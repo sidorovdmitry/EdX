@@ -15,7 +15,7 @@ angular.module('LabsterBackOffice')
     $scope.showLabForm = true;
     $scope.is_eu_country = false;
     $scope.is_denmark = false;
-    $scope.checkoutButton = "Continue to Checkout";
+    $scope.checkoutButton = "Continue to Payment";
     $scope.institution_type = 1;
     $scope.institution = "";
     $scope.country = null;
@@ -201,7 +201,7 @@ angular.module('LabsterBackOffice')
       var list_product;
 
       $scope.isProcessing = true;
-      $scope.checkoutButton = "Processing";
+      $scope.checkoutButton = "Processing...";
       if ($scope.institution_type != 1) {
         $scope.checkVatFormat();
         $scope.checkInsitution();
