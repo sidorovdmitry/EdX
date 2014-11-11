@@ -263,3 +263,6 @@ a.btn-labster-checkout {
     font-weight: 400;
     cursor: pointer;
 }
+table.table-vat td:last-child {
+    width: 450px;
+}
