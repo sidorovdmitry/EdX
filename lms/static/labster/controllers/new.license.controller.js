@@ -211,6 +211,10 @@ angular.module('LabsterBackOffice')
         data = {
           user: window.requestUser.backoffice.user.id,
           payment_type: "manual",
+          institution_type : $scope.institution_type,
+          institution_name : $scope.institution_name,
+          country : $scope.country.id,
+          total_before_tax : $scope.subTotalPrice,
           list_product: []
         };
 
