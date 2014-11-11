@@ -62,14 +62,14 @@ class Command(BaseCommand):
 
                     problem.scales.add(scale_obj)
 
-                for station in stations.split(','):
-                    station = station.strip()
+                for category in stations.split(','):
+                    category = category.strip()
                     try:
-                        station_obj = Station.objects.get(id=station)
-                    except Station.DoesNotExist:
-                        station_obj = Station.objects.create(id=station, name=station)
+                        category_obj = Category.objects.get(id=category)
+                    except category.DoesNotExist:
+                        category_obj = Category.objects.create(id=category, name=category)
 
-                    problem.stations.add(station_obj)
+                    problem.categories.add(category_obj)
 
                 Answer.objects.filter(problem=problem).update(is_active=False)
                 for index, response in enumerate(response_list):

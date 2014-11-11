@@ -11,7 +11,7 @@ class Scale(models.Model):
         return self.name
 
 
-class Station(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
     def __unicode__(self):
@@ -40,7 +40,7 @@ class Problem(models.Model):
     guessing = models.FloatField(blank=True, null=True)
 
     scales = models.ManyToManyField(Scale, blank=True)
-    stations = models.ManyToManyField(Station, blank=True)
+    categories = models.ManyToManyField(Category, blank=True)
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
