@@ -8,7 +8,7 @@ except ImportError:
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response
 from django.utils.xmlutils import SimplerXMLGenerator
 from django.views.generic import View
@@ -234,13 +234,13 @@ class StartNewLab(PlayLab):
     def get(self, request, *args, **kwargs):
         prev_url = request.get_full_path()
         if not request.user.is_authenticated():
-            return HttpResponseRedirect('/login?next={}'.format(prev_url))
+            return HttpResponseBadRequest('Missing user')
 
         lab_proxy = self.get_lab_proxy()
 
         user = self.get_user(request)
         if not user:
-            return HttpResponseRedirect('/login?next={}'.format(prev_url))
+            return HttpResponseBadRequest('Missing user')
 
         user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
         if user_attempt:
