@@ -826,6 +826,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         attempt_count = request.POST.get('AttemptCount')
 
         start_time = parser.parse(start_time).replace(tzinfo=timezone.utc)
+        completion_time = float(completion_time)
         end_time = start_time + timedelta(seconds=completion_time)
         is_correct = correct_answer.strip() == chosen_answer.strip()
 
