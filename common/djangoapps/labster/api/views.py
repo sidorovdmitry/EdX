@@ -831,12 +831,18 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         is_correct = correct_answer.strip() == chosen_answer.strip()
 
         if not all([
-                request, score, completion_time, correct_answer, play_count,
-                start_time, end_time,
+                question is not None,
+                score is not None,
+                completion_time is not None,
+                correct_answer is not None,
+                chosen_answer is not None,
+                start_time is not None,
+                play_count is not None,
+                attempt_count is not None,
                 ]):
 
             user = request.user
-            message = request.POST.copy()
+            post_data = request.POST.copy()
             log_type = 'quiz_statistic'
             url = request.build_absolute_uri()
             request_method = request.method
@@ -848,7 +854,10 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             except:
                 pass
 
-            response_data = {'post': message}
+            response_data = {
+                'message': "Missing required data",
+                'post': post_data,
+            }
             return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
 
         problem_proxy = get_problem_proxy_by_question(lab_proxy, question)
