@@ -128,10 +128,10 @@
     </div>
     <div id="buttonContent">
       % if user_save:
-      <a class="button button-labster-grey playLabButton" data-url="start_new_lab/" id="startNewButton" href="#">Restart from beginning</a>
-      <a class="button button-labster-blue playLabButton" data-url="continue_lab/" id="continueButton" href="#">Continue from save game</a>
+      <a class="button button-labster-grey playLabButton" data-url="start_new_lab/?token=${user_token.key}" id="startNewButton" href="#">Restart from beginning</a>
+      <a class="button button-labster-blue playLabButton" data-url="continue_lab/?token=${user_token.key}" id="continueButton" href="#">Continue from save game</a>
       % else:
-      <a class="button button-labster-blue playLabButton" data-url="start_new_lab/" id="startNewButton" href="#">Enter the Lab</a>
+      <a class="button button-labster-blue playLabButton" data-url="start_new_lab/?token=${user_token.key}" id="startNewButton" href="#">Enter the Lab</a>
       % endif
     </div>
 

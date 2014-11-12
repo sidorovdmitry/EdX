@@ -8,10 +8,12 @@ except ImportError:
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render, render_to_response
 from django.utils.xmlutils import SimplerXMLGenerator
 from django.views.generic import View
+
+from rest_framework.authtoken.models import Token
 
 from labster.models import LabProxy, UserSave, UserAttempt
 
@@ -113,9 +115,21 @@ class SettingsXml(LabProxyXMLView):
 
         return engine_xml
 
+    def get_user(self, request):
+        try:
+            user = User.objects.get(id=request.user.id)
+        except User.DoesNotExist:
+            ref_url = request.META.get('HTTP_REFERER')
+            if not ref_url:
+                raise Http404
+            _, token = ref_url.split('?token=')
+            token = Token.objects.get(key=token)
+            user = token.user
+        return user
+
     def get_root_attributes(self, request):
         lab_proxy = self.get_lab_proxy()
-        user = User.objects.get(id=request.user.id)
+        user = self.get_user(request)
 
         engine_xml = self.get_engine_xml(lab_proxy, user)
 
@@ -206,9 +220,18 @@ class PlayLab(View):
 
 class StartNewLab(PlayLab):
 
+    def get_user(self, request):
+        try:
+            user = User.objects.get(id=request.user.id)
+        except User.DoesNotExist:
+            token = Token.objects.get(key=request.GET.get('token'))
+            user = token.user
+        return user
+
     def get(self, request, *args, **kwargs):
         lab_proxy = self.get_lab_proxy()
-        user = User.objects.get(id=request.user.id)
+
+        user = self.get_user(request)
         user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
         if user_attempt:
             user_attempt.is_finished = True
