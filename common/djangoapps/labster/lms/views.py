@@ -208,7 +208,7 @@ class StartNewLab(PlayLab):
 
     def get(self, request, *args, **kwargs):
         lab_proxy = self.get_lab_proxy()
-        user = User.objects.get(id=self.request.user.id)
+        user = User.objects.get(id=request.user.id)
         user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
         if user_attempt:
             user_attempt.is_finished = True
