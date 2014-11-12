@@ -835,6 +835,20 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
                 start_time, end_time,
                 ]):
 
+            user = request.user
+            message = request.POST.copy()
+            log_type = 'quiz_statistic'
+            url = request.build_absolute_uri()
+            request_method = request.method
+
+            try:
+                # try to log
+                # because why not
+                UnityLog.new(user, lab_proxy, log_type, message, url, request_method)
+            except:
+                pass
+
+            response_data = {'post': message}
             return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
 
         problem_proxy = get_problem_proxy_by_question(lab_proxy, question)
