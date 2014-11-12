@@ -38,7 +38,7 @@ class XMLView(View):
     charset = 'utf-8'
     root_name = 'Root'
 
-    def get_root_attributes(self):
+    def get_root_attributes(self, request):
         return {}
 
     def insert_children(self, xml):
@@ -49,7 +49,7 @@ class XMLView(View):
         stream = StringIO()
         xml = SimplerXMLGenerator(stream, self.charset)
         xml.startDocument()
-        xml.startElement(self.root_name, self.get_root_attributes())
+        xml.startElement(self.root_name, self.get_root_attributes(request))
 
         self.insert_children(xml)
 
@@ -113,9 +113,9 @@ class SettingsXml(LabProxyXMLView):
 
         return engine_xml
 
-    def get_root_attributes(self):
+    def get_root_attributes(self, request):
         lab_proxy = self.get_lab_proxy()
-        user = User.objects.get(id=self.request.user.id)
+        user = User.objects.get(id=request.user.id)
 
         engine_xml = self.get_engine_xml(lab_proxy, user)
 
@@ -132,7 +132,7 @@ class SettingsXml(LabProxyXMLView):
 class PlatformXml(LabProxyXMLView):
     root_name = 'Settings'
 
-    def get_root_attributes(self):
+    def get_root_attributes(self, request):
         return {
             'Id': "ModularLab",
             'Version': "1",
@@ -145,7 +145,7 @@ class PlatformXml(LabProxyXMLView):
 class ServerXml(LabProxyXMLView):
     root_name = 'Server'
 
-    def get_root_attributes(self):
+    def get_root_attributes(self, request):
         return {
             'Url': API_PREFIX,
         }
