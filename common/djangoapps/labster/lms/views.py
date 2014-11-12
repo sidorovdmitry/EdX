@@ -8,10 +8,12 @@ except ImportError:
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response
 from django.utils.xmlutils import SimplerXMLGenerator
 from django.views.generic import View
+
+from rest_framework.authtoken.models import Token
 
 from labster.models import LabProxy, UserSave, UserAttempt
 
@@ -38,7 +40,7 @@ class XMLView(View):
     charset = 'utf-8'
     root_name = 'Root'
 
-    def get_root_attributes(self):
+    def get_root_attributes(self, request):
         return {}
 
     def insert_children(self, xml):
@@ -49,7 +51,7 @@ class XMLView(View):
         stream = StringIO()
         xml = SimplerXMLGenerator(stream, self.charset)
         xml.startDocument()
-        xml.startElement(self.root_name, self.get_root_attributes())
+        xml.startElement(self.root_name, self.get_root_attributes(request))
 
         self.insert_children(xml)
 
@@ -113,9 +115,21 @@ class SettingsXml(LabProxyXMLView):
 
         return engine_xml
 
-    def get_root_attributes(self):
+    def get_user(self, request):
+        try:
+            user = User.objects.get(id=request.user.id)
+        except User.DoesNotExist:
+            ref_url = request.META.get('HTTP_REFERER')
+            if not ref_url:
+                raise Http404
+            _, token = ref_url.split('?token=')
+            token = Token.objects.get(key=token)
+            user = token.user
+        return user
+
+    def get_root_attributes(self, request):
         lab_proxy = self.get_lab_proxy()
-        user = User.objects.get(id=self.request.user.id)
+        user = self.get_user(request)
 
         engine_xml = self.get_engine_xml(lab_proxy, user)
 
@@ -132,7 +146,7 @@ class SettingsXml(LabProxyXMLView):
 class PlatformXml(LabProxyXMLView):
     root_name = 'Settings'
 
-    def get_root_attributes(self):
+    def get_root_attributes(self, request):
         return {
             'Id': "ModularLab",
             'Version': "1",
@@ -145,7 +159,7 @@ class PlatformXml(LabProxyXMLView):
 class ServerXml(LabProxyXMLView):
     root_name = 'Server'
 
-    def get_root_attributes(self):
+    def get_root_attributes(self, request):
         return {
             'Url': API_PREFIX,
         }
@@ -206,9 +220,28 @@ class PlayLab(View):
 
 class StartNewLab(PlayLab):
 
+    def get_user(self, request):
+        try:
+            user = User.objects.get(id=request.user.id)
+        except User.DoesNotExist:
+            key = request.GET.get('token')
+            if not key:
+                return None
+            token = Token.objects.get(key=key)
+            user = token.user
+        return user
+
     def get(self, request, *args, **kwargs):
+        prev_url = request.get_full_path()
+        if not request.user.is_authenticated():
+            return HttpResponseBadRequest('Missing user')
+
         lab_proxy = self.get_lab_proxy()
-        user = User.objects.get(id=self.request.user.id)
+
+        user = self.get_user(request)
+        if not user:
+            return HttpResponseBadRequest('Missing user')
+
         user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
         if user_attempt:
             user_attempt.is_finished = True

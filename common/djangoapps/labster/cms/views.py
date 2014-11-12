@@ -31,11 +31,11 @@ class CourseDuplicateForm(forms.Form):
     source = forms.CharField(help_text="course id in slash format, e.g. LabsterX/CYT101/2014")
     target = forms.CharField(help_text="course id in slash format, e.g. LabsterX/NEW-CYT101/2014")
 
-    def duplicate(self, user):
+    def duplicate(self, user, http_protocol):
         source = self.cleaned_data.get('source')
         target = self.cleaned_data.get('target')
 
-        course = duplicate_course(source, target, user)
+        course = duplicate_course(source, target, user, http_protocol=http_protocol)
 
         return course
 
@@ -54,7 +54,9 @@ class CourseDuplicate(FormView):
         return super(CourseDuplicate, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        self.course = form.duplicate(self.request.user)
+        absolute_uri = self.request.build_absolute_uri()
+        http_protocol = 'https' if absolute_uri.startswith('https') else 'http'
+        self.course = form.duplicate(self.request.user, http_protocol)
         return super(CourseDuplicate, self).form_valid(form)
 
     def get_success_url(self):
