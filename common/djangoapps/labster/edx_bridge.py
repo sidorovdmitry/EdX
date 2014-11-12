@@ -5,6 +5,7 @@ import requests
 from django.conf import settings
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.utils import timezone
 
 from cache_toolbox.core import del_cached_content
 from contentstore.utils import add_instructor, initialize_permissions, course_image_url
@@ -108,17 +109,10 @@ def force_create_course(source, target, user, extra_fields=None):
     source_course = get_course_by_id(source_course_key)
     display_name = source_course.display_name
 
-    fields = {'display_name': display_name}
-    # duplicated_fields = [
-    #     'key_dates', 'video',
-    #     'course_staff_short', 'course_staff_extended',
-    #     'requirements', 'textbook', 'faq', 'more_info',
-    #     'number', 'instructors', 'end_date',
-    #     'prerequisites', 'ocw_links',
-    # ]
-
-    # for field in duplicated_fields:
-    #     fields[field] = getattr(source_course, field)
+    fields = {
+        'display_name': display_name,
+        'start': timezone.now(),
+    }
 
     course = None
     start_index = 0
