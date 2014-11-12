@@ -2,6 +2,7 @@ import json
 from lxml import etree
 
 from dateutil import parser
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
