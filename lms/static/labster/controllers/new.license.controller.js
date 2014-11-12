@@ -173,8 +173,8 @@ angular.module('LabsterBackOffice')
     };
 
     var duplicateLabs = function (list_product, payment_id, callback) {
-      callback();
-      return;
+      //callback();
+      //return;
 
       var labs = [],
         post_data;
