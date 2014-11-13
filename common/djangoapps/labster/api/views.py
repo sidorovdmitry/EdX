@@ -824,6 +824,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         start_time = request.POST.get('StartTime')
         play_count = request.POST.get('PlayCount')
         attempt_count = request.POST.get('AttemptCount')
+        quiz_id = request.POST.get('quiz_id')
 
         start_time = parser.parse(start_time).replace(tzinfo=timezone.utc)
         completion_time = float(completion_time)
@@ -860,7 +861,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             }
             return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
 
-        problem_proxy = get_problem_proxy_by_question(lab_proxy, question)
+        problem_proxy = get_problem_proxy_by_question(lab_proxy, question, quiz_id=quiz_id)
         UserAnswer.objects.create(
             answer_string=chosen_answer,
             correct_answer=correct_answer,

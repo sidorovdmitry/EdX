@@ -441,7 +441,7 @@ def get_hashed_question(question):
     return hashlib.md5(question.encode('utf-8').strip()).hexdigest()
 
 
-def get_problem_proxy_by_question(lab_proxy, question):
+def get_problem_proxy_by_question(lab_proxy, question, quiz_id=None):
     """
     get ProblemProxy for given question
 
@@ -450,16 +450,24 @@ def get_problem_proxy_by_question(lab_proxy, question):
     """
 
     hashed = hashlib.md5(question.encode('utf-8').strip()).hexdigest()
+    obj = None
+    if quiz_id:
+        try:
+            obj = ProblemProxy.objects.get(lab_proxy=lab_proxy, quiz_id=quiz_id)
+        except ProblemProxy.DoesNotExist:
+            pass
+        else:
+            return obj
 
-    try:
-        obj = ProblemProxy.objects.get(lab_proxy=lab_proxy, question=hashed)
-    except ProblemProxy.DoesNotExist:
-        pass
-    else:
-        return obj
+    if not obj:
+        try:
+            obj = ProblemProxy.objects.get(lab_proxy=lab_proxy, question=hashed)
+        except ProblemProxy.DoesNotExist:
+            pass
+        else:
+            return obj
 
     # FIXME: do not do this
-    obj = None
     locator = get_usage_key().from_string(lab_proxy.location)
     descriptor = get_modulestore().get_item(locator)
 
