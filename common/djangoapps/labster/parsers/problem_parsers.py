@@ -62,6 +62,9 @@ class MultipleChoiceProblemParser(object):
 
 
 class ProblemParser(object):
+    """
+    From edX problem XML
+    """
 
     def __init__(self, problem_tree, id=''):
         self.problem_tree = problem_tree
@@ -145,6 +148,9 @@ class ProblemParser(object):
 
 
 class QuizParser(object):
+    """
+    From platform XML
+    """
 
     def __init__(self, quiz_tree):
         self.quiz_tree = quiz_tree
