@@ -59,6 +59,7 @@ class Problem(models.Model):
     def platform_xml(self):
         return get_problem_as_platform_xml(self)
 
+    @property
     def platform_xml_string(self):
         return etree.tostring(self.platform_xml, pretty_print=True)
 

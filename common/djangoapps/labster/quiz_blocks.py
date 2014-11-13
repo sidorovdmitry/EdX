@@ -507,53 +507,51 @@ def sync_surveys(course, user, master_survey):
         get_modulestore().publish(new_location, user.id)
 
 
-
 def quizblock_xml_to_unit(quizblock, user, lab_proxy):
-    for quizblock in tree.getchildren():
-        unit_name = quizblock.attrib.get('Id')
-        unit = create_xblock(user, 'vertical', lab_proxy.location, name=unit_name)
-        unit_location = unit.location.to_deprecated_string()
+    unit_name = quizblock.attrib.get('Id')
+    unit = create_xblock(user, 'vertical', lab_proxy.location, name=unit_name)
+    unit_location = unit.location.to_deprecated_string()
 
-        for quiz in quizblock.getchildren():
-            component_name = quiz.attrib.get('Id')
-            extra_post = {'boilerplate': "multiplechoice.yaml"}
-            problem = create_xblock(user, 'problem', unit_location, extra_post=extra_post)
+    for quiz in quizblock.getchildren():
+        component_name = quiz.attrib.get('Id')
+        extra_post = {'boilerplate': "multiplechoice.yaml"}
+        problem = create_xblock(user, 'problem', unit_location, extra_post=extra_post)
 
-            platform_xml = etree.tostring(quiz, pretty_print=True)
-            quiz_parser = QuizParser(quiz)
+        platform_xml = etree.tostring(quiz, pretty_print=True)
+        quiz_parser = QuizParser(quiz)
 
-            edx_xml = quiz_parser.parsed_as_string
-            update_problem(
-                user,
-                problem,
-                data=edx_xml,
-                name=component_name,
-                platform_xml=platform_xml,
-                correct_index=quiz_parser.correct_index,
-                correct_answer=quiz_parser.correct_answer,
-            )
+        edx_xml = quiz_parser.parsed_as_string
+        update_problem(
+            user,
+            problem,
+            data=edx_xml,
+            name=component_name,
+            platform_xml=platform_xml,
+            correct_index=quiz_parser.correct_index,
+            correct_answer=quiz_parser.correct_answer,
+        )
 
-            problem = get_modulestore().get_item(problem.location)
-            get_modulestore().publish(problem.location, user.id)
+        problem = get_modulestore().get_item(problem.location)
+        get_modulestore().publish(problem.location, user.id)
 
-            # create ProblemProxy
-            question = quiz.attrib.get('Sentence')
-            hashed = get_hashed_question(question)
-            obj, created = ProblemProxy.objects.get_or_create(
-                lab_proxy=lab_proxy,
-                question=hashed,
-                defaults={'location': str(problem.location)},
-            )
+        # create ProblemProxy
+        question = quiz.attrib.get('Sentence')
+        hashed = get_hashed_question(question)
+        obj, created = ProblemProxy.objects.get_or_create(
+            lab_proxy=lab_proxy,
+            question=hashed,
+            defaults={'location': str(problem.location)},
+        )
 
-            if not obj.question_text:
-                obj.question_text = question
-                obj.save()
+        if not obj.question_text:
+            obj.question_text = question
+            obj.save()
 
-            if obj.location != str(problem.location):
-                obj.location = str(problem.location)
-                obj.save()
+        if obj.location != str(problem.location):
+            obj.location = str(problem.location)
+            obj.save()
 
-        get_modulestore().publish(unit.location, user.id)
+    get_modulestore().publish(unit.location, user.id)
 
 
 def update_lab_quiz_block(lab, user):
