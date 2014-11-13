@@ -91,7 +91,7 @@ def get_master_sections(user=None, course=None, command=None):
     # most of the time, this shouldn't happen since usually we're just create
     # the section manually
     if section_name not in section_dicts:
-        command and command.stdout.write("creating {}\n".format(section_name))
+        # command and command.stdout.write("creating {}\n".format(section_name))
         section_dicts[section_name] = create_xblock(user, 'chapter', course_location, name=section_name)
 
     section = section_dicts[section_name]
@@ -175,7 +175,7 @@ def update_master_lab(lab, user=None, course=None,
     # sub section is using lab's name as the name
     # FIXME: we should use location for this as name could be changed
     if lab.name not in sub_section_dicts:
-        command and command.stdout.write("creating {}\n".format(lab.name))
+        # command and command.stdout.write("creating {}\n".format(lab.name))
         sub_section_dicts[lab.name] = create_xblock(user, 'sequential', section_location, name=lab.name)
 
     elif not force_update:
@@ -204,7 +204,7 @@ def update_master_lab(lab, user=None, course=None,
     for quizblock in tree.getchildren():
         name = quizblock.attrib.get('Id')
         if name not in unit_dicts:
-            command and command.stdout.write("creating quizblock {}\n".format(name))
+            # command and command.stdout.write("creating quizblock {}\n".format(name))
             unit_dicts[name] = create_xblock(user, 'vertical', sub_section_location, name=name)
 
         elif not force_update:
@@ -218,7 +218,7 @@ def update_master_lab(lab, user=None, course=None,
             name = quiz.attrib.get('Id')
 
             if name not in problem_dicts:
-                command and command.stdout.write("creating problem {}\n".format(name))
+                # command and command.stdout.write("creating problem {}\n".format(name))
                 extra_post = {'boilerplate': "multiplechoice.yaml"}
                 problem_dicts[name] = create_xblock(user, 'problem', unit_location, extra_post=extra_post)
 
@@ -269,7 +269,7 @@ def update_course_lab(user, course, section_name, sub_section_name,
     for quizblock in tree.getchildren():
         name = quizblock.attrib.get('Id')
         if name not in unit_dicts:
-            command and command.stdout.write("creating quizblock {}\n".format(name))
+            # command and command.stdout.write("creating quizblock {}\n".format(name))
             unit_dicts[name] = create_xblock(user, 'vertical', sub_section_location, name=name)
 
         elif not force_update:
@@ -283,7 +283,7 @@ def update_course_lab(user, course, section_name, sub_section_name,
             name = quiz.attrib.get('Id')
 
             if name not in problem_dicts:
-                command and command.stdout.write("creating problem {}\n".format(name))
+                # command and command.stdout.write("creating problem {}\n".format(name))
                 extra_post = {'boilerplate': "multiplechoice.yaml"}
                 problem_dicts[name] = create_xblock(user, 'problem', unit_location, extra_post=extra_post)
 
