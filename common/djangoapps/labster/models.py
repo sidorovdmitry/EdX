@@ -89,7 +89,9 @@ class Lab(models.Model):
 
     @classmethod
     def fetch_with_lab_proxies(self):
-        labs = Lab.objects.annotate(labproxy_count=Count('labproxy'))
+        labs = Lab.objects.filter(verified_only=False, labproxy__is_active=True)\
+            .distinct()\
+            .annotate(labproxy_count=Count('labproxy'))
         return labs
 
     @classmethod
@@ -288,6 +290,7 @@ class ProblemProxy(models.Model):
     Model to store connection between quiz and the location
     """
     lab_proxy = models.ForeignKey(LabProxy)
+    quiz_id = models.CharField(max_length=100, db_index=True)
     question = models.CharField(max_length=100, db_index=True, help_text='Question in md5')
     question_text = models.TextField(default='')
     location = models.CharField(max_length=200)
