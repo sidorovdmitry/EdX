@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 
 from labster.models import (
     LanguageLab, Lab, ErrorInfo, DeviceInfo, UserSave, Token, LabProxy,
-    UnityLog, UserAnswer, ProblemProxy, LabsterUserLicense)
+    UnityLog, UserAnswer, ProblemProxy, LabsterUserLicense,
+    UnityPlatformLog)
 
 
 class BaseAdmin(admin.ModelAdmin):
@@ -66,7 +67,12 @@ class TokenAdmin(admin.ModelAdmin):
 
 
 class UnityLogAdmin(admin.ModelAdmin):
+    list_filter = ('log_type',)
     list_display = ('user', 'lab_proxy', 'log_type', 'created_at')
+
+
+class UnityPlatformLogAdmin(admin.ModelAdmin):
+    list_display = ('user', 'lab_proxy', 'created_at', 'message')
 
 
 class UserAnswerAdmin(admin.ModelAdmin):
@@ -86,7 +92,6 @@ class ProblemProxyAdmin(admin.ModelAdmin):
         return obj.lab_proxy.lab.name
 
 
-
 class LabsterUserLicenseAdmin(admin.ModelAdmin):
     list_display = ('course_id', 'email', 'created_at', 'expired_at')
 
@@ -101,6 +106,7 @@ admin.site.register(Lab, LabAdmin)
 admin.site.register(LabProxy, LabProxyAdmin)
 admin.site.register(ProblemProxy, ProblemProxyAdmin)
 admin.site.register(UnityLog, UnityLogAdmin)
+admin.site.register(UnityPlatformLog, UnityPlatformLogAdmin)
 admin.site.register(LabsterUserLicense, LabsterUserLicenseAdmin)
 
 

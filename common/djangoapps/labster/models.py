@@ -254,6 +254,13 @@ class DeviceInfo(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
 
+class UnityLogManager(models.Manager):
+
+    def get_query_set(self):
+        qs = super(UnityLogManager, self).get_query_set()
+        return qs.exclude(log_type='UNITY_LOG')
+
+
 class UnityLog(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     lab_proxy = models.ForeignKey(LabProxy, blank=True, null=True)
@@ -264,6 +271,7 @@ class UnityLog(models.Model):
     message = models.TextField(help_text="JSON representation of data")
 
     created_at = models.DateTimeField(default=timezone.now)
+    objects = UnityLogManager()
 
     def get_message(self):
         if self.message:
@@ -284,6 +292,24 @@ class UnityLog(models.Model):
             user=user, lab_proxy=lab_proxy,
             log_type=log_type, message=message, url=url, request_method=request_method)
 
+    @classmethod
+    def new_unity_log(self, user, lab_proxy, message, url='', request_method=''):
+        return self.objects.create(
+            user=user, lab_proxy=lab_proxy,
+            log_type='UNITY_LOG', message=message, url=url, request_method=request_method)
+
+
+class UnityPlatformLogManager(models.Manager):
+
+    def get_query_set(self):
+        qs = super(UnityPlatformLogManager, self).get_query_set()
+        return qs.filter(log_type='UNITY_LOG')
+
+
+class UnityPlatformLog(UnityLog):
+    objects = UnityPlatformLogManager()
+    class Meta:
+        proxy = True
 
 class ProblemProxy(models.Model):
     """
