@@ -940,3 +940,21 @@ class CreateLog(ParserMixin, AuthMixin, APIView):
                      log_type, message, url, request_method)
         response_data = {'status': 'ok'}
         return Response(response_data, status=status.HTTP_201_CREATED)
+
+
+class CreateUnityLog(ParserMixin, AuthMixin, APIView):
+
+    renderer_classes = (JSONRenderer,)
+
+    def post(self, request, *args, **kwargs):
+        lab_id = kwargs.get('lab_id')
+
+        lab_proxy = get_object_or_404(LabProxy, id=lab_id)
+        user = request.user
+        message = request.POST.get('message', '')
+        url = request.build_absolute_uri()
+        request_method = request.method
+
+        UnityLog.new_unity_log(user, lab_proxy, message, url, request_method)
+        response_data = {'status': 'ok'}
+        return Response(response_data, status=status.HTTP_201_CREATED)

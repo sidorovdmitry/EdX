@@ -3,6 +3,8 @@ import logging
 
 from lxml import etree
 
+from django.core.urlresolvers import reverse
+
 from xblock.fields import Integer, Scope
 from xblock.fragment import Fragment
 from pkg_resources import resource_string
@@ -196,6 +198,7 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                 'user_token': token,
                 'user_save': user_save,
                 'user_profile': user_profile,
+                'unity_log_url': reverse('labster-api:create-unity-log', args=[lab_proxy.id]),
             })
 
         fragment.add_content(self.system.render_template('lab_module.html', params))

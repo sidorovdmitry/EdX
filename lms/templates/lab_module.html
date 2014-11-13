@@ -491,8 +491,23 @@ LANGUAGES = [
   <script>
     var messages = [];
     function Log(message) {
-      console.log(message);
-      messages.push(message);
+      console.dir(message);
+      var csrf_token = "${csrf_token}";
+      var token = '${user_token.key}';
+      var unity_log_url = '${unity_log_url}';
+      var post_data = {'message': message};
+      $.ajax({
+        url: unity_log_url,
+        type: "POST",
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrf_token);
+          xhr.setRequestHeader("Authorization", "Token " + token);
+        },
+        data: post_data
+
+      }).success(function(response) {
+      }).error(function(response) {
+      });
     }
 
     function gaLogEvent(category, action, label, value, noninteract) {}
