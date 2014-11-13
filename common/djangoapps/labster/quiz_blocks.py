@@ -181,9 +181,7 @@ def update_master_lab(lab, user=None, course=None,
     elif not force_update:
         return
 
-    quizblock_xml = lab.engine_xml.replace('Engine_', 'QuizBlocks_')
-    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(quizblock_xml)
-
+    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.final_quiz_block_file)
     response = requests.get(quizblock_xml)
     assert response.status_code == 200, "missing quizblocks xml"
 
@@ -250,9 +248,7 @@ def update_course_lab(user, course, section_name, sub_section_name,
     lab_proxy = LabProxy.objects.get(location=sub_section_location)
     lab = lab_proxy.lab
 
-    quizblock_xml = lab.engine_xml.replace('Engine_', 'QuizBlocks_')
-    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(quizblock_xml)
-
+    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.final_quiz_block_file)
     response = requests.get(quizblock_xml)
     assert response.status_code == 200, "missing quizblocks xml"
 
@@ -515,9 +511,10 @@ def sync_surveys(course, user, master_survey):
         get_modulestore().publish(new_location, user.id)
 
 
-def quizblock_xml_to_unit(quizblock, user, lab_proxy):
+def quizblock_xml_to_unit(quizblock, user, lab_proxy, unit=None):
     unit_name = quizblock.attrib.get('Id')
-    unit = create_xblock(user, 'vertical', lab_proxy.location, name=unit_name)
+    if not unit:
+        unit = create_xblock(user, 'vertical', lab_proxy.location, name=unit_name)
     unit_location = unit.location.to_deprecated_string()
 
     for quiz in quizblock.getchildren():
@@ -565,11 +562,13 @@ def quizblock_xml_to_unit(quizblock, user, lab_proxy):
 def update_lab_quiz_block(lab, user):
     UsageKey = get_usage_key()
 
-    lab_proxies = LabProxy.objects.filter(lab=lab)
+    lab_proxies = LabProxy.objects.filter(lab=lab, is_active=True)
 
     quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.final_quiz_block_file)
     response = requests.get(quizblock_xml)
     assert response.status_code == 200, "missing quizblocks xml"
+
+    tree = etree.fromstring(response.content)
 
     for lab_proxy in lab_proxies:
         usage_key = UsageKey.from_string(lab_proxy.location)
@@ -578,8 +577,45 @@ def update_lab_quiz_block(lab, user):
         for unit in item.get_children():
             get_modulestore().delete_item(unit.location, user.id)
 
-        tree = etree.fromstring(response.content)
         for quizblock in tree.getchildren():
             quizblock_xml_to_unit(quizblock, user, lab_proxy)
 
     Lab.update_quiz_block_last_updated(lab.id)
+
+
+def validate_lab_proxy(lab_proxy):
+    from courseware.courses import get_course_by_id
+    from xmodule.modulestore.exceptions import ItemNotFoundError
+
+    UsageKey = get_usage_key()
+
+    try:
+        locator = UsageKey.from_string(lab_proxy.location)
+        descriptor = get_modulestore().get_item(locator)
+        course_key = descriptor.location.course_key
+        course = get_course_by_id(course_key)
+    except ItemNotFoundError:
+        lab_proxy.is_active = False
+        lab_proxy.save()
+        return None, None, None
+
+    the_section = the_sub_section = None
+    section_name = sub_section_name = ''
+    for section in course.get_children():
+        for sub_section in section.get_children():
+            if str(sub_section.location) == lab_proxy.location:
+                section_name = section.display_name
+                sub_section_name = sub_section.display_name
+
+                the_section = section
+                the_sub_section = sub_section
+
+    if not all([section_name, sub_section_name]):
+        lab_proxy.is_active = False
+        lab_proxy.save()
+        return None, None, None
+
+    lab_proxy.is_active = True
+    lab_proxy.save()
+
+    return course, the_section, the_sub_section
