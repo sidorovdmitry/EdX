@@ -5,6 +5,7 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from labster.backoffice.views import get_payment
 from labster.edx_bridge import duplicate_course, unregister_course
 from labster.models import Lab
 

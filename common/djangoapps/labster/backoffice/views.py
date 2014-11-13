@@ -26,7 +26,7 @@ def get_labs(token, format='json'):
     return resp.json
 
 
-def get_payment(payment_id, token, format='josn'):
+def get_payment(payment_id, token, format='json'):
     headers = {
         'authorization': "Token {}".format(token),
     }
