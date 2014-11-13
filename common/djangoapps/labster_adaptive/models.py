@@ -1,3 +1,5 @@
+from lxml import etree
+
 from django.db import models
 from django.utils import timezone
 
@@ -53,6 +55,13 @@ class Problem(models.Model):
     def __unicode__(self):
         return self.question
 
+    @property
+    def platform_xml(self):
+        return get_problem_as_platform_xml(self)
+
+    def platform_xml_string(self):
+        return etree.tostring(self.platform_xml, pretty_print=True)
+
 
 class Answer(models.Model):
     problem = models.ForeignKey(Problem)
@@ -66,3 +75,25 @@ class Answer(models.Model):
 
     def __unicode__(self):
         return "{}: {}".format(self.problem, self.answer)
+
+
+def get_problem_as_platform_xml(problem):
+    answers = Answer.objects.filter(problem=problem, is_active=True)
+
+    quiz_attrib = {
+        'Id': problem.item_number,
+        'CorrectMessage': "",
+        'WrongMessage': "",
+        'Sentence': problem.question,
+    }
+
+    quiz_el = etree.Element('Quiz', quiz_attrib)
+    options = etree.SubElement(quiz_el, 'Options')
+
+    for answer in answers:
+        answer_attrib = {'Sentence': answer.answer}
+        if answer.is_correct:
+            answer_attrib['IsCorrectAnswer'] = "true"
+
+        etree.SubElement(options, 'Option', **answer_attrib)
+    return quiz_el
