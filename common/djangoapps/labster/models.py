@@ -275,7 +275,7 @@ class UnityLog(models.Model):
     url = models.CharField(max_length=255, default='')
     request_method = models.CharField(max_length=10, blank=True, default='')
     message = models.TextField(help_text="JSON representation of data")
-    tag = models.CharField(max_length=50, default="INFO")
+    # tag = models.CharField(max_length=50, default="INFO")
 
     created_at = models.DateTimeField(default=timezone.now)
     objects = UnityLogManager()
