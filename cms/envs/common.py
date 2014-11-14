@@ -293,9 +293,7 @@ EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'registration@example.com'
 DEFAULT_FEEDBACK_EMAIL = 'feedback@example.com'
 SERVER_EMAIL = 'devops@example.com'
-ADMINS = (
-    ('edX Developers', 'edx@labster.com'),
-)
+ADMINS = ()
 MANAGERS = ADMINS
 
 # Static content

@@ -585,9 +585,7 @@ CONTACT_EMAIL = 'info@example.com'
 BUGS_EMAIL = 'bugs@example.com'
 UNIVERSITY_EMAIL = 'university@example.com'
 PRESS_EMAIL = 'press@example.com'
-ADMINS = (
-    ('edX Developers', 'edx@labster.com'),
-)
+ADMINS = ()
 MANAGERS = ADMINS
 
 # Static content
