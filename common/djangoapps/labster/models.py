@@ -262,10 +262,13 @@ class UnityLogManager(models.Manager):
         return qs.exclude(log_type='UNITY_LOG')
 
 
-
-def get_tag_from_message(message):
+def separate_tag_from_message(message):
     tag = ''
-    return tag
+    search = re.search(r'^\[(\w+)\] (.+)', message)
+    if search:
+        tag, message = search.groups()
+    return tag, message
+
 
 class UnityLog(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
@@ -275,7 +278,7 @@ class UnityLog(models.Model):
     url = models.CharField(max_length=255, default='')
     request_method = models.CharField(max_length=10, blank=True, default='')
     message = models.TextField(help_text="JSON representation of data")
-    # tag = models.CharField(max_length=50, default="INFO")
+    tag = models.CharField(max_length=50, default="INFO", db_index=True)
 
     created_at = models.DateTimeField(default=timezone.now)
     objects = UnityLogManager()
@@ -301,9 +304,15 @@ class UnityLog(models.Model):
 
     @classmethod
     def new_unity_log(self, user, lab_proxy, message, url='', request_method=''):
+        tag, message = separate_tag_from_message(message)
         return self.objects.create(
-            user=user, lab_proxy=lab_proxy,
-            log_type='UNITY_LOG', message=message, url=url, request_method=request_method)
+            user=user,
+            lab_proxy=lab_proxy,
+            log_type='UNITY_LOG',
+            message=message,
+            tag=tag,
+            url=url,
+            request_method=request_method)
 
 
 class UnityPlatformLogManager(models.Manager):
