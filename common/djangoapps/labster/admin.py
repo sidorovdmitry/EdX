@@ -72,7 +72,14 @@ class UnityLogAdmin(admin.ModelAdmin):
 
 
 class UnityPlatformLogAdmin(admin.ModelAdmin):
-    list_display = ('user', 'lab_proxy', 'created_at', 'message')
+    list_filter = ('tag',)
+    list_display = ('user', 'lab', 'lab_proxy_id', 'created_at', 'tag', 'message')
+
+    def lab_proxy_id(self, obj):
+        return obj.lab_proxy.id
+
+    def lab(self, obj):
+        return obj.lab_proxy.lab.name
 
 
 class UserAnswerAdmin(admin.ModelAdmin):
