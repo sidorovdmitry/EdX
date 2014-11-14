@@ -86,6 +86,7 @@ def get_problem_as_platform_xml(problem):
         'CorrectMessage': "",
         'WrongMessage': "",
         'Sentence': problem.question,
+        'NoScore': "true",
     }
 
     quiz_el = etree.Element('Quiz', quiz_attrib)
