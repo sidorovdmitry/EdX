@@ -1,3 +1,4 @@
+import re
 import binascii
 import calendar
 import json
@@ -261,6 +262,11 @@ class UnityLogManager(models.Manager):
         return qs.exclude(log_type='UNITY_LOG')
 
 
+
+def get_tag_from_message(message):
+    tag = ''
+    return tag
+
 class UnityLog(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     lab_proxy = models.ForeignKey(LabProxy, blank=True, null=True)
@@ -269,6 +275,7 @@ class UnityLog(models.Model):
     url = models.CharField(max_length=255, default='')
     request_method = models.CharField(max_length=10, blank=True, default='')
     message = models.TextField(help_text="JSON representation of data")
+    tag = models.CharField(max_length=50, default="INFO")
 
     created_at = models.DateTimeField(default=timezone.now)
     objects = UnityLogManager()
@@ -310,6 +317,7 @@ class UnityPlatformLog(UnityLog):
     objects = UnityPlatformLogManager()
     class Meta:
         proxy = True
+
 
 class ProblemProxy(models.Model):
     """

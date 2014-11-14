@@ -657,6 +657,8 @@ if FEATURES.get('LABSTER'):
 
     CORS_ORIGIN_ALLOW_ALL = True
     LABSTER_ENABLE_NUTSHELL = False
+    LABSTER_BACKOFFICE_BASE_URL = "https://internal.labster.com"
+    LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
 
     # MIDDLEWARE_CLASSES += (
     #     'labster.middleware.ProfileMiddleware',
