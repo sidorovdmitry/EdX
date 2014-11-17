@@ -88,6 +88,7 @@ def get_problem_as_platform_xml(problem):
         'Sentence': problem.question,
         'NoScore': "true",
         'MaxAttempts': "1",
+        'RandomizeOptionOrder': "false",
     }
 
     quiz_el = etree.Element('Quiz', quiz_attrib)
