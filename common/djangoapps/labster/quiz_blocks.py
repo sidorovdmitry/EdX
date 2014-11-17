@@ -411,6 +411,13 @@ def sync_quiz_xml(course, user, section_name='Labs', sub_section_name='', comman
                 if not question:
                     continue
 
+                correct_answer = ''
+                quiz_id = tree.attrib.get('Id')
+                for options in tree.getchildren():
+                    for option in options.getchildren():
+                        if option.attrib.get('IsCorrectAnswer') == 'true':
+                            correct_answer = option.attrib.get('Sentence')
+
                 hashed = get_hashed_question(question)
                 obj, created = ProblemProxy.objects.get_or_create(
                     lab_proxy=lab_proxy,
@@ -420,11 +427,13 @@ def sync_quiz_xml(course, user, section_name='Labs', sub_section_name='', comman
 
                 if not obj.question_text:
                     obj.question_text = question
-                    obj.save()
 
                 if obj.location != str(component.location):
                     obj.location = str(component.location)
-                    obj.save()
+
+                obj.correct_answer = correct_answer
+                obj.quiz_id = quiz_id
+                obj.save()
 
                 if created:
                     command and command.stdout.write("new ProblemProxy: {}\n".format(component.location))
@@ -474,10 +483,16 @@ def get_problem_proxy_by_question(lab_proxy, question, quiz_id=None):
             _hashed = hashlib.md5(_question.encode('utf-8').strip()).hexdigest()
             _location = str(_problem.location)
 
+            _correct_answer = ''
+            for _options in _problem.getchildren():
+                for _option in _options.getchildren():
+                    if _option.attrib.get('IsCorrectAnswer') == 'true':
+                        _correct_answer = _option.attrib.get('Sentence')
+
             try:
                 new_obj, _ = ProblemProxy.objects.get_or_create(
                     lab_proxy=lab_proxy, question=_hashed,
-                    defaults={'location': _location},
+                    defaults={'location': _location, 'correct_answer': _correct_answer},
                 )
             except IntegrityError:
                 new_obj = ProblemProxy.objects.get(lab_proxy=lab_proxy, question=_hashed)
