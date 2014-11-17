@@ -454,7 +454,6 @@ def get_problem_proxy_by_question(lab_proxy, question, quiz_id=None):
     have it. This shouldn't even happen.
     """
 
-    hashed = hashlib.md5(question.encode('utf-8').strip()).hexdigest()
     obj = None
     if quiz_id:
         try:
@@ -464,6 +463,7 @@ def get_problem_proxy_by_question(lab_proxy, question, quiz_id=None):
         else:
             return obj
 
+    hashed = hashlib.md5(question.encode('utf-8').strip()).hexdigest()
     if not obj:
         try:
             obj = ProblemProxy.objects.get(lab_proxy=lab_proxy, question=hashed)
