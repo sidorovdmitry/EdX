@@ -93,10 +93,13 @@ class UserAnswerAdmin(admin.ModelAdmin):
 
 
 class ProblemProxyAdmin(admin.ModelAdmin):
-    list_display = ('lab', 'location', 'created_at')
+    list_display = ('lab', 'lab_proxy_id', 'location', 'question_text', 'quiz_id', 'correct_answer', 'created_at')
 
     def lab(self, obj):
         return obj.lab_proxy.lab.name
+
+    def lab_proxy_id(self, obj):
+        return obj.lab_proxy.id
 
 
 class LabsterUserLicenseAdmin(admin.ModelAdmin):
