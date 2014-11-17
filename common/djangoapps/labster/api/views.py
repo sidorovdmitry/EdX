@@ -817,6 +817,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         lab_proxy = get_object_or_404(LabProxy, id=lab_id)
 
         score = request.POST.get('Score')
+        question = request.POST.get('QuizQuestion')
         completion_time = request.POST.get('CompletionTime')
         chosen_answer = request.POST.get('ChosenAnswer')
         start_time = request.POST.get('StartTime')
