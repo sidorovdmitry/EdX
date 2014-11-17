@@ -341,9 +341,6 @@ class ProblemProxy(models.Model):
 
     created_at = models.DateTimeField(default=timezone.now)
 
-    class Meta:
-        unique_together = ('lab_proxy', 'question')
-
 
 class UserAnswer(models.Model):
     user = models.ForeignKey(User)
