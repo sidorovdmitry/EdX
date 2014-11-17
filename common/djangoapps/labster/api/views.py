@@ -637,7 +637,7 @@ class LabProxyView(LabsterRendererMixin, AuthMixin, APIView):
 
     def get_response_data(self, lab_id):
         lab_proxy = get_object_or_404(LabProxy, id=lab_id)
-        return get_lab_by_location_for_xml(lab_proxy.location, with_timer=with_timer)
+        return get_lab_by_location_for_xml(lab_proxy.location)
 
     def get(self, request, format=None, *args, **kwargs):
         lab_id = kwargs.get('lab_id')
