@@ -816,10 +816,8 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         lab_id = kwargs.get('lab_id')
         lab_proxy = get_object_or_404(LabProxy, id=lab_id)
 
-        question = request.POST.get('QuizQuestion')
         score = request.POST.get('Score')
         completion_time = request.POST.get('CompletionTime')
-        correct_answer = request.POST.get('CorrectAnswer')
         chosen_answer = request.POST.get('ChosenAnswer')
         start_time = request.POST.get('StartTime')
         play_count = request.POST.get('PlayCount')
@@ -829,13 +827,10 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         start_time = parser.parse(start_time).replace(tzinfo=timezone.utc)
         completion_time = float(completion_time)
         end_time = start_time + timedelta(seconds=completion_time)
-        is_correct = correct_answer.strip() == chosen_answer.strip()
 
         if not all([
-                question is not None,
                 score is not None,
                 completion_time is not None,
-                correct_answer is not None,
                 chosen_answer is not None,
                 start_time is not None,
                 play_count is not None,
@@ -862,6 +857,8 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
 
         problem_proxy = get_problem_proxy_by_question(lab_proxy, question, quiz_id=quiz_id)
+        correct_answer = problem_proxy.correct_answer.strip()
+        is_correct = chosen_answer.strip() == correct_answer
         UserAnswer.objects.create(
             answer_string=chosen_answer,
             correct_answer=correct_answer,
