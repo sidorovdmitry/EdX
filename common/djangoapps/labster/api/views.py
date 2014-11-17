@@ -637,7 +637,7 @@ class LabProxyView(LabsterRendererMixin, AuthMixin, APIView):
 
     def get_response_data(self, lab_id):
         lab_proxy = get_object_or_404(LabProxy, id=lab_id)
-        return get_lab_by_location_for_xml(lab_proxy.location)
+        return get_lab_by_location_for_xml(lab_proxy.location, with_timer=with_timer)
 
     def get(self, request, format=None, *args, **kwargs):
         lab_id = kwargs.get('lab_id')
@@ -823,7 +823,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         start_time = request.POST.get('StartTime')
         play_count = request.POST.get('PlayCount')
         attempt_count = request.POST.get('AttemptCount')
-        quiz_id = request.POST.get('quiz_id')
+        quiz_id = request.POST.get('QuizId')
 
         start_time = parser.parse(start_time).replace(tzinfo=timezone.utc)
         completion_time = float(completion_time)
