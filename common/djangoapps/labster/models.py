@@ -192,6 +192,19 @@ class Problem(models.Model):
     def __unicode__(self):
         return "{}: {}".format(self.quiz_block, self.element_id)
 
+    @property
+    def correct_answer(self):
+        try:
+            return Answer.objects.get(is_active=True, problem=self, is_correct=True)
+        except Answer.DoesNotExist:
+            return None
+
+    @property
+    def correct_answer_text(self):
+        if self.correct_answer:
+            return self.correct_answer.text
+        return ""
+
 
 class Answer(models.Model):
     """

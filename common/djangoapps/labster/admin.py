@@ -115,15 +115,19 @@ class UserAnswerAdmin(admin.ModelAdmin):
 
 
 class ProblemProxyAdmin(admin.ModelAdmin):
-    list_display = (
-        'lab', 'lab_proxy_id', 'question_text', 'quiz_id',
-        'correct_answer', 'created_at')
+    list_display = ('id', 'problem_id', 'lab_proxy_id', 'problem_question', 'answer')
 
-    def lab(self, obj):
-        return obj.lab_proxy.lab.name
+    def problem_id(self, obj):
+        return obj.problem_id
 
     def lab_proxy_id(self, obj):
-        return obj.lab_proxy.id
+        return obj.quiz_block_proxy.lab_proxy.id
+
+    def problem_question(self, obj):
+        return obj.problem.sentence
+
+    def answer(self, obj):
+        return obj.problem.correct_answer_text
 
     def get_queryset(self):
         qs = super(ProblemProxy, self).get_queryset()
