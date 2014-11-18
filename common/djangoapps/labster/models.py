@@ -154,6 +154,7 @@ class QuizBlock(models.Model):
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ('lab', 'element_id')
@@ -179,6 +180,7 @@ class Problem(models.Model):
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ('quiz_block', 'element_id')
@@ -199,6 +201,7 @@ class Answer(models.Model):
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ('problem', 'hashed_text')
@@ -494,6 +497,9 @@ post_save.connect(create_master_lab, sender=Lab)
 def update_modified_at(sender, instance, **kwargs):
     instance.modified_at = timezone.now()
 pre_save.connect(update_modified_at, sender=Lab)
+pre_save.connect(update_modified_at, sender=QuizBlock)
+pre_save.connect(update_modified_at, sender=Problem)
+pre_save.connect(update_modified_at, sender=Answer)
 pre_save.connect(update_modified_at, sender=LabProxy)
 pre_save.connect(update_modified_at, sender=UserSave)
 pre_save.connect(update_modified_at, sender=Lab)
