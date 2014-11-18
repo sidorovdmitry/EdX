@@ -58,6 +58,9 @@ class ActiveManager(models.Manager):
 
 
 class Lab(models.Model):
+    """
+    Master Lab
+    """
     name = models.CharField(max_length=64)
     description = models.TextField(default='')
     engine_xml = models.CharField(max_length=128, blank=True, default="")
@@ -138,6 +141,80 @@ class Lab(models.Model):
 
     def get_quizblocks(self):
         return self.quizblocklab_set.all()
+
+
+class QuizBlock(models.Model):
+    """
+    Master QuizBlock
+    """
+    lab = models.ForeignKey(Lab)
+    element_id = models.CharField(max_length=100, db_index=True)
+
+    time_limit = models.IntegerField(blank=True, null=True)
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('lab', 'element_id')
+
+    def __unicode__(self):
+        return "{}: {}".format(self.lab.name, self.element_id)
+
+
+class Problem(models.Model):
+    """
+    Master Problem
+    """
+    quiz_block = models.ForeignKey(QuizBlock)
+    element_id = models.CharField(max_length=100, db_index=True)
+
+    sentence = models.TextField()
+    correct_message = models.TextField(default="")
+    wrong_message = models.TextField(default="")
+
+    no_score = models.BooleanField(default=False)
+    max_attempts = models.IntegerField(blank=True, null=True)
+    randomize_option_order = models.BooleanField(default=True)
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('quiz_block', 'element_id')
+
+    def __unicode__(self):
+        return "{}: {}".format(self.quiz_block, self.element_id)
+
+
+class Answer(models.Model):
+    """
+    Master Answer
+    """
+
+    problem = models.ForeignKey(Problem)
+    text = models.TextField()
+    hashed_text = models.CharField(max_length=50, db_index=True)
+    is_correct = models.BooleanField(default=False)
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('problem', 'hashed_text')
+
+    def __unicode__(self):
+        return "{}: {} ({})".format(
+            self.problem,
+            self.text,
+            "correct" if self.is_correct else "incorrect")
+
+    def get_hashed_text(self):
+        return hashlib.md5(self.text.encode('utf-8').strip()).hexdigest()
+
+    def save(self, *args, **kwargs):
+        self.hashed_text = self.get_hashed_text()
+        return super(Answer, self).save(*args, **kwargs)
 
 
 class LabProxy(models.Model):
