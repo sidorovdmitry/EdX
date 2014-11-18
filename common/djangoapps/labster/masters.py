@@ -104,3 +104,39 @@ def fetch_labs_as_json():
     labs = Lab.objects.order_by('name')
     labs_json = [lab.to_json() for lab in labs]
     return labs_json
+
+
+def get_problem_as_platform_xml(problem):
+    answers = Answer.objects.filter(problem=problem)
+
+    quiz_attrib = {
+        'Id': problem.element_id,
+        'CorrectMessage': problem.correct_message,
+        'WrongMessage': problem.wrong_message,
+        'Sentence': problem.sentence,
+    }
+
+    extra = {}
+    if problem.no_score:
+        extra['NoScore'] = "true"
+    if problem.max_attempts:
+        extra['MaxAttempts'] = str(problem.max_attempts)
+    if not problem.randomize_option_order:
+        extra['RandomizeOptionOrder'] = "false"
+
+    quiz_attrib.update(extra)
+
+    quiz_el = etree.Element('Quiz', quiz_attrib)
+    options = etree.SubElement(quiz_el, 'Options')
+
+    for answer in answers:
+        if not answer.text:
+            continue
+
+        answer_attrib = {'Sentence': answer.text}
+        if answer.is_correct:
+            answer_attrib['IsCorrectAnswer'] = "true"
+
+        etree.SubElement(options, 'Option', **answer_attrib)
+
+    return quiz_el
