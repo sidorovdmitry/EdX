@@ -101,6 +101,34 @@ def get_master_sections(user=None, course=None, command=None):
     return section_location, sub_section_dicts
 
 
+def get_or_create_problem_proxy_from_quiz(lab_proxy, quiz, location):
+    question = quiz.attrib.get('Sentence')
+    quiz_id = quiz.attrib.get('Id')
+    hashed = get_hashed_question(question)
+    obj, created = ProblemProxy.objects.get_or_create(
+        lab_proxy=lab_proxy,
+        quiz_id=quiz_id,
+    )
+
+    obj.correct_answer = get_correct_answer_from_quiz(quiz)
+    obj.location = location
+    obj.question_text = question
+    obj.hashed = hashed
+    obj.is_active = True
+    obj.save()
+
+    return obj, created
+
+
+def get_correct_answer_from_quiz(quiz):
+    correct_answer = ''
+    for options in quiz.getchildren():
+        for option in options.getchildren():
+            if option.attrib.get('IsCorrectAnswer') == 'true':
+                correct_answer = option.attrib.get('Sentence')
+    return correct_answer
+
+
 def create_xblock(user, category, parent_location, name=None, extra_post=None):
     """
     Wrapper to create xblock
@@ -332,13 +360,12 @@ def update_quizblocks(
                           force_update=force_update)
 
 
-def sync_quiz_xml(course, user, section_name='Labs', sub_section_name='', command=None,
-                  master_data=None, lab_name=None):
+def sync_quiz_xml(course, user, section_name='Labs', sub_section_name='',
+                  command=None, lab_name=None):
     """
     updates quiz/problem content from it's problem_xml field
 
     it will updates the data field, parsed from problem_xml.
-    if master_data is defined, it fill fetch the problem_xml from master
     and store it as well. it will also creates ProblemProxy objects if there's
     no ProblemProxy yet.
     """
@@ -367,28 +394,11 @@ def sync_quiz_xml(course, user, section_name='Labs', sub_section_name='', comman
             defaults={'lab': lab},
         )
 
+        # disable all problem proxies
+        ProblemProxy.objects.filter(lab_proxy=lab_proxy).update(is_active=False)
+
         for qb in sub_section.get_children():
             for component in qb.get_children():
-
-                if master_data:
-                    # remove \' char because somehow the duplicate process
-                    # added it
-                    unit_name = qb.display_name.replace("'", '')
-                    component_name = component.display_name.replace("'", '')
-
-                    master = None
-                    for key, value in master_data.items():
-                        try:
-                            master = value[unit_name][component_name]
-                        except:
-                            continue
-                        else:
-                            break
-
-                    if not master:
-                        continue
-
-                    component.platform_xml = master.data
 
                 quiz_parser = QuizParser(etree.fromstring(component.platform_xml))
 
@@ -407,33 +417,8 @@ def sync_quiz_xml(course, user, section_name='Labs', sub_section_name='', comman
 
                 # create ProblemProxy
                 tree = etree.fromstring(component.platform_xml)
-                question = tree.attrib.get('Sentence')
-                if not question:
-                    continue
-
-                correct_answer = ''
-                quiz_id = tree.attrib.get('Id')
-                for options in tree.getchildren():
-                    for option in options.getchildren():
-                        if option.attrib.get('IsCorrectAnswer') == 'true':
-                            correct_answer = option.attrib.get('Sentence')
-
-                hashed = get_hashed_question(question)
-                obj, created = ProblemProxy.objects.get_or_create(
-                    lab_proxy=lab_proxy,
-                    question=hashed,
-                    defaults={'location': str(component.location)},
-                )
-
-                if not obj.question_text:
-                    obj.question_text = question
-
-                if obj.location != str(component.location):
-                    obj.location = str(component.location)
-
-                obj.correct_answer = correct_answer
-                obj.quiz_id = quiz_id
-                obj.save()
+                obj, created = get_or_create_problem_proxy_from_quiz(
+                    lab_proxy, tree, str(component.location))
 
                 if created:
                     command and command.stdout.write("new ProblemProxy: {}\n".format(component.location))
@@ -463,67 +448,33 @@ def get_problem_proxy_by_question(lab_proxy, question, quiz_id=None):
         else:
             return obj
 
-    hashed = hashlib.md5(question.encode('utf-8').strip()).hexdigest()
-    if not obj:
-        try:
-            obj = ProblemProxy.objects.get(lab_proxy=lab_proxy, question=hashed)
-        except ProblemProxy.DoesNotExist:
-            pass
-        else:
-            return obj
+    elif question:
+        hashed = hashlib.md5(question.encode('utf-8').strip()).hexdigest()
+        if not obj:
+            try:
+                obj = ProblemProxy.objects.get(lab_proxy=lab_proxy, question=hashed)
+            except ProblemProxy.DoesNotExist:
+                pass
+            else:
+                return obj
 
     # FIXME: do not do this
     locator = get_usage_key().from_string(lab_proxy.location)
     descriptor = get_modulestore().get_item(locator)
 
-    for _quiz_block in descriptor.get_children():
-        for _problem in _quiz_block.get_children():
-            tree = etree.fromstring(_problem.platform_xml)
-            _question = tree.attrib.get('Sentence')
-            _hashed = hashlib.md5(_question.encode('utf-8').strip()).hexdigest()
-            _location = str(_problem.location)
+    for quiz_block in descriptor.get_children():
+        for problem in quiz_block.get_children():
+            tree = etree.fromstring(problem.platform_xml)
+            new_obj, created = get_or_create_problem_proxy_from_quiz(
+                lab_proxy, tree, str(problem.location))
 
-            _correct_answer = ''
-            for _options in _problem.getchildren():
-                for _option in _options.getchildren():
-                    if _option.attrib.get('IsCorrectAnswer') == 'true':
-                        _correct_answer = _option.attrib.get('Sentence')
+            if hashed == new_obj.hashed:
+                return new_obj
 
-            try:
-                new_obj, _ = ProblemProxy.objects.get_or_create(
-                    lab_proxy=lab_proxy, question=_hashed,
-                    defaults={'location': _location, 'correct_answer': _correct_answer},
-                )
-            except IntegrityError:
-                new_obj = ProblemProxy.objects.get(lab_proxy=lab_proxy, question=_hashed)
-
-            if hashed == _hashed:
-                obj = new_obj
+            if quiz_id == new_obj.quiz_id:
+                return new_obj
 
     return obj
-
-
-def sync_surveys(course, user, master_survey):
-    """
-    Copy surveys from master course to all other courses
-    """
-    from contentstore.views.item import _duplicate_item
-    section = None
-
-    for each in course.get_children():
-        if each.display_name == 'Survey':
-            section = each
-            break
-
-    course_location = course.location.to_deprecated_string()
-    if not section:
-        section = create_xblock(user, 'chapter', course_location, name='Survey')
-
-    for sub_section in master_survey.get_children():
-        new_location = _duplicate_item(
-            section.location, sub_section.location, user=user,
-            display_name=sub_section.display_name)
-        get_modulestore().publish(new_location, user.id)
 
 
 def quizblock_xml_to_unit(quizblock, user, lab_proxy, unit=None):
@@ -555,24 +506,8 @@ def quizblock_xml_to_unit(quizblock, user, lab_proxy, unit=None):
         get_modulestore().publish(problem.location, user.id)
 
         # create ProblemProxy
-        question = quiz.attrib.get('Sentence')
-        quiz_id = quiz.attrib.get('Id')
-        hashed = get_hashed_question(question)
-        obj, created = ProblemProxy.objects.get_or_create(
-            lab_proxy=lab_proxy,
-            quiz_id=quiz_id,
-            defaults={'location': str(problem.location)},
-        )
-
-        if not obj.question_text:
-            obj.question_text = question
-
-        if obj.location != str(problem.location):
-            obj.location = str(problem.location)
-
-        obj.quiz_id = quiz_id
-        obj.question = hashed
-        obj.save()
+        get_or_create_problem_proxy_from_quiz(
+            lab_proxy, quiz, str(problem.location))
 
     get_modulestore().publish(unit.location, user.id)
 
