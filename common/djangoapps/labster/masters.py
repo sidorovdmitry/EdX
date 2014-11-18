@@ -35,6 +35,7 @@ def create_problem_from_tree(quiz_block, tree):
 
         problem.is_active = True
         problem.sentence = child.attrib.get('Sentence', '')
+        problem.hashed_sentence = get_hashed_text(problem.sentence)
         problem.correct_message = child.attrib.get('CorrectMessage', '')
         problem.wrong_message = child.attrib.get('WrongMessage', '')
         problem.no_score = child.attrib.get('NoScore') == 'true'
