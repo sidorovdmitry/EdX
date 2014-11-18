@@ -1,8 +1,8 @@
-import re
 import binascii
 import calendar
 import json
 import os
+import re
 
 from datetime import datetime
 
@@ -211,13 +211,6 @@ class Answer(models.Model):
             self.problem,
             self.text,
             "correct" if self.is_correct else "incorrect")
-
-    def get_hashed_text(self):
-        return hashlib.md5(self.text.encode('utf-8').strip()).hexdigest()
-
-    def save(self, *args, **kwargs):
-        self.hashed_text = self.get_hashed_text()
-        return super(Answer, self).save(*args, **kwargs)
 
 
 class LabProxy(models.Model):
