@@ -171,7 +171,7 @@ angular.module('LabsterBackOffice')
       lab.total = 0;
       $scope.updateTotal();
     };
-        
+
     var duplicateLabs = function (list_product, payment_id, callback) {
       //callback();
       //return;

@@ -23,7 +23,7 @@ def get_labs(token, format='json'):
 
     if format == 'string':
         return resp.content
-    return resp.json
+    return resp.json()
 
 
 def get_payment(payment_id, token, format='json'):
@@ -36,7 +36,7 @@ def get_payment(payment_id, token, format='json'):
 
     if format == 'string':
         return resp.content
-    return resp.json
+    return resp.json()
 
 
 def create_user(user, format='json'):
