@@ -405,6 +405,25 @@ class UnityPlatformLog(UnityLog):
         proxy = True
 
 
+class QuizBlockProxy(models.Model):
+    lab_proxy = models.ForeignKey(LabProxy)
+    quiz_block = models.ForeignKey(QuizBlock)
+    location = LocationKeyField(max_length=255, db_index=True)
+
+    time_limit = models.IntegerField(blank=True, null=True)
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('lab_proxy', 'quiz_block')
+
+    def get_time_limit(self):
+        if self.time_limit is not None:
+            return self.time_limit
+        return self.quiz_block.time_limit
+
+
 class ProblemProxy(models.Model):
     """
     Model to store connection between quiz and the location
