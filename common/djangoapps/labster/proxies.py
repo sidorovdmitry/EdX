@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from xmodule.modulestore.django import modulestore
 
 from labster.masters import get_problem_as_platform_xml
-from labster.models import LabProxy, QuizBlockProxy, ProblemProxy
+from labster.models import LabProxy, QuizBlockProxy, ProblemProxy, Lab
 from labster.models import QuizBlock, Problem
 from labster.parsers.problem_parsers import QuizParser
 from labster.quiz_blocks import create_xblock, update_problem
@@ -66,6 +66,11 @@ def prepare_lab(lab, location):
 
         unit = modulestore().get_item(unit.location)
         modulestore().publish(unit.location, user.id)
+
+
+def prepare_lab_from_lab_id(lab_id, location):
+    lab = Lab.objects.get(id=lab_id)
+    return prepare_lab(lab, location)
 
 
 def create_unit_from_quiz_block_proxy(user, quiz_block_proxy, location):

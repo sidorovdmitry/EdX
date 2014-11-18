@@ -149,11 +149,16 @@ def xblock_handler(request, usage_key_string):
             _delete_item(usage_key, request.user)
             return JsonResponse()
         else:  # Since we have a usage_key, we are updating an existing xblock.
+            lab_id_changed = False
             try:
                 lab_id = int(request.json.get('labId'))
             except TypeError:
                 lab_id = None
-            return _save_xblock(
+            else:
+                xblock = _get_xblock(usage_key, request.user)
+                lab_id_changed = xblock.lab_id != lab_id
+
+            response =_save_xblock(
                 request.user,
                 _get_xblock(usage_key, request.user),
                 data=request.json.get('data'),
@@ -164,6 +169,14 @@ def xblock_handler(request, usage_key_string):
                 publish=request.json.get('publish'),
                 lab_id=lab_id,
             )
+
+            if lab_id_changed:
+                from labster.proxies import prepare_lab_from_lab_id
+                xblock = _get_xblock(usage_key, request.user)
+                prepare_lab_from_lab_id(lab_id, xblock.location.to_deprecated_string())
+
+            return response
+
     elif request.method in ('PUT', 'POST'):
         if 'duplicate_source_locator' in request.json:
             parent_usage_key = usage_key_with_run(request.json['parent_locator'])
