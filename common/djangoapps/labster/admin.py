@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from labster.models import (
     LanguageLab, Lab, ErrorInfo, DeviceInfo, UserSave, Token, LabProxy,
     UnityLog, UserAnswer, ProblemProxy, LabsterUserLicense,
-    UnityPlatformLog)
+    UnityPlatformLog, QuizBlock, Problem, Answer)
 
 
 class BaseAdmin(admin.ModelAdmin):
@@ -25,6 +25,18 @@ class LabAdmin(BaseAdmin):
 
     def queryset(self, request):
         return Lab.all_objects.all()
+
+
+class QuizBlockAdmin(BaseAdmin):
+    list_display = ('lab', 'element_id')
+
+
+class ProblemAdmin(BaseAdmin):
+    list_display = ('quiz_block', 'element_id')
+
+
+class AnswerAdmin(BaseAdmin):
+    list_display = ('problem', 'text')
 
 
 class LabProxyAdmin(BaseAdmin):
@@ -119,7 +131,12 @@ admin.site.register(DeviceInfo, DeviceInfoAdmin)
 admin.site.register(UserSave, UserSaveAdmin)
 admin.site.register(UserAnswer, UserAnswerAdmin)
 admin.site.register(Token, TokenAdmin)
+
 admin.site.register(Lab, LabAdmin)
+admin.site.register(QuizBlock, QuizBlockAdmin)
+admin.site.register(Problem, ProblemAdmin)
+admin.site.register(Answer, AnswerAdmin)
+
 admin.site.register(LabProxy, LabProxyAdmin)
 admin.site.register(ProblemProxy, ProblemProxyAdmin)
 admin.site.register(UnityLog, UnityLogAdmin)
