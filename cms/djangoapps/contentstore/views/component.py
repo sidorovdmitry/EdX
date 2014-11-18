@@ -104,6 +104,7 @@ def subsection_handler(request, usage_key_string):
                 break
 
         # import here to reduce circular imports
+        # FIXME: not needed anymore
         from labster.edx_bridge import get_master_quiz_blocks
         from labster.models import fetch_labs_as_json
 
