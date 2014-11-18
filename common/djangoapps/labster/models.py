@@ -430,15 +430,18 @@ class ProblemProxy(models.Model):
     """
     Model to store connection between quiz and the location
     """
-    lab_proxy = models.ForeignKey(LabProxy)
-    quiz_id = models.CharField(max_length=100, db_index=True)
+    quiz_block_proxy = models.ForeignKey(QuizBlockProxy)
+    problem = models.ForeignKey(Problem)
+    location = LocationKeyField(max_length=255, db_index=True)
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    lab_proxy = models.ForeignKey(LabProxy, blank=True, null=True)
+    quiz_id = models.CharField(max_length=100, db_index=True, default='')
     question = models.CharField(max_length=100, db_index=True, help_text='Question in md5')
     question_text = models.TextField(default='')
-    location = models.CharField(max_length=200)
-    correct_answer = models.TextField()
-    is_active = models.BooleanField(default=True)
-
-    created_at = models.DateTimeField(default=timezone.now)
+    correct_answer = models.TextField(default='')
 
 
 class UserAnswer(models.Model):
