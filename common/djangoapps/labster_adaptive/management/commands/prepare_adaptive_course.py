@@ -97,19 +97,21 @@ class Command(BaseCommand):
                 # create ProblemProxy
                 question = problem_obj.question
                 hashed = get_hashed_question(question)
+                quiz_id = component_name
                 obj, created = ProblemProxy.objects.get_or_create(
                     lab_proxy=lab_proxy,
-                    question=hashed,
+                    quiz_id=quiz_id,
                     defaults={'location': str(problem.location)},
                 )
 
                 if not obj.question_text:
                     obj.question_text = question
-                    obj.save()
 
                 if obj.location != str(problem.location):
                     obj.location = str(problem.location)
-                    obj.save()
+
+                obj.question = hashed
+                obj.save()
 
             get_modulestore().publish(unit.location, user.id)
 
