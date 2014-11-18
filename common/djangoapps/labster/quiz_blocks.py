@@ -111,10 +111,10 @@ def get_or_create_problem_proxy_from_quiz(lab_proxy, quiz, location):
     )
 
     obj.correct_answer = get_correct_answer_from_quiz(quiz)
-    obj.location = location
-    obj.question_text = question
-    obj.hashed = hashed
     obj.is_active = True
+    obj.location = location
+    obj.question = hashed
+    obj.question_text = question
     obj.save()
 
     return obj, created

@@ -101,16 +101,13 @@ class Command(BaseCommand):
                 obj, created = ProblemProxy.objects.get_or_create(
                     lab_proxy=lab_proxy,
                     quiz_id=quiz_id,
-                    defaults={'location': str(problem.location)},
                 )
 
-                if not obj.question_text:
-                    obj.question_text = question
-
-                if obj.location != str(problem.location):
-                    obj.location = str(problem.location)
-
+                obj.correct_answer = quiz_parser.correct_answer
+                obj.is_active = True
+                obj.location = str(problem.location)
                 obj.question = hashed
+                obj.question_text = question
                 obj.save()
 
             get_modulestore().publish(unit.location, user.id)
