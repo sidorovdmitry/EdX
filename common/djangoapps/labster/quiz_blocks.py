@@ -105,10 +105,19 @@ def get_or_create_problem_proxy_from_quiz(lab_proxy, quiz, location):
     question = quiz.attrib.get('Sentence')
     quiz_id = quiz.attrib.get('Id')
     hashed = get_hashed_question(question)
-    obj, created = ProblemProxy.objects.get_or_create(
-        lab_proxy=lab_proxy,
-        quiz_id=quiz_id,
-    )
+
+    # try to use hased first
+    objects = ProblemProxy.objects.filter(
+        lab_proxy=lab_proxy, question=hashed, quiz_id="UPDATE_THIS")
+    if objects.exists():
+        obj, created = objects[0], False
+        obj.quiz_id = quiz_id
+
+    else:
+        obj, created = ProblemProxy.objects.get_or_create(
+            lab_proxy=lab_proxy,
+            quiz_id=quiz_id,
+        )
 
     obj.correct_answer = get_correct_answer_from_quiz(quiz)
     obj.is_active = True
