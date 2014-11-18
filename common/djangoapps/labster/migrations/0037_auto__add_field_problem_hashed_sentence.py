@@ -8,36 +8,16 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'ProblemProxy.quiz_block_proxy'
-        db.add_column('labster_problemproxy', 'quiz_block_proxy',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['labster.QuizBlockProxy']),
+        # Adding field 'Problem.hashed_sentence'
+        db.add_column('labster_problem', 'hashed_sentence',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=50, db_index=True),
                       keep_default=False)
-
-        # Adding field 'ProblemProxy.problem'
-        db.add_column('labster_problemproxy', 'problem',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['labster.Problem']),
-                      keep_default=False)
-
-
-        # Changing field 'ProblemProxy.location'
-        db.alter_column('labster_problemproxy', 'location', self.gf('xmodule_django.models.LocationKeyField')(max_length=255))
-        # Adding index on 'ProblemProxy', fields ['location']
-        db.create_index('labster_problemproxy', ['location'])
 
 
     def backwards(self, orm):
-        # Removing index on 'ProblemProxy', fields ['location']
-        db.delete_index('labster_problemproxy', ['location'])
+        # Deleting field 'Problem.hashed_sentence'
+        db.delete_column('labster_problem', 'hashed_sentence')
 
-        # Deleting field 'ProblemProxy.quiz_block_proxy'
-        db.delete_column('labster_problemproxy', 'quiz_block_proxy_id')
-
-        # Deleting field 'ProblemProxy.problem'
-        db.delete_column('labster_problemproxy', 'problem_id')
-
-
-        # Changing field 'ProblemProxy.location'
-        db.alter_column('labster_problemproxy', 'location', self.gf('django.db.models.fields.CharField')(max_length=200))
 
     models = {
         'auth.group': {
@@ -176,6 +156,7 @@ class Migration(SchemaMigration):
             'correct_message': ('django.db.models.fields.TextField', [], {'default': "''"}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'element_id': ('django.db.models.fields.CharField', [], {'max_length': '100', 'db_index': 'True'}),
+            'hashed_sentence': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_index': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'max_attempts': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
@@ -194,11 +175,9 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'lab_proxy': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.LabProxy']"}),
-            'location': ('xmodule_django.models.LocationKeyField', [], {'max_length': '255', 'db_index': 'True'}),
-            'problem': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.Problem']"}),
+            'location': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'question': ('django.db.models.fields.CharField', [], {'max_length': '100', 'db_index': 'True'}),
             'question_text': ('django.db.models.fields.TextField', [], {'default': "''"}),
-            'quiz_block_proxy': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.QuizBlockProxy']"}),
             'quiz_id': ('django.db.models.fields.CharField', [], {'max_length': '100', 'db_index': 'True'})
         },
         'labster.quizblock': {
@@ -210,16 +189,6 @@ class Migration(SchemaMigration):
             'lab': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.Lab']"}),
             'modified_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'order': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'time_limit': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'labster.quizblockproxy': {
-            'Meta': {'unique_together': "(('lab_proxy', 'quiz_block'),)", 'object_name': 'QuizBlockProxy'},
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'lab_proxy': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.LabProxy']"}),
-            'location': ('xmodule_django.models.LocationKeyField', [], {'max_length': '255', 'db_index': 'True'}),
-            'quiz_block': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.QuizBlock']"}),
             'time_limit': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'})
         },
         'labster.token': {
@@ -252,7 +221,9 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_correct': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_view_theory_clicked': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'lab_proxy': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.LabProxy']", 'null': 'True', 'blank': 'True'}),
             'play_count': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'problem': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.Problem']", 'null': 'True', 'blank': 'True'}),
             'problem_proxy': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.ProblemProxy']"}),
             'score': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'start_time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),

@@ -175,6 +175,7 @@ class Problem(models.Model):
     sentence = models.TextField()
     correct_message = models.TextField(default="")
     wrong_message = models.TextField(default="")
+    hashed_sentence = models.CharField(max_length=50, default="", db_index=True)
 
     no_score = models.BooleanField(default=False)
     max_attempts = models.IntegerField(blank=True, null=True)
@@ -420,48 +421,31 @@ class UnityPlatformLog(UnityLog):
         proxy = True
 
 
-class QuizBlockProxy(models.Model):
-    lab_proxy = models.ForeignKey(LabProxy)
-    quiz_block = models.ForeignKey(QuizBlock)
-    location = LocationKeyField(max_length=255, db_index=True)
-
-    time_limit = models.IntegerField(blank=True, null=True)
-
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        unique_together = ('lab_proxy', 'quiz_block')
-
-    def get_time_limit(self):
-        if self.time_limit is not None:
-            return self.time_limit
-        return self.quiz_block.time_limit
-
-
 class ProblemProxy(models.Model):
     """
     Model to store connection between quiz and the location
     """
-    quiz_block_proxy = models.ForeignKey(QuizBlockProxy)
-    problem = models.ForeignKey(Problem)
-    location = LocationKeyField(max_length=255, db_index=True)
-
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(default=timezone.now)
-
-    lab_proxy = models.ForeignKey(LabProxy, blank=True, null=True)
-    quiz_id = models.CharField(max_length=100, db_index=True, default='')
+    lab_proxy = models.ForeignKey(LabProxy)
+    quiz_id = models.CharField(max_length=100, db_index=True)
     question = models.CharField(max_length=100, db_index=True, help_text='Question in md5')
     question_text = models.TextField(default='')
-    correct_answer = models.TextField(default='')
+    location = models.CharField(max_length=200)
+    correct_answer = models.TextField()
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(default=timezone.now)
 
 
 class UserAnswer(models.Model):
     user = models.ForeignKey(User)
-    problem_proxy = models.ForeignKey(ProblemProxy)
+
+    lab_proxy = models.ForeignKey(LabProxy, blank=True, null=True)
+    problem = models.ForeignKey(Problem, blank=True, null=True)
+
     created_at = models.DateTimeField(default=timezone.now)
 
+    quiz_id = models.CharField(max_length=100, blank=True, default='')
+    question = models.TextField(default='')
     answer_string = models.TextField(default='')
     correct_answer = models.TextField(default='')
     is_correct = models.BooleanField(default=True)
@@ -476,6 +460,8 @@ class UserAnswer(models.Model):
     score = models.IntegerField(blank=True, null=True)
 
     is_view_theory_clicked = models.BooleanField(default=False)
+
+    problem_proxy = models.ForeignKey(ProblemProxy, blank=True, null=True)
 
 
 # FIXME: unused
