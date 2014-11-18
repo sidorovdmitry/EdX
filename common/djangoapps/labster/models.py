@@ -338,6 +338,7 @@ class ProblemProxy(models.Model):
     question_text = models.TextField(default='')
     location = models.CharField(max_length=200)
     correct_answer = models.TextField()
+    is_active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(default=timezone.now)
 
