@@ -28,15 +28,25 @@ class LabAdmin(BaseAdmin):
 
 
 class QuizBlockAdmin(BaseAdmin):
-    list_display = ('lab', 'element_id')
+    list_display = ('element_id', 'lab', 'order')
+    list_filter = ('lab',)
+
+    def queryset(self, request):
+        return QuizBlock.objects.filter(is_active=True)
 
 
 class ProblemAdmin(BaseAdmin):
-    list_display = ('quiz_block', 'element_id')
+    list_display = ('element_id', 'quiz_block', 'order')
+
+    def queryset(self, request):
+        return Problem.objects.filter(is_active=True)
 
 
 class AnswerAdmin(BaseAdmin):
-    list_display = ('problem', 'text')
+    list_display = ('text', 'problem', 'order')
+
+    def queryset(self, request):
+        return Answer.objects.filter(is_active=True)
 
 
 class LabProxyAdmin(BaseAdmin):
