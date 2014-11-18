@@ -29,8 +29,10 @@ class Command(BaseCommand):
                 except:
                     pass
 
+            quiz_id = problem.element_id if problem else problem_proxy.quiz_id
+
             user_answer.lab_proxy = lab_proxy
             user_answer.problem = problem
             user_answer.question = problem_proxy.question_text
-            user_answer.quiz_id = problem_proxy.quiz_id
+            user_answer.quiz_id = quiz_id
             user_answer.save()
