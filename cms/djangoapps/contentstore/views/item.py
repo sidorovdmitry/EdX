@@ -658,19 +658,6 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
     release_date = get_default_time_display(xblock.start) if xblock.start != DEFAULT_START_DATE else None
     published = modulestore().compute_publish_state(xblock) != PublishState.private
 
-    # import here to reduce circular imports
-    from labster.edx_bridge import get_master_quiz_blocks
-    from labster.models import fetch_labs_as_json
-
-    _labster_labs = [lab for lab in fetch_labs_as_json()]
-    _master_quiz_blocks = get_master_quiz_blocks()
-    labster_labs = []
-    for lab in _labster_labs:
-        lab_in_edx = _master_quiz_blocks.get(lab['name'].upper())
-        if lab_in_edx:
-            lab['template_location'] = unicode(lab_in_edx['lab'].location)
-            labster_labs.append(lab)
-
     xblock_info = {
         "id": unicode(xblock.location),
         "display_name": xblock.display_name_with_default,
@@ -688,9 +675,18 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
         "due": xblock.fields['due'].to_json(xblock.due),
         "format": xblock.format,
         "course_graders": json.dumps([grader.get('type') for grader in graders]),
-        "labster_labs": json.dumps(labster_labs),
-        "lab_id": getattr(xblock, 'lab_id', None),
     }
+
+    if xblock.category == 'sequential':
+        # import here to reduce circular imports
+        from labster.masters import fetch_labs_as_json
+        labster_labs = fetch_labs_as_json()
+
+        xblock_info.update({
+            "labster_labs": json.dumps(labster_labs),
+            "lab_id": getattr(xblock, 'lab_id', None),
+        })
+
     if data is not None:
         xblock_info["data"] = data
     if metadata is not None:
