@@ -1,3 +1,4 @@
+import hashlib
 import re
 
 from lxml import etree
@@ -171,3 +172,7 @@ def answer_from_xml(xml_string):
         return answer
 
     return answer.strip()
+
+
+def get_hashed_text(text):
+    return hashlib.md5(text.encode('utf-8').strip()).hexdigest()
