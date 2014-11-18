@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from labster.backoffice.views import get_payment
 from labster.edx_bridge import duplicate_course, unregister_course
 from labster.models import Lab
+from labster.models import LabsterCourseLicense
 
 
 def get_course_meta(user):
