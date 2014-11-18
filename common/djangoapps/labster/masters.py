@@ -141,3 +141,24 @@ def get_problem_as_platform_xml(problem):
         etree.SubElement(options, 'Option', **answer_attrib)
 
     return quiz_el
+
+
+def get_problem(lab_proxy, quiz_id=None, question=None):
+    problem = None
+
+    if quiz_id:
+        try:
+            problem = Problem.objects.get(
+                quiz_block__lab=lab_proxy.lab, element_id=quiz_id)
+        except Problem.DoesNotExist:
+            problem = None
+
+    elif question:
+        try:
+            hashed = get_hashed_text(question)
+            problem = Problem.objects.get(
+                quiz_block__lab=lab_proxy.lab, hashed_sentence=hashed)
+        except Problem.DoesNotExist:
+            problem = None
+
+    return problem
