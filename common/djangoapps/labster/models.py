@@ -425,7 +425,9 @@ class ProblemProxy(models.Model):
     """
     Model to store connection between quiz and the location
     """
+
     lab_proxy = models.ForeignKey(LabProxy)
+
     quiz_id = models.CharField(max_length=100, db_index=True)
     question = models.CharField(max_length=100, db_index=True, help_text='Question in md5')
     question_text = models.TextField(default='')
@@ -434,6 +436,9 @@ class ProblemProxy(models.Model):
     is_active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(default=timezone.now)
+
+    def __unicode__(self):
+        return str(self.id)
 
 
 class UserAnswer(models.Model):
