@@ -66,21 +66,6 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/modals/base_mod
                     success: this.options.onSave
                 });
 
-                if (requestData.graderType == 'Lab' && requestData.labId) {
-                    // redirect
-                    var form = $('#duplicate-lab-form');
-                    var csrftoken = $.cookie('csrftoken');
-                    var redirect_url = window.location.href;
-                    var source_locator = this.$('#lab_type').find(':selected').data('locator');
-                    var parent_locator = this.$('#lab_type').closest('.xblock-editor').data('locator');
-
-                    form.find('input[name=parent_locator]').val(parent_locator);
-                    form.find('input[name=source_locator]').val(source_locator);
-                    form.find('input[name=redirect_url]').val(redirect_url);
-                    form.find('input[name=csrfmiddlewaretoken]').val(csrftoken);
-                    form.submit();
-                }
-
                 this.hide();
             },
 
