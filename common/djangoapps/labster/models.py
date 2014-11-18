@@ -151,6 +151,7 @@ class QuizBlock(models.Model):
     element_id = models.CharField(max_length=100, db_index=True)
 
     time_limit = models.IntegerField(blank=True, null=True)
+    order = models.IntegerField(default=0)
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -158,6 +159,7 @@ class QuizBlock(models.Model):
 
     class Meta:
         unique_together = ('lab', 'element_id')
+        ordering = ('order', 'created_at')
 
     def __unicode__(self):
         return "{}: {}".format(self.lab.name, self.element_id)
@@ -177,6 +179,7 @@ class Problem(models.Model):
     no_score = models.BooleanField(default=False)
     max_attempts = models.IntegerField(blank=True, null=True)
     randomize_option_order = models.BooleanField(default=True)
+    order = models.IntegerField(default=0)
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -184,6 +187,7 @@ class Problem(models.Model):
 
     class Meta:
         unique_together = ('quiz_block', 'element_id')
+        ordering = ('order', 'created_at')
 
     def __unicode__(self):
         return "{}: {}".format(self.quiz_block, self.element_id)
@@ -198,6 +202,7 @@ class Answer(models.Model):
     text = models.TextField()
     hashed_text = models.CharField(max_length=50, db_index=True)
     is_correct = models.BooleanField(default=False)
+    order = models.IntegerField(default=0)
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -205,6 +210,7 @@ class Answer(models.Model):
 
     class Meta:
         unique_together = ('problem', 'hashed_text')
+        ordering = ('order', 'created_at')
 
     def __unicode__(self):
         return "{}: {} ({})".format(
@@ -456,6 +462,7 @@ class UserAnswer(models.Model):
     is_view_theory_clicked = models.BooleanField(default=False)
 
 
+# FIXME: unused
 def fetch_labs_as_json():
     labs = Lab.objects.order_by('name')
     labs_json = [lab.to_json() for lab in labs]
