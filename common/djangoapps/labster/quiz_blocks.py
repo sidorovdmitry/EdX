@@ -556,20 +556,23 @@ def quizblock_xml_to_unit(quizblock, user, lab_proxy, unit=None):
 
         # create ProblemProxy
         question = quiz.attrib.get('Sentence')
+        quiz_id = quiz.attrib.get('Id')
         hashed = get_hashed_question(question)
         obj, created = ProblemProxy.objects.get_or_create(
             lab_proxy=lab_proxy,
-            question=hashed,
+            quiz_id=quiz_id,
             defaults={'location': str(problem.location)},
         )
 
         if not obj.question_text:
             obj.question_text = question
-            obj.save()
 
         if obj.location != str(problem.location):
             obj.location = str(problem.location)
-            obj.save()
+
+        obj.quiz_id = quiz_id
+        obj.question = hashed
+        obj.save()
 
     get_modulestore().publish(unit.location, user.id)
 
