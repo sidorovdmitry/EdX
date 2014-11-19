@@ -244,6 +244,20 @@ class Problem(models.Model):
         return ""
 
 
+class AdaptiveProblemManager(models.Manager):
+    def get_query_set(self):
+        qs = super(AdaptiveProblemManager, self).get_query_set()
+        qs = qs.filter(is_adaptive=True)
+        return qs
+
+
+class AdaptiveProblem(Problem):
+    objects = AdaptiveProblemManager()
+
+    class Meta:
+        proxy = True
+
+
 class Answer(models.Model):
     """
     Master Answer

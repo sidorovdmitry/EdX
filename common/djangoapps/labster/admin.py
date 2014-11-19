@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from labster.models import (
     LanguageLab, Lab, ErrorInfo, DeviceInfo, UserSave, Token, LabProxy,
     UnityLog, UserAnswer, LabsterUserLicense, ProblemProxy,
-    UnityPlatformLog, QuizBlock, Problem, Answer)
+    UnityPlatformLog, QuizBlock, Problem, Answer, AdaptiveProblem)
 
 
 class BaseAdmin(admin.ModelAdmin):
@@ -38,12 +38,20 @@ class QuizBlockAdmin(BaseAdmin):
 
 class ProblemAdmin(BaseAdmin):
     list_display = ('element_id', 'quiz_block', 'order')
-    list_filter = ('is_adaptive',)
     search_fields = ('element_id', 'quiz_block__element_id')
     raw_id_fields = ('quiz_block',)
+    list_filter = ('quiz_block__lab',)
 
     def queryset(self, request):
         return Problem.objects.filter(is_active=True)
+
+
+class AdaptiveProblemAdmin(ProblemAdmin):
+    list_display = ProblemAdmin.list_display + ('is_active',)
+    list_filter = ('quiz_block__lab',)
+
+    def queryset(self, request):
+        return AdaptiveProblem.objects.all()
 
 
 class AnswerAdmin(BaseAdmin):
@@ -133,8 +141,8 @@ class LabsterUserLicenseAdmin(admin.ModelAdmin):
 
 
 admin.site.register(LanguageLab)
-admin.site.register(ErrorInfo, ErrorInfoAdmin)
-admin.site.register(DeviceInfo, DeviceInfoAdmin)
+# admin.site.register(ErrorInfo, ErrorInfoAdmin)
+# admin.site.register(DeviceInfo, DeviceInfoAdmin)
 admin.site.register(UserSave, UserSaveAdmin)
 admin.site.register(UserAnswer, UserAnswerAdmin)
 admin.site.register(Token, TokenAdmin)
@@ -142,6 +150,7 @@ admin.site.register(Token, TokenAdmin)
 admin.site.register(Lab, LabAdmin)
 admin.site.register(QuizBlock, QuizBlockAdmin)
 admin.site.register(Problem, ProblemAdmin)
+admin.site.register(AdaptiveProblem, AdaptiveProblemAdmin)
 admin.site.register(Answer, AnswerAdmin)
 
 admin.site.register(LabProxy, LabProxyAdmin)
