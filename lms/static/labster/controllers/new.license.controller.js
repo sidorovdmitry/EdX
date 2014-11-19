@@ -206,7 +206,7 @@ angular.module('LabsterBackOffice')
         $scope.checkVatFormat();
         $scope.checkInsitution();
       }
-      if (!$scope.institution_error.length || !$scope.vat_error.length) {
+      if (!$scope.institution_error.length && !$scope.vat_error.length) {
         var url = window.backofficeUrls.buyLab;
         data = {
           user: window.requestUser.backoffice.user.id,
