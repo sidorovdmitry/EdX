@@ -9,7 +9,7 @@ from django.db import IntegrityError
 from django.utils import timezone
 
 from labster.constants import COURSE_ID, ADMIN_USER_ID
-from labster.models import Lab, ProblemProxy, LabProxy
+from labster.models import Lab, ProblemProxy, LabProxy, Problem
 from labster.parsers.problem_parsers import QuizParser
 from labster.utils import get_request
 
@@ -119,8 +119,15 @@ def get_or_create_problem_proxy_from_quiz(lab_proxy, quiz, location):
             quiz_id=quiz_id,
         )
 
+    try:
+        problem = Problem.objects.get(
+            quiz_block__lab=lab_proxy.lab, element_id=quiz_id)
+    except Problem.DoesNotExist:
+        problem = None
+
+    obj.problem = problem
     obj.correct_answer = get_correct_answer_from_quiz(quiz)
-    obj.is_active = True
+    obj.is_active = problem is not None
     obj.location = location
     obj.question = hashed
     obj.question_text = question
@@ -389,6 +396,9 @@ def sync_quiz_xml(course, user, section_name='Labs', sub_section_name='',
     else:
         labs = Lab.objects.all()
         labs = [lab.name for lab in labs]
+
+    ProblemProxy.objects.filter(
+        lab_proxy__is_active=False).update(is_active=False)
 
     for lab_name in labs:
         sub_section = sub_section_dicts[lab_name]
