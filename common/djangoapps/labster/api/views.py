@@ -38,8 +38,9 @@ from labster.models import (
     UserSave, ErrorInfo, DeviceInfo, LabProxy, UserAttempt, UnityLog,
     UserAnswer)
 from labster.parsers.problem_parsers import MultipleChoiceProblemParser
-from labster.renderers import LabsterXMLRenderer
+from labster.renderers import LabsterXMLRenderer, LabsterDirectXMLRenderer
 from labster.masters import get_problem
+from labster.proxies import get_lab_proxy_as_platform_xml
 
 
 def invoke_xblock_handler(*args, **kwargs):
@@ -622,22 +623,15 @@ class CreateDevice(LabsterRendererMixin, ParserMixin, AuthMixin, CreateAPIView):
         obj.lab_proxy = get_object_or_404(LabProxy, id=lab_id)
 
 
-class LabProxyView(LabsterRendererMixin, AuthMixin, APIView):
-
-    def get_root_attributes(self):
-        return {
-            'Id': self.kwargs.get('lab_id'),
-        }
-
-    def get_labster_renderer_context(self):
-        return {
-            'root_name': "Lab",
-            'root_attributes': self.get_root_attributes(),
-        }
+class LabProxyView(AuthMixin, APIView):
+    renderer_classes = (LabsterDirectXMLRenderer,)
+    charset = 'utf-8'
 
     def get_response_data(self, lab_id):
         lab_proxy = get_object_or_404(LabProxy, id=lab_id)
-        return get_lab_by_location_for_xml(lab_proxy.location)
+        lab_proxy_xml = get_lab_proxy_as_platform_xml(lab_proxy)
+        response_data = etree.tostring(lab_proxy_xml)
+        return response_data
 
     def get(self, request, format=None, *args, **kwargs):
         lab_id = kwargs.get('lab_id')
