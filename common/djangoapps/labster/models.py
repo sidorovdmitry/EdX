@@ -427,15 +427,18 @@ class ProblemProxy(models.Model):
     """
 
     lab_proxy = models.ForeignKey(LabProxy)
+    problem = models.ForeignKey(Problem, blank=True, null=True)
+    location = LocationKeyField(max_length=255, db_index=True)
 
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    # FIXME: delete
     quiz_id = models.CharField(max_length=100, db_index=True)
     question = models.CharField(max_length=100, db_index=True, help_text='Question in md5')
     question_text = models.TextField(default='')
     location = models.CharField(max_length=200)
     correct_answer = models.TextField()
-    is_active = models.BooleanField(default=True)
-
-    created_at = models.DateTimeField(default=timezone.now)
 
     def __unicode__(self):
         return str(self.id)
@@ -466,6 +469,7 @@ class UserAnswer(models.Model):
 
     is_view_theory_clicked = models.BooleanField(default=False)
 
+    # FIXME: delete
     problem_proxy = models.ForeignKey(ProblemProxy, blank=True, null=True)
 
 
