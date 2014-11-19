@@ -56,7 +56,9 @@ class AdaptiveProblemAdmin(ProblemAdmin):
 
 
 class AnswerAdmin(BaseAdmin):
-    list_display = ('text', 'problem', 'order')
+    list_display = ('text', 'problem', 'order', 'is_correct')
+    list_filter = ('problem__quiz_block__lab',)
+    raw_id_fields = ('problem',)
 
     def queryset(self, request):
         return Answer.objects.filter(is_active=True)
