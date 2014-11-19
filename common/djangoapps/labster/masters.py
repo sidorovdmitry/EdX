@@ -74,7 +74,7 @@ def create_answer_from_tree(problem, tree):
             answer, _ = Answer.objects.get_or_create(
                 problem=problem, hashed_text=hashed_text)
 
-            answer.is_correct = option.attrib.get('IsCorrectAnswer') == 'true'
+            answer.is_correct = answer.is_correct or option.attrib.get('IsCorrectAnswer') == 'true'
             answer.is_active = True
             answer.text = text.encode('utf-8')
             answer.order = order
@@ -108,8 +108,29 @@ def fetch_labs_as_json():
     return labs_json
 
 
+def get_quiz_block_as_platform_xml(quiz_block):
+    attrib = {
+        'Id': quiz_block.element_id,
+    }
+
+    if quiz_block.time_limit:
+        attrib['TimeLimit'] = quiz_block.time_limit
+
+    quiz_block_el = etree.Element('QuizBlock', attrib)
+
+    # fetch active problems
+    problems = Problem.objects.filter(
+        quiz_block=quiz_block, is_active=True)
+
+    for problem in problems:
+        problem_xml = get_problem_as_platform_xml(problem)
+        quiz_block_el.append(problem_xml)
+
+    return quiz_block_el
+
+
 def get_problem_as_platform_xml(problem):
-    answers = Answer.objects.filter(problem=problem)
+    answers = Answer.objects.filter(problem=problem, is_active=True)
 
     quiz_attrib = {
         'Id': problem.element_id,
