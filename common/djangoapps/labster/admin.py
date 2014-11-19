@@ -47,7 +47,8 @@ class ProblemAdmin(BaseAdmin):
 
 
 class AdaptiveProblemAdmin(ProblemAdmin):
-    list_display = ProblemAdmin.list_display + ('is_active',)
+    list_display = ('element_id', 'quiz_block', 'answer_type', 'number_of_destractors',
+                    'time', 'sd_time', 'discrimination', 'guessing', 'image_url')
     list_filter = ('quiz_block__lab',)
 
     def queryset(self, request):
