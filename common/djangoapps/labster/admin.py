@@ -30,6 +30,7 @@ class LabAdmin(BaseAdmin):
 class QuizBlockAdmin(BaseAdmin):
     list_display = ('element_id', 'lab', 'order')
     list_filter = ('lab',)
+    search_fields = ('element_id',)
 
     def queryset(self, request):
         return QuizBlock.objects.filter(is_active=True)
@@ -37,6 +38,9 @@ class QuizBlockAdmin(BaseAdmin):
 
 class ProblemAdmin(BaseAdmin):
     list_display = ('element_id', 'quiz_block', 'order')
+    list_filter = ('is_adaptive',)
+    search_fields = ('element_id', 'quiz_block__element_id')
+    raw_id_fields = ('quiz_block',)
 
     def queryset(self, request):
         return Problem.objects.filter(is_active=True)
@@ -57,6 +61,7 @@ class LabProxyAdmin(BaseAdmin):
 class ProblemProxyAdmin(admin.ModelAdmin):
     list_display = ('id', 'lab_proxy_id', 'problem', 'is_active')
     list_filter = ('is_active',)
+    raw_id_fields = ('lab_proxy', 'problem')
 
     def lab_proxy_id(self, obj):
         return obj.lab_proxy.id
