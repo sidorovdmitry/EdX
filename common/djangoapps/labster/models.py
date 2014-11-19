@@ -165,6 +165,20 @@ class QuizBlock(models.Model):
         return "{}: {}".format(self.lab.name, self.element_id)
 
 
+class Scale(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Problem(models.Model):
     """
     Master Problem
@@ -181,6 +195,29 @@ class Problem(models.Model):
     max_attempts = models.IntegerField(blank=True, null=True)
     randomize_option_order = models.BooleanField(default=True)
     order = models.IntegerField(default=0)
+
+    is_adaptive = models.BooleanField(default=False)
+
+    # adaptive fields
+    ANSWER_TYPE_CHOICES = (
+        (1, 'dichotomous'),
+        (2, '3 response options'),
+        (3, '4 response options'),
+        # (4, '5 response options'),
+        # (5, '6 response options'),
+    )
+    answer_type = models.IntegerField(choices=ANSWER_TYPE_CHOICES, blank=True, null=True)
+    number_of_destractors = models.IntegerField(blank=True, null=True)
+    content = models.TextField(default="")
+    feedback = models.TextField(default="")
+    time = models.FloatField(blank=True, null=True)
+    sd_time = models.FloatField(blank=True, null=True)
+    discrimination = models.IntegerField(blank=True, null=True)
+    guessing = models.FloatField(blank=True, null=True)
+    image_url = models.URLField(max_length=500, blank=True, default="")
+    scales = models.ManyToManyField(Scale, blank=True)
+    categories = models.ManyToManyField(Category, blank=True)
+    # end of adaptive fields
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -217,6 +254,9 @@ class Answer(models.Model):
     hashed_text = models.CharField(max_length=50, db_index=True)
     is_correct = models.BooleanField(default=False)
     order = models.IntegerField(default=0)
+
+    # for adaptive
+    difficulty = models.IntegerField(blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -499,10 +539,11 @@ def get_or_create_lab_proxy(location, lab=None):
     return lab_proxy
 
 
-def create_master_lab(sender, instance, created, **kwargs):
-    from labster.quiz_blocks import update_master_lab
-    update_master_lab(instance)
-post_save.connect(create_master_lab, sender=Lab)
+# FIXME: update post save for Lab
+# def create_master_lab(sender, instance, created, **kwargs):
+#     from labster.quiz_blocks import update_master_lab
+#     update_master_lab(instance)
+# post_save.connect(create_master_lab, sender=Lab)
 
 
 def update_modified_at(sender, instance, **kwargs):
