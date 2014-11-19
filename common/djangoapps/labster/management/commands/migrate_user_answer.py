@@ -12,14 +12,7 @@ class Command(BaseCommand):
         for user_answer in user_answers:
             problem_proxy = user_answer.problem_proxy
             lab_proxy = problem_proxy.lab_proxy
-
-            problem = None
-            try:
-                problem = Problem.objects.get(
-                    lab_proxy=lab_proxy,
-                    element_id=user_answer.quiz_id)
-            except:
-                pass
+            problem = problem_proxy.problem
 
             if not problem:
                 try:
