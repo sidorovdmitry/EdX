@@ -32,7 +32,8 @@ angular.module('LabsterBackOffice')
 
         element.on('click', function (ev) {
           ev.preventDefault();
-          var priceInCent = scope.amount * 100;
+          var priceInCent = Math.round(scope.amount * 100);
+
           handler.open({
             name: 'Labster',
             description: scope.description,
