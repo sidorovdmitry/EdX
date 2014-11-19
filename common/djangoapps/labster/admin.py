@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from labster.models import (
     LanguageLab, Lab, ErrorInfo, DeviceInfo, UserSave, Token, LabProxy,
-    UnityLog, UserAnswer, LabsterUserLicense,
+    UnityLog, UserAnswer, LabsterUserLicense, ProblemProxy,
     UnityPlatformLog, QuizBlock, Problem, Answer)
 
 
@@ -52,6 +52,14 @@ class AnswerAdmin(BaseAdmin):
 class LabProxyAdmin(BaseAdmin):
     list_display = ('id', 'course_from_location', 'lab', 'location', 'is_active')
     list_filter = ('is_active',)
+
+
+class ProblemProxyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'lab_proxy_id', 'problem', 'is_active')
+    list_filter = ('is_active',)
+
+    def lab_proxy_id(self, obj):
+        return obj.lab_proxy.id
 
 
 class UserSaveAdmin(BaseAdmin):
@@ -132,6 +140,8 @@ admin.site.register(Problem, ProblemAdmin)
 admin.site.register(Answer, AnswerAdmin)
 
 admin.site.register(LabProxy, LabProxyAdmin)
+admin.site.register(ProblemProxy, ProblemProxyAdmin)
+
 admin.site.register(UnityLog, UnityLogAdmin)
 admin.site.register(UnityPlatformLog, UnityPlatformLogAdmin)
 admin.site.register(LabsterUserLicense, LabsterUserLicenseAdmin)
