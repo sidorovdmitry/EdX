@@ -6,6 +6,7 @@ import requests
 
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.db.models import Q
 from django.utils import timezone
 
 from labster.constants import COURSE_ID, ADMIN_USER_ID
@@ -101,14 +102,15 @@ def get_master_sections(user=None, course=None, command=None):
     return section_location, sub_section_dicts
 
 
-def get_or_create_problem_proxy_from_quiz(lab_proxy, quiz, location):
+def get_or_create_problem_proxy_from_quiz(lab_proxy, quiz, location, quiz_block_name):
     question = quiz.attrib.get('Sentence')
     quiz_id = quiz.attrib.get('Id')
     hashed = get_hashed_question(question)
 
     # try to use hased first
     objects = ProblemProxy.objects.filter(
-        lab_proxy=lab_proxy, question=hashed, quiz_id="UPDATE_THIS")
+        lab_proxy=lab_proxy, question=hashed).filter(
+            Q(quiz_id="") | Q(quiz_id="UPDATE_THIS"))
     if objects.exists():
         obj, created = objects[0], False
         obj.quiz_id = quiz_id
@@ -121,13 +123,18 @@ def get_or_create_problem_proxy_from_quiz(lab_proxy, quiz, location):
 
     try:
         problem = Problem.objects.get(
-            quiz_block__lab=lab_proxy.lab, element_id=quiz_id)
+            quiz_block__lab=lab_proxy.lab,
+            quiz_block__element_id=quiz_block_name,
+            element_id=quiz_id)
     except Problem.DoesNotExist:
         problem = None
+        is_active = False
+    else:
+        is_active = True
 
     obj.problem = problem
     obj.correct_answer = get_correct_answer_from_quiz(quiz)
-    obj.is_active = problem is not None
+    obj.is_active = is_active
     obj.location = location
     obj.question = hashed
     obj.question_text = question
@@ -437,7 +444,7 @@ def sync_quiz_xml(course, user, section_name='Labs', sub_section_name='',
                 # create ProblemProxy
                 tree = etree.fromstring(component.platform_xml)
                 obj, created = get_or_create_problem_proxy_from_quiz(
-                    lab_proxy, tree, str(component.location))
+                    lab_proxy, tree, str(component.location), qb.display_name)
 
                 if created:
                     command and command.stdout.write("new ProblemProxy: {}\n".format(component.location))
@@ -485,7 +492,7 @@ def get_problem_proxy_by_question(lab_proxy, question, quiz_id=None):
         for problem in quiz_block.get_children():
             tree = etree.fromstring(problem.platform_xml)
             new_obj, created = get_or_create_problem_proxy_from_quiz(
-                lab_proxy, tree, str(problem.location))
+                lab_proxy, tree, str(problem.location), quiz_block.display_name)
 
             if hashed == new_obj.hashed:
                 return new_obj
@@ -526,7 +533,7 @@ def quizblock_xml_to_unit(quizblock, user, lab_proxy, unit=None):
 
         # create ProblemProxy
         get_or_create_problem_proxy_from_quiz(
-            lab_proxy, quiz, str(problem.location))
+            lab_proxy, quiz, str(problem.location), unit.display_name)
 
     get_modulestore().publish(unit.location, user.id)
 

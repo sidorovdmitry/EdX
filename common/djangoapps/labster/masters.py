@@ -33,6 +33,7 @@ def create_problem_from_tree(quiz_block, tree):
         problem, _ = Problem.objects.get_or_create(
             quiz_block=quiz_block, element_id=element_id)
 
+        problem.is_adaptive = quiz_block.element_id in ['QuizblockPreTest', 'QuizblockPostTest']
         problem.is_active = True
         problem.sentence = child.attrib.get('Sentence', '')
         problem.hashed_sentence = get_hashed_text(problem.sentence)
