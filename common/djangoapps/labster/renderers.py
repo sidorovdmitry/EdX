@@ -46,3 +46,15 @@ class LabsterXMLRenderer(XMLRenderer):
                 for each in data['children']:
                     self._to_xml(xml, each)
             xml.endElement(data['name'])
+
+
+class LabsterDirectXMLRenderer(XMLRenderer):
+
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        """
+        Renders *obj* into serialized XML.
+        """
+        if data is None:
+            return ''
+
+        return data
