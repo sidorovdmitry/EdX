@@ -38,4 +38,19 @@ angular.module('LabsterBackOffice')
         $scope.payments = data;
       });
 
+    $scope.selection = "";
+    // toggle selection for a given employee by name
+    $scope.toggleSelection = function toggleSelection(licenseId) {
+      var idx = $scope.selection.indexOf(licenseId);
+
+      // is currently selected
+      if (idx > -1) {
+        $scope.selection.splice(idx, 1);
+      }
+
+      // is newly selected
+      else {
+        $scope.selection = $scope.selection + "+" + licenseId;
+      }
+    };
   });
