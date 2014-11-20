@@ -123,7 +123,7 @@ def get_quiz_block_as_platform_xml(quiz_block):
     }
 
     if quiz_block.time_limit:
-        attrib['TimeLimit'] = quiz_block.time_limit
+        attrib['TimeLimit'] = str(quiz_block.time_limit)
 
     quiz_block_el = etree.Element('QuizBlock', attrib)
 
