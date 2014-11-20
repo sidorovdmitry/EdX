@@ -790,7 +790,6 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         }
         return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
 
-
     def post(self, request, *args, **kwargs):
         response_data = {}
         lab_id = kwargs.get('lab_id')
@@ -803,7 +802,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         start_time = request.POST.get('StartTime')
         play_count = request.POST.get('PlayCount')
         attempt_count = request.POST.get('AttemptCount')
-        quiz_id = request.POST.get('QuizId')
+        quiz_id = request.POST.get('QuizId', '')
 
         if not all([
                 score is not None,
@@ -827,6 +826,14 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
                 request, lab_proxy, "Missing problem")
 
         correct_answer = problem.correct_answer_text
+        if not quiz_id:
+            try:
+                problem_proxy = ProblemProxy.objects.get(
+                    lab_proxy=lab_proxy, problem=problem)
+            except ProblemProxy.DoesNotExist:
+                pass
+            else:
+                quiz_id = problem_proxy.quiz_id
 
         is_correct = chosen_answer.strip() == correct_answer
         UserAnswer.objects.create(
@@ -843,6 +850,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             score=score,
             start_time=start_time,
             user=request.user,
+            quiz_id=quiz_id,
         )
         response_data = {'correct': is_correct}
         return Response(response_data, status=status.HTTP_201_CREATED)

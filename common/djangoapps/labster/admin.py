@@ -133,10 +133,10 @@ class UserAnswerAdmin(admin.ModelAdmin):
                     'answer_string', 'correct_answer', 'is_correct')
 
     def lab(self, obj):
-        return obj.problem_proxy.lab_proxy.lab.name
+        return obj.lab_proxy.lab.name
 
     def question(self, obj):
-        return obj.problem_proxy.question
+        return obj.problem.sentence
 
 
 class LabsterUserLicenseAdmin(admin.ModelAdmin):
