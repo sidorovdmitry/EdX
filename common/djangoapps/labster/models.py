@@ -1,11 +1,12 @@
-import re
 import binascii
 import calendar
 import json
 import os
+import re
 
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -15,7 +16,12 @@ from django.utils import timezone
 
 from xmodule_django.models import CourseKeyField, LocationKeyField
 
+from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_block_file_url
+
+
 PLATFORM_NAME = 'platform'
+URL_PREFIX = getattr(settings, 'LABSTER_UNITY_URL_PREFIX', '')
+ENGINE_FILE = 'labster.unity3d'
 
 
 class Token(models.Model):
@@ -58,19 +64,26 @@ class ActiveManager(models.Manager):
 
 
 class Lab(models.Model):
+    """
+    Master Lab
+    """
     name = models.CharField(max_length=64)
     description = models.TextField(default='')
-    engine_xml = models.CharField(max_length=128, blank=True, default="")
-    engine_file = models.CharField(max_length=128, blank=True, default="labster.unity3d")
-    quiz_block_file = models.CharField(max_length=128, blank=True, default="")
+    engine_xml = models.CharField(max_length=128, default="")
+    engine_file = models.CharField(max_length=128, blank=True, default=ENGINE_FILE)
+    quiz_block_file = models.CharField(max_length=128, default="")
     quiz_block_last_updated = models.DateTimeField(blank=True, null=True)
 
     demo_course_id = CourseKeyField(max_length=255, db_index=True, blank=True,
                                     null=True)
 
-    use_quiz_blocks = models.BooleanField(default=False)
+    use_quiz_blocks = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     verified_only = models.BooleanField(default=False)
+
+    xml_url_prefix = models.CharField(
+        max_length=255,
+        default=URL_PREFIX)
 
     # lab can have many languages
     languages = models.ManyToManyField(LanguageLab)
@@ -90,8 +103,7 @@ class Lab(models.Model):
 
     @classmethod
     def fetch_with_lab_proxies(self):
-        labs = Lab.objects.filter(verified_only=False, labproxy__is_active=True)\
-            .distinct()\
+        labs = Lab.objects.order_by('name')\
             .annotate(labproxy_count=Count('labproxy'))
         return labs
 
@@ -101,13 +113,6 @@ class Lab(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    def to_json(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'template_location': '',
-        }
 
     @property
     def slug(self):
@@ -122,13 +127,6 @@ class Lab(models.Model):
             return ''
 
     @property
-    def final_quiz_block_file(self):
-        if self.quiz_block_file:
-            return self.quiz_block_file
-
-        return 'QuizBlocks_{}.xml'.format(self.slug)
-
-    @property
     def studio_detail_url(self):
         return "/labster/labs/{}/".format(self.id)
 
@@ -136,8 +134,171 @@ class Lab(models.Model):
     def new_quiz_block_url(self):
         return reverse('labster_create_quiz_block', args=[self.id])
 
+    @property
+    def engine_xml_url(self):
+        return get_engine_xml_url(self.xml_url_prefix, self.engine_xml)
+
+    @property
+    def engine_file_url(self):
+        return get_engine_file_url(self.xml_url_prefix, self.engine_file)
+
+    @property
+    def quiz_block_file_url(self):
+        return get_quiz_block_file_url(self.quiz_block_file)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'template_location': '',
+        }
+
     def get_quizblocks(self):
         return self.quizblocklab_set.all()
+
+
+class QuizBlock(models.Model):
+    """
+    Master QuizBlock
+    """
+    lab = models.ForeignKey(Lab)
+    element_id = models.CharField(max_length=100, db_index=True)
+
+    time_limit = models.IntegerField(blank=True, null=True)
+    order = models.IntegerField(default=0)
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('lab', 'element_id')
+        ordering = ('order', 'created_at')
+
+    def __unicode__(self):
+        return "{}: {}".format(self.lab.name, self.element_id)
+
+
+class Scale(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Problem(models.Model):
+    """
+    Master Problem
+    """
+    quiz_block = models.ForeignKey(QuizBlock)
+    element_id = models.CharField(max_length=100, db_index=True)
+
+    sentence = models.TextField()
+    correct_message = models.TextField(default="")
+    wrong_message = models.TextField(default="")
+    hashed_sentence = models.CharField(max_length=50, default="", db_index=True)
+
+    no_score = models.BooleanField(default=False)
+    max_attempts = models.IntegerField(blank=True, null=True)
+    randomize_option_order = models.BooleanField(default=True)
+    order = models.IntegerField(default=0)
+
+    is_adaptive = models.BooleanField(default=False)
+
+    # adaptive fields
+    ANSWER_TYPE_CHOICES = (
+        (1, 'dichotomous'),
+        (2, '3 response options'),
+        (3, '4 response options'),
+        # (4, '5 response options'),
+        # (5, '6 response options'),
+    )
+    answer_type = models.IntegerField(choices=ANSWER_TYPE_CHOICES, blank=True, null=True)
+    number_of_destractors = models.IntegerField(blank=True, null=True)
+    content = models.TextField(default="")
+    feedback = models.TextField(default="")
+    time = models.FloatField(blank=True, null=True)
+    sd_time = models.FloatField(blank=True, null=True)
+    discrimination = models.IntegerField(blank=True, null=True)
+    guessing = models.FloatField(blank=True, null=True)
+    image_url = models.URLField(max_length=500, blank=True, default="")
+    scales = models.ManyToManyField(Scale, blank=True)
+    categories = models.ManyToManyField(Category, blank=True)
+    # end of adaptive fields
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('quiz_block', 'element_id')
+        ordering = ('order', 'created_at')
+
+    def __unicode__(self):
+        return "{}: {}".format(self.quiz_block, self.element_id)
+
+    @property
+    def correct_answers(self):
+        try:
+            return Answer.objects.filter(is_active=True, problem=self, is_correct=True)
+        except Answer.DoesNotExist:
+            return None
+
+    @property
+    def correct_answer_texts(self):
+        if self.correct_answers:
+            return [each.text for each in self.correct_answers]
+        return ""
+
+
+class AdaptiveProblemManager(models.Manager):
+    def get_query_set(self):
+        qs = super(AdaptiveProblemManager, self).get_query_set()
+        qs = qs.filter(is_adaptive=True)
+        return qs
+
+
+class AdaptiveProblem(Problem):
+    objects = AdaptiveProblemManager()
+
+    class Meta:
+        proxy = True
+
+
+class Answer(models.Model):
+    """
+    Master Answer
+    """
+
+    problem = models.ForeignKey(Problem)
+    text = models.TextField()
+    hashed_text = models.CharField(max_length=50, db_index=True)
+    is_correct = models.BooleanField(default=False)
+    order = models.IntegerField(default=0)
+
+    # for adaptive
+    difficulty = models.IntegerField(blank=True, null=True)
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('problem', 'hashed_text')
+        ordering = ('order', 'created_at')
+
+    def __unicode__(self):
+        return "{}: {} ({})".format(
+            self.problem,
+            self.text,
+            "correct" if self.is_correct else "incorrect")
 
 
 class LabProxy(models.Model):
@@ -332,21 +493,35 @@ class ProblemProxy(models.Model):
     """
     Model to store connection between quiz and the location
     """
+
     lab_proxy = models.ForeignKey(LabProxy)
+    problem = models.ForeignKey(Problem, blank=True, null=True)
+    location = LocationKeyField(max_length=255, db_index=True)
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    # FIXME: delete
     quiz_id = models.CharField(max_length=100, db_index=True)
     question = models.CharField(max_length=100, db_index=True, help_text='Question in md5')
     question_text = models.TextField(default='')
     location = models.CharField(max_length=200)
     correct_answer = models.TextField()
 
-    created_at = models.DateTimeField(default=timezone.now)
+    def __unicode__(self):
+        return str(self.id)
 
 
 class UserAnswer(models.Model):
     user = models.ForeignKey(User)
-    problem_proxy = models.ForeignKey(ProblemProxy)
+
+    lab_proxy = models.ForeignKey(LabProxy, blank=True, null=True)
+    problem = models.ForeignKey(Problem, blank=True, null=True)
+
     created_at = models.DateTimeField(default=timezone.now)
 
+    quiz_id = models.CharField(max_length=100, blank=True, default='')
+    question = models.TextField(default='')
     answer_string = models.TextField(default='')
     correct_answer = models.TextField(default='')
     is_correct = models.BooleanField(default=True)
@@ -362,7 +537,11 @@ class UserAnswer(models.Model):
 
     is_view_theory_clicked = models.BooleanField(default=False)
 
+    # FIXME: delete
+    problem_proxy = models.ForeignKey(ProblemProxy, blank=True, null=True)
 
+
+# FIXME: unused
 def fetch_labs_as_json():
     labs = Lab.objects.order_by('name')
     labs_json = [lab.to_json() for lab in labs]
@@ -388,15 +567,18 @@ def get_or_create_lab_proxy(location, lab=None):
     return lab_proxy
 
 
-def create_master_lab(sender, instance, created, **kwargs):
-    from labster.quiz_blocks import update_master_lab
-    update_master_lab(instance)
-post_save.connect(create_master_lab, sender=Lab)
+def fetch_lab_data(sender, instance, created, **kwargs):
+    from labster.masters import fetch_quizblocks
+    fetch_quizblocks(instance)
+post_save.connect(fetch_lab_data, sender=Lab)
 
 
 def update_modified_at(sender, instance, **kwargs):
     instance.modified_at = timezone.now()
 pre_save.connect(update_modified_at, sender=Lab)
+pre_save.connect(update_modified_at, sender=QuizBlock)
+pre_save.connect(update_modified_at, sender=Problem)
+pre_save.connect(update_modified_at, sender=Answer)
 pre_save.connect(update_modified_at, sender=LabProxy)
 pre_save.connect(update_modified_at, sender=UserSave)
 pre_save.connect(update_modified_at, sender=Lab)

@@ -56,7 +56,7 @@
                           <select class="input" id="lab_type" style="display:none" data-lab-id="<%= labId %>">
                               <option value=""></option>
                             <% _.each(labsterLabs, function(lab) { %>
-                              <option value="<%= lab.id %>" data-locator="<%= lab.template_location %>"><%= lab.name %></option>
+                              <option value="<%= lab.id %>"><%= lab.name %></option>
                             <% }); %>
                           </select>
                       </li>

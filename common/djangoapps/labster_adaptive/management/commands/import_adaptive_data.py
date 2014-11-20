@@ -3,7 +3,8 @@ import csv
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from labster_adaptive.models import Scale, Category, Problem, Answer
+from labster.models import Scale, Category, Problem, Answer, QuizBlock
+from labster.utils import get_hashed_text
 
 
 """
@@ -34,37 +35,41 @@ class Command(BaseCommand):
                 _ = row[11] # categories not used
                 category = row[12].strip()
 
-                try:
-                    problem = Problem.objects.get(item_number=item_number)
-                except:
-                    problem = Problem(item_number=item_number)
+                lab_id = 35
+                if category == 'Cyto-Pre-Test': category = 'QuizblockPreTest'
+                if category == 'Cyto-Post-Test': category = 'QuizblockPostTest'
 
-                problem.item_number = item_number
-                problem.question = question
+                quiz_block = QuizBlock.objects.get(lab__id=lab_id, element_id=category)
+                problem = Problem.objects.get(element_id=item_number, quiz_block=quiz_block)
                 problem.image_url = image_url
-                problem.modified_at = timezone.now()
-                problem.order = order
                 problem.save()
 
                 Answer.objects.filter(problem=problem).update(is_active=False)
 
-                def create_answer(problem, answer, is_correct):
-                    try:
-                        answer = Answer.objects.create(problem=problem, answer=answer)
-                    except Answer.DoesNotExist:
-                        answer = Answer(problem=problem, answer=answer)
+                def create_answer(problem, text, correct_answer, order):
+                    if not text:
+                        return
 
+                    hashed_text = get_hashed_text(text)
+                    is_correct = False
+                    if correct_answer != 'N/A':
+                        if correct_answer == text:
+                            is_correct = True
+
+                    answer = Answer.objects.get(problem=problem, hashed_text=hashed_text)
+
+                    answer.text = text
+                    answer.hashed_text = hashed_text
                     answer.is_correct = is_correct
                     answer.is_active = True
+                    answer.order = order
                     answer.save()
 
-                if correct_answer.upper() != 'N/A':
-                    create_answer(problem, correct_answer, True)
-                create_answer(problem, possible_answer_1, False)
-                create_answer(problem, possible_answer_2, False)
-                create_answer(problem, possible_answer_3, False)
-                create_answer(problem, possible_answer_4, False)
-                create_answer(problem, possible_answer_5, False)
+                create_answer(problem, possible_answer_1, correct_answer, 1)
+                create_answer(problem, possible_answer_2, correct_answer, 2)
+                create_answer(problem, possible_answer_3, correct_answer, 3)
+                create_answer(problem, possible_answer_4, correct_answer, 4)
+                create_answer(problem, possible_answer_5, correct_answer, 5)
 
                 category, _ = Category.objects.get_or_create(name=category)
                 problem.categories.add(category)

@@ -95,6 +95,8 @@ def get_problem_as_platform_xml(problem):
     options = etree.SubElement(quiz_el, 'Options')
 
     for answer in answers:
+        if not answer:
+            continue
         answer_attrib = {'Sentence': answer.answer}
         if answer.is_correct:
             answer_attrib['IsCorrectAnswer'] = "true"

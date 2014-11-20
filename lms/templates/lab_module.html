@@ -468,7 +468,7 @@ LANGUAGES = [
           }
         };
         u = new UnityObject2(config);
-        u.initPlugin(jQuery("#unityPlayer")[0], "https://s3-us-west-2.amazonaws.com/labster/unity/${lab.engine_file}?token=${user_token.key}");
+        u.initPlugin(jQuery("#unityPlayer")[0], "${lab.engine_file_url}?token=${user_token.key}");
         loaded = true;
       }
 

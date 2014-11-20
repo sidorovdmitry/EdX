@@ -38,8 +38,9 @@ from labster.models import (
     UserSave, ErrorInfo, DeviceInfo, LabProxy, UserAttempt, UnityLog,
     UserAnswer)
 from labster.parsers.problem_parsers import MultipleChoiceProblemParser
-from labster.quiz_blocks import get_problem_proxy_by_question
-from labster.renderers import LabsterXMLRenderer
+from labster.renderers import LabsterXMLRenderer, LabsterDirectXMLRenderer
+from labster.masters import get_problem
+from labster.proxies import get_lab_proxy_as_platform_xml
 
 
 def invoke_xblock_handler(*args, **kwargs):
@@ -622,22 +623,15 @@ class CreateDevice(LabsterRendererMixin, ParserMixin, AuthMixin, CreateAPIView):
         obj.lab_proxy = get_object_or_404(LabProxy, id=lab_id)
 
 
-class LabProxyView(LabsterRendererMixin, AuthMixin, APIView):
-
-    def get_root_attributes(self):
-        return {
-            'Id': self.kwargs.get('lab_id'),
-        }
-
-    def get_labster_renderer_context(self):
-        return {
-            'root_name': "Lab",
-            'root_attributes': self.get_root_attributes(),
-        }
+class LabProxyView(AuthMixin, APIView):
+    renderer_classes = (LabsterDirectXMLRenderer,)
+    charset = 'utf-8'
 
     def get_response_data(self, lab_id):
         lab_proxy = get_object_or_404(LabProxy, id=lab_id)
-        return get_lab_by_location_for_xml(lab_proxy.location)
+        lab_proxy_xml = get_lab_proxy_as_platform_xml(lab_proxy)
+        response_data = etree.tostring(lab_proxy_xml)
+        return response_data
 
     def get(self, request, format=None, *args, **kwargs):
         lab_id = kwargs.get('lab_id')
@@ -776,40 +770,25 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         self.modulestore = get_modulestore()
         super(AnswerProblem, self).__init__(*args, **kwargs)
 
-    def get_problem_locator_descriptor(self, problem_id):
-        locator = self.usage_key.from_string(problem_id)
-        descriptor = self.modulestore().get_item(locator)
-
-        return locator, descriptor
-
-    def get_post_data(self, request, problem_locator, answer, time_spent):
-
-        request.POST = request.POST.copy()
-        field_name = "input_{tag}-{org}-{course}-{category}-{name}_2_1"
-        field_key = {
-            'tag': 'i4x',  # problem_locator.tag,
-            'org': problem_locator.org,
-            'course': problem_locator.course,
-            'category': problem_locator.category,
-            'name': problem_locator.name,
-        }
-
-        field = field_name.format(**field_key)
-        post_data = QueryDict('', mutable=True)
-        post_data[field] = answer
-        post_data['time_spent'] = time_spent
-
-        return post_data
-
-    def call_xblock_handler(self, request, course_id, problem_locator, answer, time_spent):
-        usage_id = problem_locator.to_deprecated_string()
-        usage_id = usage_id.replace('/', ';_')
-        handler = 'xmodule_handler'
-        suffix = 'problem_check'
+    def bad_request_response(self, request, lab_proxy, error_message):
         user = request.user
-        request.POST = self.get_post_data(request, problem_locator, answer, time_spent)
-        request._content_type = 'multipart/form-data'
-        return invoke_xblock_handler(request, course_id, usage_id, handler, suffix, user)
+        post_data = request.POST.copy()
+        log_type = 'quiz_statistic'
+        url = request.build_absolute_uri()
+        request_method = request.method
+
+        try:
+            # try to log
+            # because why not
+            UnityLog.new(user, lab_proxy, log_type, post_data, url, request_method)
+        except:
+            pass
+
+        response_data = {
+            'message': error_message,
+            'post': post_data,
+        }
+        return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, *args, **kwargs):
         response_data = {}
@@ -823,11 +802,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         start_time = request.POST.get('StartTime')
         play_count = request.POST.get('PlayCount')
         attempt_count = request.POST.get('AttemptCount')
-        quiz_id = request.POST.get('QuizId')
-
-        start_time = parser.parse(start_time).replace(tzinfo=timezone.utc)
-        completion_time = float(completion_time)
-        end_time = start_time + timedelta(seconds=completion_time)
+        quiz_id = request.POST.get('QuizId', '')
 
         if not all([
                 score is not None,
@@ -838,55 +813,46 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
                 attempt_count is not None,
                 ]):
 
-            user = request.user
-            post_data = request.POST.copy()
-            log_type = 'quiz_statistic'
-            url = request.build_absolute_uri()
-            request_method = request.method
+            return self.bad_request_response(
+                request, lab_proxy, "Missing required data")
 
+        start_time = parser.parse(start_time).replace(tzinfo=timezone.utc)
+        completion_time = float(completion_time)
+        end_time = start_time + timedelta(seconds=completion_time)
+
+        problem = get_problem(lab_proxy, quiz_id, question)
+        if not problem:
+            return self.bad_request_response(
+                request, lab_proxy, "Missing problem")
+
+        correct_answers = problem.correct_answer_texts
+        if not quiz_id:
             try:
-                # try to log
-                # because why not
-                UnityLog.new(user, lab_proxy, log_type, message, url, request_method)
-            except:
+                problem_proxy = ProblemProxy.objects.get(
+                    lab_proxy=lab_proxy, problem=problem)
+            except ProblemProxy.DoesNotExist:
                 pass
+            else:
+                quiz_id = problem_proxy.quiz_id
 
-            response_data = {
-                'message': "Missing required data",
-                'post': post_data,
-            }
-            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
-
-        problem_proxy = get_problem_proxy_by_question(lab_proxy, question, quiz_id=quiz_id)
-        correct_answer = problem_proxy.correct_answer.strip()
-        is_correct = chosen_answer.strip() == correct_answer
+        is_correct = chosen_answer.strip() in correct_answers
         UserAnswer.objects.create(
             answer_string=chosen_answer,
-            correct_answer=correct_answer,
             attempt_count=attempt_count,
             completion_time=completion_time,
+            correct_answer=";".join(correct_answers),
             end_time=end_time,
             is_correct=is_correct,
+            lab_proxy=lab_proxy,
             play_count=play_count,
-            problem_proxy=problem_proxy,
+            problem=problem,
+            question=problem.sentence,
             score=score,
             start_time=start_time,
             user=request.user,
+            quiz_id=quiz_id,
         )
-
-        problem_id = problem_proxy.location
-        problem_locator, problem_descriptor = self.get_problem_locator_descriptor(problem_id)
-        answer_index = problem_descriptor.correct_index
-        answer_value = "choice_{}".format(answer_index)
-
-        course_id = problem_descriptor.location.course_key.to_deprecated_string()
-        result = self.call_xblock_handler(request, course_id,
-                                          problem_locator, answer_value, completion_time)
-        content = json.loads(result.content)
-        response_data = {
-            'correct': content.get('success') == 'correct',
-        }
-
+        response_data = {'correct': is_correct}
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 

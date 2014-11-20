@@ -20,43 +20,9 @@ class Command(BaseCommand):
     to see how course is created
     """
 
-    def get_master_data(self):
-        data = {}
-        org, number, run = COURSE_ID.split('/')
-        course_key = SlashSeparatedCourseKey(org, number, run)
-        course = get_course_by_id(course_key)
-
-        for section in course.get_children():
-            if section.display_name != 'Labs':
-                continue
-
-            for sub_section in section.get_children():
-                unit_data = {}
-
-                for unit in sub_section.get_children():
-                    problem_data = {}
-
-                    for problem in unit.get_children():
-                        problem_data[problem.display_name] = problem
-
-                    unit_data[unit.display_name] = problem_data
-                data[sub_section.display_name] = unit_data
-
-        return data
-
     def handle(self, *args, **options):
         user = User.objects.get(id=ADMIN_USER_ID)
         if args[0] == 'all':
-
-            master_data = None
-            try:
-                args_1 = args[1]
-            except IndexError:
-                pass
-            else:
-                if args_1 == 'master':
-                    self.stdout.write('fetching the master\n')
-                    master_data = self.get_master_data()
 
             self.stdout.write('updating all quiz xml\n')
 
@@ -84,7 +50,7 @@ class Command(BaseCommand):
                             course, user, command=self,
                             section_name=section.display_name,
                             sub_section_name=sub_section.display_name,
-                            master_data=master_data, lab_name=lab_proxy.lab.name)
+                            lab_name=lab_proxy.lab.name)
 
         else:
             course_id = args[0]

@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import FormView, TemplateView, View
 
 from labster.edx_bridge import duplicate_lab_content, duplicate_course
-from labster.quiz_blocks import update_lab_quiz_block, update_master_lab
+from labster.masters import fetch_quizblocks
 from labster.models import Lab
 
 
@@ -102,8 +102,7 @@ class UpdateQuizBlock(AdminOnlyMixin, View):
         except Lab.DoesNotExist:
             raise Http404
 
-        update_lab_quiz_block(lab, request.user)
-        update_master_lab(lab, request.user, force_update=True)
+        fetch_quizblocks(lab)
         lab = Lab.objects.get(id=lab_id)
 
         response = {
