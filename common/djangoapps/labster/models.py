@@ -6,6 +6,7 @@ import re
 
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -16,6 +17,8 @@ from django.utils import timezone
 from xmodule_django.models import CourseKeyField, LocationKeyField
 
 PLATFORM_NAME = 'platform'
+URL_PREFIX = getattr(settings, 'LABSTER_UNITY_URL_PREFIX', '')
+ENGINE_FILE = 'labster.unity3d'
 
 
 class Token(models.Model):
@@ -64,16 +67,20 @@ class Lab(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(default='')
     engine_xml = models.CharField(max_length=128, default="")
-    engine_file = models.CharField(max_length=128, blank=True, default="labster.unity3d")
+    engine_file = models.CharField(max_length=128, blank=True, default=ENGINE_FILE)
     quiz_block_file = models.CharField(max_length=128, default="")
     quiz_block_last_updated = models.DateTimeField(blank=True, null=True)
 
     demo_course_id = CourseKeyField(max_length=255, db_index=True, blank=True,
                                     null=True)
 
-    use_quiz_blocks = models.BooleanField(default=False)
+    use_quiz_blocks = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     verified_only = models.BooleanField(default=False)
+
+    xml_url_prefix = models.CharField(
+        max_length=255,
+        default=URL_PREFIX)
 
     # lab can have many languages
     languages = models.ManyToManyField(LanguageLab)
