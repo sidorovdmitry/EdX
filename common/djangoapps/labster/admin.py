@@ -1,3 +1,6 @@
+import requests
+
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
@@ -8,20 +11,51 @@ from labster.models import (
     UnityPlatformLog, QuizBlock, Problem, Answer, AdaptiveProblem)
 
 
+ENGINE_S3_PATH = 'https://s3-us-west-2.amazonaws.com/labster/unity/ModularLab/{}'
+QUIZ_BLOCK_S3_PATH = "https://s3-us-west-2.amazonaws.com/labster/uploads/{}"
+
+
 class BaseAdmin(admin.ModelAdmin):
     exclude = ('created_at', 'modified_at')
 
 
-class LabAdmin(BaseAdmin):
+class LabAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = Lab
+        fields = (
+            'name', 'description', 'engine_xml', 'languages', 'engine_file',
+            'quiz_block_file', 'use_quiz_blocks', 'is_active', 'demo_course_id',
+            'verified_only')
+
+    def clean_engine_xml(self):
+        engine_xml = self.cleaned_data['engine_xml']
+        url = ENGINE_S3_PATH.format(engine_xml)
+        response = requests.head(url)
+        if response.status_code != 200:
+            raise forms.ValidationError("No engine xml found.")
+        return engine_xml
+
+    def clean_quiz_block_file(self):
+        quiz_block_file = self.cleaned_data['quiz_block_file']
+        url = QUIZ_BLOCK_S3_PATH.format(quiz_block_file)
+        response = requests.head(url)
+        if response.status_code != 200:
+            raise forms.ValidationError("No quiz block file found.")
+        return quiz_block_file
+
+
+class LabAdmin(admin.ModelAdmin):
     list_display = (
-        'name', 'engine_xml', 'engine_file', 'final_quiz_block_file',
+        'name', 'engine_xml', 'engine_file', 'quiz_block_file',
         'use_quiz_blocks', 'demo_course_id', 'is_active')
-    fields = (
-        'name', 'description', 'engine_xml', 'languages', 'engine_file',
-        'quiz_block_file', 'use_quiz_blocks', 'is_active', 'demo_course_id',
-        'verified_only')
+    # fields = (
+    #     'name', 'description', 'engine_xml', 'languages', 'engine_file',
+    #     'quiz_block_file', 'use_quiz_blocks', 'is_active', 'demo_course_id',
+    #     'verified_only')
     filter_horizontal = ('languages',)
     list_filter = ('is_active', 'engine_file')
+    form = LabAdminForm
 
     def queryset(self, request):
         return Lab.all_objects.all()
