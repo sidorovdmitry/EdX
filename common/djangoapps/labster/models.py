@@ -16,6 +16,9 @@ from django.utils import timezone
 
 from xmodule_django.models import CourseKeyField, LocationKeyField
 
+from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_block_file_url
+
+
 PLATFORM_NAME = 'platform'
 URL_PREFIX = getattr(settings, 'LABSTER_UNITY_URL_PREFIX', '')
 ENGINE_FILE = 'labster.unity3d'
@@ -111,13 +114,6 @@ class Lab(models.Model):
     def __unicode__(self):
         return self.name
 
-    def to_json(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'template_location': '',
-        }
-
     @property
     def slug(self):
         """
@@ -137,6 +133,25 @@ class Lab(models.Model):
     @property
     def new_quiz_block_url(self):
         return reverse('labster_create_quiz_block', args=[self.id])
+
+    @property
+    def engine_xml_url(self):
+        return get_engine_xml_url(self.xml_url_prefix, self.engine_xml)
+
+    @property
+    def engine_file_url(self):
+        return get_engine_file_url(self.xml_url_prefix, self.engine_file)
+
+    @property
+    def quiz_block_file_url(self):
+        return get_quiz_block_file_url(self.quiz_block_file)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'template_location': '',
+        }
 
     def get_quizblocks(self):
         return self.quizblocklab_set.all()
