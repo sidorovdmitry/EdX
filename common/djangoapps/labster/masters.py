@@ -9,6 +9,8 @@ from labster.utils import get_hashed_text
 
 def create_quizblock_from_tree(lab, tree):
     order = 1
+
+    QuizBlock.objects.filter(lab=lab).update(is_active=False)
     for child in tree.getchildren():
         if child.tag != 'QuizBlock':
             continue
@@ -26,6 +28,8 @@ def create_quizblock_from_tree(lab, tree):
 
 def create_problem_from_tree(quiz_block, tree):
     order = 1
+
+    Problem.objects.filter(quiz_block=quiz_block).update(is_active=False)
     for child in tree.getchildren():
         if child.tag != 'Quiz':
             continue
@@ -58,6 +62,7 @@ def create_problem_from_tree(quiz_block, tree):
 
 def create_answer_from_tree(problem, tree):
     order = 1
+    Answer.objects.filter(problem=problem).update(is_active=False)
     for options in tree.getchildren():
         if options.tag != 'Options':
             continue
