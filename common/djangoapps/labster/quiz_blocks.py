@@ -4,6 +4,7 @@ import json
 from lxml import etree
 import requests
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.db.models import Q
@@ -14,7 +15,8 @@ from labster.models import Lab, ProblemProxy, LabProxy, Problem
 from labster.parsers.problem_parsers import QuizParser
 from labster.utils import get_request
 
-QUIZ_BLOCK_S3_PATH = "https://s3-us-west-2.amazonaws.com/labster/uploads/{}"
+S3_BASE_URL = settings.LABSTER_S3_BASE_URL
+QUIZ_BLOCK_S3_PATH = "{}uploads/{}"
 SECTION_NAME = 'Labs'
 
 
@@ -232,7 +234,7 @@ def update_master_lab(lab, user=None, course=None,
     elif not force_update:
         return
 
-    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.quiz_block_file)
+    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(S3_BASE_URL, lab.quiz_block_file)
     response = requests.get(quizblock_xml)
     assert response.status_code == 200, "missing quizblocks xml"
 
@@ -299,7 +301,7 @@ def update_course_lab(user, course, section_name, sub_section_name,
     lab_proxy = LabProxy.objects.get(location=sub_section_location)
     lab = lab_proxy.lab
 
-    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.quiz_block_file)
+    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(S3_BASE_URL, lab.quiz_block_file)
     response = requests.get(quizblock_xml)
     assert response.status_code == 200, "missing quizblocks xml"
 
@@ -543,7 +545,7 @@ def update_lab_quiz_block(lab, user):
 
     lab_proxies = LabProxy.objects.filter(lab=lab, is_active=True)
 
-    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.quiz_block_file)
+    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(S3_BASE_URL, lab.quiz_block_file)
     response = requests.get(quizblock_xml)
     assert response.status_code == 200, "missing quizblocks xml"
 
