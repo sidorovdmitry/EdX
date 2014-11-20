@@ -1455,7 +1455,10 @@ if FEATURES.get('LABSTER'):
     ) + MIDDLEWARE_CLASSES
 
     CORS_ORIGIN_ALLOW_ALL = True
-    LABSTER_UNITY_URL_PREFIX = "https://labster.s3.amazonaws.com/unity/"
+
+    LABSTER_S3_BASE_URL = "https://labster.s3.amazonaws.com/"
+    LABSTER_UNITY_URL_PREFIX = "{}unity/".format(LABSTER_S3_BASE_URL)
+
     LABSTER_UNITY_API_PREFIX = "https://edx.labster.com"
     LABSTER_BACKOFFICE_BASE_URL = "https://internal.labster.com"
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
