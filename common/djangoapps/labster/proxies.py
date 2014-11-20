@@ -5,10 +5,11 @@ from django.contrib.auth.models import User
 from xmodule.modulestore.django import modulestore
 
 from labster.masters import get_problem_as_platform_xml, get_quiz_block_as_platform_xml
-from labster.models import LabProxy, Lab
-from labster.models import QuizBlock, Problem
+from labster.models import LabProxy, ProblemProxy
+from labster.models import Lab, QuizBlock, Problem
 from labster.parsers.problem_parsers import QuizParser
 from labster.quiz_blocks import create_xblock, update_problem
+from labster.utils import get_hashed_text
 
 
 USER_ID = 19  # kriwil@gmail.com
@@ -54,6 +55,17 @@ def create_unit_from_quiz_block(user, quiz_block, location):
     return unit
 
 
+def get_or_create_problem_proxy(lab_proxy, problem, location):
+    problem_proxy, _ = ProblemProxy.objects.get_or_create(
+        lab_proxy=lab_proxy, problem=problem)
+
+    problem_proxy.is_active = True
+    problem_proxy.location = location
+    problem_proxy.save()
+
+    return problem_proxy
+
+
 def create_component_from_problem(user, lab_proxy, problem, location):
     name = problem.element_id
     extra_post = {'boilerplate': "multiplechoice.yaml"}
@@ -76,8 +88,7 @@ def create_component_from_problem(user, lab_proxy, problem, location):
         correct_answer=quiz_parser.correct_answer,
     )
 
-    get_or_create_problem_proxy_from_quiz(
-        lab_proxy, platform_xml, component.location, quiz_block.element_id)
+    get_or_create_problem_proxy(lab_proxy, problem, component.location)
 
     return component
 
