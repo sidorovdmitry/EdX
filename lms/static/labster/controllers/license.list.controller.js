@@ -1,6 +1,6 @@
 angular.module('LabsterBackOffice')
 
-  .controller('LicenseListController', function ($scope, $http) {
+  .controller('LicenseListController', function ($scope, $http, $location) {
     $scope.licenses = [];
 
     var url = window.backofficeUrls.license;
@@ -39,18 +39,26 @@ angular.module('LabsterBackOffice')
       });
 
     $scope.selection = "";
+    $scope.selection_count = 0;
     // toggle selection for a given employee by name
     $scope.toggleSelection = function toggleSelection(licenseId) {
       var idx = $scope.selection.indexOf(licenseId);
 
       // is currently selected
       if (idx > -1) {
-        $scope.selection.splice(idx, 1);
+        $scope.selection = $scope.selection.replace("+" + licenseId, "");
+        $scope.selection_count -= 1;
       }
 
       // is newly selected
       else {
         $scope.selection = $scope.selection + "+" + licenseId;
+        $scope.selection_count += 1;
       }
     };
+
+    $scope.renew_license = function() {
+      var url = '/renew-license/' + $scope.selection;
+      $location.url(url);
+    }
   });

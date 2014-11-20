@@ -27,6 +27,11 @@ angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate'])
         templateUrl: window.baseUrl + 'labster/backoffice/new_license.html'
       })
 
+      .when('/renew-license/:licenses_id', {
+        controller: 'RenewLicenseController',
+        templateUrl: window.baseUrl + 'labster/backoffice/renew_license.html'
+      })
+
       .when('/invoice/:paymentId', {
         controller: 'PaymentDetailController',
         templateUrl: window.baseUrl + 'labster/backoffice/payment_detail.html'
