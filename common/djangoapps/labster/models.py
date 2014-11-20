@@ -63,9 +63,9 @@ class Lab(models.Model):
     """
     name = models.CharField(max_length=64)
     description = models.TextField(default='')
-    engine_xml = models.CharField(max_length=128, blank=True, default="")
+    engine_xml = models.CharField(max_length=128, default="")
     engine_file = models.CharField(max_length=128, blank=True, default="labster.unity3d")
-    quiz_block_file = models.CharField(max_length=128, blank=True, default="")
+    quiz_block_file = models.CharField(max_length=128, default="")
     quiz_block_last_updated = models.DateTimeField(blank=True, null=True)
 
     demo_course_id = CourseKeyField(max_length=255, db_index=True, blank=True,
