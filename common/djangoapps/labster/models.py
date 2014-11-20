@@ -210,6 +210,10 @@ class Problem(models.Model):
     randomize_option_order = models.BooleanField(default=True)
     order = models.IntegerField(default=0)
 
+    current_conv_popup_id = models.CharField(max_length=100, default="", blank=True)
+    image_id = models.CharField(max_length=100, default="", blank=True)
+    read_more_url = models.CharField(max_length=100, default="", blank=True)
+
     is_adaptive = models.BooleanField(default=False)
 
     # adaptive fields

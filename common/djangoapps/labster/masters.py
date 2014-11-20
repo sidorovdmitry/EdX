@@ -45,6 +45,9 @@ def create_problem_from_tree(quiz_block, tree):
         problem.correct_message = child.attrib.get('CorrectMessage', '')
         problem.wrong_message = child.attrib.get('WrongMessage', '')
         problem.no_score = child.attrib.get('NoScore') == 'true'
+        problem.current_conv_popup_id = child.attrib.get('CurrentConvPopupId', '')
+        problem.image_id = child.attrib.get('ImageId', '')
+        problem.read_more_url = child.attrib.get('ReadMoreUrl', '')
         problem.order = order
 
         try:
@@ -153,6 +156,13 @@ def get_problem_as_platform_xml(problem):
         extra['NoScore'] = "true"
     if problem.max_attempts:
         extra['MaxAttempts'] = str(problem.max_attempts)
+    if problem.current_conv_popup_id:
+        extra['CurrentConvPopupId'] = problem.current_conv_popup_id
+    if problem.image_id:
+        extra['ImageId'] = problem.image_id
+    if problem.read_more_url:
+        extra['ReadMoreUrl'] = problem.read_more_url
+
     if not problem.randomize_option_order:
         extra['RandomizeOptionOrder'] = "false"
 
