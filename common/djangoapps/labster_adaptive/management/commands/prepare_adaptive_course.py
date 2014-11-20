@@ -116,7 +116,7 @@ class Command(BaseCommand):
         adaptive_problems(pre_test, 'QuizblockPreTest')
 
         # main
-        quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.final_quiz_block_file)
+        quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.quiz_block_file)
         response = requests.get(quizblock_xml)
         assert response.status_code == 200, "missing quizblocks xml"
 

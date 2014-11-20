@@ -232,7 +232,7 @@ def update_master_lab(lab, user=None, course=None,
     elif not force_update:
         return
 
-    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.final_quiz_block_file)
+    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.quiz_block_file)
     response = requests.get(quizblock_xml)
     assert response.status_code == 200, "missing quizblocks xml"
 
@@ -299,7 +299,7 @@ def update_course_lab(user, course, section_name, sub_section_name,
     lab_proxy = LabProxy.objects.get(location=sub_section_location)
     lab = lab_proxy.lab
 
-    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.final_quiz_block_file)
+    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.quiz_block_file)
     response = requests.get(quizblock_xml)
     assert response.status_code == 200, "missing quizblocks xml"
 
@@ -543,7 +543,7 @@ def update_lab_quiz_block(lab, user):
 
     lab_proxies = LabProxy.objects.filter(lab=lab, is_active=True)
 
-    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.final_quiz_block_file)
+    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.quiz_block_file)
     response = requests.get(quizblock_xml)
     assert response.status_code == 200, "missing quizblocks xml"
 

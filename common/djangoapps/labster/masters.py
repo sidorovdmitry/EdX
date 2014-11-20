@@ -94,7 +94,7 @@ def fetch_quizblocks(lab):
     Answer.objects.filter(problem__quiz_block__lab=lab).update(is_active=False)
 
     # quizblocks
-    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.final_quiz_block_file)
+    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.quiz_block_file)
     response = requests.get(quizblock_xml)
     assert response.status_code == 200, "missing quizblocks xml"
 

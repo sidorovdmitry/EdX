@@ -125,13 +125,6 @@ class Lab(models.Model):
             return ''
 
     @property
-    def final_quiz_block_file(self):
-        if self.quiz_block_file:
-            return self.quiz_block_file
-
-        return 'QuizBlocks_{}.xml'.format(self.slug)
-
-    @property
     def studio_detail_url(self):
         return "/labster/labs/{}/".format(self.id)
 
