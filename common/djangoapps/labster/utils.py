@@ -4,7 +4,12 @@ import re
 from lxml import etree
 import markdown
 
+from django.conf import settings
 from django.test.client import RequestFactory
+
+
+URL_PREFIX = settings.LABSTER_UNITY_URL_PREFIX
+S3_BASE_URL = settings.LABSTER_S3_BASE_URL
 
 
 def get_request(user=None, data=None):
@@ -178,3 +183,21 @@ def get_hashed_text(text):
     if not text:
         return ''
     return hashlib.md5(text.encode('utf-8').strip()).hexdigest()
+
+
+def get_engine_xml_url(prefix, engine_xml):
+    if not prefix:
+        prefix = URL_PREFIX
+    url = "{}ModularLab/{}".format(prefix, engine_xml)
+    return url
+
+def get_engine_file_url(prefix, engine_file):
+    if not prefix:
+        prefix = URL_PREFIX
+    url = "{}{}".format(prefix, engine_file)
+    return url
+
+def get_quiz_block_file_url(quiz_block_file):
+    prefix = S3_BASE_URL
+    url = "{}uploads/{}".format(prefix, quiz_block_file)
+    return url
