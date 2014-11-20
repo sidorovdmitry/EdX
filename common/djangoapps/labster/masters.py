@@ -1,6 +1,8 @@
 from lxml import etree
 import requests
 
+from django.utils import timezone
+
 from labster.models import Lab, QuizBlock, Problem, Answer
 from labster.quiz_blocks import QUIZ_BLOCK_S3_PATH
 from labster.utils import get_hashed_text
@@ -100,6 +102,9 @@ def fetch_quizblocks(lab):
 
     qb_tree = etree.fromstring(response.content)
     create_quizblock_from_tree(lab, qb_tree)
+
+    Lab.objects.filter(id=lab.id).update(
+        quiz_block_last_updated=timezone.now())
 
 
 def fetch_labs_as_json():

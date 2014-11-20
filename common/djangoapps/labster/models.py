@@ -93,8 +93,7 @@ class Lab(models.Model):
 
     @classmethod
     def fetch_with_lab_proxies(self):
-        labs = Lab.objects.filter(verified_only=False, labproxy__is_active=True)\
-            .distinct()\
+        labs = Lab.objects.order_by('name')\
             .annotate(labproxy_count=Count('labproxy'))
         return labs
 
