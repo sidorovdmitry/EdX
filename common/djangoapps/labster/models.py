@@ -546,11 +546,10 @@ def get_or_create_lab_proxy(location, lab=None):
     return lab_proxy
 
 
-# FIXME: update post save for Lab
-# def create_master_lab(sender, instance, created, **kwargs):
-#     from labster.quiz_blocks import update_master_lab
-#     update_master_lab(instance)
-# post_save.connect(create_master_lab, sender=Lab)
+def fetch_lab_data(sender, instance, created, **kwargs):
+    from labster.masters import fetch_quizblocks
+    fetch_quizblocks(instance)
+post_save.connect(fetch_lab_data, sender=Lab)
 
 
 def update_modified_at(sender, instance, **kwargs):
