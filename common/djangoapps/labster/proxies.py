@@ -8,7 +8,7 @@ from labster.masters import get_problem_as_platform_xml, get_quiz_block_as_platf
 from labster.models import LabProxy, ProblemProxy
 from labster.models import Lab, QuizBlock, Problem
 from labster.parsers.problem_parsers import QuizParser
-from labster.quiz_blocks import create_xblock, update_problem
+from labster.quiz_blocks import create_xblock, update_problem, validate_lab_proxy
 from labster.utils import get_hashed_text
 
 
@@ -57,10 +57,9 @@ def create_unit_from_quiz_block(user, quiz_block, location):
 
 def get_or_create_problem_proxy(lab_proxy, problem, location):
     problem_proxy, _ = ProblemProxy.objects.get_or_create(
-        lab_proxy=lab_proxy, problem=problem)
+        lab_proxy=lab_proxy, problem=problem, location=location)
 
     problem_proxy.is_active = True
-    problem_proxy.location = location
     problem_proxy.save()
 
     return problem_proxy
@@ -91,6 +90,21 @@ def create_component_from_problem(user, lab_proxy, problem, location):
     get_or_create_problem_proxy(lab_proxy, problem, component.location)
 
     return component
+
+
+def sync_lab_proxy(lab_proxy):
+    user = User.objects.get(id=USER_ID)
+
+    # get course
+    course, section, sub_section = validate_lab_proxy(lab_proxy)
+    if not course:
+        return
+
+    # delete all units
+    for unit in sub_section.get_children():
+        modulestore().delete_item(unit.location, user.id)
+
+    prepare_lab(lab_proxy.lab, sub_section.location.to_deprecated_string())
 
 
 def get_lab_proxy_as_platform_xml(lab_proxy):
