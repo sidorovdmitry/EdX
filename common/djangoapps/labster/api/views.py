@@ -825,7 +825,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             return self.bad_request_response(
                 request, lab_proxy, "Missing problem")
 
-        correct_answer = problem.correct_answer_text
+        correct_answers = problem.correct_answer_texts
         if not quiz_id:
             try:
                 problem_proxy = ProblemProxy.objects.get(
@@ -835,12 +835,12 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             else:
                 quiz_id = problem_proxy.quiz_id
 
-        is_correct = chosen_answer.strip() == correct_answer
+        is_correct = chosen_answer.strip() in correct_answers
         UserAnswer.objects.create(
             answer_string=chosen_answer,
             attempt_count=attempt_count,
             completion_time=completion_time,
-            correct_answer=correct_answer,
+            correct_answer=";".join(correct_answers),
             end_time=end_time,
             is_correct=is_correct,
             lab_proxy=lab_proxy,

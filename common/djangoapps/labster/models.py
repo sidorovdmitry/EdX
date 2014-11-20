@@ -245,16 +245,16 @@ class Problem(models.Model):
         return "{}: {}".format(self.quiz_block, self.element_id)
 
     @property
-    def correct_answer(self):
+    def correct_answers(self):
         try:
-            return Answer.objects.get(is_active=True, problem=self, is_correct=True)
+            return Answer.objects.filter(is_active=True, problem=self, is_correct=True)
         except Answer.DoesNotExist:
             return None
 
     @property
-    def correct_answer_text(self):
-        if self.correct_answer:
-            return self.correct_answer.text
+    def correct_answer_texts(self):
+        if self.correct_answers:
+            return [each.text for each in self.correct_answers]
         return ""
 
 
