@@ -4,7 +4,6 @@ import requests
 from django.utils import timezone
 
 from labster.models import Lab, QuizBlock, Problem, Answer
-from labster.quiz_blocks import QUIZ_BLOCK_S3_PATH
 from labster.utils import get_hashed_text
 
 
@@ -96,7 +95,7 @@ def fetch_quizblocks(lab):
     Answer.objects.filter(problem__quiz_block__lab=lab).update(is_active=False)
 
     # quizblocks
-    quizblock_xml = QUIZ_BLOCK_S3_PATH.format(lab.quiz_block_file)
+    quizblock_xml = lab.quiz_block_file_url
     response = requests.get(quizblock_xml)
     assert response.status_code == 200, "missing quizblocks xml"
 

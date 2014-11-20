@@ -18,7 +18,6 @@ from rest_framework.authtoken.models import Token
 from labster.models import LabProxy, UserSave, UserAttempt
 
 
-URL_PREFIX = getattr(settings, 'LABSTER_UNITY_URL_PREFIX', '')
 API_PREFIX = getattr(settings, 'LABSTER_UNITY_API_PREFIX', '')
 
 
@@ -132,6 +131,7 @@ class SettingsXml(LabProxyXMLView):
         user = self.get_user(request)
 
         engine_xml = self.get_engine_xml(lab_proxy, user)
+        url_prefix = lab_proxy.lab.xml_url_prefix
 
         return {
             'EngineXML': engine_xml,
@@ -139,7 +139,7 @@ class SettingsXml(LabProxyXMLView):
             'CameraMode': "Standard",
             'InputMode': "Mouse",
             'HandMode': "Hand",
-            'URLPrefix': URL_PREFIX,
+            'URLPrefix': url_prefix,
         }
 
 
