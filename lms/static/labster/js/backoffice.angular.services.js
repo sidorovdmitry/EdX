@@ -4,7 +4,8 @@ angular.module('LabsterBackOffice')
     return({
       checkVatFormat: checkVatFormat,
       checkInstitution: checkInstitution,
-      getEuCountries: getEuCountries
+      getEuCountries: getEuCountries,
+      checkEuCountry: checkEuCountry
     });
 
     function checkVatFormat(vat_number) {
@@ -57,5 +58,18 @@ angular.module('LabsterBackOffice')
         {id: 214, name: 'Sweden'},
         {id: 234, name: 'United Kingdom'},
       ];
+    }
+
+    function checkEuCountry(country) {
+      var eu_countries = getEuCountries();
+      if (country != null || country != undefined) {
+        for (var i = eu_countries.length - 1; i >= 0; i--) {
+          var item = eu_countries[i];
+          if (item.id == country.id) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
   });
