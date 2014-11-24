@@ -1,12 +1,21 @@
+import csv
+
 from lxml import etree
+import six
+try:
+    import cStringIO.StringIO as StringIO
+except ImportError:
+    StringIO = six.StringIO
 
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
+from django.utils import timezone
 
 from xmodule.modulestore.django import modulestore
 
 from labster.masters import get_problem_as_platform_xml, get_quiz_block_as_platform_xml
-from labster.models import LabProxy, ProblemProxy
-from labster.models import Lab, QuizBlock, Problem
+from labster.models import LabProxy, ProblemProxy, LabProxyData
+from labster.models import Lab, QuizBlock, Problem, UserAnswer
 from labster.parsers.problem_parsers import QuizParser
 from labster.quiz_blocks import create_xblock, update_problem, validate_lab_proxy
 from labster.utils import get_hashed_text
@@ -118,3 +127,63 @@ def get_lab_proxy_as_platform_xml(lab_proxy):
         quizblocks_el.append(quiz_block_el)
 
     return lab_proxy_el
+
+
+def generate_lab_proxy_data(lab_proxy):
+
+    lab = lab_proxy.lab
+    quiz_blocks = QuizBlock.objects.filter(is_active=True, lab=lab)
+
+    ## rows
+    # QuizBlock, QuizID, Email, User ID, Question, Correct Answer, Answer,
+    # Is Correct, Completion Time
+
+    stream = StringIO()
+    writer = csv.writer(stream)
+    headers = [
+        'QuizID',
+        'Email',
+        'User ID',
+        'Question',
+        'Correct Answer',
+        'Answer',
+        'Is Correct',
+        'Completion Time',
+        'QuizBlock',
+    ]
+
+    writer.writerow(headers)
+
+    for quiz_block in quiz_blocks:
+        problems = Problem.objects.filter(is_active=True, quiz_block=quiz_block)
+
+        for problem in problems:
+            user_answers = UserAnswer.objects.filter(problem=problem)
+
+            for user_answer in user_answers:
+                user = user_answer.user
+
+                is_correct = ""
+                if not problem.no_score:
+                    is_correct = "yes" if user_answer.is_correct else "no"
+
+                rows = [
+                    problem.element_id,
+                    user.email,
+                    user.profile.unique_id,
+                    user_answer.question.encode('utf-8'),
+                    user_answer.correct_answer.encode('utf-8'),
+                    user_answer.answer_string.encode('utf-8'),
+                    is_correct,
+                    user_answer.completion_time,
+                    quiz_block.element_id,
+                ]
+
+                writer.writerow(rows)
+
+    now = timezone.now()
+    file_name = 'lp_{}_{}.csv'.format(lab_proxy.id, now.strftime('%Y%m%d%H%M%S'))
+    csv_file = ContentFile(stream.getvalue(), file_name)
+    lab_proxy_data = LabProxyData(lab_proxy=lab_proxy)
+    lab_proxy_data.data_file.save(file_name, csv_file, save=False)
+    lab_proxy_data.save()
