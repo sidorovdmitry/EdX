@@ -798,7 +798,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         score = request.POST.get('Score')
         question = request.POST.get('QuizQuestion')
         completion_time = request.POST.get('CompletionTime')
-        chosen_answer = request.POST.get('ChosenAnswer')
+        chosen_answer = request.POST.get('ChosenAnswer', '').strip()
         start_time = request.POST.get('StartTime')
         play_count = request.POST.get('PlayCount')
         attempt_count = request.POST.get('AttemptCount')
@@ -835,12 +835,12 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             else:
                 quiz_id = problem_proxy.quiz_id
 
-        is_correct = chosen_answer.strip() in correct_answers
+        is_correct = chosen_answer in correct_answers
         UserAnswer.objects.create(
             answer_string=chosen_answer,
             attempt_count=attempt_count,
             completion_time=completion_time,
-            correct_answer=";".join(correct_answers),
+            correct_answer=":::".join(correct_answers),
             end_time=end_time,
             is_correct=is_correct,
             lab_proxy=lab_proxy,

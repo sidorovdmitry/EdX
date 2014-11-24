@@ -40,7 +40,7 @@ def create_problem_from_tree(quiz_block, tree):
 
         problem.is_adaptive = quiz_block.element_id in ['QuizblockPreTest', 'QuizblockPostTest']
         problem.is_active = True
-        problem.sentence = child.attrib.get('Sentence', '')
+        problem.sentence = child.attrib.get('Sentence', '').strip()
         problem.hashed_sentence = get_hashed_text(problem.sentence)
         problem.correct_message = child.attrib.get('CorrectMessage', '')
         problem.wrong_message = child.attrib.get('WrongMessage', '')
@@ -74,7 +74,7 @@ def create_answer_from_tree(problem, tree):
             if option.tag != 'Option':
                 continue
 
-            text = option.attrib.get('Sentence')
+            text = option.attrib.get('Sentence', '').strip()
             if not text:
                 continue
 
