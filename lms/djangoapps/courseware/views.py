@@ -899,6 +899,61 @@ def student_detail(request, course_id, student_id):
     return response
 
 
+@login_required
+def survey_result(request, course_id):
+    course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+    course = modulestore().get_course(course_key)
+    section = sub_section = None
+
+    for course_section in course.get_children():
+        if course_section.display_name.upper() == 'SURVEY':
+            section = course_section
+            break
+
+    for course_sub_section in section.get_children():
+        if course_sub_section.display_name.upper() == 'FEEDBACK SURVEY':
+            sub_section = course_sub_section
+            break
+
+    if section is None or sub_section is None:
+        return HttpResponse('Missing survey')
+
+    student_objects = CourseEnrollment.objects.filter(course_id=course_key, is_active=True)
+
+    for item in student_objects:
+        student_id = item.user_id
+        student_user = User.objects.get(id=int(student_id))
+        # additional DB lookup (this kills the Progress page in particular).
+        student = User.objects.prefetch_related("groups").get(id=student_user.id)
+
+        section_field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
+            course.id, student, sub_section, depth=2)
+        for each in section_field_data_cache.descriptors:
+            if each.plugin_name != 'problem':
+                continue
+
+            student_module = StudentModule.objects.get(
+                student=student,
+                course_id=course_key,
+                module_state_key=each.location
+            )
+
+            results = json.loads(student_module.state)
+            if 'student_answers' not in results.keys():
+                pass
+
+        # courseware_summary = grades.progress_summary(student, request, course)
+        # grade_summary = grades.grade(student, request, course)
+
+        # if courseware_summary is None:
+        #     # if the student is indeed registered, it means the course is not
+        #     # started yet
+        #     continue
+
+    response = HttpResponse()
+    return response
+
+
 def get_problems_student_in_course(request, student, course, course_key):
     """
         Helper function to get all the problems for a student in a course
