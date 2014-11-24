@@ -328,6 +328,19 @@ class LabProxy(models.Model):
         paths = self.location.split('/')
         return '/'.join([paths[2], paths[3]])
 
+    @property
+    def latest_data(self):
+        try:
+            return LabProxy.objects.filter(lab_proxy=lab_proxy).latest('created_at')
+        except LabProxy.DoesNotExist:
+            return None
+
+
+class LabProxyData(models.Model):
+    lab_proxy = models.ForeignKey(LabProxy)
+    data_file = models.FileField(upload_to='edx/labster/lab_proxy/data')
+    created_at = models.DateTimeField(default=timezone.now)
+
 
 class UserSave(models.Model):
     """

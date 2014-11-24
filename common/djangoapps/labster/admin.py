@@ -10,7 +10,8 @@ from django.utils.safestring import mark_safe
 from labster.models import (
     LanguageLab, Lab, ErrorInfo, DeviceInfo, UserSave, Token, LabProxy,
     UnityLog, UserAnswer, LabsterUserLicense, ProblemProxy,
-    UnityPlatformLog, QuizBlock, Problem, Answer, AdaptiveProblem)
+    UnityPlatformLog, QuizBlock, Problem, Answer, AdaptiveProblem,
+    LabProxyData)
 from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_block_file_url
 
 
@@ -226,6 +227,7 @@ admin.site.register(Answer, AnswerAdmin)
 
 admin.site.register(LabProxy, LabProxyAdmin)
 admin.site.register(ProblemProxy, ProblemProxyAdmin)
+admin.site.register(LabProxyData)
 
 admin.site.register(UnityLog, UnityLogAdmin)
 admin.site.register(UnityPlatformLog, UnityPlatformLogAdmin)
