@@ -7,6 +7,8 @@ angular.module('LabsterBackOffice')
     $scope.countries = null;
     $scope.totalPrice = 0;
     $scope.tax = 0;
+    $scope.vat_error = "";
+    $scope.institution_error = "";
 
     // get license information
     $http.get(url, {
@@ -64,4 +66,56 @@ angular.module('LabsterBackOffice')
 
       $scope.totalPrice = $scope.tax + $scope.subTotalPrice;
     };
+
+    $scope.buyLabs = function () {
+      $scope.isProcessing = true;
+      $scope.checkoutButton = "Processing...";
+      if ($scope.institution_type != 1) {
+        $scope.vat_error = LicenseService.checkVatFormat($scope.institution_vat_number);
+        $scope.institution_error = LicenseService.checkInsitution($scope.institution_name);
+      }
+      if (!$scope.institution_error.length && !$scope.vat_error.length) {
+        var url = window.backofficeUrls.buyLab;
+        data = {
+          user: window.requestUser.backoffice.user.id,
+          payment_type: "manual",
+          institution_type : $scope.institution_type,
+          institution_name : $scope.institution_name,
+          country : $scope.country.id,
+          total_before_tax : $scope.subTotalPrice,
+          list_product: []
+        };
+
+        angular.forEach($scope.license.products, function (lab) {
+          if (!lab.is_product_group) {
+            // include individual lab
+            data.list_product.push({
+              product: lab.get_product_id,
+              item_count: lab.item_count,
+              month_subscription: lab.month_subscription
+            });
+          } else {
+            // include group package lab
+            data.list_product.push({
+              product_group: lab.get_product_id,
+              item_count: lab.item_count,
+              month_subscription: lab.month_subscription
+            });
+          }
+        });
+
+        $http.post(url, data, {
+          headers: {
+            'Authorization': "Token " + window.requestUser.backoffice.token
+          }
+        })
+          .success(function (data, status, headers, config) {
+            var url = '/invoice/' + data.id;
+            $location.url(url);
+          })
+
+          .error(function (data, status, headers, config) {
+          });
+      }
+    };  // end of buy lab function
   });
