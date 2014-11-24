@@ -196,6 +196,9 @@ class UnityPlatformLogAdmin(admin.ModelAdmin):
 class UserAnswerAdmin(admin.ModelAdmin):
     list_display = ('user', 'lab', 'created_at', 'question', 'quiz_id',
                     'answer_string', 'correct_answer', 'is_correct')
+    raw_id_fields = ('problem',)
+    list_filter = ('is_correct',)
+    search_fields = ('quiz_id',)
 
     def lab(self, obj):
         return obj.lab_proxy.lab.name

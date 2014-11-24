@@ -258,7 +258,7 @@ class Problem(models.Model):
     @property
     def correct_answer_texts(self):
         if self.correct_answers:
-            return [each.text for each in self.correct_answers]
+            return [each.text.strip() for each in self.correct_answers]
         return ""
 
 
