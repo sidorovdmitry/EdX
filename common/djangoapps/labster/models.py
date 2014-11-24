@@ -323,6 +323,9 @@ class LabProxy(models.Model):
     class Meta:
         verbose_name_plural = 'Lab proxies'
 
+    def __unicode__(self):
+        return "{}: {}".format(self.id, self.lab.name)
+
     @property
     def course_from_location(self):
         paths = self.location.split('/')
@@ -340,6 +343,11 @@ class LabProxyData(models.Model):
     lab_proxy = models.ForeignKey(LabProxy)
     data_file = models.FileField(upload_to='edx/labster/lab_proxy/data')
     created_at = models.DateTimeField(default=timezone.now)
+
+    @property
+    def data_file_name(self):
+        name = self.data_file.name.split('/')[-1]
+        return name
 
 
 class UserSave(models.Model):

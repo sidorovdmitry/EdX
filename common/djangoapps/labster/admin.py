@@ -135,6 +135,18 @@ class LabProxyAdmin(BaseAdmin):
     list_filter = ('is_active',)
 
 
+class LabProxyDataAdmin(admin.ModelAdmin):
+    list_display = ('id', 'data_file_link', 'lab_proxy_id')
+    list_filter = ('lab_proxy',)
+
+    def lab_proxy_id(self, obj):
+        return obj.lab_proxy.id
+
+    def data_file_link(self, obj):
+        return HTML_LINK.format(obj.data_file.url, obj.data_file_name)
+    data_file_link.allow_tags = True
+
+
 class ProblemProxyAdmin(admin.ModelAdmin):
     list_display = ('id', 'lab_proxy_id', 'problem', 'is_active')
     list_filter = ('is_active',)
@@ -227,7 +239,7 @@ admin.site.register(Answer, AnswerAdmin)
 
 admin.site.register(LabProxy, LabProxyAdmin)
 admin.site.register(ProblemProxy, ProblemProxyAdmin)
-admin.site.register(LabProxyData)
+admin.site.register(LabProxyData, LabProxyDataAdmin)
 
 admin.site.register(UnityLog, UnityLogAdmin)
 admin.site.register(UnityPlatformLog, UnityPlatformLogAdmin)
