@@ -1,47 +1,80 @@
+from datetime import timedelta
+from unittest import TestCase
+
+from factory.django import DjangoModelFactory
+import factory
 import mock
 
-from django.test import TestCase
+from django.utils import timezone
 
-from labster.constants import ADMIN_USER_ID
-from labster.models import UserAttempt
-from labster.tests.factories import (
-    UserFactory, LabFactory, UserAttemptFactory, create_lab_proxy,
-)
+from labster.models import Lab, LabProxy, Problem, Answer, QuizBlock, AdaptiveProblem
 
 
-class UserAttemptTest(TestCase):
+class LabFactory(DjangoModelFactory):
+    FACTORY_FOR = Lab
 
-    @mock.patch('labster.quiz_blocks.update_master_lab')
-    def setUp(self, update_master_lab):
-        update_master_lab.return_value = None
-        UserFactory(id=ADMIN_USER_ID)
 
-        lab = LabFactory()
-        self.lab_proxy = create_lab_proxy(lab=lab)
-        self.user = UserFactory()
+class LabProxyFactory(DjangoModelFactory):
+    FACTORY_FOR = LabProxy
+    lab = factory.SubFactory(LabFactory)
 
-    def test_get_for_user(self):
 
-        first_user_attempt = UserAttemptFactory(user=self.user, lab_proxy=self.lab_proxy)
-        second_user_attempt = UserAttemptFactory(user=self.user, lab_proxy=self.lab_proxy)
+class QuizBlockFactory(DjangoModelFactory):
+    FACTORY_FOR = QuizBlock
+    lab = factory.SubFactory(LabFactory)
 
-        user_attempt = UserAttempt.objects.latest_for_user(self.lab_proxy, self.user)
-        self.assertEqual(second_user_attempt.id, user_attempt.id)
-        self.assertNotEqual(first_user_attempt.id, user_attempt.id)
 
-    def test_get_for_user_empty(self):
-        user_attempt = UserAttempt.objects.latest_for_user(self.lab_proxy, self.user)
-        self.assertIsNone(user_attempt)
+class ProblemFactory(DjangoModelFactory):
+    FACTORY_FOR = Problem
+    quiz_block = factory.SubFactory(QuizBlockFactory)
 
-    def test_mark_finished(self):
-        user_attempt = UserAttemptFactory(user=self.user, lab_proxy=self.lab_proxy)
-        user_attempt.mark_finished()
 
-        user_attempt = UserAttempt.objects.get(id=user_attempt.id)
-        self.assertTrue(user_attempt.is_finished)
+class AnswerFactory(DjangoModelFactory):
+    FACTORY_FOR = Answer
+    problem = factory.SubFactory(ProblemFactory)
 
-    def test_get_total_play_count(self):
-        [UserAttemptFactory(user=self.user, lab_proxy=self.lab_proxy) for i in range(10)]
-        user_attempt = UserAttempt.objects.latest_for_user(self.lab_proxy, self.user)
-        self.assertIsNotNone(user_attempt)
-        self.assertEqual(user_attempt.get_total_play_count(), 10)
+
+class LabModelTest(TestCase):
+
+    @mock.patch('labster.masters.fetch_quizblocks')
+    def test_fetch_sith_lab_proxies(self, fn):
+        lab_proxy = LabProxyFactory()
+        lab = lab_proxy.lab
+
+        labs = Lab.fetch_with_lab_proxies()
+        self.assertTrue(labs.exists())
+        for lab in labs:
+            self.assertEqual(lab.labproxy_count, 1)
+
+    @mock.patch('labster.masters.fetch_quizblocks')
+    def test_update_quiz_block_last_updated(self, fn):
+        sometimes = timezone.now() - timedelta(days=7)
+        lab = LabFactory(quiz_block_last_updated=sometimes)
+
+        Lab.update_quiz_block_last_updated(lab.id)
+        lab = Lab.objects.get(id=lab.id)
+        self.assertGreater(lab.quiz_block_last_updated, sometimes)
+
+    def test_slug(self):
+        lab = Lab()
+        lab.engine_xml = 'Engine_SpiderMan.xml'
+        self.assertEqual(lab.slug, 'SpiderMan')
+
+    def test_slug_no_engine_xml(self):
+        lab = Lab()
+        self.assertEqual(lab.slug, '')
+
+
+class ProblemModelTest(TestCase):
+
+    @mock.patch('labster.masters.fetch_quizblocks')
+    def test_correct_answers(self, fn):
+        answer = AnswerFactory(is_correct=True)
+        problem = answer.problem
+        self.assertIn(answer, problem.correct_answers)
+
+    @mock.patch('labster.masters.fetch_quizblocks')
+    def test_no_correct_answers(self, fn):
+        answer = AnswerFactory()
+        problem = answer.problem
+        self.assertNotIn(answer, problem.correct_answers)
