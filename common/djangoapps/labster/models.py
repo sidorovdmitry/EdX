@@ -201,8 +201,8 @@ class Problem(models.Model):
     element_id = models.CharField(max_length=100, db_index=True)
 
     sentence = models.TextField()
-    correct_message = models.TextField(default="")
-    wrong_message = models.TextField(default="")
+    correct_message = models.TextField(default="", blank=True)
+    wrong_message = models.TextField(default="", blank=True)
     hashed_sentence = models.CharField(max_length=50, default="", db_index=True)
 
     no_score = models.BooleanField(default=False)
