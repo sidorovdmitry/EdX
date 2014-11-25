@@ -78,6 +78,7 @@ angular.module('LabsterBackOffice')
         var url = window.backofficeUrls.buyLab;
         data = {
           user: window.requestUser.backoffice.user.id,
+          is_renew: true,
           payment_type: "manual",
           institution_type : $scope.institution_type,
           institution_name : $scope.institution_name,
@@ -91,6 +92,7 @@ angular.module('LabsterBackOffice')
             // include individual lab
             data.list_product.push({
               product: lab.get_product_id,
+              license_id: lab.license_id,
               item_count: lab.item_count,
               month_subscription: lab.month_subscription
             });
@@ -98,6 +100,7 @@ angular.module('LabsterBackOffice')
             // include group package lab
             data.list_product.push({
               product_group: lab.get_product_id,
+              license_id: lab.license_id,
               item_count: lab.item_count,
               month_subscription: lab.month_subscription
             });
