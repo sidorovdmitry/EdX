@@ -190,7 +190,9 @@ def get_problem(lab_proxy, quiz_id=None, question=None):
     if quiz_id:
         try:
             problem = Problem.objects.get(
-                quiz_block__lab=lab_proxy.lab, element_id=quiz_id)
+                is_active=True,
+                quiz_block__lab=lab_proxy.lab,
+                element_id=quiz_id)
         except Problem.DoesNotExist:
             problem = None
 
@@ -198,7 +200,9 @@ def get_problem(lab_proxy, quiz_id=None, question=None):
         try:
             hashed = get_hashed_text(question)
             problem = Problem.objects.get(
-                quiz_block__lab=lab_proxy.lab, hashed_sentence=hashed)
+                is_active=True,
+                quiz_block__lab=lab_proxy.lab,
+                hashed_sentence=hashed)
         except Problem.DoesNotExist:
             problem = None
 
