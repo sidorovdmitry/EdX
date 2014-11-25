@@ -141,6 +141,11 @@ LANGUAGES = [
   </div>
   % endif
   <div class="loading" style="display:none">Loading &hellip;</div>
+  <div class="browser safari mac" style="display:none">
+    <h2>${lab.name}</h2>
+    <h3>Use Safari</h3>
+    <p>We're sorry to tell you that due to a bug from chrome and unity, the unity isn't working right now. Please use Safari instead to play our lab.</p>
+  </div>
   <div id="missingUnityContainer" style="display:none">
     <h2>${lab.name}</h2>
     <h3>How to Play Our Labs</h3>
@@ -387,7 +392,14 @@ LANGUAGES = [
 
     jQuery(function() {
       var browser = jQuery.browser;
-      if (browser.webkit || browser.mozilla) {
+      var platform = navigator.platform.toUpperCase();
+      var userAgent = navigator.userAgent.toUpperCase();
+      var chromeOnMac = (platform == 'MACINTEL') && (userAgent.indexOf('CHROME/39') !== -1);
+
+      if (chromeOnMac) {
+        jQuery('.browser.safari.mac').show();
+
+      } else if (browser.webkit || browser.mozilla) {
         jQuery('.browser.chrome').show();
         jQuery('#course-content').css(
             'background-position', 'top -50px right -90px');
@@ -437,7 +449,10 @@ LANGUAGES = [
         }
       });
 
-      if (isVerifiedLab && ! isVerifiedLabster) {
+      if (chromeOnMac) {
+        jQuery('.loading').hide();
+
+      } else if (isVerifiedLab && ! isVerifiedLabster) {
         initVerifiedForm(function() {
           if (hasUnity) {
             jQuery('#labModuleContainer').show();
