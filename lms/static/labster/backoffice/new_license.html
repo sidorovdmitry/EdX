@@ -130,14 +130,14 @@
       <td>Institution Name</td>
       <td>
         <input type="text" class="form-control" ng-model="institution_name">
-        <i>{{ institution_error }}</i>
+        <i style="color:red;">{{ institution_error }}</i>
       </td>
     </tr>
     <tr ng-hide="institution_type == 1">
       <td>VAT Number</td>
       <td>
         <input type="text" class="form-control" ng-model="institution_vat_number" >
-        <i>{{ vat_error }}</i>
+        <i style="color:red;">{{ vat_error }}</i>
       </td>
     </tr>
     </tbody>

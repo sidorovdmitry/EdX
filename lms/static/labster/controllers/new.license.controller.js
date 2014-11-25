@@ -201,12 +201,12 @@ angular.module('LabsterBackOffice')
       var list_product;
 
       $scope.isProcessing = true;
-      $scope.checkoutButton = "Processing...";
       if ($scope.institution_type != 1) {
         $scope.checkVatFormat();
         $scope.checkInsitution();
       }
       if (!$scope.institution_error.length && !$scope.vat_error.length) {
+        $scope.checkoutButton = "Processing...";
         var url = window.backofficeUrls.buyLab;
         data = {
           user: window.requestUser.backoffice.user.id,
