@@ -1,0 +1,64 @@
+<div class="labster-lab-list">
+  <h2>Checkout</h2>
+  <table class="table-vat">
+    <tbody>
+    <tr class="edu-level">
+      <td colspan="2"><strong>Buyer Details</strong></td>
+    </tr>
+    <tr>
+      <td>Country</td>
+      <td>
+        <select class="form-control" ng-change="checkVat()" ng-model="country"
+                ng-options="country.name for country in countries"></select>
+      </td>
+    </tr>
+    <tr>
+      <td class="vertical-align-baseline">Institution type</td>
+      <td>
+        <label>
+          <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="1"> Personal <br/>
+        </label>
+        <label>
+          <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="2"> Private School <br/>
+        </label>
+        <label>
+          <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="3"> Public School <br/>
+        </label>
+      </td>
+    </tr>
+    <tr class="edu-level">
+      <td colspan="2"><strong>Billing Information</strong></td>
+    </tr>
+    <tr ng-hide="institution_type == 1">
+      <td>Institution Name</td>
+      <td>
+        <input type="text" class="form-control" ng-model="institution_name">
+        <i>{{ institution_error }}</i>
+      </td>
+    </tr>
+    <tr ng-hide="institution_type == 1">
+      <td>VAT Number</td>
+      <td>
+        <input type="text" class="form-control" ng-model="institution_vat_number" >
+        <i>{{ vat_error }}</i>
+      </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+      <td>Subtotal</td>
+      <td class="align-right">{{ subTotalPrice|currency:"$" }}</td>
+    </tr>
+    <tr>
+      <td>Tax</td>
+      <td class="align-right">{{ tax|currency:"$" }}</td>
+    </tr>
+    <tr>
+      <td>Total</td>
+      <td class="align-right">{{ totalPrice|currency:"$"}}</td>
+    </tr>
+    </tfoot>
+  </table>
+  <a type="button"
+     class="btn-labster-checkout pull-right" ng-click="buyLabs()">{{ checkoutButton }}</a>
+</div>

@@ -3,9 +3,14 @@
 </header>
 <div class="labster-lab-list">
   <h3>Active Licenses</h3>
+     <div class="selected-item">
+         {{selection_count}} selected of {{licenses.length}} Licenses
+         <a type="button" class="btn-labster-checkout pull-right" ng-click="renew_license()" >Renew selected licenses</a>
+     </div>
   <table>
     <thead>
       <tr>
+        <th></th>
         <th>Lab</th>
         <th>Purchase Date</th>
         <th>Expiration Date</th>
@@ -15,12 +20,16 @@
     </thead>
     <tbody>
       <tr ng-show="(licenses | filter: {product_type:'univ'}).length > 0" class="edu-level-invoice">
+        <td></td>
         <td colspan="2"><strong>University & College Labs</strong></td>
         <td></td>
         <td></td>
         <td></td>
       </tr>
       <tr ng-repeat="license in licenses | filter: {product_type:'univ'}">
+        <td>
+            <input id="{{license.id}}" type="checkbox" ng-checked="selection.indexOf(license.id) > -1" ng-click="toggleSelection(license.id)" />
+        </td>
         <td class="lab-description">{{ license.product_name }}
             <div ng-show="license.list_products.length > 0">
               Lab included in this package:
@@ -35,12 +44,16 @@
         <td class="align-right">{{ license.item_count }}</td>
       </tr>
       <tr ng-show=" (licenses | filter: {product_type:'hs'}).length > 0" class="edu-level-invoice">
+        <td></td>
         <td colspan="2"><strong>High School</strong></td>
         <td></td>
         <td></td>
         <td></td>
       </tr>
       <tr ng-repeat="license in licenses | filter: {product_type:'hs'}">
+        <td>
+            <input id="{{license.id}}" type="checkbox" ng-checked="selection.indexOf(license.id) > -1" ng-click="toggleSelection(license.id)" />
+        </td>
         <td class="lab-description">{{ license.product_name }}
             <div ng-show="license.list_products.length > 0">
               Lab included in this package:

@@ -64,6 +64,7 @@ def get_backoffice_urls():
         'buy_lab': '{}/api/payments/create/'.format(base_url),
         'payment': '{}/api/payments/'.format(base_url),
         'license': '{}/api/licenses/'.format(base_url),
+        'renew_license_bill': '{}/api/licenses/get_license_bill/'.format(base_url),
         'product': '{}/api/products/'.format(base_url),
         'country': '{}/api/countries/'.format(base_url),
         'product_group': '{}/api/product_groups/'.format(base_url),

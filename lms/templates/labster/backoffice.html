@@ -51,7 +51,8 @@ window.backofficeUrls = {
   product_group: "${backoffice_urls['product_group']}",
   product: "${backoffice_urls['product']}",
   license: "${backoffice_urls['license']}",
-  country: "${backoffice_urls['country']}"
+  country: "${backoffice_urls['country']}",
+  get_renew_license_bill: "${backoffice_urls['renew_license_bill']}"
 };
 window.labList = JSON.parse('${lab_list}');
 </script>
@@ -67,10 +68,13 @@ window.labList = JSON.parse('${lab_list}');
 <script src="${static.url('labster/js/backoffice.angular.directives.js')}"></script>
 <!-- controllers -->
 <script src="${static.url('labster/controllers/license.list.controller.js')}"></script>
+<script src="${static.url('labster/controllers/renew.license.controller.js')}"></script>
 <script src="${static.url('labster/controllers/new.license.controller.js')}"></script>
 <script src="${static.url('labster/controllers/payment.detail.controller.js')}"></script>
 <script src="${static.url('labster/controllers/payment.paid.controller.js')}"></script>
 <script src="${static.url('labster/controllers/payment.list.controller.js')}"></script>
+<!-- services -->
+<script src="${static.url('labster/js/backoffice.angular.services.js')}"></script>
 </%block>
 
 <section class="container dashboard labster-bo" id="dashboard-main" aria-hidden="false" ng-app="LabsterBackOffice">
