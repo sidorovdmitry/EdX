@@ -1,11 +1,42 @@
 angular.module('LabsterBackOffice')
 
   .factory('LicenseService', function () {
+    var eu_countries = [
+      {id: 15, name: 'Austria'},
+      {id: 22, name: 'Belgium'},
+      {id: 35, name: 'Bulgaria'},
+      {id: 56, name: 'Croatia'},
+      {id: 59, name: 'Cyprus'},
+      {id: 60, name: 'Czech Republic'},
+      {id: 61, name: 'Denmark'},
+      {id: 70, name: 'Estonia'},
+      {id: 75, name: 'Finland'},
+      {id: 76, name: 'France'},
+      {id: 83, name: 'Germany'},
+      {id: 86, name: 'Greece'},
+      {id: 101, name: 'Hungary'},
+      {id: 107, name: 'Ireland'},
+      {id: 110, name: 'Italy'},
+      {id: 123, name: 'Latvia'},
+      {id: 129, name: 'Lithuania'},
+      {id: 130, name: 'Luxembourg'},
+      {id: 138, name: 'Malta'},
+      {id: 157, name: 'Netherlands'},
+      {id: 177, name: 'Poland'},
+      {id: 178, name: 'Portugal'},
+      {id: 182, name: 'Romania'},
+      {id: 202, name: 'Slovakia'},
+      {id: 203, name: 'Slovenia'},
+      {id: 208, name: 'Spain'},
+      {id: 214, name: 'Sweden'},
+      {id: 234, name: 'United Kingdom'},
+    ];
+
     return({
       checkVatFormat: checkVatFormat,
       checkInstitution: checkInstitution,
-      getEuCountries: getEuCountries,
-      checkEuCountry: checkEuCountry
+      checkEuCountry: checkEuCountry,
+      getIndexCountry: getIndexCountry
     });
 
     function checkVatFormat(vat_number) {
@@ -27,41 +58,7 @@ angular.module('LabsterBackOffice')
       }
     }
 
-    function getEuCountries() {
-      return [
-        {id: 15, name: 'Austria'},
-        {id: 22, name: 'Belgium'},
-        {id: 35, name: 'Bulgaria'},
-        {id: 56, name: 'Croatia'},
-        {id: 59, name: 'Cyprus'},
-        {id: 60, name: 'Czech Republic'},
-        {id: 61, name: 'Denmark'},
-        {id: 70, name: 'Estonia'},
-        {id: 75, name: 'Finland'},
-        {id: 76, name: 'France'},
-        {id: 83, name: 'Germany'},
-        {id: 86, name: 'Greece'},
-        {id: 101, name: 'Hungary'},
-        {id: 107, name: 'Ireland'},
-        {id: 110, name: 'Italy'},
-        {id: 123, name: 'Latvia'},
-        {id: 129, name: 'Lithuania'},
-        {id: 130, name: 'Luxembourg'},
-        {id: 138, name: 'Malta'},
-        {id: 157, name: 'Netherlands'},
-        {id: 177, name: 'Poland'},
-        {id: 178, name: 'Portugal'},
-        {id: 182, name: 'Romania'},
-        {id: 202, name: 'Slovakia'},
-        {id: 203, name: 'Slovenia'},
-        {id: 208, name: 'Spain'},
-        {id: 214, name: 'Sweden'},
-        {id: 234, name: 'United Kingdom'},
-      ];
-    }
-
     function checkEuCountry(country) {
-      var eu_countries = getEuCountries();
       if (country != null || country != undefined) {
         for (var i = eu_countries.length - 1; i >= 0; i--) {
           var item = eu_countries[i];
@@ -71,5 +68,14 @@ angular.module('LabsterBackOffice')
         }
       }
       return false;
+    }
+
+    function getIndexCountry(countryId, all_countries) {
+      for (var i = 0; i < all_countries.length; i++) {
+        if (all_countries[i].id == countryId) {
+          return i;
+        }
+      }
+      return 0;
     }
   });

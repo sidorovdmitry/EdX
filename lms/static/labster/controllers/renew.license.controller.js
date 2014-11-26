@@ -11,24 +11,30 @@ angular.module('LabsterBackOffice')
     $scope.institution_error = "";
     $scope.checkoutButton = "Continue to Payment";
 
-    // get license information
-    $http.get(url, {
-      headers: {
-        'Authorization': "Token " + window.requestUser.backoffice.token
-      },
-      params: {
-        'licenses_id': licenses_id,
-        'user_id': user
-      }
-    })
-      .success(function (data, status, headers, config) {
-        $scope.license = data;
-        $scope.institution_type = data.institution_type;
-        $scope.institution_name = data.institution_name;
-        $scope.institution_vat_number = data.vat_number;
-        $scope.subTotalPrice = parseFloat(data.total_before_tax);
-        //$scope.country = data.country;
-      });
+    function getLicenseData() {
+      // get license information
+      $http.get(url, {
+        headers: {
+          'Authorization': "Token " + window.requestUser.backoffice.token
+        },
+        params: {
+          'licenses_id': licenses_id,
+          'user_id': user
+        }
+      })
+        .success(function (data, status, headers, config) {
+          $scope.license = data;
+          $scope.institution_type = data.institution_type;
+          $scope.institution_name = data.institution_name;
+          $scope.institution_vat_number = data.vat_number;
+          $scope.subTotalPrice = parseFloat(data.total_before_tax);
+          var idx_country = LicenseService.getIndexCountry(data.country.id, $scope.countries);
+          if (idx_country != 0) {
+            $scope.country = $scope.countries[idx_country];
+          }
+          $scope.checkVat();
+        });
+    }
 
     // get list of countries
     var url_country = window.backofficeUrls.country;
@@ -36,13 +42,7 @@ angular.module('LabsterBackOffice')
       .success(function (data, status, headers, config) {
         $scope.countries = data;
         $scope.country = $scope.countries[0];
-        $scope.checkVat();
-//        if ($scope.license != undefined){
-//          var idx = $scope.countries.indexOf($scope.license.country);
-//          $scope.country = $scope.countries[idx];
-//        } else {
-//          $scope.country = $scope.countries[0];
-//        }
+        getLicenseData();
       });
 
     $scope.checkVat = function () {
@@ -81,10 +81,10 @@ angular.module('LabsterBackOffice')
           user: window.requestUser.backoffice.user.id,
           is_renew: true,
           payment_type: "manual",
-          institution_type : $scope.institution_type,
-          institution_name : $scope.institution_name,
-          country : $scope.country.id,
-          total_before_tax : $scope.subTotalPrice,
+          institution_type: $scope.institution_type,
+          institution_name: $scope.institution_name,
+          country: $scope.country.id,
+          total_before_tax: $scope.subTotalPrice,
           vat_number: $scope.institution_vat_number,
           list_product: []
         };
