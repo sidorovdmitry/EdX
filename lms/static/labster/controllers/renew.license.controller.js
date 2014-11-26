@@ -9,6 +9,7 @@ angular.module('LabsterBackOffice')
     $scope.tax = 0;
     $scope.vat_error = "";
     $scope.institution_error = "";
+    $scope.checkoutButton = "Continue to Payment";
 
     // get license information
     $http.get(url, {
@@ -24,7 +25,7 @@ angular.module('LabsterBackOffice')
         $scope.license = data;
         $scope.institution_type = data.institution_type;
         $scope.institution_name = data.institution_name;
-        $scope.institution_vat_number = data.institution_vat_number;
+        $scope.institution_vat_number = data.vat_number;
         $scope.subTotalPrice = parseFloat(data.total_before_tax);
         //$scope.country = data.country;
       });
@@ -69,12 +70,12 @@ angular.module('LabsterBackOffice')
 
     $scope.buyLabs = function () {
       $scope.isProcessing = true;
-      $scope.checkoutButton = "Processing...";
       if ($scope.institution_type != 1) {
         $scope.vat_error = LicenseService.checkVatFormat($scope.institution_vat_number);
-        $scope.institution_error = LicenseService.checkInsitution($scope.institution_name);
+        $scope.institution_error = LicenseService.checkInstitution($scope.institution_name);
       }
       if (!$scope.institution_error.length && !$scope.vat_error.length) {
+        $scope.checkoutButton = "Processing...";
         var url = window.backofficeUrls.buyLab;
         data = {
           user: window.requestUser.backoffice.user.id,
@@ -84,6 +85,7 @@ angular.module('LabsterBackOffice')
           institution_name : $scope.institution_name,
           country : $scope.country.id,
           total_before_tax : $scope.subTotalPrice,
+          vat_number: $scope.institution_vat_number,
           list_product: []
         };
 
