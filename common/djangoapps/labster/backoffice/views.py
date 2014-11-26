@@ -6,6 +6,8 @@ from django.http import Http404
 
 from edxmako.shortcuts import render_to_response
 
+from student.models import UserProfile
+
 
 def get_base_url():
     from django.conf import settings
@@ -82,10 +84,12 @@ def home(request):
     template_name = 'labster/backoffice.html'
 
     bo_user = create_user(request.user, format='json')
+    user = UserProfile.objects.get(user=request.user)
     token = bo_user['token']
     lab_list = get_labs(token=token, format='string')
     backoffice = {
-        'user_id': bo_user['id']
+        'user_id': bo_user['id'],
+        'user_country': user.country,
     }
 
     backoffice_urls = get_backoffice_urls()

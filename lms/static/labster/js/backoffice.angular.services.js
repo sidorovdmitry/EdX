@@ -2,41 +2,42 @@ angular.module('LabsterBackOffice')
 
   .factory('LicenseService', function () {
     var eu_countries = [
-      {id: 15, name: 'Austria'},
-      {id: 22, name: 'Belgium'},
-      {id: 35, name: 'Bulgaria'},
-      {id: 56, name: 'Croatia'},
-      {id: 59, name: 'Cyprus'},
-      {id: 60, name: 'Czech Republic'},
-      {id: 61, name: 'Denmark'},
-      {id: 70, name: 'Estonia'},
-      {id: 75, name: 'Finland'},
-      {id: 76, name: 'France'},
-      {id: 83, name: 'Germany'},
-      {id: 86, name: 'Greece'},
-      {id: 101, name: 'Hungary'},
-      {id: 107, name: 'Ireland'},
-      {id: 110, name: 'Italy'},
-      {id: 123, name: 'Latvia'},
-      {id: 129, name: 'Lithuania'},
-      {id: 130, name: 'Luxembourg'},
-      {id: 138, name: 'Malta'},
-      {id: 157, name: 'Netherlands'},
-      {id: 177, name: 'Poland'},
-      {id: 178, name: 'Portugal'},
-      {id: 182, name: 'Romania'},
-      {id: 202, name: 'Slovakia'},
-      {id: 203, name: 'Slovenia'},
-      {id: 208, name: 'Spain'},
-      {id: 214, name: 'Sweden'},
-      {id: 234, name: 'United Kingdom'},
+      {id: 15, alpha2: "AT", name: "Austria"},
+      {id: 22, alpha2: "BE", name: "Belgium"},
+      {id: 35, alpha2: "BG", name: "Bulgaria"},
+      {id: 56, alpha2: "HR", name: "Croatia"},
+      {id: 59, alpha2: "CY", name: "Cyprus"},
+      {id: 60, alpha2: "CZ", name: "Czech Republic"},
+      {id: 61, alpha2: "DK", name: "Denmark"},
+      {id: 70, alpha2: "EE", name: "Estonia"},
+      {id: 75, alpha2: "FI", name: "Finland"},
+      {id: 76, alpha2: "FR", name: "France"},
+      {id: 83, alpha2: "DE", name: "Germany"},
+      {id: 86, alpha2: "GR", name: "Greece"},
+      {id: 101, alpha2: "HU", name: "Hungary"},
+      {id: 107, alpha2: "IE", name: "Ireland"},
+      {id: 110, alpha2: "IT", name: "Italy"},
+      {id: 123, alpha2: "LV", name: "Latvia"},
+      {id: 129, alpha2: "LT", name: "Lithuania"},
+      {id: 130, alpha2: "LU", name: "Luxembourg"},
+      {id: 138, alpha2: "MT", name: "Malta"},
+      {id: 157, alpha2: "NL", name: "Netherlands"},
+      {id: 177, alpha2: "PL", name: "Poland"},
+      {id: 178, alpha2: "PT", name: "Portugal"},
+      {id: 182, alpha2: "RO", name: "Romania"},
+      {id: 202, alpha2: "SK", name: "Slovakia"},
+      {id: 203, alpha2: "SI", name: "Slovenia"},
+      {id: 208, alpha2: "ES", name: "Spain"},
+      {id: 214, alpha2: "SE", name: "Sweden"},
+      {id: 234, alpha2: "GB", name: "United Kingdom"},
     ];
 
     return({
       checkVatFormat: checkVatFormat,
       checkInstitution: checkInstitution,
       checkEuCountry: checkEuCountry,
-      getIndexCountry: getIndexCountry
+      getIndexCountry: getIndexCountry,
+      getIndexCountryByCode: getIndexCountryByCode
     });
 
     function checkVatFormat(vat_number) {
@@ -73,6 +74,15 @@ angular.module('LabsterBackOffice')
     function getIndexCountry(countryId, all_countries) {
       for (var i = 0; i < all_countries.length; i++) {
         if (all_countries[i].id == countryId) {
+          return i;
+        }
+      }
+      return 0;
+    }
+
+    function getIndexCountryByCode(countryCode, all_countries) {
+      for (var i = 0; i < all_countries.length; i++) {
+        if (all_countries[i].alpha2 == countryCode) {
           return i;
         }
       }

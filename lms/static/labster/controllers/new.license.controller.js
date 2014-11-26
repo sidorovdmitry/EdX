@@ -23,6 +23,7 @@ angular.module('LabsterBackOffice')
     $scope.institution_type = 1;
     $scope.institution = "";
     $scope.country = null;
+    $scope.default_country = window.requestUser.backoffice.user.country;
 
     var group_type = $routeParams.group_type;
 
@@ -83,6 +84,10 @@ angular.module('LabsterBackOffice')
       .success(function (data, status, headers, config) {
         $scope.countries = data;
         $scope.country = $scope.countries[0];
+        var idx_country = LicenseService.getIndexCountryByCode($scope.default_country, $scope.countries);
+        if (idx_country != 0) {
+          $scope.country = $scope.countries[idx_country];
+        }
       });
 
     $scope.updateTotal = function () {
