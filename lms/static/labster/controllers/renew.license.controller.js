@@ -22,8 +22,8 @@ angular.module('LabsterBackOffice')
           'user_id': user
         }
       })
-        .success(function (data, status, headers, config) {
-          $scope.license = data;
+        .success(function (data) {
+          $scope.products = data.products;
           $scope.institution_type = data.institution_type;
           $scope.institution_name = data.institution_name;
           $scope.institution_vat_number = data.vat_number;
@@ -39,7 +39,7 @@ angular.module('LabsterBackOffice')
     // get list of countries
     var url_country = window.backofficeUrls.country;
     $http.get(url_country)
-      .success(function (data, status, headers, config) {
+      .success(function (data) {
         $scope.countries = data;
         $scope.country = $scope.countries[0];
         getLicenseData();
@@ -89,7 +89,7 @@ angular.module('LabsterBackOffice')
           list_product: []
         };
 
-        angular.forEach($scope.license.products, function (lab) {
+        angular.forEach($scope.products, function (lab) {
           if (!lab.is_product_group) {
             // include individual lab
             data.list_product.push({
