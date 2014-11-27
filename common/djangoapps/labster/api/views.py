@@ -794,6 +794,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         response_data = {}
         lab_id = kwargs.get('lab_id')
         lab_proxy = get_object_or_404(LabProxy, id=lab_id)
+        user = request.user
 
         score = request.POST.get('Score')
         question = request.POST.get('QuizQuestion')
@@ -835,8 +836,13 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             else:
                 quiz_id = problem_proxy.quiz_id
 
+        user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
+        if not user_attempt:
+            user_attempt = UserAttempt.objects.create(lab_proxy, user)
+
         is_correct = chosen_answer in correct_answers
         UserAnswer.objects.create(
+            attempt=user_attempt,
             answer_string=chosen_answer,
             attempt_count=attempt_count,
             completion_time=completion_time,
@@ -849,7 +855,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             question=problem.sentence,
             score=score,
             start_time=start_time,
-            user=request.user,
+            user=user,
             quiz_id=quiz_id,
         )
         response_data = {'correct': is_correct}
