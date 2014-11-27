@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response
+from django.utils import timezone
 from django.utils.xmlutils import SimplerXMLGenerator
 from django.views.generic import View
 
@@ -242,10 +243,9 @@ class StartNewLab(PlayLab):
         if not user:
             return HttpResponseBadRequest('Missing user')
 
-        user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
-        if user_attempt:
-            user_attempt.is_finished = True
-            user_attempt.save()
+        UserAttempt.objects.filter(
+            lab_proxy=lab_proxy, user=user, is_finished=False).update(
+                is_finished=True, finished_at=timezone.now())
 
         return self.render(request)
 
