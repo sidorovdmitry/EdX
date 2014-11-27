@@ -1256,6 +1256,9 @@ def enforce_single_login(sender, request, user, signal, **kwargs):
         else:
             key = None
 
+        if not user:
+            return
+
         profile = user.profile
         if not profile:
             name = user.get_full_name()
