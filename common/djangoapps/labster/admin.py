@@ -11,7 +11,7 @@ from labster.models import (
     LanguageLab, Lab, ErrorInfo, DeviceInfo, UserSave, Token, LabProxy,
     UnityLog, UserAnswer, LabsterUserLicense, ProblemProxy,
     UnityPlatformLog, QuizBlock, Problem, Answer, AdaptiveProblem,
-    LabProxyData)
+    LabProxyData, UserAttempt)
 from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_block_file_url
 
 
@@ -208,7 +208,7 @@ class UnityPlatformLogAdmin(admin.ModelAdmin):
 
 class UserAnswerAdmin(admin.ModelAdmin):
     list_display = ('user', 'lab', 'created_at', 'question', 'quiz_id',
-                    'answer_string', 'correct_answer', 'is_correct')
+                    'answer_string', 'correct_answer', 'is_correct', 'attempt_id')
     raw_id_fields = ('problem',)
     list_filter = ('is_correct',)
     search_fields = ('quiz_id',)
@@ -219,9 +219,26 @@ class UserAnswerAdmin(admin.ModelAdmin):
     def question(self, obj):
         return obj.problem.sentence
 
+    def attempt_id(self, obj):
+        if not obj.attempt:
+            return ''
+        return obj.attempt.id
+
 
 class LabsterUserLicenseAdmin(admin.ModelAdmin):
     list_display = ('course_id', 'email', 'created_at', 'expired_at')
+
+
+class UserAttemptAdmin(admin.ModelAdmin):
+    list_display = ('id', 'lab_proxy_id', 'lab', 'user', 'created_at',
+                    'is_completed', 'completed_at')
+    list_filter = ('is_completed', 'lab_proxy')
+
+    def lab(self, obj):
+        return obj.lab_proxy.lab.name
+
+    def lab_proxy_id(self, obj):
+        return obj.lab_proxy.id
 
 
 admin.site.register(LanguageLab)
@@ -229,6 +246,7 @@ admin.site.register(LanguageLab)
 # admin.site.register(DeviceInfo, DeviceInfoAdmin)
 admin.site.register(UserSave, UserSaveAdmin)
 admin.site.register(UserAnswer, UserAnswerAdmin)
+admin.site.register(UserAttempt, UserAttemptAdmin)
 admin.site.register(Token, TokenAdmin)
 
 admin.site.register(Lab, LabAdmin)
