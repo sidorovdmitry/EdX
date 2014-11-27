@@ -177,19 +177,23 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
         except Lab.DoesNotExist:
             params['errors'] = "Lab doesn't no exist"
         else:
-            from labster.models import LabProxy, UserSave
+            from labster.models import LabProxy, UserSave, UserAttempt
             from rest_framework.authtoken.models import Token
 
             user_id = self.scope_ids.user_id
             token, _ = Token.objects.get_or_create(user_id=user_id)
             location_str = str(self.location)
             lab_proxy, _ = LabProxy.objects.get_or_create(location=location_str, defaults={'lab_id': self.lab_id})
-            try:
-                user_save = UserSave.objects.get(lab_proxy=lab_proxy,
-                                                 user_id=user_id,
-                                                 is_finished=False)
-            except UserSave.DoesNotExist:
-                user_save = None
+
+            # check if has unfinished user attempt
+            user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user_id=user_id)
+            user_save = None
+            if user_attempt:
+                try:
+                    user_save = UserSave.objects.get(lab_proxy=lab_proxy,
+                                                     user_id=user_id)
+                except UserSave.DoesNotExist:
+                    pass
 
             user_profile = UserProfile.objects.get(user_id=user_id)
             params.update({
