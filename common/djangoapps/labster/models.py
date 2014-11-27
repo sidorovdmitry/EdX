@@ -377,10 +377,12 @@ class UserSave(models.Model):
 
 
 class UserAttemptManager(models.Manager):
-    def latest_for_user(self, lab_proxy, user):
+    def latest_for_user(self, lab_proxy, user=None, user_id=None):
+        if user is None:
+            user = User.objects.get(id=user_id)
         try:
             return self.get_query_set().filter(
-                lab_proxy=lab_proxy, user=user).latest('created_at')
+                is_finished=False, lab_proxy=lab_proxy, user=user).latest('created_at')
         except self.model.DoesNotExist:
             return None
 
