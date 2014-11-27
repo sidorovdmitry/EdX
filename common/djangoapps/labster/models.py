@@ -388,13 +388,22 @@ class UserAttemptManager(models.Manager):
 class UserAttempt(models.Model):
     lab_proxy = models.ForeignKey(LabProxy)
     user = models.ForeignKey(User)
-    is_finished = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
+
+    # user is finished with this attempt (could be completed or starting new one)
+    is_finished = models.BooleanField(default=False)
     finished_at = models.DateTimeField(blank=True, null=True)
 
+    # the lab is completed
+    is_completed = models.BooleanField(default=False)
+    completed_at = models.DateTimeField(blank=True, null=True)
+
     objects = UserAttemptManager()
+
+    class Meta:
+        ordering = ('-created_at',)
 
     @property
     def play(self):
@@ -539,6 +548,7 @@ class ProblemProxy(models.Model):
 
 class UserAnswer(models.Model):
     user = models.ForeignKey(User)
+    attempt = models.ForeignKey(UserAttempt, blank=True, null=True)
 
     lab_proxy = models.ForeignKey(LabProxy, blank=True, null=True)
     problem = models.ForeignKey(Problem, blank=True, null=True)
@@ -606,6 +616,7 @@ pre_save.connect(update_modified_at, sender=Problem)
 pre_save.connect(update_modified_at, sender=Answer)
 pre_save.connect(update_modified_at, sender=LabProxy)
 pre_save.connect(update_modified_at, sender=UserSave)
+pre_save.connect(update_modified_at, sender=UserAttempt)
 pre_save.connect(update_modified_at, sender=Lab)
 
 
