@@ -30,7 +30,6 @@ urlpatterns = patterns('',  # nopep8
     # unused
     url('^labs/(?P<lab_id>\d+)/log/error/$', CreateError.as_view(), name='log-error'),
     url('^labs/(?P<lab_id>\d+)/log/device/$', CreateDevice.as_view(), name='log-device'),
-
     url('^labs/(?P<lab_id>\d+)/settings/$', LabSettings.as_view(), name='lab-proxy-settings'),
     url('^labs/(?P<lab_id>\d+)/play-lab/$', PlayLab.as_view(), name='play-lab'),
     url('^labs/(?P<lab_id>\d+)/finish-lab/$', FinishLab.as_view(), name='finish-lab'),
