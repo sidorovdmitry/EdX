@@ -12,7 +12,7 @@ from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response
 from django.utils import timezone
 from django.utils.xmlutils import SimplerXMLGenerator
-from django.views.generic import View
+from django.views.generic import View, DetailView
 
 from rest_framework.authtoken.models import Token
 
@@ -256,8 +256,14 @@ class ContinueLab(PlayLab):
         return self.render(request)
 
 
+class LabResult(DetailView):
+    template_name = "labster/lms/lab_result.html"
+    model = LabProxy
+
+
 settings_xml = SettingsXml.as_view()
 server_xml = ServerXml.as_view()
 platform_xml = PlatformXml.as_view()
 start_new_lab = StartNewLab.as_view()
 continue_lab = ContinueLab.as_view()
+lab_result = LabResult.as_view()
