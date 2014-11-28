@@ -205,7 +205,8 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                 'user_profile': user_profile,
                 'unity_log_url': reverse('labster-api:create-unity-log', args=[lab_proxy.id]),
                 'user_attempt': user_attempt,
-                'result_url': reverse('labster_lab_result', args=[lab_proxy.id]),
+                'result_url': reverse('labster_lab_result',
+                                      args=[self.course_id.to_deprecated_string(), lab_proxy.id]),
             })
 
         fragment.add_content(self.system.render_template('lab_module.html', params))
