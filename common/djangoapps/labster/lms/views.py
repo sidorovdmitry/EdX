@@ -13,6 +13,7 @@ from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response
 from django.utils import timezone
 from django.utils.xmlutils import SimplerXMLGenerator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, DetailView
 
 from rest_framework.authtoken.models import Token
@@ -280,6 +281,11 @@ class LabResult(DetailView):
             'course': course,
         })
         return context
+
+
+@csrf_exempt
+def dummy_post(request):
+    return HttpResponse('1')
 
 
 settings_xml = SettingsXml.as_view()

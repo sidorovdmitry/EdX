@@ -219,6 +219,8 @@ LANGUAGES = [
 
   </div>
 
+  <div id="externalContent"></div>
+
   <script id="unityPlayerTemplate" type="text/template">
   </script>
 
@@ -420,7 +422,7 @@ LANGUAGES = [
           setPlayerSize();
         }, 500);
       });
- 
+
       jQuery('.playLabButton').click(function(ev) {
         ev.preventDefault();
         var el = jQuery(ev.currentTarget);
@@ -447,8 +449,9 @@ LANGUAGES = [
         ev.preventDefault();
         var sure = confirm("Are you sure you want to close the lab?");
         if (sure) {
-          jQuery('#unityPlayerContainer').hide();
-          stopLab();
+          location.reload();
+          // jQuery('#unityPlayerContainer').hide();
+          // stopLab();
         }
       });
 
@@ -507,7 +510,6 @@ LANGUAGES = [
   </script>
 
   <script>
-    var messages = [];
     function Log(message) {
       console.dir(message);
       var csrf_token = "${csrf_token}";
@@ -529,6 +531,21 @@ LANGUAGES = [
     }
 
     function gaLogEvent(category, action, label, value, noninteract) {}
+
+    function OpenLink(link) {
+      // var container = $('#externalContent');
+      // var iframe = $('<iframe/>');
+      // iframe.prop('src', link);
+      // container.empty().append(iframe);
+      $.ajax({
+        url: '${dummy_post_url}',
+        type: "POST",
+        async: false,
+        success: function() {
+          window.open(link, '_blank');
+        }
+      });
+    }
   </script>
 
 % endif
