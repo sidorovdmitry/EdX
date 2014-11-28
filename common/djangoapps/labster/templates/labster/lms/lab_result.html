@@ -1,0 +1,59 @@
+{% extends "main_django.html" %}
+
+{% block body %}
+
+{% if course %}
+{% include "courseware/course_navigation.html" with active_page_context="courseware" %}
+{% endif %}
+<style>
+.lab-result-wrapper {
+  padding: 30px 40px;
+}
+.lab-result-wrapper table {
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  margin: 0 0 40px 0;
+}
+.lab-result-wrapper table th {
+  background-color: #eee;
+}
+.lab-result-wrapper table th,
+.lab-result-wrapper table td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+}
+.lab-result-wrapper table tr.correct td {
+  background-color: #c3dcbf;
+}
+</style>
+
+<section class="container">
+  <div class="lab-result-wrapper">
+
+    {% for attempt in attempts %}
+    <table>
+      <thead>
+        <tr>
+          {% for header in headers %}
+          <th>{{ header }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for answer in attempt.answers %}
+        <tr class="{% if answer.is_correct %}correct{% endif %}">
+          <td>{{ answer.question }}</td>
+          <td>{{ answer.answer_string }}</td>
+          <td>{{ answer.correct_answer }}</td>
+          <td>{{ answer.is_correct|yesno:"Yes," }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endfor %}
+
+  </div>
+</section>
+
+{% endblock %}

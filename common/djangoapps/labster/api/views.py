@@ -794,6 +794,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         response_data = {}
         lab_id = kwargs.get('lab_id')
         lab_proxy = get_object_or_404(LabProxy, id=lab_id)
+        user = request.user
 
         score = request.POST.get('Score')
         question = request.POST.get('QuizQuestion')
@@ -835,8 +836,13 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             else:
                 quiz_id = problem_proxy.quiz_id
 
+        user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
+        if not user_attempt:
+            user_attempt = UserAttempt.objects.create(lab_proxy, user)
+
         is_correct = chosen_answer in correct_answers
         UserAnswer.objects.create(
+            attempt=user_attempt,
             answer_string=chosen_answer,
             attempt_count=attempt_count,
             completion_time=completion_time,
@@ -849,7 +855,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             question=problem.sentence,
             score=score,
             start_time=start_time,
-            user=request.user,
+            user=user,
             quiz_id=quiz_id,
         )
         response_data = {'correct': is_correct}
@@ -860,6 +866,26 @@ class UnityPlayLab(ParserMixin, AuthMixin, APIView):
 
     renderer_classes = (JSONRenderer,)
 
+    def bad_request_response(self, request, lab_proxy, error_message):
+        user = request.user
+        post_data = request.POST.copy()
+        log_type = 'player_start_end'
+        url = request.build_absolute_uri()
+        request_method = request.method
+
+        try:
+            # try to log
+            # because why not
+            UnityLog.new(user, lab_proxy, log_type, post_data, url, request_method)
+        except:
+            pass
+
+        response_data = {
+            'message': error_message,
+            'post': post_data,
+        }
+        return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+
     def post(self, request, *args, **kwargs):
         lab_id = kwargs.get('lab_id')
         lab_proxy = get_object_or_404(LabProxy, id=lab_id)
@@ -868,18 +894,23 @@ class UnityPlayLab(ParserMixin, AuthMixin, APIView):
         try:
             start_end_type = int(start_end_type)
         except TypeError:
-            return Response('', status=status.HTTP_400_BAD_REQUEST)
+            return self.bad_request_response(
+                request, lab_proxy, "Bad StartEndType format")
         else:
             if start_end_type not in [1, 2]:
-                return Response('', status=status.HTTP_400_BAD_REQUEST)
+                return self.bad_request_response(
+                    request, lab_proxy, "Bad StartEndType format")
 
         user = request.user
         if start_end_type == 1:
-            user_attempt = UserAttempt.objects.create(
-                lab_proxy=lab_proxy, user=user)
+            user_attempt, _ = UserAttempt.objects.get_or_create(
+                lab_proxy=lab_proxy, user=user, is_finished=False)
         else:
             user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
             user_attempt.is_finished = True
+            user_attempt.finished_at = timezone.now()
+            user_attempt.is_completed = True
+            user_attempt.completed_at = timezone.now()
             user_attempt.save()
 
         response_data = {'status': 'ok'}

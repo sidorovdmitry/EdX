@@ -6,16 +6,22 @@ except ImportError:
     StringIO = six.StringIO
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response
+from django.utils import timezone
 from django.utils.xmlutils import SimplerXMLGenerator
-from django.views.generic import View
+from django.views.generic import View, DetailView
 
 from rest_framework.authtoken.models import Token
 
+from courseware.courses import get_course_by_id
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
+
 from labster.models import LabProxy, UserSave, UserAttempt
+from labster.reports import get_attempts_and_answers
 
 
 API_PREFIX = getattr(settings, 'LABSTER_UNITY_API_PREFIX', '')
@@ -242,10 +248,9 @@ class StartNewLab(PlayLab):
         if not user:
             return HttpResponseBadRequest('Missing user')
 
-        user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
-        if user_attempt:
-            user_attempt.is_finished = True
-            user_attempt.save()
+        UserAttempt.objects.filter(
+            lab_proxy=lab_proxy, user=user, is_finished=False).update(
+                is_finished=True, finished_at=timezone.now())
 
         return self.render(request)
 
@@ -256,8 +261,30 @@ class ContinueLab(PlayLab):
         return self.render(request)
 
 
+class LabResult(DetailView):
+    template_name = "labster/lms/lab_result.html"
+    model = LabProxy
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(LabResult, self).get_context_data(*args, **kwargs)
+        course_id = self.kwargs.get('course_id')
+        course = get_course_by_id(SlashSeparatedCourseKey.from_deprecated_string(course_id))
+        user = self.request.user
+        lab_proxy = context['object']
+        attempts = get_attempts_and_answers(lab_proxy, user)
+        headers = ['Question', 'Answer', 'Correct Answer', 'Correct?']
+
+        context.update({
+            'attempts': attempts,
+            'headers': headers,
+            'course': course,
+        })
+        return context
+
+
 settings_xml = SettingsXml.as_view()
 server_xml = ServerXml.as_view()
 platform_xml = PlatformXml.as_view()
 start_new_lab = StartNewLab.as_view()
 continue_lab = ContinueLab.as_view()
+lab_result = login_required(LabResult.as_view())
