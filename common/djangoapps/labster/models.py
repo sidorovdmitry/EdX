@@ -213,6 +213,7 @@ class Problem(models.Model):
     current_conv_popup_id = models.CharField(max_length=100, default="", blank=True)
     image_id = models.CharField(max_length=100, default="", blank=True)
     read_more_url = models.CharField(max_length=100, default="", blank=True)
+    is_exploreable = models.BooleanField(default=False)
 
     is_adaptive = models.BooleanField(default=False)
 
