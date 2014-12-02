@@ -1,12 +1,19 @@
 from celery.task import task
 
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from labster.nutshell import create_new_lead
 
 
+ENABLE_NUTSHELL = getattr(settings, 'LABSTER_ENABLE_NUTSHELL', False)
+
+
 @task()
 def create_nutshell_data(user_id):
+    if not ENABLE_NUTSHELL:
+        return
+
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
