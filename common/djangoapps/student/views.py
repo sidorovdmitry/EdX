@@ -1969,3 +1969,12 @@ def change_email_settings(request):
         track.views.server_track(request, "change-email-settings", {"receive_emails": "no", "course": course_id}, page='dashboard')
 
     return JsonResponse({"success": True})
+
+
+@require_POST
+@login_required
+@ensure_csrf_cookie
+def resend_activation_email(request):
+    """Resend user's activation email"""
+    user = request.user
+    return reactivation_email_for_user(user)
