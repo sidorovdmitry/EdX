@@ -92,6 +92,8 @@ from util.password_policy_validators import (
 from third_party_auth import pipeline, provider
 from xmodule.error_module import ErrorDescriptor
 
+from labster.student import generate_unique_username
+
 
 log = logging.getLogger("edx.student")
 AUDIT_LOG = logging.getLogger("audit")
@@ -1151,7 +1153,7 @@ def create_account(request, post_override=None):  # pylint: disable-msg=too-many
     """
     js = {'success': False}  # pylint: disable-msg=invalid-name
 
-    post_vars = post_override if post_override else request.POST
+    post_vars = post_override if post_override else request.POST.copy()
 
     # allow for microsites to define their own set of required/optional/hidden fields
     extra_fields = microsite.get_value(
@@ -1184,11 +1186,13 @@ def create_account(request, post_override=None):  # pylint: disable-msg=too-many
         log.debug(u'In create_account with external_auth: user = %s, email=%s', name, email)
 
     # Confirm we have a properly formed request
-    for a in ['username', 'email', 'password', 'name']:
+    for a in ['email', 'password', 'name']:
         if a not in post_vars:
             js['value'] = _("Error (401 {field}). E-mail us.").format(field=a)
             js['field'] = a
             return JsonResponse(js, status=400)
+
+    post_vars['username'] = generate_unique_username(post_vars['name'], User)
 
     if extra_fields.get('honor_code', 'required') == 'required' and \
             post_vars.get('honor_code', 'false') != u'true':
