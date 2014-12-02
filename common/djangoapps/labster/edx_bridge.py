@@ -13,8 +13,6 @@ from contentstore.views.item import _duplicate_item
 from courseware.courses import get_course_by_id, get_course
 from opaque_keys.edx.keys import UsageKey
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from student.roles import CourseRole
-from student.models import UserProfile, CourseEnrollment
 from xmodule.contentstore.content import StaticContent
 from xmodule.contentstore.django import contentstore
 from xmodule.modulestore.django import modulestore
@@ -67,6 +65,8 @@ def duplicate_lab_content(user, source_location, parent_location):
 
 
 def get_or_create_course(source, target, user):
+    from student.roles import CourseRole
+
     source_course = get_course_by_id(SlashSeparatedCourseKey.from_deprecated_string(source))
 
     display_name = source_course.display_name
@@ -105,6 +105,9 @@ def get_or_create_course(source, target, user):
 
 
 def force_create_course(source, target, user, extra_fields=None):
+    from student.roles import CourseRole
+    from student.models import UserProfile, CourseEnrollment
+
     source_course_key = SlashSeparatedCourseKey.from_deprecated_string(source)
     source_course = get_course_by_id(source_course_key)
     display_name = source_course.display_name
