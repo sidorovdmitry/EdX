@@ -1401,6 +1401,7 @@ REGISTRATION_EXTRA_FIELDS = {
     'city': 'optional',
     'country': 'optional',
     'user_type': 'required',
+    'country': 'required',
 }
 
 ########################## CERTIFICATE NAME ########################
