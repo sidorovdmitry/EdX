@@ -74,7 +74,7 @@ class Nutshell:
             'contact': {
                 'name': name,
                 'email': [email],
-                'tags': [TAG],
+                # 'tags': [TAG],
             }
         }
 
@@ -91,7 +91,7 @@ class Nutshell:
                 'contacts': [
                     {'id': contact_id},
                 ],
-                'tags': [TAG],
+                # 'tags': [TAG],
             }
         }
         return self.call('newAccount', params)
@@ -106,7 +106,7 @@ class Nutshell:
                 'sources': [
                     {'id': SOURCE_ID},
                 ],
-                'tags': [TAG],
+                # 'tags': [TAG],
             }
         }
 
@@ -138,7 +138,7 @@ class Nutshell:
             }
         }
 
-        self.call('newActivity', params)
+        return self.call('newActivity', params)
 
     def play_lab(self, lead_id, user_name, lab_name):
         name = "Play {}".format(lab_name)

@@ -581,6 +581,7 @@ class UserAnswer(models.Model):
     play_count = models.IntegerField(blank=True, null=True)
 
     score = models.IntegerField(blank=True, null=True)
+    # answer_index = models.IntegerField(default=0)
 
     is_view_theory_clicked = models.BooleanField(default=False)
 
