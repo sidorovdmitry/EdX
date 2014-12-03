@@ -295,9 +295,9 @@ class NutshellPlayLab(View):
 class NutshellInviteStudents(View):
     def post(self, request, *args, **kwargs):
         user = request.user
-        lab_id = kwargs.get('lab_id')
+        course_id = kwargs.get('course_id')
 
-        send_invite_students.delay(user.id, lab_id)
+        send_invite_students.delay(user.id, course_id)
         return HttpResponse(1)
 
 

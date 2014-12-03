@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 from labster.models import Lab
-from labster.nutshell import create_new_lead
+from labster.nutshell import create_new_lead, play_lab, invite_students, view_course
 
 
 ENABLE_NUTSHELL = getattr(settings, 'LABSTER_ENABLE_NUTSHELL', False)
@@ -61,12 +61,12 @@ def send_play_lab(user_id, lab_id):
 
 
 @task()
-def send_invite_students(user_id, lab_id):
-    user, lab = send_nutshell(user_id, lab_id)
-    if not user or not lab:
+def send_invite_students(user_id, course_id):
+    user, lab = send_nutshell(user_id)
+    if not user:
         return
 
-    invite_students(user, lab)
+    invite_students(user, course_id)
 
 
 @task()

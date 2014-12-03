@@ -151,9 +151,9 @@ class Nutshell:
         self.new_activity(lead_id, VIEW_COURSE_ACTIVITY_ID, name, description)
 
 
-    def invite_students(self, lead_id, user_name, lab_name):
-        name = "Invite Students to {}".format(lab_name)
-        description = "{} invites students to {}".format(user_name, lab_name)
+    def invite_students(self, lead_id, user_name, course_id):
+        name = "Invite Students to {}".format(course_id)
+        description = "{} invites students to {}".format(user_name, course_id)
         self.new_activity(lead_id, INVITE_STUDENTS_ACTIVITY_ID, name, description)
 
 
@@ -186,13 +186,13 @@ def view_course(user, course_name):
     nutshell.view_course(lead_id, user.profile.name, course_name)
 
 
-def invite_students(user, lab):
+def invite_students(user, course_id):
     nutshell = Nutshell(USERNAME, API_KEY)
     lead_id = get_lead_id(user)
     if not lead_id:
         return
 
-    nutshell.invite_students(lead_id, user.profile.name, lab.name)
+    nutshell.invite_students(lead_id, user.profile.name, course_id)
 
 
 def demo():
