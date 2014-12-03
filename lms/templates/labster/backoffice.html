@@ -40,7 +40,8 @@ window.requestUser = {
   backoffice: {
     user: {
       id: "${backoffice['user_id']}",
-      country: "${backoffice['user_country']}"
+      country: "${backoffice['user_country']}",
+      edu_level: "${backoffice['user_edu_level']}"
     },
     token: "${token}"
   }
@@ -74,6 +75,7 @@ window.labList = JSON.parse('${lab_list}');
 <script src="${static.url('labster/controllers/payment.detail.controller.js')}"></script>
 <script src="${static.url('labster/controllers/payment.paid.controller.js')}"></script>
 <script src="${static.url('labster/controllers/payment.list.controller.js')}"></script>
+<script src="${static.url('labster/controllers/home.controller.js')}"></script>
 <!-- services -->
 <script src="${static.url('labster/js/backoffice.angular.services.js')}"></script>
 </%block>

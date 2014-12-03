@@ -91,6 +91,7 @@ def home(request):
     backoffice = {
         'user_id': bo_user['id'],
         'user_country': user_profile.country,
+        'user_edu_level': user_profile.user_school_level
     }
 
     backoffice_urls = get_backoffice_urls()
