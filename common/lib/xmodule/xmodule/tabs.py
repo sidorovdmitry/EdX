@@ -332,8 +332,10 @@ class WikiTab(HideableTab):
 
     def __init__(self, tab_dict=None):
         super(WikiTab, self).__init__(
+            # FIXME : find another way to change wiki tab
             # Translators: "Wiki" is the name of the course's wiki page
-            name=tab_dict['name'] if tab_dict else _('Wiki'),
+            # name=tab_dict['name'] if tab_dict else _('Wiki'),
+            name=_('Theory'),
             tab_id=self.type,
             link_func=link_reverse_func('course_wiki'),
             tab_dict=tab_dict,
