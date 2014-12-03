@@ -53,6 +53,20 @@ $(function() {
                 }
             });
 
+            function nutshellInviteStudents() {
+                var csrf_token = $.cookie('csrftoken');
+                $.ajax({
+                    url: '/labster/course/' + response.course_id + '/nutshell_invite_students/',
+                    type: "POST",
+                    beforeSend: function(xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                    },
+                }).success(function(response) {
+                }).error(function(response) {
+                });
+
+            }
+
             var url = "/courses/" + response.course_id + "/instructor/api/students_update_enrollment";
             var data = {
                 action: "enroll",
@@ -62,6 +76,7 @@ $(function() {
             }
 
             $.get(url, data, function(response) {
+                nutshellInviteStudents();
                 show_success();
             });
         };

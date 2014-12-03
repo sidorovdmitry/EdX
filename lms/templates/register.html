@@ -172,11 +172,13 @@
             <input id="name" type="text" name="name" value="${name}" placeholder="${_('example: Jane Doe')}" required aria-required="true" aria-describedby="name-tip" />
             <span class="tip tip-input" id="name-tip">${_("Needed for any certificates you may earn")}</span>
           </li>
+          <%doc>
           <li class="field required text" id="field-username">
             <label for="username">${_('Public Username')}</label>
             <input id="username" type="text" name="username" value="${username}" placeholder="${_('example: JaneDoe')}" required aria-required="true" aria-describedby="username-tip"/>
             <span class="tip tip-input" id="username-tip">${_('Will be shown in any discussions or forums you participate in')} <strong>(${_('cannot be changed later')})</strong></span>
           </li>
+          </%doc>
 
           % if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH') and running_pipeline:
 

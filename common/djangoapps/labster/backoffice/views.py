@@ -41,10 +41,11 @@ def get_payment(payment_id, token, format='json'):
     return resp.json()
 
 
-def create_user(user, format='json'):
+def create_user(user, name, format='json'):
     post_data = {
         'email': user.email,
         'username': user.username,
+        'first_name': name,
         'external_id': user.id,
     }
     create_user_url = '{}/api/users/create/'.format(get_base_url())
@@ -82,14 +83,14 @@ def home(request):
         raise Http404
 
     template_name = 'labster/backoffice.html'
+    user_profile = UserProfile.objects.get(user=request.user)
+    bo_user = create_user(request.user, user_profile.name, format='json')
 
-    bo_user = create_user(request.user, format='json')
-    user = UserProfile.objects.get(user=request.user)
     token = bo_user['token']
     lab_list = get_labs(token=token, format='string')
     backoffice = {
         'user_id': bo_user['id'],
-        'user_country': user.country,
+        'user_country': user_profile.country,
     }
 
     backoffice_urls = get_backoffice_urls()

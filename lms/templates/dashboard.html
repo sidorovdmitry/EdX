@@ -155,6 +155,22 @@
       });
       return false;
     });
+
+    $("#resend_activation_form").submit(function() {
+      $.ajax({
+        type: "POST",
+        url: '${reverse("resend_activation_email")}',
+        success: function(data) {
+          $("#resend_activation_form").find("input[type=submit")
+            .prop("disabled", true)
+            .val("Email Sent");
+        }
+      });
+
+      return false;
+    });
+
+
   })(this);
 
   $(function(){
@@ -609,9 +625,13 @@
       </h2>
       <hr/>
     </header>
-    <form id="" action="">
+    <form id="resend_activation_form" action="">
+      <p>Hi ${user.profile.name},</p>
       <p>To access your courses, please now check your email for an activation email, and click the link in the email to activate your account.<br>
       Then you will be able to start the course.</p>
+      <div class="submit">
+        <input name="submit" type="submit" value="${_('Resend Activation Email')}" />
+      </div>
     </form>
   </div>
 </section>

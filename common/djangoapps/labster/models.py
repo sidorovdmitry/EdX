@@ -24,6 +24,15 @@ URL_PREFIX = getattr(settings, 'LABSTER_UNITY_URL_PREFIX', '')
 ENGINE_FILE = 'labster.unity3d'
 
 
+class NutshellUser(models.Model):
+    user = models.OneToOneField(User)
+
+    # nutshell stuff
+    account_id = models.CharField(max_length=100, db_index=True)
+    contact_id = models.CharField(max_length=100, db_index=True)
+    lead_id = models.CharField(max_length=100, db_index=True)
+
+
 class Token(models.Model):
     name = models.CharField(max_length=100, unique=True)
     key = models.CharField(max_length=40, unique=True)
@@ -213,6 +222,7 @@ class Problem(models.Model):
     current_conv_popup_id = models.CharField(max_length=100, default="", blank=True)
     image_id = models.CharField(max_length=100, default="", blank=True)
     read_more_url = models.CharField(max_length=100, default="", blank=True)
+    is_explorable = models.BooleanField(default=False)
 
     is_adaptive = models.BooleanField(default=False)
 

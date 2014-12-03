@@ -341,6 +341,20 @@ LANGUAGES = [
       });
     }
 
+    function nutshellPlayLab() {
+      var csrf_token = "${csrf_token}";
+      $.ajax({
+        url: '${nutshell_play_lab_url}',
+        type: "POST",
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrf_token);
+        },
+      }).success(function(response) {
+      }).error(function(response) {
+      });
+
+    }
+
     function detectUnityWebPlayer() {
       var tInstalled = false;
       if (navigator.mimeTypes && navigator.mimeTypes["application/vnd.unity"]){
@@ -494,6 +508,7 @@ LANGUAGES = [
       }
 
       jQuery('#livechat-compact-container').hide();
+      nutshellPlayLab();
 
       // jQuery('window').bind('resize', function(event) {
       //   setPlayerSize();

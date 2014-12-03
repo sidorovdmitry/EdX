@@ -197,6 +197,9 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                     pass
 
             user_profile = UserProfile.objects.get(user_id=user_id)
+            nutshell_play_lab_url = reverse(
+                'labster_nutshell_play_lab',
+                args=[self.course_id.to_deprecated_string(), lab_proxy.id])
             params.update({
                 'lab': lab,
                 'lab_proxy': lab_proxy,
@@ -207,6 +210,7 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                 'user_attempt': user_attempt,
                 'result_url': reverse('labster_lab_result',
                                       args=[self.course_id.to_deprecated_string(), lab_proxy.id]),
+                'nutshell_play_lab_url': nutshell_play_lab_url,
                 'dummy_post_url': reverse('labster_dummy_post'),
             })
 

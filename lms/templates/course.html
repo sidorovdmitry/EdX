@@ -3,12 +3,15 @@
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from courseware.courses import course_image_url, get_course_about_section
+from django.utils import timezone
 %>
 <%page args="course" />
 <article id="${course.id.to_deprecated_string()}" class="course">
-  %if course.is_newish:
+  % if course.start > timezone.now():
+    <span class="status">${_("Coming Soon")}</span>
+  % elif course.is_newish:
     <span class="status">${_("New")}</span>
-  %endif
+  % endif
   <a href="${reverse('about_course', args=[course.id.to_deprecated_string()])}">
   <div class="inner-wrapper">
       <header class="course-preview">
