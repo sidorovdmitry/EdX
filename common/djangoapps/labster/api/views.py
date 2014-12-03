@@ -804,6 +804,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         play_count = request.POST.get('PlayCount')
         attempt_count = request.POST.get('AttemptCount')
         quiz_id = request.POST.get('QuizId', '')
+        answer_index = request.POST.get('AnswerIndex', 0)
 
         if not all([
                 score is not None,
@@ -840,6 +841,11 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         if not user_attempt:
             user_attempt = UserAttempt.objects.create(lab_proxy, user)
 
+        try:
+            answer_index = int(answer_index)
+        except:
+            answer_index = 0
+
         is_correct = chosen_answer in correct_answers
         UserAnswer.objects.create(
             attempt=user_attempt,
@@ -857,6 +863,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             start_time=start_time,
             user=user,
             quiz_id=quiz_id,
+            answer_index=answer_index,
         )
         response_data = {'correct': is_correct}
         return Response(response_data, status=status.HTTP_201_CREATED)
