@@ -126,8 +126,10 @@ class Nutshell:
                 'startTime': now_iso,
                 'endTime': now_iso,
                 'leads': [
-                    'entityType': "Leads",
-                    'id': lead_id,
+                    {
+                        'entityType': "Leads",
+                        'id': lead_id,
+                    },
                 ],
                 'isAllDay': False,
                 'isTimed': False,
