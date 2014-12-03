@@ -1392,7 +1392,7 @@ if FEATURES.get('AUTH_USE_CAS'):
 # - 'hidden': to not display the field
 
 REGISTRATION_EXTRA_FIELDS = {
-    'level_of_education': 'hide',
+    'level_of_education': 'hidden',
     'user_type': 'required',
     'phone_number': 'optional',
     'gender': 'optional',

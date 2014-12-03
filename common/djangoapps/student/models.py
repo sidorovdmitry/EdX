@@ -264,7 +264,7 @@ class UserProfile(models.Model):
     USER_UNIVERSITY = 2
     USER_SCHOOL_LEVEL_CHOICES = (
         (USER_HIGH_SCHOOL, ugettext_noop('High School')),
-        (USER_UNIVERSITY, ugettext_noop('University')),
+        (USER_UNIVERSITY, ugettext_noop('University / College')),
     )
     user_school_level = models.IntegerField(choices=USER_SCHOOL_LEVEL_CHOICES, blank=True, null=True)
 

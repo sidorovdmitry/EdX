@@ -1252,7 +1252,7 @@ def create_account(request, post_override=None):  # pylint: disable-msg=too-many
                 'city': _('A city is required'),
                 'country': _('A country is required'),
                 'user_type': _('Your occupation is required'),
-                'user_school_level': _('Your level of education is required'),
+                'user_school_level': _('Your education is required'),
             }
 
             if field_name in error_str:
