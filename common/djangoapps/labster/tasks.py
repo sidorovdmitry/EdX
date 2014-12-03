@@ -40,6 +40,7 @@ def create_nutshell_data(user_id):
     if not user:
         return
 
+    profile = user.profile
     name = profile.name
     email = user.email
     phone = profile.phone_number
