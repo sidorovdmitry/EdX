@@ -114,6 +114,7 @@ def force_create_course(source, target, user, extra_fields=None):
 
     fields = {
         'display_name': display_name,
+        'main_wiki_page': source_course.main_wiki_page,
         'start': timezone.now(),
     }
 
