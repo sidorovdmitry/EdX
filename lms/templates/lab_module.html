@@ -25,7 +25,7 @@ LANGUAGES = [
     #labModuleContainer p {
       margin-bottom: 16px;
     }
-    #unityPlayerContainer {
+    #unityPlayerContainer, #externalContent {
       background-color: #000;
       position: fixed;
       height: 100%;
@@ -34,7 +34,15 @@ LANGUAGES = [
       left: 0;
       z-index: 100;
     }
-    #unityPlayerContainer .exit-lab {
+    #externalContent {
+      z-index: 300;
+    }
+    #externalContent iframe {
+      width: 100%;
+      height: 100%;
+    }
+    #unityPlayerContainer .exit-lab,
+    #externalContent .exit {
       background-color: #1D354D;
       border-radius: 3px;
       border: 1px solid #fff;
@@ -144,7 +152,7 @@ LANGUAGES = [
   <div class="browser safari mac" style="display:none">
     <h2>${lab.name}</h2>
     <h3>Use Safari</h3>
-    <p>We're sorry to tell you that due to a bug from chrome and unity, the unity isn't working right now. Please use Safari instead to play our lab.</p>
+    <p>We're sorry to tell you that due to a bug from chrome and unity, please use Safari instead to play our lab.</p>
   </div>
   <div id="missingUnityContainer" style="display:none">
     <h2>${lab.name}</h2>
@@ -217,6 +225,9 @@ LANGUAGES = [
       </div>
     </div>
 
+  </div>
+
+  <div id="externalContent" style="display:none">
   </div>
 
   <script id="unityPlayerTemplate" type="text/template">
@@ -339,6 +350,20 @@ LANGUAGES = [
       });
     }
 
+    function nutshellPlayLab() {
+      var csrf_token = "${csrf_token}";
+      $.ajax({
+        url: '${nutshell_play_lab_url}',
+        type: "POST",
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrf_token);
+        },
+      }).success(function(response) {
+      }).error(function(response) {
+      });
+
+    }
+
     function detectUnityWebPlayer() {
       var tInstalled = false;
       if (navigator.mimeTypes && navigator.mimeTypes["application/vnd.unity"]){
@@ -420,7 +445,7 @@ LANGUAGES = [
           setPlayerSize();
         }, 500);
       });
- 
+
       jQuery('.playLabButton').click(function(ev) {
         ev.preventDefault();
         var el = jQuery(ev.currentTarget);
@@ -447,8 +472,9 @@ LANGUAGES = [
         ev.preventDefault();
         var sure = confirm("Are you sure you want to close the lab?");
         if (sure) {
-          jQuery('#unityPlayerContainer').hide();
-          stopLab();
+          location.reload();
+          // jQuery('#unityPlayerContainer').hide();
+          // stopLab();
         }
       });
 
@@ -491,6 +517,7 @@ LANGUAGES = [
       }
 
       jQuery('#livechat-compact-container').hide();
+      nutshellPlayLab();
 
       // jQuery('window').bind('resize', function(event) {
       //   setPlayerSize();
@@ -507,7 +534,6 @@ LANGUAGES = [
   </script>
 
   <script>
-    var messages = [];
     function Log(message) {
       console.dir(message);
       var csrf_token = "${csrf_token}";
@@ -529,6 +555,25 @@ LANGUAGES = [
     }
 
     function gaLogEvent(category, action, label, value, noninteract) {}
+
+    function OpenLink(link) {
+      var container = $('#externalContent');
+      var iframe = $('<iframe/>');
+
+      var exitContainer = function(ev) {
+        ev.preventDefault();
+        container.empty();
+        container.hide();
+      }
+
+      iframe.prop('src', link);
+      container.empty();
+      container.append('<a href="" class="exit labster-blue-button">Exit</a>');
+      container.append(iframe);
+
+      container.find('a.exit').bind('click', exitContainer);
+      container.show();
+    }
   </script>
 
 % endif

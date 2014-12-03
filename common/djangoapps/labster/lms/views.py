@@ -13,6 +13,7 @@ from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response
 from django.utils import timezone
 from django.utils.xmlutils import SimplerXMLGenerator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, DetailView
 
 from rest_framework.authtoken.models import Token
@@ -22,6 +23,7 @@ from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
 from labster.models import LabProxy, UserSave, UserAttempt
 from labster.reports import get_attempts_and_answers
+from labster.tasks import send_play_lab, send_invite_students
 
 
 API_PREFIX = getattr(settings, 'LABSTER_UNITY_API_PREFIX', '')
@@ -282,9 +284,29 @@ class LabResult(DetailView):
         return context
 
 
+class NutshellPlayLab(View):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        lab_id = kwargs.get('lab_id')
+
+        send_play_lab.delay(user.id, lab_id)
+        return HttpResponse(1)
+
+
+class NutshellInviteStudents(View):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        course_id = kwargs.get('course_id')
+
+        send_invite_students.delay(user.id, course_id)
+        return HttpResponse(1)
+
+
 settings_xml = SettingsXml.as_view()
 server_xml = ServerXml.as_view()
 platform_xml = PlatformXml.as_view()
 start_new_lab = StartNewLab.as_view()
 continue_lab = ContinueLab.as_view()
 lab_result = login_required(LabResult.as_view())
+nutshell_play_lab = login_required(NutshellPlayLab.as_view())
+nutshell_invite_students = login_required(NutshellInviteStudents.as_view())

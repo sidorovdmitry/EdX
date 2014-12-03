@@ -4,6 +4,7 @@
   from courseware.courses import course_image_url, get_course_about_section
   from django.conf import settings
   from edxmako.shortcuts import marketing_link
+  from django.utils import timezone
 
   if settings.FEATURES.get('ENABLE_SHOPPING_CART'):
       cart_link = reverse('shoppingcart.views.show_cart')
@@ -38,7 +39,9 @@
   <script type="text/javascript">
   (function() {
     $(".register").click(function(event) {
-      $("#class_enroll_form").submit();
+      if ( ! $(event.currentTarget).hasClass('disabled')) {
+        $("#class_enroll_form").submit();
+      }
       event.preventDefault();
     });
 
@@ -180,9 +183,13 @@
         %else:
 
           % if course.labster_demo:
-          <a href="#try-course-modal" rel="leanModal" class="try-course">
-            ${_("Try Course for Free")}
-          </a>
+            % if course.start > timezone.now():
+            <span class="register disabled">${_("The Course Is Not Started Yet")}</span>
+            % else:
+            <a href="#try-course-modal" rel="leanModal" class="try-course">
+              ${_("Try Course for Free")}
+            </a>
+            % endif
           % else:
           <a href="#" class="register">
             ${_("Register for Course")}

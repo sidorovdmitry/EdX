@@ -92,6 +92,8 @@ from util.password_policy_validators import (
 from third_party_auth import pipeline, provider
 from xmodule.error_module import ErrorDescriptor
 
+from labster.student import generate_unique_username
+
 
 log = logging.getLogger("edx.student")
 AUDIT_LOG = logging.getLogger("audit")
@@ -1116,6 +1118,7 @@ def _do_create_account(post_vars, extended_profile=None):
     profile.goals = post_vars.get('goals')
     profile.user_type = post_vars.get('user_type')
     profile.user_school_level = post_vars.get('user_school_level')
+    profile.phone_number = post_vars.get('phone_number')
 
     # add any extended profile information in the denormalized 'meta' field in the profile
     if extended_profile:
@@ -1137,7 +1140,7 @@ def _do_create_account(post_vars, extended_profile=None):
 
     try:
         from labster.tasks import create_nutshell_data
-        create_nutshell_data(user.id)
+        create_nutshell_data.delay(user.id)
     except:
         pass
 
@@ -1152,7 +1155,7 @@ def create_account(request, post_override=None):  # pylint: disable-msg=too-many
     """
     js = {'success': False}  # pylint: disable-msg=invalid-name
 
-    post_vars = post_override if post_override else request.POST
+    post_vars = post_override if post_override else request.POST.copy()
 
     # allow for microsites to define their own set of required/optional/hidden fields
     extra_fields = microsite.get_value(
@@ -1185,11 +1188,13 @@ def create_account(request, post_override=None):  # pylint: disable-msg=too-many
         log.debug(u'In create_account with external_auth: user = %s, email=%s', name, email)
 
     # Confirm we have a properly formed request
-    for a in ['username', 'email', 'password', 'name']:
+    for a in ['email', 'password', 'name']:
         if a not in post_vars:
             js['value'] = _("Error (401 {field}). E-mail us.").format(field=a)
             js['field'] = a
             return JsonResponse(js, status=400)
+
+    post_vars['username'] = generate_unique_username(post_vars['name'], User)
 
     if extra_fields.get('honor_code', 'required') == 'required' and \
             post_vars.get('honor_code', 'false') != u'true':
@@ -1967,3 +1972,12 @@ def change_email_settings(request):
         track.views.server_track(request, "change-email-settings", {"receive_emails": "no", "course": course_id}, page='dashboard')
 
     return JsonResponse({"success": True})
+
+
+@require_POST
+@login_required
+@ensure_csrf_cookie
+def resend_activation_email(request):
+    """Resend user's activation email"""
+    user = request.user
+    return reactivation_email_for_user(user)
