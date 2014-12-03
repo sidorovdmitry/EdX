@@ -19,7 +19,7 @@ def send_nutshell(user_id, lab_id=None):
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
-        pass
+        return (None, None)
 
     profile = user.profile
     if profile.user_type != profile.USER_TYPE_TEACHER:
