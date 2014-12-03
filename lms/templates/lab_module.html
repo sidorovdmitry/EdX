@@ -556,6 +556,10 @@ LANGUAGES = [
 
     function gaLogEvent(category, action, label, value, noninteract) {}
 
+    function OpenResult() {
+      OpenLink(window.location.origin + '/labster/lab/LabsterX/AdaptiveCytogenetics/2014/49/result/');
+    }
+
     function OpenLink(link) {
       var container = $('#externalContent');
       var iframe = $('<iframe/>');
