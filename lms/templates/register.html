@@ -257,6 +257,19 @@
             </div>
           </li>
           % endif
+          % if settings.REGISTRATION_EXTRA_FIELDS['user_school_level'] != 'hidden':
+          <li class="field-group">
+            <div class="field ${settings.REGISTRATION_EXTRA_FIELDS['user_type']} select" id="field-user_school_level">
+              <label for="user_type">${_("Occupation")}</label>
+              <select id="user_school_level" name="user_school_level">
+                <option value="">--</option>
+                %for key, value in UserProfile.USER_TYPE_CHOICES:
+                <option value="${key}">${value}</option>
+                %endfor
+              </select>
+            </div>
+          </li>
+          % endif
           % if settings.REGISTRATION_EXTRA_FIELDS['country'] != 'hidden':
           <li class="field-group">
           <div class="field ${settings.REGISTRATION_EXTRA_FIELDS['country']} select" id="field-country">

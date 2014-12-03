@@ -1392,7 +1392,7 @@ if FEATURES.get('AUTH_USE_CAS'):
 # - 'hidden': to not display the field
 
 REGISTRATION_EXTRA_FIELDS = {
-    'level_of_education': 'optional',
+    'level_of_education': 'hide',
     'gender': 'optional',
     'year_of_birth': 'optional',
     'mailing_address': 'hidden',
@@ -1401,6 +1401,7 @@ REGISTRATION_EXTRA_FIELDS = {
     'city': 'optional',
     'country': 'optional',
     'user_type': 'required',
+    'user_school_level': 'required',
 }
 
 ########################## CERTIFICATE NAME ########################

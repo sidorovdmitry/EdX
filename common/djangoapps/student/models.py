@@ -259,6 +259,15 @@ class UserProfile(models.Model):
     )
     user_type = models.IntegerField(choices=USER_TYPE_CHOICES, blank=True, null=True)
 
+    USER_HIGH_SCHOOL = 1
+    USER_UNIVERSITY = 2
+    USER_SCHOOL_LEVEL_CHOICES = (
+        (USER_HIGH_SCHOOL, ugettext_noop('High School')),
+        (USER_UNIVERSITY, ugettext_noop('University')),
+    )
+    user_school_level = models.IntegerField(choices=USER_SCHOOL_LEVEL_CHOICES, blank=True, null=True)
+
+
     # labster verified account
     language = models.CharField(blank=True, max_length=255, db_index=True)
     date_of_birth = models.DateField(blank=True, null=True)
