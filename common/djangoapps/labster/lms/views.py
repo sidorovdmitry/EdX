@@ -284,11 +284,6 @@ class LabResult(DetailView):
         return context
 
 
-@csrf_exempt
-def dummy_post(request):
-    return HttpResponse('1')
-
-
 class NutshellPlayLab(View):
     def post(self, request, *args, **kwargs):
         user = request.user

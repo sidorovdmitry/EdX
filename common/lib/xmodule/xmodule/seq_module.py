@@ -211,7 +211,6 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                 'result_url': reverse('labster_lab_result',
                                       args=[self.course_id.to_deprecated_string(), lab_proxy.id]),
                 'nutshell_play_lab_url': nutshell_play_lab_url,
-                'dummy_post_url': reverse('labster_dummy_post'),
             })
 
         fragment.add_content(self.system.render_template('lab_module.html', params))
