@@ -1138,7 +1138,7 @@ def _do_create_account(post_vars, extended_profile=None):
 
     try:
         from labster.tasks import create_nutshell_data
-        create_nutshell_data(user.id)
+        create_nutshell_data.delay(user.id)
     except:
         pass
 
