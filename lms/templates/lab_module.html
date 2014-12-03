@@ -25,7 +25,7 @@ LANGUAGES = [
     #labModuleContainer p {
       margin-bottom: 16px;
     }
-    #unityPlayerContainer {
+    #unityPlayerContainer, #externalContent {
       background-color: #000;
       position: fixed;
       height: 100%;
@@ -34,7 +34,15 @@ LANGUAGES = [
       left: 0;
       z-index: 100;
     }
-    #unityPlayerContainer .exit-lab {
+    #externalContent {
+      z-index: 300;
+    }
+    #externalContent iframe {
+      width: 100%;
+      height: 100%;
+    }
+    #unityPlayerContainer .exit-lab,
+    #externalContent .exit {
       background-color: #1D354D;
       border-radius: 3px;
       border: 1px solid #fff;
@@ -219,7 +227,8 @@ LANGUAGES = [
 
   </div>
 
-  <div id="externalContent"></div>
+  <div id="externalContent" style="display:none">
+  </div>
 
   <script id="unityPlayerTemplate" type="text/template">
   </script>
@@ -548,18 +557,22 @@ LANGUAGES = [
     function gaLogEvent(category, action, label, value, noninteract) {}
 
     function OpenLink(link) {
-      // var container = $('#externalContent');
-      // var iframe = $('<iframe/>');
-      // iframe.prop('src', link);
-      // container.empty().append(iframe);
-      $.ajax({
-        url: '${dummy_post_url}',
-        type: "POST",
-        async: false,
-        success: function() {
-          window.open(link, '_blank');
-        }
-      });
+      var container = $('#externalContent');
+      var iframe = $('<iframe/>');
+
+      var exitContainer = function(ev) {
+        ev.preventDefault();
+        container.empty();
+        container.hide();
+      }
+
+      iframe.prop('src', link);
+      container.empty();
+      container.append('<a href="" class="exit labster-blue-button">Exit</a>');
+      container.append(iframe);
+
+      container.find('a.exit').bind('click', exitContainer);
+      container.show();
     }
   </script>
 
