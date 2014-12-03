@@ -42,7 +42,7 @@ def create_nutshell_data(user_id):
 
     name = profile.name
     email = user.email
-    phone = ''
+    phone = profile.phone_number
     contact_id, lead_id = create_new_lead(name, email, phone)
 
     NutshellUser.objects.get_or_create(
