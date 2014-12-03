@@ -3,7 +3,7 @@ from celery.task import task
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from labster.models import Lab
+from labster.models import Lab, NutshellUser
 from labster.nutshell import create_new_lead, play_lab, invite_students, view_course
 
 
