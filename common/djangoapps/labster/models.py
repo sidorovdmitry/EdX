@@ -344,8 +344,8 @@ class LabProxy(models.Model):
     @property
     def latest_data(self):
         try:
-            return LabProxy.objects.filter(lab_proxy=lab_proxy).latest('created_at')
-        except LabProxy.DoesNotExist:
+            return LabProxyData.objects.filter(lab_proxy=self).latest('created_at')
+        except LabProxyData.DoesNotExist:
             return None
 
 
@@ -434,7 +434,7 @@ class UserAttempt(models.Model):
         return self.useranswer_set.filter(
             problem__is_active=True,
             problem__no_score=False,
-        ).count()
+        ).distinct().count()
 
     @property
     def correct_answers_count(self):
@@ -442,7 +442,7 @@ class UserAttempt(models.Model):
             is_correct=True,
             problem__is_active=True,
             problem__no_score=False,
-        ).count()
+        ).distinct().count()
 
     @property
     def progress_in_percent(self):
