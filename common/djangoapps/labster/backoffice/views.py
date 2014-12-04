@@ -79,9 +79,6 @@ def get_backoffice_urls():
 
 @login_required
 def home(request):
-    if not request.user.is_superuser and not request.user.is_staff:
-        raise Http404
-
     template_name = 'labster/backoffice.html'
     user_profile = UserProfile.objects.get(user=request.user)
     bo_user = create_user(request.user, user_profile.name, format='json')
