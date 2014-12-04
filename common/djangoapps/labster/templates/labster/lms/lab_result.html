@@ -23,8 +23,20 @@
   border-right: 1px solid #ccc;
   padding: 10px;
 }
+/*
 .lab-result-wrapper table tr.correct td {
   background-color: #c3dcbf;
+}
+*/
+.lab-result-wrapper h3.score {
+  margin: 0 0 10px 0;
+  text-align: right;
+  font-size: 30px;
+}
+.lab-result-wrapper h3.score span {
+  display: inline-block;
+  background-color: #c3dcbf;
+  padding: 5px 10px;
 }
 </style>
 
@@ -32,6 +44,9 @@
   <div class="lab-result-wrapper">
 
     {% for attempt in attempts %}
+    {% if attempt.answers %}
+    <h3 class="score">Score
+      <span>{{ attempt.custom_score }}%</span></h3>
     <table>
       <thead>
         <tr>
@@ -51,6 +66,7 @@
         {% endfor %}
       </tbody>
     </table>
+    {% endif %}
     {% endfor %}
 
   </div>

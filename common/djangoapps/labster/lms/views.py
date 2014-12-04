@@ -273,7 +273,7 @@ class LabResult(DetailView):
         course = get_course_by_id(SlashSeparatedCourseKey.from_deprecated_string(course_id))
         user = self.request.user
         lab_proxy = context['object']
-        attempts = get_attempts_and_answers(lab_proxy, user)
+        attempts = get_attempts_and_answers(lab_proxy, user, latest_only=True)
         headers = ['Question', 'Answer', 'Correct Answer', 'Correct?']
 
         context.update({
