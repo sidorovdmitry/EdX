@@ -3,9 +3,13 @@ from collections import defaultdict
 from labster.models import UserAnswer, UserAttempt
 
 
-def get_attempts_and_answers(lab_proxy, user):
+def get_attempts_and_answers(lab_proxy, user, latest_only=False):
     attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy, user=user)\
         .exclude(useranswer=None).order_by('-created_at')
+
+    if latest_only:
+        attempts = list(attempts)[:1]
+
     answers = UserAnswer.objects.filter(attempt__in=attempts).order_by('problem__order')
 
     answers_by_attempt = defaultdict(list)
