@@ -20,7 +20,7 @@ class Command(BaseCommand):
         total = lab_proxies.count()
 
         for index, lab_proxy in enumerate(lab_proxies, start=1):
-            self.stdout.write("{}/{}\n".format(
-                index, total))
+            self.stdout.write("{}/{}: {}\n".format(
+                index, total, lab_proxy.id))
 
             sync_lab_proxy(lab_proxy)
