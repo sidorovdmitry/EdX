@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Sum
 from django.db.models.signals import pre_save, post_save
 from django.utils import timezone
 
@@ -420,6 +420,48 @@ class UserAttempt(models.Model):
     @property
     def play(self):
         return 0
+
+    @property
+    def problems_count(self):
+        return Problem.objects.filter(
+            is_active=True,
+            no_score=False,
+            quiz_block__lab=self.lab_proxy.lab,
+        ).count()
+
+    @property
+    def answers_count(self):
+        return self.useranswer_set.filter(
+            problem__is_active=True,
+            problem__no_score=False,
+        ).count()
+
+    @property
+    def correct_answers_count(self):
+        return self.useranswer_set.filter(
+            is_correct=True,
+            problem__is_active=True,
+            problem__no_score=False,
+        ).count()
+
+    @property
+    def progress_in_percent(self):
+        return 100 * self.answers_count / self.problems_count
+
+    @property
+    def score(self):
+        correct_answers = self.useranswer_set.filter(
+            is_correct=True,
+            problem__is_active=True,
+            problem__no_score=False,
+        ).aggregate(
+            score=Sum('score'))
+
+        score = correct_answers['score']
+        if not score:
+            score = 0
+        score = 10 * score / self.problems_count
+        return score
 
     def mark_finished(self):
         self.is_finished = True
