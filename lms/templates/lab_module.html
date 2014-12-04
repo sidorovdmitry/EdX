@@ -153,6 +153,12 @@ LANGUAGES = [
     <h2>${lab.name}</h2>
     <h3>Use Safari</h3>
     <p>We're sorry to tell you that due to a bug from chrome and unity, please use Safari instead to play our lab.</p>
+      % if user_attempt:
+      <p>
+      However, if you're here to see the result, you still could to that:<br>
+      <a class="button button-labster-blue" href="${result_url}">Result</a>
+      </p>
+      % endif
   </div>
   <div id="missingUnityContainer" style="display:none">
     <h2>${lab.name}</h2>
