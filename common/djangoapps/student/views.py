@@ -92,7 +92,7 @@ from util.password_policy_validators import (
 from third_party_auth import pipeline, provider
 from xmodule.error_module import ErrorDescriptor
 
-from labster.student import generate_unique_username
+from labster.user_utils import generate_unique_username
 
 
 log = logging.getLogger("edx.student")

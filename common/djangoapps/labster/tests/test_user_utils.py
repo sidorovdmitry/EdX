@@ -1,7 +1,7 @@
 import unittest
 
 from django.contrib.auth.models import User
-from labster.student import generate_username, generate_unique_username
+from labster.user_utils import generate_username, generate_unique_username
 
 
 class GenerateUsernameTest(unittest.TestCase):
