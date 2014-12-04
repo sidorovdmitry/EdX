@@ -1269,7 +1269,6 @@ def calculate_grades_csv(request, course_id):
 @cache_control(no_cache=True, no_store=True, must_revalidate=True)
 @require_level('staff')
 def student_quiz_detail_csv(request, course_id):
-    from courseware.views import get_problems_student_in_course
     from labster.proxies import generate_lab_proxy_data
     from labster.models import LabProxy
 
