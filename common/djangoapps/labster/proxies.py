@@ -158,7 +158,7 @@ def generate_lab_proxy_data(lab_proxy):
         problems = Problem.objects.filter(is_active=True, quiz_block=quiz_block)
 
         for problem in problems:
-            user_answers = UserAnswer.objects.filter(problem=problem)
+            user_answers = UserAnswer.objects.filter(problem=problem, lab_proxy=lab_proxy)
 
             for user_answer in user_answers:
                 user = user_answer.user
