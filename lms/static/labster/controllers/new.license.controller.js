@@ -145,9 +145,11 @@ angular.module('LabsterBackOffice')
       var labs = [],
         post_data;
       angular.forEach(list_product, function (item) {
-        labs.push({
-          lab_id: item.product,
-          license_count: item.item_count
+        angular.forEach(list_product.labter_labs, function (lab_id) {
+          labs.push({
+            lab_id: lab_id,
+            license_count: item.item_count
+          });
         });
       });
 
@@ -191,16 +193,22 @@ angular.module('LabsterBackOffice')
               // include individual lab
               data.list_product.push({
                 product: lab.id,
+                labster_labs: [lab.external_id],
                 item_count: lab.license,
                 month_subscription: lab.month_subscription
               });
             } else {
               // include group package lab
-              data.list_product.push({
+              var item = {
                 product_group: lab.id,
+                labster_labs: [],
                 item_count: lab.license,
                 month_subscription: lab.month_subscription
+              }
+              angular.forEach(lab.products, function (each) {
+                item.labster_labs.push(each.external_id);
               });
+              data.list_product.push(item);
             }
           }
         });
