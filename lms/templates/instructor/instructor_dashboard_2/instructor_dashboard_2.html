@@ -63,13 +63,13 @@
 <div class="instructor-dashboard-wrapper-2">
   <section class="instructor-dashboard-content-2" id="instructor-dashboard-content">
     <div class="wrap-instructor-info studio-view">
-      <a class="instructor-info-action" href="progress_all_students">${_("View all student's Progress")}</a>
       %if studio_url:
       <a class="instructor-info-action" href="${studio_url}">${_("View Course in Studio")}</a>
       %endif
       %if settings.FEATURES.get('ENABLE_INSTRUCTOR_LEGACY_DASHBOARD'):
       <a class="instructor-info-action" href="${ old_dashboard_url }"> ${_("Revert to Legacy Dashboard")} </a>
       %endif
+      <a class="instructor-info-action" href="progress_all_students">${_("View all students' Progress")}</a>
     </div>
 
   <h1>${_("Instructor Dashboard")}</h1>
