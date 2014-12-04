@@ -145,7 +145,7 @@ angular.module('LabsterBackOffice')
       var labs = [],
         post_data;
       angular.forEach(list_product, function (item) {
-        angular.forEach(list_product.labter_labs, function (lab_id) {
+        angular.forEach(list_product.labster_labs, function (lab_id) {
           labs.push({
             lab_id: lab_id,
             license_count: item.item_count
