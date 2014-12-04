@@ -131,7 +131,7 @@ class AnswerAdmin(BaseAdmin):
 
 
 class LabProxyAdmin(BaseAdmin):
-    list_display = ('id', 'course_from_location', 'lab', 'location', 'is_active')
+    list_display = ('id', 'course_from_location', 'lab', 'location', 'is_active', 'created_at')
     list_filter = ('is_active',)
 
 
