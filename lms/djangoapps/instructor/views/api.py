@@ -20,7 +20,7 @@ from django.db import IntegrityError
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.utils.translation import ugettext as _
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
 from django.utils.html import strip_tags
 import string  # pylint: disable=W0402
 import random
@@ -1270,44 +1270,24 @@ def calculate_grades_csv(request, course_id):
 @require_level('staff')
 def student_quiz_detail_csv(request, course_id):
     from courseware.views import get_problems_student_in_course
-    from labster.models import LabProxy, UserAnswer
+    from labster.proxies import generate_lab_proxy_data
+    from labster.models import LabProxy
 
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
     course = modulestore().get_course(course_key)
-    locations = []
 
+    lab_id = None
+    location = None
     for section in course.get_children():
         for sub_section in section.get_children():
             if sub_section.lab_id:
-                locations.append(sub_section.location)
+                lab_id = sub_section.lab_id
+                location = sub_section.location
 
-    lab_proxies = LabProxy.objects.filter(location__in=locations)
-    user_answers = UserAnswer.objects.filter(problem_proxy__lab_proxy__in=lab_proxies)
-    csv_headers = ['name', 'email', 'lab', 'question', 'attempt_count', 'completion_time', 'score']
-
-    response = HttpResponse(content_type='text/csv')
-    writer = csv.DictWriter(response, fieldnames=csv_headers)
-    writer.writeheader()
-    for user_answer in user_answers:
-        lab = user_answer.problem_proxy.lab_proxy.lab
-        user = user_answer.user
-        csv_item = {
-                'lab': lab.name,
-                'name': user.get_full_name(),
-                'email': user.email,
-                'question': user_answer.problem_proxy.question_text.encode('utf-8'),
-                'attempt_count': user_answer.attempt_count,
-                'completion_time': user_answer.completion_time,
-                'score': user_answer.score,
-        }
-        writer.writerow(csv_item)
-
-    now = datetime.now()
-    datetime_as_string = re.sub(r'\W+', '', now.isoformat())
-    csv_file_name = "student-quiz-detail-{}.csv".format(datetime_as_string)
-
-    response['Content-Disposition'] = 'attachment; filename="{filename}"'.format(filename=csv_file_name)
-    return response
+    lab_proxy = LabProxy.objects.get(location=location)
+    generate_lab_proxy_data(lab_proxy)
+    lab_proxy = LabProxy.objects.get(id=lab_proxy.id)
+    return HttpResponseRedirect(lab_proxy.latest_data.data_file.url)
 
 
 @ensure_csrf_cookie
