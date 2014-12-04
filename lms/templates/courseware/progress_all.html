@@ -34,7 +34,7 @@ from django.conf import settings
           <a class="instructor-info-action studio-view" href="${studio_url}">${_("View Grading in studio")}</a>
         </div>
       % endif
-      
+
       <header>
         <h1>${_("Course Progress for all Students")}</h1>
       </header>
@@ -43,48 +43,20 @@ from django.conf import settings
        <table class="progress-all-table">
           <tr>
              <th>Name</th>
+             <th>Email</th>
              <th>Progress</th>
              <th>Score</th>
-             <th>Details</th>
           </tr>
      %for item in students_context:
       <tr>
-         <td>${item["student"]}</td>
-          
-            %for chapter in item["courseware_summary"]:
-               %if not chapter['display_name'] == "hidden":
+          <td>${item['user'].profile.name}</td>
+          <td>${item['user'].email}</td>
+          <td>
+            <progress max="100" value="${item['progress_in_percent']}" style="width:100%"></progress>
+            ${item['progress_in_percent']}%
+          </td>
+          <td>${item['score']}</td>
 
-               <% 
-                  total_earned = 0
-                  total_question = 0
-                %>
-                %for section in chapter['sections']:
-                  <%
-                    earned = section['section_total'].earned
-                    total = section['section_total'].possible
-                    total_earned = total_earned + earned
-                    total_question = total_question + total
-                  %>
-                %endfor
-                <% 
-                  percentageString = "{0:.0%}".format( float(total_earned)/total_question) if total_earned > 0 and total_question > 0 else ""
-                
-                %>
-                <td><div class="progress">
-                %if total_question > 0 or total_earned > 01:
-                    <span style="width:${percentageString}"> ${percentageString}</span>
-                %endif
-                </div>
-                </td>
-                <td>
-                     <span>${"{0:.3n}".format( float(total_earned) )} </span>
-                </td>
-                <td>
-                  <a href=progress/${item["student"].id}>Details</a>
-                  <a href=${item["student"].id}/student_detail>| Quiz Details</a>
-                </td>
-              %endif
-           %endfor
       </tr>
       %endfor
       </table>

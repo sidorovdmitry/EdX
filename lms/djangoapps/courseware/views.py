@@ -814,6 +814,9 @@ def progress_all(request, course_id):
 
 
 def _progress_all(request, course_key):
+    from labster.models import LabProxy
+    from labster.reports import get_attempts_and_answers
+
     """
     Unwrapped version of "progress_all".
 
@@ -829,25 +832,52 @@ def _progress_all(request, course_key):
     if not staff_access:
         raise Http404
 
-    for item in student_objects:
-        student_id = item.user_id
-        student_user = User.objects.get(id=int(student_id))
-        # additional DB lookup (this kills the Progress page in particular).
-        student = User.objects.prefetch_related("groups").get(id=student_user.id)
+    lab_id = None
+    location = None
+    for section in course.get_children():
+        for sub_section in section.get_children():
+            if sub_section.lab_id:
+                lab_id = sub_section.lab_id
+                location = sub_section.location
 
-        courseware_summary = grades.progress_summary(student, request, course)
-        grade_summary = grades.grade(student, request, course)
+    lab_proxy = LabProxy.objects.get(location=location)
+    for student in student_objects:
+        attempts = get_attempts_and_answers(lab_proxy, student.user, latest_only=True)
+        attempt = None
+        progress_in_percent = score = 0
+        if attempts:
+            attempt = attempts[0]
+            progress_in_percent = attempt.progress_in_percent
+            score = attempt.score
 
-        if courseware_summary is None:
-            # if the student is indeed registered, it means the course is not
-            # started yet
-            continue
-        student_context = {
-            'courseware_summary': courseware_summary,
-            'grade_summary': grade_summary,
-            'student': student,
+        context = {
+            'user': student.user,
+            'attempt': attempt,
+            'progress_in_percent': progress_in_percent,
+            'score': score,
         }
-        students_context.append(student_context)
+
+        students_context.append(context)
+
+    # for item in student_objects:
+    #     student_id = item.user_id
+    #     student_user = User.objects.get(id=int(student_id))
+    #     # additional DB lookup (this kills the Progress page in particular).
+    #     student = User.objects.prefetch_related("groups").get(id=student_user.id)
+
+    #     courseware_summary = grades.progress_summary(student, request, course)
+    #     grade_summary = grades.grade(student, request, course)
+
+    #     if courseware_summary is None:
+    #         # if the student is indeed registered, it means the course is not
+    #         # started yet
+    #         continue
+    #     student_context = {
+    #         'courseware_summary': courseware_summary,
+    #         'grade_summary': grade_summary,
+    #         'student': student,
+    #     }
+    #     students_context.append(student_context)
 
     studio_url = get_studio_url(course_key, 'settings/grading')
     context = {
