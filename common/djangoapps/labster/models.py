@@ -434,7 +434,7 @@ class UserAttempt(models.Model):
         return self.useranswer_set.filter(
             problem__is_active=True,
             problem__no_score=False,
-        ).distinct().count()
+        ).annotate(Count('quiz_id')).order_by().count()
 
     @property
     def correct_answers_count(self):
@@ -442,7 +442,7 @@ class UserAttempt(models.Model):
             is_correct=True,
             problem__is_active=True,
             problem__no_score=False,
-        ).distinct().count()
+        ).annotate(Count('quiz_id')).order_by().count()
 
     @property
     def progress_in_percent(self):
