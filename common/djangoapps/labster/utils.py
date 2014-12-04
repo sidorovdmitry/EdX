@@ -191,11 +191,13 @@ def get_engine_xml_url(prefix, engine_xml):
     url = "{}ModularLab/{}".format(prefix, engine_xml)
     return url
 
+
 def get_engine_file_url(prefix, engine_file):
     if not prefix:
         prefix = URL_PREFIX
     url = "{}{}".format(prefix, engine_file)
     return url
+
 
 def get_quiz_block_file_url(quiz_block_file):
     prefix = S3_BASE_URL
