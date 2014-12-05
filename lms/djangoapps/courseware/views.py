@@ -814,8 +814,8 @@ def progress_all(request, course_id):
 
 
 def _progress_all(request, course_key):
-    from labster.models import LabProxy
-    from labster.reports import get_attempts_and_answers
+    from labster.models import LabProxy, UserAttempt
+    # from labster.reports import get_attempts_and_answers
 
     """
     Unwrapped version of "progress_all".
@@ -842,7 +842,7 @@ def _progress_all(request, course_key):
 
     lab_proxy = LabProxy.objects.get(location=location)
     for student in student_objects:
-        attempts = get_attempts_and_answers(lab_proxy, student.user, latest_only=True)
+        attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy, user=student.user).order_by('-created_at')
         attempt = None
         progress_in_percent = score = 0
         if attempts:

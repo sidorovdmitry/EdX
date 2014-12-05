@@ -13,6 +13,7 @@ from django.db import models
 from django.db.models import Count, Q, Sum
 from django.db.models.signals import pre_save, post_save
 from django.utils import timezone
+from django.utils.functional import cached_property
 
 from xmodule_django.models import CourseKeyField, LocationKeyField
 
@@ -421,7 +422,7 @@ class UserAttempt(models.Model):
     def play(self):
         return 0
 
-    @property
+    @cached_property
     def problems_count(self):
         return Problem.objects.filter(
             is_active=True,
@@ -429,37 +430,52 @@ class UserAttempt(models.Model):
             quiz_block__lab=self.lab_proxy.lab,
         ).count()
 
-    @property
+    @cached_property
     def answers_count(self):
-        return self.useranswer_set.filter(
+        user_answers = UserAnswer.objects.filter(
+            attempt=self,
             problem__is_active=True,
             problem__no_score=False,
-        ).annotate(Count('quiz_id')).order_by().count()
+        )
 
-    @property
+        problem_ids = list(user_answers.values_list('problem__id', flat=True))
+        problem_ids = list(set(problem_ids))
+        return len(problem_ids)
+
+    @cached_property
     def correct_answers_count(self):
-        return self.useranswer_set.filter(
+        user_answers = UserAnswer.objects.filter(
+            attempt=self,
             is_correct=True,
             problem__is_active=True,
             problem__no_score=False,
-        ).annotate(Count('quiz_id')).order_by().count()
+        )
 
-    @property
+        problem_ids = list(user_answers.values_list('problem__id', flat=True))
+        problem_ids = list(set(problem_ids))
+        return len(problem_ids)
+
+    @cached_property
     def progress_in_percent(self):
         return 100 * self.answers_count / self.problems_count
 
-    @property
+    @cached_property
     def score(self):
-        correct_answers = self.useranswer_set.filter(
+        user_answers = UserAnswer.objects.filter(
+            attempt=self,
             is_correct=True,
             problem__is_active=True,
             problem__no_score=False,
-        ).aggregate(
-            score=Sum('score'))
+        ).order_by('-created_at')
 
-        score = correct_answers['score']
-        if not score:
-            score = 0
+        score = 0
+        picked = []
+
+        for user_answer in user_answers:
+            if not user_answer.problem.id in picked:
+                picked.append(user_answer.problem.id)
+                score += user_answer.score
+
         score = 10 * score / self.problems_count
         return score
 
