@@ -511,7 +511,7 @@ LANGUAGES = [
 
       window.onbeforeunload = function() {
         if (isPlaying) {
-          return "Are you sure you want to exit?";
+          return "You'll lose any unsaved progress.";
         } else {
           return null;
         }
