@@ -423,6 +423,7 @@ LANGUAGES = [
 
     var loaded = false;
     var hasUnity = detectUnityWebPlayer();
+    var isPlaying = false;
 
     jQuery(function() {
       var browser = jQuery.browser;
@@ -507,6 +508,14 @@ LANGUAGES = [
           jQuery('.loading').hide();
         }
       }
+
+      window.onbeforeunload = function() {
+        if (isPlaying) {
+          return "Are you sure you want to exit?";
+        } else {
+          return null;
+        }
+      };
     });
 
     var u;
@@ -523,6 +532,7 @@ LANGUAGES = [
       }
 
       jQuery('#livechat-compact-container').hide();
+      isPlaying = true;
       nutshellPlayLab();
 
       // jQuery('window').bind('resize', function(event) {
