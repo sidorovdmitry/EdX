@@ -1,5 +1,6 @@
 import csv
 
+from collections import defaultdict
 from lxml import etree
 import six
 try:
@@ -14,7 +15,7 @@ from django.utils import timezone
 from xmodule.modulestore.django import modulestore
 
 from labster.masters import get_problem_as_platform_xml, get_quiz_block_as_platform_xml
-from labster.models import LabProxy, ProblemProxy, LabProxyData
+from labster.models import LabProxy, ProblemProxy, LabProxyData, UserAttempt, UserAnswer
 from labster.models import Lab, QuizBlock, Problem, UserAnswer
 from labster.parsers.problem_parsers import QuizParser
 from labster.quiz_blocks import create_xblock, update_problem, validate_lab_proxy
@@ -131,8 +132,9 @@ def get_lab_proxy_as_platform_xml(lab_proxy):
 
 def generate_lab_proxy_data(lab_proxy):
 
-    lab = lab_proxy.lab
-    quiz_blocks = QuizBlock.objects.filter(is_active=True, lab=lab)
+    # lab = lab_proxy.lab
+    # quiz_blocks = QuizBlock.objects.filter(is_active=True, lab=lab)
+    # problems = Problem.objects.filter(is_active=True, quiz_block__in=quiz_blocks)
 
     ## rows
     # QuizBlock, QuizID, Email, User ID, Question, Correct Answer, Answer,
@@ -141,7 +143,7 @@ def generate_lab_proxy_data(lab_proxy):
     stream = StringIO()
     writer = csv.writer(stream)
     headers = [
-        'QuizID',
+        'Quiz ID',
         'Email',
         'User ID',
         'Question',
@@ -149,37 +151,48 @@ def generate_lab_proxy_data(lab_proxy):
         'Answer',
         'Is Correct',
         'Completion Time',
+        'Number of Attempts',
         'QuizBlock',
+        'Attempt Group',
     ]
 
     writer.writerow(headers)
 
-    for quiz_block in quiz_blocks:
-        problems = Problem.objects.filter(is_active=True, quiz_block=quiz_block)
+    user_attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy).order_by('user__id', 'created_at')
+    attempt_groups = defaultdict(int)
 
-        for problem in problems:
-            user_answers = UserAnswer.objects.filter(problem=problem, lab_proxy=lab_proxy)
+    for user_attempt in user_attempts:
+        attempt_groups[user_attempt.user_id] += 1
 
-            for user_answer in user_answers:
-                user = user_answer.user
+        user_answers = UserAnswer.objects.filter(attempt=user_attempt)
+        for user_answer in user_answers:
+            user = user_answer.user
+            problem = user_answer.problem
+            quiz_block = problem.quiz_block
 
-                is_correct = ""
-                if not problem.no_score:
-                    is_correct = "yes" if user_answer.is_correct else "no"
+            is_correct = ""
+            if not problem.no_score:
+                is_correct = "yes" if user_answer.is_correct else "no"
 
-                rows = [
-                    problem.element_id,
-                    user.email,
-                    user.profile.unique_id,
-                    user_answer.question.encode('utf-8'),
-                    user_answer.correct_answer.encode('utf-8'),
-                    user_answer.answer_string.encode('utf-8'),
-                    is_correct,
-                    user_answer.completion_time,
-                    quiz_block.element_id,
-                ]
+            unique_id = user.profile.unique_id
+            if not unique_id:
+                unique_id = user.id
 
-                writer.writerow(rows)
+            rows = [
+                problem.element_id,
+                user.email,
+                unique_id,
+                user_answer.question.encode('utf-8'),
+                user_answer.correct_answer.encode('utf-8'),
+                user_answer.answer_string.encode('utf-8'),
+                is_correct,
+                user_answer.completion_time,
+                user_answer.attempt_count,
+                quiz_block.element_id,
+                "{}-{}".format(user.email, attempt_groups[user.id]),
+            ]
+
+            writer.writerow(rows)
 
     now = timezone.now()
     file_name = 'lp_{}_{}.csv'.format(lab_proxy.id, now.strftime('%Y%m%d%H%M%S'))
