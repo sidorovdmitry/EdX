@@ -16,7 +16,7 @@ def get_attempts_and_answers(lab_proxy, user, latest_only=False):
 
     # special case for LAB_ID 35 (adaptive cytogenetics)
     if lab_proxy.lab_id == 35:
-        quiz_ids = ["Cyto-{}-Post".format(i) for i in range(18, 38)]
+        quiz_ids = ["Cyto-{}-Post".format(i) for i in range(11, 41)]
         problems = Problem.objects.filter(is_active=True, element_id__in=quiz_ids)
         answers = answers.filter(problem__in=problems)
 

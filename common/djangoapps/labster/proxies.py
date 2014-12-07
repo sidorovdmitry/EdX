@@ -1,8 +1,8 @@
-import csv
-
 from collections import defaultdict
 from lxml import etree
+import csv
 import six
+
 try:
     import cStringIO.StringIO as StringIO
 except ImportError:
@@ -130,13 +130,13 @@ def get_lab_proxy_as_platform_xml(lab_proxy):
     return lab_proxy_el
 
 
-def generate_lab_proxy_data(lab_proxy):
+def generate_lab_proxy_data(
+    lab_proxy, quiz_blocks=None, quiz_ids=None, filters=None,
+    file_name=None,
+    process_score=False,
+    score_file_name=None):
 
-    # lab = lab_proxy.lab
-    # quiz_blocks = QuizBlock.objects.filter(is_active=True, lab=lab)
-    # problems = Problem.objects.filter(is_active=True, quiz_block__in=quiz_blocks)
-
-    ## rows
+    ## row
     # QuizBlock, QuizID, Email, User ID, Question, Correct Answer, Answer,
     # Is Correct, Completion Time
 
@@ -158,30 +158,59 @@ def generate_lab_proxy_data(lab_proxy):
 
     writer.writerow(headers)
 
-    user_attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy).order_by('user__id', 'created_at')
+    user_attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy)
+    if filters:
+        user_attempts = user_attempts.filter(**filters)
+
+    user_attempts = user_attempts.exclude(user__email__endswith='labster.com')
+    user_attempts = user_attempts.exclude(user__email__endswith='liv.it')
+    user_attempts = user_attempts.exclude(user__email='mitsurudy@gmail.com')
+
+    user_attempts = user_attempts.order_by('user__id', 'created_at')
     attempt_groups = defaultdict(int)
+    scores = []
 
     for user_attempt in user_attempts:
         attempt_groups[user_attempt.user_id] += 1
 
+        user = user_attempt.user
+        unique_id = user.profile.unique_id
+        if not unique_id:
+            unique_id = user.id
+
+        score = {
+            'email': user.email,
+            'name': user.profile.name.encode('utf-8'),
+            'user_id': unique_id.encode('utf-8'),
+            'score': 0,
+            'raw_score': 0,
+            'attempt_count': 0,
+        }
+
         user_answers = UserAnswer.objects.filter(attempt=user_attempt)
         for user_answer in user_answers:
-            user = user_answer.user
             problem = user_answer.problem
             quiz_block = problem.quiz_block
+
+            if quiz_blocks and quiz_block.element_id not in quiz_blocks:
+                continue
+
+            if quiz_ids and problem.element_id not in quiz_ids:
+                continue
+
+            score['attempt_count'] += 1
 
             is_correct = ""
             if not problem.no_score:
                 is_correct = "yes" if user_answer.is_correct else "no"
 
-            unique_id = user.profile.unique_id
-            if not unique_id:
-                unique_id = user.id
+            if user_answer.is_correct:
+                score['raw_score'] += 1
 
-            rows = [
+            row = [
                 problem.element_id,
                 user.email,
-                unique_id,
+                unique_id.encode('utf-8'),
                 user_answer.question.encode('utf-8'),
                 user_answer.correct_answer.encode('utf-8'),
                 user_answer.answer_string.encode('utf-8'),
@@ -192,11 +221,49 @@ def generate_lab_proxy_data(lab_proxy):
                 "{}-{}".format(user.email, attempt_groups[user.id]),
             ]
 
-            writer.writerow(rows)
+            writer.writerow(row)
+
+        if score['attempt_count']:
+            score['score'] = 100 * score['raw_score'] / score['attempt_count']
+            scores.append(score)
 
     now = timezone.now()
-    file_name = 'lp_{}_{}.csv'.format(lab_proxy.id, now.strftime('%Y%m%d%H%M%S'))
+    if not file_name:
+        file_name = 'lp_{}_{}.csv'.format(lab_proxy.id, now.strftime('%Y%m%d%H%M%S'))
     csv_file = ContentFile(stream.getvalue(), file_name)
     lab_proxy_data = LabProxyData(lab_proxy=lab_proxy)
     lab_proxy_data.data_file.save(file_name, csv_file, save=False)
+
+    if process_score:
+        score_stream = export_score(scores)
+        score_file_name = score_file_name
+        score_file = ContentFile(score_stream.getvalue(), score_file_name)
+        lab_proxy_data.score_file.save(score_file_name, score_file, save=False)
+
     lab_proxy_data.save()
+
+
+def export_score(scores):
+    stream = StringIO()
+    writer = csv.writer(stream)
+
+    headers = [
+        'User ID',
+        'Name',
+        'Email',
+        'Score',
+    ]
+
+    writer.writerow(headers)
+
+    for score in scores:
+        row = [
+            score['user_id'],
+            score['name'],
+            score['email'],
+            score['score'],
+        ]
+
+        writer.writerow(row)
+
+    return stream
