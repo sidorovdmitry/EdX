@@ -119,7 +119,7 @@ class ProfileMiddleware(object):
 
 class IEDetectionMiddleware(object):
     """
-    middleware to detect if the user is on old IE
+    middleware to detect if the user is on IE
     """
 
     def process_request(self, request):
@@ -129,7 +129,7 @@ class IEDetectionMiddleware(object):
             user_agent = request.META['HTTP_USER_AGENT']
 
             # Test IE 1-7
-            pattern = "msie [1-8]\."
+            pattern = "msie [1-12]\."
             prog = re.compile(pattern, re.IGNORECASE)
             match = prog.search(user_agent)
 
