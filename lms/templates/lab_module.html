@@ -114,10 +114,14 @@ LANGUAGES = [
     <form>
       <div class="input-group">
         <label>Nationality</label>
-        <select name="nationality" value="${user_profile.nationality}">
+        <select name="nationality">
           <option value="">--</option>
           %for code, country_name in COUNTRIES:
-          <option value="${code}">${ unicode(country_name) }</option>
+            %if user_profile.nationality == code:
+            <option value="${code}" selected>${ unicode(country_name) }</option>
+            %else:
+            <option value="${code}">${ unicode(country_name) }</option>
+            % endif
           %endfor
         </select>
       </div>
