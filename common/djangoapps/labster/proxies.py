@@ -200,9 +200,7 @@ def generate_lab_proxy_data(
 
             score['attempt_count'] += 1
 
-            is_correct = ""
-            if not problem.no_score:
-                is_correct = "yes" if user_answer.is_correct else "no"
+            is_correct = "yes" if user_answer.is_correct else ""
 
             if user_answer.is_correct:
                 score['raw_score'] += 1
