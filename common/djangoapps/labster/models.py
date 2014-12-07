@@ -353,6 +353,7 @@ class LabProxy(models.Model):
 class LabProxyData(models.Model):
     lab_proxy = models.ForeignKey(LabProxy)
     data_file = models.FileField(upload_to='edx/labster/lab_proxy/data')
+    score_file = models.FileField(upload_to='edx/labster/lab_proxy/score', null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
 
     @property
