@@ -144,7 +144,11 @@ LANGUAGES = [
       </div>
       <div class="input-group">
         <label>Date of Birth</label>
+        % if user_profile.date_of_birth:
         <input type="text" class="datepicker" name="date_of_birth" value="${user_profile.date_of_birth}">
+        % else:
+        <input type="text" class="datepicker" name="date_of_birth" value="">
+        % endif
       </div>
       <div class="button-group">
         <button class="button-labster-blue" type="submit">Save</button>
