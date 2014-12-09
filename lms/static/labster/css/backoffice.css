@@ -209,7 +209,6 @@ a.btn-labster-paid:hover{
     text-decoration: none;
 }
 a.btn-labster {
-    position: absolute;
     bottom: 14px;
     width: 210px;
     /*display: block;*/
@@ -217,6 +216,12 @@ a.btn-labster {
     margin-right: auto;
     left: 0;
     right: 0;
+}
+a.btn-labster-home {
+    position: absolute;
+}
+a.btn-labster-renew-license {
+    margin-bottom: 20px;
 }
 a.btn-labster-invoice {
     width: 150px;

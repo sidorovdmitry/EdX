@@ -2,11 +2,11 @@
   <h2>Licenses</h2>
 </header>
 <div class="labster-lab-list">
-  <h3>Active Licenses</h3>
-     <div class="selected-item">
-         {{selection_count}} selected of {{licenses.length}} Licenses
-         <a type="button" class="btn-labster-checkout pull-right" ng-click="renew_license()" >Renew selected licenses</a>
-     </div>
+  <div class="selected-item">
+    <h3>Active Licenses</h3>
+    <a type="button" class="btn-labster pull-right btn-labster-renew-license" ng-click="renew_license()" >Renew selected licenses</a>
+    {{selection_count}} selected of {{licenses.length}} Licenses
+  </div>
   <table>
     <thead>
       <tr>
