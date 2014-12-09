@@ -3,29 +3,66 @@
 <%inherit file="../main.html" />
 
 <%namespace name='static' file='../static_content.html'/>
-
+<style>
+  a.btn-labster {
+    bottom: 14px;
+    width: 210px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    cursor: pointer;
+    border: 1px solid #08111b;
+    border-radius: 3px;
+    box-shadow: inset 0 1px 0 0 #395b7d;
+    color: #fff;
+    font-size: inherit;
+    font-weight: bold;
+    background-color: #1d354d;
+    background-image: -webkit-linear-gradient(#1d354d,#0b1926);
+    background-image: linear-gradient(#1d354d,#0b1926);
+    text-decoration: none;
+    text-shadow: 0 1px 0 #03070b;
+    background-clip: padding-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 3px;
+    font: normal 15px/1.6rem "Lato","Source Sans";
+    letter-spacing: 0;
+    text-align: center;
+    padding: 7px 18px;
+  }
+  a.btn-labster:hover {
+    text-decoration: none;
+  }
+</style>
 <section class="container activation">
 
   <section class="message">
     %if not already_active:
-      <h1 class="valid">${_("Activation Complete!")}</h1>
+      <h1>${_("Activation Complete")}</h1>
     %else:
-      <h1>${_("Account already active!")}</h1>
+      <h1>${_("Account already active")}</h1>
     %endif
     <hr class="horizontal-divider">
 
     <p>
+      Dear ${ profile.name },
+    </p>
+    <p>
       %if not already_active:
-        ${_("Thanks for activating your account.")}
+        ${_("Thank you for activating your account.")}
       %else:
         ${_("This account has already been activated.")}
       %endif
-
       %if user_logged_in:
         ${_("Visit your {link_start}dashboard{link_end} to see your courses.").format(link_start='<a href="{url}">'.format(url=reverse('dashboard')), link_end='</a>')}
       %else:
         ${_("You can now {link_start}log in{link_end}.").format(link_start='<a href="{url}">'.format(url=reverse('signin_user')), link_end='</a>')}
       %endif
     </p>
+    <div style="margin-top: 30px"></div>
+    <a href="/dashboard" class="btn-labster">Go to Dashboard</a>
   </section>
 </section>

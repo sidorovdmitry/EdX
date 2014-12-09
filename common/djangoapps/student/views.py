@@ -1531,6 +1531,7 @@ def activate_account(request, key):
 
         # Enroll student in any pending courses he/she may have if auto_enroll flag is set
         student = User.objects.filter(id=r[0].user_id)
+        profile = UserProfile.objects.filter(user=student[0])
         if student:
             ceas = CourseEnrollmentAllowed.objects.filter(email=student[0].email)
             for cea in ceas:
@@ -1541,7 +1542,8 @@ def activate_account(request, key):
             "registration/activation_complete.html",
             {
                 'user_logged_in': user_logged_in,
-                'already_active': already_active
+                'already_active': already_active,
+                'profile': profile[0]
             }
         )
         return resp
