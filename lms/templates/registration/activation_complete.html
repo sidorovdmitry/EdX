@@ -45,6 +45,7 @@
     %else:
       <h1>${_("Account already active")}</h1>
     %endif
+    <p><i>This page will be redirected to dashboard in <span id="countdown"></span></i></p>
     <hr class="horizontal-divider">
 
     <p>
@@ -62,7 +63,21 @@
         ${_("You can now {link_start}log in{link_end}.").format(link_start='<a href="{url}">'.format(url=reverse('signin_user')), link_end='</a>')}
       %endif
     </p>
+
     <div style="margin-top: 30px"></div>
     <a href="/dashboard" class="btn-labster">Go to Dashboard</a>
   </section>
 </section>
+
+<script>
+  var seconds = 5;
+  var countdown = document.getElementById("countdown");
+
+  setInterval(function () {
+    seconds = seconds - 1;
+    countdown.innerHTML = seconds;
+    if (seconds == 0) {
+      window.location.href = "/dashboard";
+    }
+  }, 1000);
+</script>
