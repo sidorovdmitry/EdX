@@ -275,7 +275,6 @@ if FEATURES.get('AUTH_USE_CAS'):
     INSTALLED_APPS += ('django_cas',)
     MIDDLEWARE_CLASSES += (
         'django_cas.middleware.CASMiddleware',
-        'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
     )
     CAS_ATTRIBUTE_CALLBACK = ENV_TOKENS.get('CAS_ATTRIBUTE_CALLBACK', None)
     if CAS_ATTRIBUTE_CALLBACK:
@@ -458,4 +457,8 @@ RAVEN_CONFIG = AUTH_TOKENS.get('RAVEN_CONFIG', {})
 
 INSTALLED_APPS = INSTALLED_APPS + (
     'raven.contrib.django.raven_compat',
+)
+
+MIDDLEWARE_CLASSES += (
+    'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
 )
