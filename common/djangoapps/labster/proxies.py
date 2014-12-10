@@ -176,7 +176,7 @@ def generate_lab_proxy_data(
         user = user_attempt.user
         unique_id = user.profile.unique_id
         if not unique_id:
-            unique_id = user.id
+            unique_id = str(user.id)
 
         score = {
             'email': user.email,
