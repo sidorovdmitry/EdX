@@ -480,6 +480,28 @@ class UserAttempt(models.Model):
         score = 10 * score / self.problems_count
         return score
 
+    def check_completed(self):
+        problem_quiz_ids = Problem.objects.filter(
+            is_active=True,
+            quiz_block__lab=self.lab_proxy.lab).values_list('element_id', flat=True)
+
+        answer_quiz_ids = UserAnswer.objects.filter(
+            attempt=self,
+            problem__is_active=True).values_list('quiz_id', flat=True)
+
+        problem_quiz_ids = list(problem_quiz_ids)
+        answer_quiz_ids = list(answer_quiz_ids)
+
+        for quiz_id in answer_quiz_ids:
+            if quiz_id not in problem_quiz_ids:
+                return False
+
+        for quiz_id in problem_quiz_ids:
+            if quiz_id not in answer_quiz_ids:
+                return False
+
+        return True
+
     def mark_finished(self):
         self.is_finished = True
         self.finished_at = timezone.now()
@@ -488,6 +510,12 @@ class UserAttempt(models.Model):
     def get_total_play_count(self):
         return UserAttempt.objects.filter(
             user=self.user, lab_proxy=self.lab_proxy).count()
+
+    def save(self, *args, **kwargs):
+        if not self.is_completed:
+            self.is_completed = self.check_completed()
+
+        return super(UserAttempt, self).save(*args, **kwargs)
 
 
 class ErrorInfo(models.Model):
@@ -731,3 +759,11 @@ class LabsterCourseLicense(models.Model):
 
     class Meta:
         unique_together = ('user', 'course_id')
+
+
+def get_user_attempts_from_lab_proxy(lab_proxy):
+    user_attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy)
+    user_attempts = user_attempts.exclude(user__email__endswith='labster.com')
+    user_attempts = user_attempts.exclude(user__email__endswith='liv.it')
+    user_attempts = user_attempts.exclude(user__email='mitsurudy@gmail.com')
+    return user_attempts
