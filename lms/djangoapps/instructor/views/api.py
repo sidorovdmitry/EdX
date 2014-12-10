@@ -21,6 +21,7 @@ from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
+from django.template.defaultfilters import slugify
 from django.utils.html import strip_tags
 import string  # pylint: disable=W0402
 import random
@@ -1269,8 +1270,8 @@ def calculate_grades_csv(request, course_id):
 @cache_control(no_cache=True, no_store=True, must_revalidate=True)
 @require_level('staff')
 def student_quiz_detail_csv(request, course_id):
-    from labster.proxies import generate_lab_proxy_data
     from labster.models import LabProxy
+    from labster.reports import export_answers
 
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
     course = modulestore().get_course(course_key)
@@ -1284,9 +1285,22 @@ def student_quiz_detail_csv(request, course_id):
                 location = sub_section.location
 
     lab_proxy = LabProxy.objects.get(location=location)
-    generate_lab_proxy_data(lab_proxy)
-    lab_proxy = LabProxy.objects.get(id=lab_proxy.id)
-    return HttpResponseRedirect(lab_proxy.latest_data.data_file.url)
+
+    filename = "{}_lp_{}".format(
+        slugify(lab_proxy.lab.name),
+        lab_proxy.id,
+    )
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(filename)
+
+    writer = csv.writer(response)
+    rows = export_answers(lab_proxy)
+
+    for row in rows:
+        writer.writerow(row)
+
+    return response
 
 
 @ensure_csrf_cookie
