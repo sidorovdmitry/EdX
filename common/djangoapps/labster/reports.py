@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from labster.models import UserAnswer, UserAttempt, Problem
+from labster.models import UserAnswer, UserAttempt, Problem, get_user_attempts_from_lab_proxy
 
 
 def get_attempts_and_answers(lab_proxy, user, latest_only=False):
@@ -38,3 +38,82 @@ def get_attempts_and_answers(lab_proxy, user, latest_only=False):
 def get_answers(user_attempt):
     answers = UserAnswer.objects.filter(attempt=user_attempt).order_by('created_at')
     return answers
+
+
+def user_attempts_to_rows(user_attempts):
+    rows = []
+    for user_attempt in user_attempts:
+        user = user_attempt.user
+        user_answers = UserAnswer.objects.filter(attempt=user_attempt).order_by('problem__order', '-created_at')
+        answered = []
+
+        for user_answer in user_answers:
+            if user_answer.quiz_id in answered:
+                continue
+
+            answered.append(user_answer.quiz_id)
+
+            row = [
+                user.email,
+                user.profile.name,
+                user_answer.question.encode('utf-8'),
+                user_answer.answer_string.encode('utf-8'),
+                user_answer.correct_answer.encode('utf-8'),
+                user_answer.completion_time,
+                user_answer.score,
+                10,
+                "yes" if user_answer.is_view_theory_clicked else "",
+                user_answer.attempt_count,
+            ]
+
+            rows.append(row)
+    return rows
+
+
+def unique_user_attempts(user_attempts):
+    attempts = []
+    user_ids = []
+    for user_attempt in user_attempts:
+        if user_attempt.user.id in user_ids:
+            continue
+
+        user_ids.append(user_attempt.user.id)
+        attempts.append(user_attempt)
+
+    return attempts
+
+
+def export_answers(lab_proxy):
+
+    headers = [
+        'Email',
+        'Name',
+        'Question',
+        'User Answer',
+        'Correct Answer',
+        'Time Spent (seconds)',
+        'Score',
+        'Max Score',
+        'View Theory',
+        'Number of Attempts',
+    ]
+
+    user_attempts = get_user_attempts_from_lab_proxy(lab_proxy)
+    all_users = user_attempts.values_list('user__id', flat=True)
+    all_users = list(set(all_users))
+
+    completed_user_attempts = user_attempts.filter(is_completed=True).order_by('-created_at')
+    completed_users = completed_user_attempts.values_list('user__id', flat=True)
+    completed_users = list(set(completed_users))
+
+    missing_users = set(all_users) - set(completed_users)
+    missing_user_attempts = user_attempts.filter(user__id__in=missing_users).order_by('-created_at')
+
+    completed_user_attempts = unique_user_attempts(completed_user_attempts)
+    missing_user_attempts = unique_user_attempts(missing_user_attempts)
+
+    rows = [headers]
+    rows.extend(user_attempts_to_rows(completed_user_attempts))
+    rows.extend(user_attempts_to_rows(missing_user_attempts))
+
+    return rows
