@@ -805,6 +805,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         attempt_count = request.POST.get('AttemptCount')
         quiz_id = request.POST.get('QuizId', '')
         answer_index = request.POST.get('AnswerIndex', 0)
+        is_view_theory_clicked = request.POST.get('isViewTheoryClicked', 'False') == 'True'
 
         if not all([
                 score is not None,
@@ -864,6 +865,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
             user=user,
             quiz_id=quiz_id,
             answer_index=answer_index,
+            is_view_theory_clicked=is_view_theory_clicked,
         )
         response_data = {'correct': is_correct}
         return Response(response_data, status=status.HTTP_201_CREATED)
