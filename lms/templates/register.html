@@ -16,10 +16,13 @@
 <%! import calendar %>
 
 <%block name="pagetitle">${_("Register for {platform_name}").format(platform_name=platform_name)}</%block>
-
+<%block name="headextra">
+  <link rel="stylesheet" href="${static.url('css/vendor/intl-tel-input/intlTelInput.css')}">
+</%block>
 <%block name="bodyclass">view-register</%block>
 
 <%block name="js_extra">
+  <script src="${static.url('js/intl-tel-input/intlTelInput.min.js')}"></script>
   <!-- Google Code for Labster Sign Up - Melvin Conversion Page -->
   <script type="text/javascript">
   /* <![CDATA[ */
@@ -107,6 +110,9 @@
           text("${_(u'Processing your account information…')}");
       }
     }
+  </script>
+  <script>
+    $("#phone_number").intlTelInput();
   </script>
 </%block>
 
@@ -301,7 +307,7 @@
           % if settings.REGISTRATION_EXTRA_FIELDS['phone_number'] != 'hidden':
           <li class="field ${settings.REGISTRATION_EXTRA_FIELDS['phone_number']} text" id="field-phone_number">
             <label for="phone_number">${_('Phone Number')}</label>
-            <input id="phone_number" type="text" name="phone_number" value="" placeholder="${_('example: 1234567')}" aria-describedby="phone_number-tip" ${'required aria-required="true"' if settings.REGISTRATION_EXTRA_FIELDS['phone_number'] == 'required' else ''} />
+            <input id="phone_number" type="tel" name="phone_number" placeholder="${_('example: +451234567')}" value="" aria-describedby="phone_number-tip" ${'required aria-required="true"' if settings.REGISTRATION_EXTRA_FIELDS['phone_number'] == 'required' else ''} />
           </li>
           % endif
 
