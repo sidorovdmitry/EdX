@@ -24,7 +24,6 @@ class Command(BaseCommand):
             # 'user__email__endswith': 'ku.dk',
             'created_at__year': 2014,
             'created_at__month': 12,
-            'created_at__day': 5,
         }
 
         quiz_blocks = ['QuizblockPreTest', 'QuizblockPostTest']
