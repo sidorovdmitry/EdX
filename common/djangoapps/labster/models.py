@@ -404,6 +404,9 @@ class UserAttempt(models.Model):
     lab_proxy = models.ForeignKey(LabProxy)
     user = models.ForeignKey(User)
 
+    problems = models.ManyToManyField(
+        Problem, blank=True,
+        help_text="Problems used for this attempt. Empty means any currently active problems.")
     score = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, null=True)
 
