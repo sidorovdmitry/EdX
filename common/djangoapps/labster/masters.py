@@ -129,6 +129,9 @@ def get_quiz_block_as_platform_xml(quiz_block):
     if quiz_block.time_limit:
         attrib['TimeLimit'] = str(quiz_block.time_limit)
 
+    if quiz_block.can_skip:
+        attrib['CanSkip'] = "true"
+
     quiz_block_el = etree.Element('QuizBlock', attrib)
 
     # fetch active problems

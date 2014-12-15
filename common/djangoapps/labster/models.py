@@ -176,6 +176,7 @@ class QuizBlock(models.Model):
 
     time_limit = models.IntegerField(blank=True, null=True)
     order = models.IntegerField(default=0)
+    can_skip = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
