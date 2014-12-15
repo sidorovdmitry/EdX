@@ -404,6 +404,9 @@ class UserAttempt(models.Model):
     lab_proxy = models.ForeignKey(LabProxy)
     user = models.ForeignKey(User)
 
+    score = models.DecimalField(
+        max_digits=5, decimal_places=2, blank=True, null=True)
+
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
 
@@ -461,8 +464,7 @@ class UserAttempt(models.Model):
     def progress_in_percent(self):
         return 100 * self.answers_count / self.problems_count
 
-    @cached_property
-    def score(self):
+    def get_score(self):
         user_answers = UserAnswer.objects.filter(
             attempt=self,
             is_correct=True,
