@@ -200,6 +200,14 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
             nutshell_play_lab_url = reverse(
                 'labster_nutshell_play_lab',
                 args=[self.course_id.to_deprecated_string(), lab_proxy.id])
+
+            if lab.id == 43:
+                result_url = reverse('labster_adaptive_test_result',
+                                    args=[self.course_id.to_deprecated_string(), lab_proxy.id])
+            else:
+                result_url = reverse('labster_lab_result',
+                                    args=[self.course_id.to_deprecated_string(), lab_proxy.id])
+
             params.update({
                 'lab': lab,
                 'lab_proxy': lab_proxy,
@@ -208,8 +216,7 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                 'user_profile': user_profile,
                 'unity_log_url': reverse('labster-api:create-unity-log', args=[lab_proxy.id]),
                 'user_attempt': user_attempt,
-                'result_url': reverse('labster_lab_result',
-                                      args=[self.course_id.to_deprecated_string(), lab_proxy.id]),
+                'result_url': result_url,
                 'nutshell_play_lab_url': nutshell_play_lab_url,
             })
 
