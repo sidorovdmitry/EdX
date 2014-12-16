@@ -43,6 +43,7 @@ window.requestUser = {
     token: "${token}"
   }
 };
+window.lab_id = "${lab_id}";
 window.backofficeUrls = {
   buyLab: "${backoffice_urls['buy_lab']}",
   payment: "${backoffice_urls['payment']}",
@@ -59,7 +60,7 @@ window.backofficeUrls = {
 <script src="${static.url('labster/student_license/js/student_license.angular.js')}"></script>
 <!--<script src="${static.url('labster/js/backoffice.angular.directives.js')}"></script> -->
 <!-- controllers -->
-<!-- <script src="${static.url('labster/student_license/controllers/license.list.controller.js')}"></script> -->
+<script src="${static.url('labster/student_license/controllers/home.controller.js')}"></script>
 <!-- services -->
 <!-- <script src="${static.url('labster/js/backoffice.angular.services.js')}"></script> -->
 </%block>

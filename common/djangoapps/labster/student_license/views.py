@@ -8,6 +8,10 @@ from edxmako.shortcuts import render_to_response
 
 from student.models import UserProfile
 
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
+
+from courseware.courses import get_course_by_id
+
 
 def get_base_url():
     from django.conf import settings
@@ -77,8 +81,18 @@ def get_backoffice_urls():
     return urls
 
 
+def get_lab_id(user, course_id):
+    course = get_course_by_id(SlashSeparatedCourseKey.from_deprecated_string(course_id))
+    lab_id = None
+    for section in course.get_children():
+        for sub_section in section.get_children():
+            if sub_section.lab_id:
+                lab_id = sub_section.lab_id
+    return lab_id
+
+
 @login_required
-def home(request):
+def home(request, course_id):
     template_name = 'labster/student_license.html'
     user_profile = UserProfile.objects.get(user=request.user)
     bo_user = create_user(request.user, user_profile.name, format='json')
@@ -92,10 +106,12 @@ def home(request):
 
     backoffice_urls = get_backoffice_urls()
     stripe_publishable_key = settings.STRIPE_PUBLISHABLE_KEY
+    lab_id = get_lab_id(request.user, course_id)
     context = {
         'token': token,
         'backoffice': backoffice,
         'backoffice_urls': backoffice_urls,
         'stripe_publishable_key': stripe_publishable_key,
+        'lab_id': lab_id
     }
     return render_to_response(template_name, context)
