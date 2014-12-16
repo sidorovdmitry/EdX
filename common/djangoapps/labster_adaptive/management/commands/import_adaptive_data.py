@@ -13,10 +13,10 @@ https://s3-us-west-2.amazonaws.com/labster/adaptive/item_bank.csv
 """
 
 ADAPTIVE_CYTOGENETICS_LAB = 35
-ADAPTIVE_CYTOGENETICS_TEST = 44
+ADAPTIVE_CYTOGENETICS_TEST = 43
 
 
-def create_answer(problem, text, is_correct, order):
+def create_answer(problem, text, is_correct, order, score=None):
     hashed_text = get_hashed_text(text)
     try:
         answer = Answer.objects.get(hashed_text=hashed_text, problem=problem)
@@ -26,6 +26,7 @@ def create_answer(problem, text, is_correct, order):
     answer.is_active = True
     answer.order = order
     answer.is_correct = is_correct
+    answer.score = score
     answer.save()
 
     return answer
@@ -88,14 +89,27 @@ class Command(BaseCommand):
                 problem.randomize_option_order = False
                 problem.no_score = True
                 problem.is_adaptive = True
+                problem.direction_for_scoring = direction_for_scoring
                 problem.save()
 
+                try:
+                    category = Category.objects.get(name__iexact=categories)
+                except Category.DoesNotExist:
+                    category = Category.objects.create(name=categories)
+
+                problem.categories.clear()
+                problem.categories.add(category)
+
+                answer_scores = [5, 4, 3, 2, 1]
+                if direction_for_scoring.upper() == 'NEGATIVE':
+                    answer_scores = [1, 2, 3, 4, 5]
+
                 # create_answer(problem, correct_answer, True, 1)
-                create_answer(problem, answer_0, False, 1)
-                create_answer(problem, answer_1, False, 2)
-                create_answer(problem, answer_2, False, 3)
-                create_answer(problem, answer_3, False, 4)
-                create_answer(problem, answer_4, False, 5)
+                create_answer(problem, answer_0, False, 1, answer_scores[0])
+                create_answer(problem, answer_1, False, 2, answer_scores[1])
+                create_answer(problem, answer_2, False, 3, answer_scores[2])
+                create_answer(problem, answer_3, False, 4, answer_scores[3])
+                create_answer(problem, answer_4, False, 5, answer_scores[4])
 
     def import_adaptive_questions(self, path):
 
