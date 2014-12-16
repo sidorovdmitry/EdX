@@ -39,7 +39,7 @@
   <script type="text/javascript">
   (function() {
     $(".register").click(function(event) {
-      if ( ! $(event.currentTarget).hasClass('disabled')) {
+      if ( ! $(event.currentTarget).hasClass('disabled') or ! $(event.currentTarget).hasClass('student_license')) {
         $("#class_enroll_form").submit();
       }
       event.preventDefault();
@@ -149,7 +149,7 @@
             <strong>${_("View Courseware")}</strong>
             </a>
           %endif
-        <span>${registration_price}</span>
+
         %elif in_cart:
           <span class="add-to-cart">
             ${_('This course is in your <a href="{cart_link}">cart</a>.').format(cart_link=cart_link)}
@@ -191,7 +191,7 @@
             </a>
             % endif
           % else:
-          <a href="/student_license/">
+          <a href="${reverse('labster_student_license')}" class="register student_license">
             ${_("Buy License")}
           </a>
           % endif
@@ -225,7 +225,7 @@
           <a class="instructor-info-action" href="${studio_url}">${_("View About Page in studio")}</a>
         </div>
       % endif
-      
+
       <nav>
         <a href="#" class="active">${_("Overview")}</a>
       ##  <a href="#">${_("FAQ")}</a>

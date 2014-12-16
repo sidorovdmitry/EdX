@@ -79,22 +79,20 @@ def get_backoffice_urls():
 
 @login_required
 def home(request):
-    template_name = 'labster/backoffice.html'
+    template_name = 'labster/student_license.html'
     user_profile = UserProfile.objects.get(user=request.user)
     bo_user = create_user(request.user, user_profile.name, format='json')
 
     token = bo_user['token']
-    lab_list = get_labs(token=token, format='string')
+
     backoffice = {
         'user_id': bo_user['id'],
         'user_country': user_profile.country,
-        'user_edu_level': user_profile.user_school_level
     }
 
     backoffice_urls = get_backoffice_urls()
     stripe_publishable_key = settings.STRIPE_PUBLISHABLE_KEY
     context = {
-        'lab_list': lab_list,
         'token': token,
         'backoffice': backoffice,
         'backoffice_urls': backoffice_urls,
