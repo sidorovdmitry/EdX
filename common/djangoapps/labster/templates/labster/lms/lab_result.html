@@ -52,6 +52,7 @@
     <table>
       <thead>
         <tr>
+          <th>No.</th>
           {% for header in headers %}
           <th>{{ header }}</th>
           {% endfor %}
@@ -60,6 +61,7 @@
       <tbody>
         {% for answer in attempt.answers %}
         <tr class="{% if answer.is_correct %}correct{% endif %}">
+          <td>{{ forloop.counter }}</td>
           <td>{{ answer.question }}</td>
           <td>{{ answer.answer_string }}</td>
           <td>{{ answer.correct_answer }}</td>

@@ -21,7 +21,12 @@ def get_attempts_and_answers(lab_proxy, user, latest_only=False):
         answers = answers.filter(problem__in=problems)
 
     answers_by_attempt = defaultdict(list)
+    answers_by_attempt_check = defaultdict(list)
     for answer in answers:
+        if answer.quiz_id in answers_by_attempt_check[answer.quiz_id]:
+            continue
+
+        answers_by_attempt_check[answer.attempt_id].append(answer.quiz_id)
         answers_by_attempt[answer.attempt_id].append(answer)
 
     for attempt in attempts:
@@ -31,6 +36,9 @@ def get_attempts_and_answers(lab_proxy, user, latest_only=False):
         if lab_proxy.lab_id == 35:
             correct_count = len([answer for answer in attempt.answers if answer.is_correct])
             attempt.custom_score = 100 * correct_count / problems.count()
+
+            if attempt.custom_score > 100:
+                attempt.custom_score = 100
 
     return attempts
 
