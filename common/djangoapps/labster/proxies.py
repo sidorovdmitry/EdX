@@ -154,6 +154,7 @@ def generate_lab_proxy_data(
         'Number of Attempts',
         'QuizBlock',
         'Attempt Group',
+        'Date',
     ]
 
     writer.writerow(headers)
@@ -185,6 +186,7 @@ def generate_lab_proxy_data(
             'score': 0,
             'raw_score': 0,
             'attempt_count': 0,
+            'date': user_attempt.created_at.strftime('%Y-%m-%d'),
         }
 
         user_answers = UserAnswer.objects.filter(attempt=user_attempt)
@@ -217,12 +219,14 @@ def generate_lab_proxy_data(
                 user_answer.attempt_count,
                 quiz_block.element_id,
                 "{}-{}".format(user.email, attempt_groups[user.id]),
+                user_answer.created_at.strftime('%Y-%m-%d'),
             ]
 
             writer.writerow(row)
 
         if score['attempt_count']:
             score['score'] = 100 * score['raw_score'] / score['attempt_count']
+            score['date'] = user_attempt.created_at.strftime('%Y-%m-%d')
             scores.append(score)
 
     now = timezone.now()
@@ -250,6 +254,7 @@ def export_score(scores):
         'Name',
         'Email',
         'Score',
+        'Date',
     ]
 
     writer.writerow(headers)
@@ -260,6 +265,7 @@ def export_score(scores):
             score['name'],
             score['email'],
             score['score'],
+            score['date'],
         ]
 
         writer.writerow(row)
