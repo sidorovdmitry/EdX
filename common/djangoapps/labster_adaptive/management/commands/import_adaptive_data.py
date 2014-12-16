@@ -13,6 +13,7 @@ https://s3-us-west-2.amazonaws.com/labster/adaptive/item_bank.csv
 """
 
 ADAPTIVE_CYTOGENETICS_LAB = 35
+ADAPTIVE_CYTOGENETICS_TEST = 44
 
 
 def create_answer(problem, text, is_correct, order):
@@ -33,7 +34,70 @@ def create_answer(problem, text, is_correct, order):
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        path = args[0]
+        path_0 = args[0]
+        path_1 = args[1]
+
+        lab_id = ADAPTIVE_CYTOGENETICS_TEST
+        Problem.objects.filter(quiz_block__lab__id=lab_id).update(is_active=False)
+        Answer.objects.filter(problem__quiz_block__lab__id=lab_id).update(is_active=False)
+        # Problem.objects.filter(quiz_block__lab__id=lab_id).delete()
+
+        self.import_psychological_questions(path_0)
+        self.import_adaptive_questions(path_1)
+
+    def import_psychological_questions(self, path):
+        # No,ID,Question,Correct Answer,Possible Answer 1,Possible Answer 2,Possible Answer 3,Possible Answer 4,Possible Answer 5,Image,Categories,Direction for scoring,Recieve feedback,Final Question,QuizBlock
+
+        with open(path, 'rb') as csv_file:
+            reader = csv.reader(csv_file)
+
+            lab_id = ADAPTIVE_CYTOGENETICS_TEST
+
+            for row in list(reader)[1:]:
+                problem_order = int(row[0].strip())
+                item_number = row[1].strip()
+                _ = row[2].strip()
+                correct_answer = row[3].strip()
+                answer_0 = row[4].strip()
+                answer_1 = row[5].strip()
+                answer_2 = row[6].strip()
+                answer_3 = row[7].strip()
+                answer_4 = row[8].strip()
+                image_url = row[9].strip()
+                categories = row[10].strip()
+                direction_for_scoring = row[11].strip()
+                receive_feedback = row[12].strip()
+                question = row[13].strip()
+                quiz_block_id = row[14].strip()
+
+                try:
+                    quiz_block = QuizBlock.objects.get(lab_id=lab_id, element_id=quiz_block_id)
+                except QuizBlock.DoesNotExist:
+                    quiz_block = QuizBlock.objects.create(lab_id=lab_id, element_id=quiz_block_id)
+
+                try:
+                    problem = Problem.objects.get(element_id=item_number, quiz_block=quiz_block)
+                except Problem.DoesNotExist:
+                    problem = Problem(element_id=item_number, quiz_block=quiz_block)
+
+                problem.is_active = True
+                problem.sentence = question
+                problem.hashed_sentence = get_hashed_text(question)
+                problem.max_attempts = 1
+                problem.order = problem_order
+                problem.randomize_option_order = False
+                problem.no_score = True
+                problem.is_adaptive = True
+                problem.save()
+
+                # create_answer(problem, correct_answer, True, 1)
+                create_answer(problem, answer_0, False, 1)
+                create_answer(problem, answer_1, False, 2)
+                create_answer(problem, answer_2, False, 3)
+                create_answer(problem, answer_3, False, 4)
+                create_answer(problem, answer_4, False, 5)
+
+    def import_adaptive_questions(self, path):
 
         # Image,Question,Correct answer,Wrong answer,Wrong answer,Wrong
         # answer,No,ID
@@ -41,10 +105,13 @@ class Command(BaseCommand):
         with open(path, 'rb') as csv_file:
             reader = csv.reader(csv_file)
 
-            lab_id = ADAPTIVE_CYTOGENETICS_LAB
-            quiz_block_id = 'QuizblockPostTest'
-            quiz_block = QuizBlock.objects.get(lab__id=lab_id, element_id=quiz_block_id)
-            Problem.objects.filter(quiz_block=quiz_block).update(is_active=False)
+            lab_id = ADAPTIVE_CYTOGENETICS_TEST
+            quiz_block_id = 'QuizblockPreTest'
+
+            try:
+                quiz_block = QuizBlock.objects.get(lab_id=lab_id, element_id=quiz_block_id)
+            except QuizBlock.DoesNotExist:
+                quiz_block = QuizBlock.objects.create(lab_id=lab_id, element_id=quiz_block_id)
 
             for problem_order, row in enumerate(list(reader)[1:], start=1):
                 image_url = row[0].strip()
@@ -59,15 +126,19 @@ class Command(BaseCommand):
                 try:
                     problem = Problem.objects.get(element_id=item_number, quiz_block=quiz_block)
                 except Problem.DoesNotExist:
-                    problem = Problem(element_id=element_id, quiz_block=quiz_block)
+                    problem = Problem(element_id=item_number, quiz_block=quiz_block)
 
                 problem.is_active = True
-                problem.sentence = question
                 problem.hashed_sentence = get_hashed_text(question)
                 problem.max_attempts = 1
                 problem.order = problem_order
                 problem.image_url = image_url
                 problem.is_adaptive = True
+
+                problem.sentence = question
+                if image_url:
+                    problem.sentence = """<p>{}</p><p><img src="{}" /></p>""".format(question, image_url)
+
                 problem.save()
 
                 create_answer(problem, correct_answer, True, 1)
