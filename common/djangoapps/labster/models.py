@@ -247,6 +247,7 @@ class Problem(models.Model):
     image_url = models.URLField(max_length=500, blank=True, default="")
     scales = models.ManyToManyField(Scale, blank=True)
     categories = models.ManyToManyField(Category, blank=True)
+    direction_for_scoring = models.CharField(max_length=50, blank=True, default="")
     # end of adaptive fields
 
     is_active = models.BooleanField(default=True)
@@ -300,6 +301,7 @@ class Answer(models.Model):
     order = models.IntegerField(default=0)
 
     # for adaptive
+    score = models.IntegerField(blank=True, null=True)
     difficulty = models.IntegerField(blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
