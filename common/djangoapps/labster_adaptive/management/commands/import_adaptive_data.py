@@ -87,7 +87,7 @@ class Command(BaseCommand):
                 problem.max_attempts = 1
                 problem.order = problem_order
                 problem.randomize_option_order = False
-                # problem.no_score = True
+                problem.no_score = True
                 problem.is_adaptive = True
                 problem.direction_for_scoring = direction_for_scoring
                 problem.save()
