@@ -12,83 +12,17 @@ from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
 from courseware.courses import get_course_by_id
 
-
-def get_base_url():
-    from django.conf import settings
-    return settings.LABSTER_BACKOFFICE_BASE_URL
+from labster.backoffice.views import create_user, get_backoffice_urls
 
 
-def get_labs(token, format='json'):
-    headers = {
-        'authorization': "Token {}".format(token),
-    }
-    lab_list_url = '{}/api/products/'.format(get_base_url())
-
-    resp = requests.get(lab_list_url, headers=headers)
-    assert resp.status_code == 200, resp.status_code
-
-    if format == 'string':
-        return resp.content
-    return resp.json()
-
-
-def get_payment(payment_id, token, format='json'):
-    headers = {
-        'authorization': "Token {}".format(token),
-    }
-    payment_url = '{}/api/payments/{}/'.format(get_base_url(), payment_id)
-    resp = requests.get(payment_url, headers=headers)
-    assert resp.status_code == 200, resp.status_code
-
-    if format == 'string':
-        return resp.content
-    return resp.json()
-
-
-def create_user(user, name, format='json'):
-    post_data = {
-        'email': user.email,
-        'username': user.username,
-        'first_name': name,
-        'external_id': user.id,
-    }
-    create_user_url = '{}/api/users/create/'.format(get_base_url())
-
-    resp = requests.post(create_user_url, data=post_data)
-    assert resp.status_code in range(200, 205), resp.status_code
-
-    if format == 'string':
-        return resp.content
-    return resp.json()
-
-
-def get_backoffice_urls():
-    base_url = settings.LABSTER_BACKOFFICE_JS_BASE_URL
-    duplicate_labs_url = '//{}/labster/api/course/duplicate-from-labs/'\
-        .format(settings.CMS_BASE)
-
-    urls = {
-        'buy_lab': '{}/api/payments/create/'.format(base_url),
-        'payment': '{}/api/payments/'.format(base_url),
-        'license': '{}/api/licenses/'.format(base_url),
-        'renew_license_bill': '{}/api/licenses/get_license_bill/'.format(base_url),
-        'product': '{}/api/products/'.format(base_url),
-        'country': '{}/api/countries/'.format(base_url),
-        'product_group': '{}/api/product_groups/'.format(base_url),
-        'duplicate_labs': duplicate_labs_url,
-    }
-
-    return urls
-
-
-def get_lab_id(user, course_id):
+def get_lab_id(course_id):
     course = get_course_by_id(SlashSeparatedCourseKey.from_deprecated_string(course_id))
     lab_id = None
     for section in course.get_children():
         for sub_section in section.get_children():
             if sub_section.lab_id:
                 lab_id = sub_section.lab_id
-    return lab_id
+    return lab_id, course
 
 
 @login_required
@@ -106,12 +40,13 @@ def home(request, course_id):
 
     backoffice_urls = get_backoffice_urls()
     stripe_publishable_key = settings.STRIPE_PUBLISHABLE_KEY
-    lab_id = get_lab_id(request.user, course_id)
+    lab_id, course = get_lab_id(course_id)
     context = {
         'token': token,
         'backoffice': backoffice,
         'backoffice_urls': backoffice_urls,
         'stripe_publishable_key': stripe_publishable_key,
-        'lab_id': lab_id
+        'lab_id': lab_id,
+        'course' : course,
     }
     return render_to_response(template_name, context)
