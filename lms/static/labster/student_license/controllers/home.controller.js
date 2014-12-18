@@ -14,4 +14,8 @@ angular.module('LabsterStudentLicense')
         $scope.lab_info.item_count = 1;
         console.log(data);
       });
+
+    $scope.buyLab = function () {
+
+    }
   });
