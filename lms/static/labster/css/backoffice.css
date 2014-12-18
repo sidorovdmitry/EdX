@@ -129,7 +129,8 @@
     /*text-align: center;*/
 }
 .labster-box .labster-box-content {
-    height: 245px;
+    /*height: 245px;*/
+    height: 335px;
     position: relative;
 }
 .labster-box-content ul {

@@ -15,147 +15,180 @@
     <h2>{{ group_type_name() }} Labs</h2>
     <table>
       <thead>
-      <tr>
-        <th></th>
-        <th class="align-left">Lab</th>
-        <th class="align-right">Price</th>
-        <th class="align-right">Licenses</th>
-        <th class="align-right">Total</th>
-        <th></th>
-      </tr>
+        <tr>
+          <th></th>
+          <th class="align-left">Lab</th>
+          <th class="align-right">Price</th>
+          <th class="align-right">Licenses</th>
+          <th class="align-right">Total</th>
+          <th></th>
+        </tr>
       </thead>
       <tbody>
-      <tr class="edu-level">
-        <td colspan="2"><strong>Packages Labs</strong></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr ng-repeat="lab in labs | filter: {lab_type:'packages'}">
-        <td class="lab-name">
-          <img ng-src="{{ lab.image_url }}"/>
-        </td>
-        <td class="align-left lab-description"><strong> {{ lab.name }} </strong> <br/>
-          {{ lab.description }}
-          <div ng-show="lab.products.length > 0">
-            Labs included in this package:
-            <ul class="table-cell">
-              <li ng-repeat="product in lab.products">{{ product.name }}</li>
-            </ul>
-          </div>
-        </td>
-        <td class="align-right">{{ lab.price|currency:"$" }}</td>
-        <td class="align-right lab-license">
-          <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
-                 ng-model="lab.license" ng-change="updateTotal()" numeric select-all>
-        </td>
-        <td class="align-right lab-total">{{ lab.total|currency:"$" }}</td>
-        <td class="text-decor-none">
-          <a href="" ng-click="resetCount(lab)">x</a>
-        </td>
-      </tr>
-      <tr class="edu-level">
-        <td colspan="2"><strong>Individual Labs</strong></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr ng-repeat="lab in labs | filter: {lab_type:'individual'}">
-        <td class="lab-name">
-          <img ng-src="{{ lab.image_url }}"/>
-        </td>
-        <td class="align-left lab-description"><strong> {{ lab.name }} </strong> <br/>
-          {{ lab.description }}
-        </td>
-        <td class="align-right">{{ lab.price|currency:"$" }}</td>
-        <td class="align-right lab-license">
-          <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
-                 ng-model="lab.license" ng-change="updateTotal()" numeric select-all>
-        </td>
-        <td class="align-right lab-total">{{ lab.total|currency:"$" }}</td>
-        <td class="text-decor-none">
-          <a href="" ng-click="resetCount(lab)">x</a>
-        </td>
-      </tr>
+        <!-- all labs -->
+        <tr class="edu-level">
+          <td colspan="2"><strong>All Labs</strong></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr ng-repeat="lab in labs | filter: {lab_type:'packages', is_all_products:true}">
+          <td class="lab-name">
+            <img ng-src="{{ lab.image_url }}"/>
+          </td>
+          <td class="align-left lab-description"><strong> {{ lab.name }} </strong> <br/>
+            {{ lab.description }}
+            <div ng-show="lab.products.length > 0">
+              Labs included::
+              <ul class="table-cell">
+                <li ng-repeat="product in lab.products">{{ product.name }}</li>
+              </ul>
+            </div>
+          </td>
+          <td class="align-right">{{ lab.price|currency:"$" }}</td>
+          <td class="align-right lab-license">
+            <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
+            ng-model="lab.license" ng-change="updateTotal()" numeric select-all>
+          </td>
+          <td class="align-right lab-total">{{ lab.total|currency:"$" }}</td>
+          <td class="text-decor-none">
+            <a href="" ng-click="resetCount(lab)">x</a>
+          </td>
+        </tr>
+        <!-- package lab -->
+        <tr class="edu-level">
+          <td colspan="2"><strong>Packages Labs</strong></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr ng-repeat="lab in labs | filter: {lab_type:'packages', is_all_products:false}">
+          <td class="lab-name">
+            <img ng-src="{{ lab.image_url }}"/>
+          </td>
+          <td class="align-left lab-description"><strong> {{ lab.name }} </strong> <br/>
+            {{ lab.description }}
+            <div ng-show="lab.products.length > 0">
+              Labs included in this package:
+              <ul class="table-cell">
+                <li ng-repeat="product in lab.products">{{ product.name }}</li>
+              </ul>
+            </div>
+          </td>
+          <td class="align-right">{{ lab.price|currency:"$" }}</td>
+          <td class="align-right lab-license">
+            <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
+            ng-model="lab.license" ng-change="updateTotal()" numeric select-all>
+          </td>
+          <td class="align-right lab-total">{{ lab.total|currency:"$" }}</td>
+          <td class="text-decor-none">
+            <a href="" ng-click="resetCount(lab)">x</a>
+          </td>
+        </tr>
+        <!-- individual lab -->
+        <tr class="edu-level">
+          <td colspan="2"><strong>Individual Labs</strong></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr ng-repeat="lab in labs | filter: {lab_type:'individual'}">
+          <td class="lab-name">
+            <img ng-src="{{ lab.image_url }}"/>
+          </td>
+          <td class="align-left lab-description"><strong> {{ lab.name }} </strong> <br/>
+            {{ lab.description }}
+          </td>
+          <td class="align-right">{{ lab.price|currency:"$" }}</td>
+          <td class="align-right lab-license">
+            <input ng-disabled="isProcessing" size="5" maxlength="5" type="text"
+            ng-model="lab.license" ng-change="updateTotal()" numeric select-all>
+          </td>
+          <td class="align-right lab-total">{{ lab.total|currency:"$" }}</td>
+          <td class="text-decor-none">
+            <a href="" ng-click="resetCount(lab)">x</a>
+          </td>
+        </tr>
       </tbody>
       <tfoot>
-      <tr>
-        <td></td>
-        <td>Total</td>
-        <td></td>
-        <td></td>
-        <td class="align-right">{{ subTotalPrice|currency:"$" }}</td>
-        <td></td>
-      </tr>
+        <tr>
+          <td></td>
+          <td>Total</td>
+          <td></td>
+          <td></td>
+          <td class="align-right">{{ subTotalPrice|currency:"$" }}</td>
+          <td></td>
+        </tr>
       </tfoot>
     </table>
     <a type="button"
-       ng-class="checkout_btn_class()" ng-click="subTotalPrice <= 0 || showVat()">Continue to Checkout</a>
+    ng-class="checkout_btn_class()" ng-click="subTotalPrice <= 0 || showVat()">Continue to Checkout</a>
   </div>
 </div>
 <div ng-show="!showLabForm" class="labster-lab-list">
   <h2>Checkout</h2>
   <table class="table-vat">
     <tbody>
-    <tr class="edu-level">
-      <td colspan="2"><strong>Buyer Details</strong></td>
-    </tr>
-    <tr>
-      <td>Country</td>
-      <td>
-        <select class="form-control" ng-change="checkVat()" ng-model="country"
-                ng-options="country.name for country in countries"></select>
-      </td>
-    </tr>
-    <tr>
-      <td class="vertical-align-baseline">Institution type</td>
-      <td>
-        <label>
-          <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="1"> Personal <br/>
-        </label>
-        <label>
-          <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="2"> Private School <br/>
-        </label>
-        <label>
-          <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="3"> Public School <br/>
-        </label>
-      </td>
-    </tr>
-    <tr class="edu-level">
-      <td colspan="2"><strong>Billing Information</strong></td>
-    </tr>
-    <tr ng-hide="institution_type == 1">
-      <td>Institution Name</td>
-      <td>
-        <input type="text" class="form-control" ng-model="institution_name">
-        <i style="color:red;">{{ institution_error }}</i>
-      </td>
-    </tr>
-    <tr ng-hide="institution_type == 1">
-      <td>VAT Number</td>
-      <td>
-        <input type="text" class="form-control" ng-model="institution_vat_number" >
-        <i style="color:red;">{{ vat_error }}</i>
-      </td>
-    </tr>
+      <tr class="edu-level">
+        <td colspan="2"><strong>Buyer Details</strong></td>
+      </tr>
+      <tr>
+        <td>Country</td>
+        <td>
+          <select class="form-control" ng-change="checkVat()" ng-model="country"
+          ng-options="country.name for country in countries"></select>
+        </td>
+      </tr>
+      <tr>
+        <td class="vertical-align-baseline">Institution type</td>
+        <td>
+          <label>
+            <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="1"> Personal <br/>
+          </label>
+          <label>
+            <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="2"> Private School <br/>
+          </label>
+          <label>
+            <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="3"> Public School <br/>
+          </label>
+        </td>
+      </tr>
+      <tr class="edu-level">
+        <td colspan="2"><strong>Billing Information</strong></td>
+      </tr>
+      <tr ng-hide="institution_type == 1">
+        <td>Institution Name</td>
+        <td>
+          <input type="text" class="form-control" ng-model="institution_name">
+          <i style="color:red;">{{ institution_error }}</i>
+        </td>
+      </tr>
+      <tr ng-hide="institution_type == 1">
+        <td>VAT Number</td>
+        <td>
+          <input type="text" class="form-control" ng-model="institution_vat_number" >
+          <i style="color:red;">{{ vat_error }}</i>
+        </td>
+      </tr>
     </tbody>
     <tfoot>
-    <tr>
-      <td>Subtotal</td>
-      <td class="align-right">{{ subTotalPrice|currency:"$" }}</td>
-    </tr>
-    <tr>
-      <td>Tax</td>
-      <td class="align-right">{{ tax|currency:"$" }}</td>
-    </tr>
-    <tr>
-      <td>Total</td>
-      <td class="align-right">{{ totalPrice|currency:"$" }}</td>
-    </tr>
+      <tr>
+        <td>Subtotal</td>
+        <td class="align-right">{{ subTotalPrice|currency:"$" }}</td>
+      </tr>
+      <tr>
+        <td>Tax</td>
+        <td class="align-right">{{ tax|currency:"$" }}</td>
+      </tr>
+      <tr>
+        <td>Total</td>
+        <td class="align-right">{{ totalPrice|currency:"$" }}</td>
+      </tr>
     </tfoot>
   </table>
   <a type="button"
-     class="btn-labster-checkout pull-right" ng-click="buyLabs()">{{ checkoutButton }}</a>
+  class="btn-labster-checkout pull-right" ng-click="buyLabs()">{{ checkoutButton }}</a>
 </div>
