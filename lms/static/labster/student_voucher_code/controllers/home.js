@@ -1,5 +1,8 @@
 angular.module('StudentVoucherCode')
 
   .controller('HomeController', function ($scope) {
-    $scope.batman = "batman";
+    $scope.voucher_code = "";
+    $scope.submit = function() {
+
+    }
   });
