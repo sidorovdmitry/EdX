@@ -201,7 +201,7 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                 'labster_nutshell_play_lab',
                 args=[self.course_id.to_deprecated_string(), lab_proxy.id])
 
-            if lab.id in [43, 44]:
+            if lab.id in [43]:
                 result_url = reverse('labster_adaptive_test_result',
                                     args=[self.course_id.to_deprecated_string(), lab_proxy.id])
             else:
