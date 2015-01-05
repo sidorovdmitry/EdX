@@ -13,7 +13,7 @@ https://s3-us-west-2.amazonaws.com/labster/adaptive/item_bank.csv
 """
 
 ADAPTIVE_CYTOGENETICS_LAB = 35
-ADAPTIVE_CYTOGENETICS_TEST = 43
+ADAPTIVE_CYTOGENETICS_TEST = 44
 
 
 def create_answer(problem, text, is_correct, order, score=None):
