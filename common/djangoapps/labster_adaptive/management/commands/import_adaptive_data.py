@@ -13,7 +13,7 @@ https://s3-us-west-2.amazonaws.com/labster/adaptive/item_bank.csv
 """
 
 ADAPTIVE_CYTOGENETICS_LAB = 35
-ADAPTIVE_CYTOGENETICS_TEST = 44
+# ADAPTIVE_CYTOGENETICS_TEST = 44
 
 
 def create_answer(problem, text, is_correct, order, score=None):
@@ -39,6 +39,7 @@ class Command(BaseCommand):
         path_0 = args[1]
         path_1 = args[2]
 
+        QuizBlock.objects.filter(lab__id=lab_id).update(is_active=False)
         Problem.objects.filter(quiz_block__lab__id=lab_id).update(is_active=False)
         Answer.objects.filter(problem__quiz_block__lab__id=lab_id).update(is_active=False)
         # Problem.objects.filter(quiz_block__lab__id=lab_id).delete()
@@ -73,7 +74,10 @@ class Command(BaseCommand):
                 try:
                     quiz_block = QuizBlock.objects.get(lab_id=lab_id, element_id=quiz_block_id)
                 except QuizBlock.DoesNotExist:
-                    quiz_block = QuizBlock.objects.create(lab_id=lab_id, element_id=quiz_block_id)
+                    quiz_block = QuizBlock(lab_id=lab_id, element_id=quiz_block_id)
+
+                quiz_block.is_active = True
+                quiz_block.save()
 
                 try:
                     problem = Problem.objects.get(element_id=item_number, quiz_block=quiz_block)
