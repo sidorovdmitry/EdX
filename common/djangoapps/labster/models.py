@@ -225,6 +225,7 @@ class Problem(models.Model):
     image_id = models.CharField(max_length=100, default="", blank=True)
     read_more_url = models.CharField(max_length=100, default="", blank=True)
     is_explorable = models.BooleanField(default=False)
+    quiz_group = models.CharField(max_length=100, default="", blank=True)
 
     is_adaptive = models.BooleanField(default=False)
 
