@@ -26,6 +26,21 @@
 .lab-result-wrapper ul {
   padding-left: 20px;
 }
+.lab-result-wrapper table.result-table {
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  margin: 0 0 40px 0;
+}
+.lab-result-wrapper table.result-table th {
+  background-color: #eee;
+}
+.lab-result-wrapper table.result-table th,
+.lab-result-wrapper table.result-table td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+}
+
 </style>
 
 <section class="container">
@@ -34,6 +49,32 @@
     <h2>Congratulation on finishing the Test</h2>
     <h3 class="score">Medical Genetics Test Score
       <span>{{ score }}%</span></h3>
+
+    {% if show_result %}
+    <table class="result-table">
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>Question</th>
+          <th>Answer</th>
+          <th>Correct Answer</th>
+          <th>Correct?</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for answer in user_answers %}
+        <tr class="{% if answer.is_correct %}correct{% endif %}">
+          <td>{{ forloop.counter }}</td>
+          <td>{{ answer.question }}</td>
+          <td>{{ answer.answer_string }}</td>
+          <td>{{ answer.correct_answer }}</td>
+          <td>{{ answer.is_correct|yesno:"Yes," }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+    {% endif %}
 
     {% if psy_scores %}
     <hr>

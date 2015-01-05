@@ -307,17 +307,20 @@ class AdaptiveTestResult(DetailView):
         answered = []
 
         score = 0
+        user_answers = []
         for problem in problems:
             if problem.element_id in answered:
                 continue
 
             answered.append(problem.element_id)
             answer = answers_by_quiz_id.get(problem.element_id)
-            if answer and answer.is_correct:
-                score += 1
+            if answer:
+                user_answers.append(answer)
+                if answer.is_correct:
+                    score += 1
 
         score = score * 100 / problems.count()
-        return score
+        return score, user_answers
 
     def get_psychological_scores(self, user, lab_proxy):
         attempt = UserAttempt.objects\
@@ -374,12 +377,14 @@ class AdaptiveTestResult(DetailView):
         lab_proxy = context['object']
 
         psy_scores = self.get_psychological_scores(user, lab_proxy)
-        score = self.get_cytogenetics_score(user, lab_proxy)
+        score, user_answers = self.get_cytogenetics_score(user, lab_proxy)
 
         context.update({
+            'user_answers': user_answers,
             'course': course,
             'score': score,
             'psy_scores': psy_scores,
+            'show_result': lab_proxy.lab.id == 44,
         })
         return context
 
