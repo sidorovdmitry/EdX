@@ -9,15 +9,16 @@ from labster.proxies import generate_lab_proxy_data
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        day = None
         try:
             lab_id = args[0]
         except:
             raise CommandError("Missing lab proxy's id arg")
 
         try:
-            day = int(args[1])
+            year, month, day = args[1].split('-')
         except:
+            year = 2014
+            month = 12
             day = None
 
         try:
@@ -25,13 +26,12 @@ class Command(BaseCommand):
         except LabProxy.DoesNotExist:
             raise CommandError("Missing lab proxy")
 
+        filters = {}
 
-        filters = {
-            # 'user__email__endswith': 'ku.dk',
-            'created_at__year': 2014,
-            'created_at__month': 12,
-        }
-
+        if year:
+            filters['created_at__year'] = year
+        if month:
+            filters['created_at__month'] = month
         if day:
             filters['created_at__day'] = day
 
