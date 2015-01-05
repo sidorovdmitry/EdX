@@ -22,7 +22,7 @@ class Command(BaseCommand):
         except:
             year = 2014
             month = 12
-            day = None
+            day = 0
 
         try:
             lab_proxy = LabProxy.objects.get(id=lab_id)
