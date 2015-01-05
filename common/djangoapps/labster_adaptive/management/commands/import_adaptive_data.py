@@ -127,7 +127,10 @@ class Command(BaseCommand):
             try:
                 quiz_block = QuizBlock.objects.get(lab_id=lab_id, element_id=quiz_block_id)
             except QuizBlock.DoesNotExist:
-                quiz_block = QuizBlock.objects.create(lab_id=lab_id, element_id=quiz_block_id)
+                quiz_block = QuizBlock(lab_id=lab_id, element_id=quiz_block_id)
+
+            quiz_block.is_active = True
+            quiz_block.save()
 
             for problem_order, row in enumerate(list(reader)[1:], start=1):
                 image_url = row[0].strip()
