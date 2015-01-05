@@ -43,7 +43,8 @@ class Command(BaseCommand):
         Answer.objects.filter(problem__quiz_block__lab__id=lab_id).update(is_active=False)
         # Problem.objects.filter(quiz_block__lab__id=lab_id).delete()
 
-        self.import_psychological_questions(path_0, lab_id)
+        if path_0 != 'none':
+            self.import_psychological_questions(path_0, lab_id)
         self.import_adaptive_questions(path_1, lab_id)
 
     def import_psychological_questions(self, path, lab_id):

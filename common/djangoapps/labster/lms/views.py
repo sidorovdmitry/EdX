@@ -344,6 +344,9 @@ class AdaptiveTestResult(DetailView):
         quiz_block_ids = ['QuizBlockSection1', 'QuizBlockSection2', 'QuizBlockSection3', 'QuizBlockSection4']
         quiz_blocks = QuizBlock.objects.filter(lab=lab_proxy.lab, element_id__in=quiz_block_ids)
         problems = Problem.objects.filter(is_active=True, quiz_block__in=quiz_blocks)
+        if not problems.exists():
+            return None
+
         answers = UserAnswer.objects.filter(attempt=attempt, problem__in=problems)
 
         raw_scores = defaultdict(int)

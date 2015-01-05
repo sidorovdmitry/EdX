@@ -35,6 +35,7 @@
     <h3 class="score">Medical Genetics Test Score
       <span>{{ score }}%</span></h3>
 
+    {% if psy_scores %}
     <hr>
 
     <h3>Personality Feedback</h3>
@@ -146,6 +147,7 @@
     <h4>Academic buoyancy</h4>
     <p>Academic buoyancy is the capacity to overcome setbacks, challenges, and difficulties that are part of everyday academic life.</p>
     <p class="score">Score <span>{{ psy_scores.ACADEMIC_BOUYANCY }}%</span></p>
+    {% endif %}
 
   </div>
 </section>
