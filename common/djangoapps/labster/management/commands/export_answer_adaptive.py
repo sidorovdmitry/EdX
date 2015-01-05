@@ -36,13 +36,13 @@ class Command(BaseCommand):
             filters['created_at__day'] = day
 
         quiz_blocks = ['QuizblockPreTest', 'QuizblockPostTest']
-        file_name = "adaptive_prepost_20141207.csv"
+        file_name = "adaptive_prepost_{}{}{}.csv".format(year, month, day)
         generate_lab_proxy_data(lab_proxy, quiz_blocks=quiz_blocks, filters=filters,
                                 file_name=file_name)
 
         quiz_ids = ["Cyto-{}-Post".format(i) for i in range(11, 41)]
-        file_name = "adaptive_answers_20141207.csv"
-        score_file_name = "adaptive_scores_20141207.csv"
+        file_name = "adaptive_answers_{}{}{}.csv".format(year, month, day)
+        score_file_name = "adaptive_scores_{}{}{}.csv".format(year, month, day)
         generate_lab_proxy_data(lab_proxy, quiz_ids=quiz_ids, filters=filters,
                                 file_name=file_name, process_score=True,
                                 score_file_name=score_file_name, active_only=True)
