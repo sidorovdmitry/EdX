@@ -35,24 +35,22 @@ def create_answer(problem, text, is_correct, order, score=None):
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        path_0 = args[0]
-        path_1 = args[1]
+        lab_id = args[0]
+        path_0 = args[1]
+        path_1 = args[2]
 
-        lab_id = ADAPTIVE_CYTOGENETICS_TEST
         Problem.objects.filter(quiz_block__lab__id=lab_id).update(is_active=False)
         Answer.objects.filter(problem__quiz_block__lab__id=lab_id).update(is_active=False)
         # Problem.objects.filter(quiz_block__lab__id=lab_id).delete()
 
-        self.import_psychological_questions(path_0)
-        self.import_adaptive_questions(path_1)
+        self.import_psychological_questions(path_0, lab_id)
+        self.import_adaptive_questions(path_1, lab_id)
 
-    def import_psychological_questions(self, path):
+    def import_psychological_questions(self, path, lab_id):
         # No,ID,Question,Correct Answer,Possible Answer 1,Possible Answer 2,Possible Answer 3,Possible Answer 4,Possible Answer 5,Image,Categories,Direction for scoring,Recieve feedback,Final Question,QuizBlock
 
         with open(path, 'rb') as csv_file:
             reader = csv.reader(csv_file)
-
-            lab_id = ADAPTIVE_CYTOGENETICS_TEST
 
             for row in list(reader)[1:]:
                 problem_order = int(row[0].strip())
@@ -111,7 +109,7 @@ class Command(BaseCommand):
                 create_answer(problem, answer_3, False, 4, answer_scores[3])
                 create_answer(problem, answer_4, False, 5, answer_scores[4])
 
-    def import_adaptive_questions(self, path):
+    def import_adaptive_questions(self, path, lab_id):
 
         # Image,Question,Correct answer,Wrong answer,Wrong answer,Wrong
         # answer,No,ID
@@ -119,7 +117,6 @@ class Command(BaseCommand):
         with open(path, 'rb') as csv_file:
             reader = csv.reader(csv_file)
 
-            lab_id = ADAPTIVE_CYTOGENETICS_TEST
             quiz_block_id = 'QuizblockPreTest'
 
             try:
