@@ -9,10 +9,16 @@ from labster.proxies import generate_lab_proxy_data
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        day = None
         try:
             lab_id = args[0]
         except:
             raise CommandError("Missing lab proxy's id arg")
+
+        try:
+            day = int(args[1])
+        except:
+            day = None
 
         try:
             lab_proxy = LabProxy.objects.get(id=lab_id)
@@ -25,6 +31,9 @@ class Command(BaseCommand):
             'created_at__year': 2014,
             'created_at__month': 12,
         }
+
+        if day:
+            filters['created_at__day'] = day
 
         quiz_blocks = ['QuizblockPreTest', 'QuizblockPostTest']
         file_name = "adaptive_prepost_20141207.csv"
