@@ -45,4 +45,4 @@ class Command(BaseCommand):
         score_file_name = "adaptive_scores_20141207.csv"
         generate_lab_proxy_data(lab_proxy, quiz_ids=quiz_ids, filters=filters,
                                 file_name=file_name, process_score=True,
-                                score_file_name=score_file_name)
+                                score_file_name=score_file_name, active_only=True)

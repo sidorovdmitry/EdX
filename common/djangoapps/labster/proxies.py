@@ -134,7 +134,8 @@ def generate_lab_proxy_data(
     lab_proxy, quiz_blocks=None, quiz_ids=None, filters=None,
     file_name=None,
     process_score=False,
-    score_file_name=None):
+    score_file_name=None,
+    active_only=False):
 
     ## row
     # QuizBlock, QuizID, Email, User ID, Question, Correct Answer, Answer,
@@ -199,6 +200,10 @@ def generate_lab_proxy_data(
 
             if quiz_ids and problem.element_id not in quiz_ids:
                 continue
+
+            if active_only:
+                if not problem.is_active:
+                    continue
 
             score['attempt_count'] += 1
 
