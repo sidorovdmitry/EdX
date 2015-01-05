@@ -136,7 +136,7 @@ class LabProxyAdmin(BaseAdmin):
 
 
 class LabProxyDataAdmin(admin.ModelAdmin):
-    list_display = ('id', 'data_file_link', 'lab_proxy_id')
+    list_display = ('id', 'data_file_link', 'lab_proxy_id', 'created_at')
     list_filter = ('lab_proxy',)
 
     def lab_proxy_id(self, obj):
