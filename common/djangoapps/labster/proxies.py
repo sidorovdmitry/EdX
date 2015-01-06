@@ -223,7 +223,8 @@ def generate_lab_proxy_data(
                 user_answer.completion_time,
                 user_answer.attempt_count,
                 quiz_block.element_id,
-                "{}-{}".format(user.email, attempt_groups[user.id]),
+                # "{}-{}".format(user.email, attempt_groups[user.id]),
+                "{}-{}".format(user.email, user_attempt.id),
                 user_answer.created_at.strftime('%Y-%m-%d'),
             ]
 

@@ -9,16 +9,20 @@ from labster.proxies import generate_lab_proxy_data
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        self.export_adaptive_tests(*args, **options)
+        data_type = args[0]
+        if data_type =='test':
+            self.export_adaptive_tests(*args, **options)
+        elif data_type == 'lab':
+            self.export_adaptive_labs(*args, **options)
 
     def export_adaptive_tests(self, *args, **options):
         try:
-            lab_id = args[0]
+            lab_id = args[1]
         except:
             raise CommandError("Missing lab proxy's id arg")
 
         try:
-            year, month, day = args[1].split('-')
+            year, month, day = args[2].split('-')
         except:
             year = 2014
             month = 12
@@ -55,14 +59,14 @@ class Command(BaseCommand):
                                 file_name=file_name, process_score=True,
                                 score_file_name=score_file_name, active_only=True)
 
-    def export_adaptive_labs(self):
+    def export_adaptive_labs(self, *args, **options):
         try:
-            lab_id = args[0]
+            lab_id = args[1]
         except:
             raise CommandError("Missing lab proxy's id arg")
 
         try:
-            year, month, day = args[1].split('-')
+            year, month, day = args[2].split('-')
         except:
             year = 2014
             month = 12
