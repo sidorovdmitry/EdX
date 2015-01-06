@@ -13,6 +13,9 @@ from labster.api.views import UnityPlayLab, CreateLog, CreateUnityLog
 urlpatterns = patterns('',  # nopep8
 
     url('^$', APIRoot.as_view(), name='root'),
+
+    url('^collect-response/(?P<action>\w+)/$', 'labster.api.views.collect_response'),
+
     url('auth/$', UserAuth.as_view(), name='auth'),
     url('^users/(?P<user_id>\d+)/$', UserView.as_view(), name='users'),
 

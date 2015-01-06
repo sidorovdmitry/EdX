@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.files.uploadhandler import StopFutureHandlers
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.http import QueryDict
 from django.http.multipartparser import parse_header, ChunkIter
 from django.shortcuts import get_object_or_404
@@ -969,3 +969,7 @@ class CreateUnityLog(ParserMixin, AuthMixin, APIView):
         UnityLog.new_unity_log(user, lab_proxy, message, url, request_method)
         response_data = {'status': 'ok'}
         return Response(response_data, status=status.HTTP_201_CREATED)
+
+
+def collect_response(request, action):
+    return HttpResponse('ok')
