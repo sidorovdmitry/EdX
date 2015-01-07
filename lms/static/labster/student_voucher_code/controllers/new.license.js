@@ -1,12 +1,17 @@
 angular.module('StudentVoucherCode')
 
   .controller('NewLicenseController', function ($scope, $routeParams, $http) {
+    $scope.user = window.requestUser;
     var user_id = window.requestUser.backoffice.user.id;
     var url = window.backofficeUrls.payment + 'voucher_code/';
     $scope.voucher_code = $routeParams.voucher_code;
-    $scope.agree_tos = false;
+//    $scope.agree_tos = false;
     $scope.payment = [];
     $scope.limit_reached = false;
+
+    $scope.payment_description = function (voucher_code, total) {
+      return "Voucher " + voucher_code + " with total: ($" + total + ")";
+    };
 
     var data = {
       voucher_code: $routeParams.voucher_code,

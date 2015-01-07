@@ -7,43 +7,50 @@
     <p>Date: {{ payment.created_date }}</p>
     <table>
       <thead>
-        <tr>
-          <th>Lab</th>
-          <th class="align-right">Licenses</th>
-          <th class="align-right">Subscriptions</th>
-          <th class="align-right">Total Price</th>
-        </tr>
+      <tr>
+        <th>Lab</th>
+        <th class="align-right">Licenses</th>
+        <th class="align-right">Subscriptions</th>
+        <th class="align-right">Total Price</th>
+      </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="payment_product in voucher.products">
-          <td class="lab-description">{{ payment_product.name }}</td>
-          <td class="align-right">1</td>
-          <td class="align-right"></td>
-          <td class="align-right">{{ payment_product.total|currency:"USD " }}</td>
-        </tr>
+      <tr ng-repeat="payment_product in voucher.products">
+        <td class="lab-description">{{ payment_product.name }}</td>
+        <td class="align-right">1</td>
+        <td class="align-right"></td>
+        <td class="align-right">{{ payment_product.total|currency:"USD " }}</td>
+      </tr>
       </tbody>
       <tfoot>
-        <tr>
-          <td>Subtotal</td>
-          <td></td>
-          <td></td>
-          <td class="align-right">{{ voucher.price|currency:"USD " }}</td>
-        </tr>
-        <tr>
-          <td>VAT</td>
-          <td></td>
-          <td></td>
-          <td class="align-right">
-            {{ payment.vat|currency:"USD " }} <br/>
-          </td>
-        </tr>
-        <tr>
-          <td>Total</td>
-          <td></td>
-          <td></td>
-          <td class="align-right">{{ voucher.price|currency:"USD " }}</td>
-        </tr>
+      <tr>
+        <td>Subtotal</td>
+        <td></td>
+        <td></td>
+        <td class="align-right">{{ voucher.price|currency:"USD " }}</td>
+      </tr>
+      <tr>
+        <td>VAT</td>
+        <td></td>
+        <td></td>
+        <td class="align-right">
+          {{ payment.vat|currency:"USD " }} <br/>
+        </td>
+      </tr>
+      <tr>
+        <td>Total</td>
+        <td></td>
+        <td></td>
+        <td class="align-right">{{ voucher.price|currency:"USD " }}</td>
+      </tr>
       </tfoot>
     </table>
+    <p>
+      By checking the "Terms and Conditions" box, you agree that you have read, understand, and accept the terms and conditions described in this <a href="/tos">page</a>.
+    </p>
+    <p><input type="checkbox" ng-model="agree_tos" /> I have read and agree to the Terms & Conditions.</div></p>
+    <div class="pull-right">
+      <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ voucher.price }}" description="{{ payment_description(voucher.id, voucher.price) }}"></stripe>
+    </div>
   </div>
 </div>
