@@ -70,6 +70,7 @@ def get_backoffice_urls():
         'renew_license_bill': '{}/api/licenses/get_license_bill/'.format(base_url),
         'product': '{}/api/products/'.format(base_url),
         'country': '{}/api/countries/'.format(base_url),
+        'voucher': '{}/api/vouchers/'.format(base_url),
         'product_group': '{}/api/product_groups/'.format(base_url),
         'duplicate_labs': duplicate_labs_url,
     }

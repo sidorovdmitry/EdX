@@ -10,6 +10,10 @@ angular.module('StudentVoucherCode', ['ngRoute'])
         controller: 'NewLicenseController',
         templateUrl: window.baseUrl + 'labster/student_voucher_code/views/new_license.html'
       })
+      .when('/voucher/:voucher_code', {
+        controller: 'VoucherController',
+        templateUrl: window.baseUrl + 'labster/student_voucher_code/views/voucher_detail.html'
+      })
       .otherwise({
         redirectTo: '/'
       });
