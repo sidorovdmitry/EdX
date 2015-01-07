@@ -11,10 +11,7 @@ angular.module('StudentVoucherCode')
     var data = {
       voucher_code: $routeParams.voucher_code,
       user: user_id,
-      total_before_tax: 0,
-      total: 0,
-      country: window.requestUser.backoffice.user.country,
-      list_product : []
+      country: window.requestUser.backoffice.user.country
     };
     $http.post(url, data, {
       headers: {

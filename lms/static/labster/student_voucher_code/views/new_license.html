@@ -9,18 +9,16 @@
       <thead>
         <tr>
           <th>Lab</th>
-          <th class="align-right">Price</th>
           <th class="align-right">Licenses</th>
           <th class="align-right">Subscriptions</th>
           <th class="align-right">Total Price</th>
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="payment_product in payment.payment_products">
-          <td class="lab-description">{{ payment_product.product_name }}</td>
-          <td class="align-right">{{ payment_product.price|currency:"USD " }}</td>
-          <td class="align-right">{{ payment_product.item_count }}</td>
-          <td class="align-right">{{ payment_product.month_subscription }} months</td>
+        <tr ng-repeat="payment_product in voucher.products">
+          <td class="lab-description">{{ payment_product.name }}</td>
+          <td class="align-right">1</td>
+          <td class="align-right"></td>
           <td class="align-right">{{ payment_product.total|currency:"USD " }}</td>
         </tr>
       </tbody>
@@ -29,25 +27,21 @@
           <td>Subtotal</td>
           <td></td>
           <td></td>
-          <td></td>
-          <td class="align-right">{{ payment.total_before_tax|currency:"USD " }}</td>
+          <td class="align-right">{{ voucher.price|currency:"USD " }}</td>
         </tr>
         <tr>
           <td>VAT</td>
           <td></td>
           <td></td>
-          <td></td>
           <td class="align-right">
-            {{ payment.total_tax|currency:"USD " }} <br/>
-            <i ng-show="payment.is_reverse_charges">Reverse charges is applied on this payment</i>
+            {{ payment.vat|currency:"USD " }} <br/>
           </td>
         </tr>
         <tr>
           <td>Total</td>
           <td></td>
           <td></td>
-          <td></td>
-          <td class="align-right">{{ payment.total|currency:"USD " }}</td>
+          <td class="align-right">{{ voucher.price|currency:"USD " }}</td>
         </tr>
       </tfoot>
     </table>
