@@ -14,6 +14,10 @@ angular.module('StudentVoucherCode', ['ngRoute'])
         controller: 'VoucherController',
         templateUrl: window.baseUrl + 'labster/student_voucher_code/views/voucher_detail.html'
       })
+      .when('/invoice/:paymentId/thank-you', {
+        controller: 'PaymentPaidController',
+        templateUrl: window.baseUrl + 'labster/student_voucher_code/views/payment_paid.html'
+      })
       .otherwise({
         redirectTo: '/'
       });

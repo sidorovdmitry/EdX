@@ -3,7 +3,7 @@
 </div>
 <div ng-show="payment != null">
   <div class="labster-lab-list">
-    <p>Date: {{ payment.created_date }}</p>
+    <p>Date: {{ payment.created_at | date }}</p>
     <table>
       <thead>
       <tr>
