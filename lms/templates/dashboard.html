@@ -225,8 +225,13 @@
 
   <section class="profile-sidebar">
     <a href="${marketing_link('COURSES')}" class="sidebar-button">Find More Courses</a>
+
+    % if labster_user.user_type == 2:
     <a href="${reverse('labster_backoffice')}" class="sidebar-button">${_("Buy Student Licenses")}</a>
+    % elif labster_user.user_type == 1:
     <a href="${reverse('labster_student_voucher_code')}" class="sidebar-button">${_("Use Voucher")}</a>
+    % endif
+    
     <header class="profile">
       <h1 class="user-name">${ user.username }</h1>
     </header>
