@@ -1,10 +1,11 @@
 <div ng-show="voucher == null">
-  <p>This is not the voucher code you're looking for.</p>
-  <p>Move along.</p>
+  <p>We could not find the voucher that you entered. Please contact your teacher for the valid voucher</p>
 </div>
 <div ng-show="voucher != null">
+  <p>
+    Your voucher has been approved. Here are the overview of the labs that will be included as well as the total price .
+  </p>
   <div class="labster-lab-list">
-    <p>Date: {{ payment.created_date }}</p>
     <table>
       <thead>
       <tr>
@@ -38,7 +39,7 @@
     </p>
     <p><input type="checkbox" ng-model="agree_tos" ng-change="updateBtnPayment()" /> I have read and agree to the Terms & Conditions.</div></p>
     <div class="pull-right">
-      <a ng-class="btnPayment" ng-click="goToPayment()">Continue to Payment</a>
+      <a ng-class="btnPayment" ng-click="goToPayment()">Continue</a>
     </div>
   </div>
 </div>
