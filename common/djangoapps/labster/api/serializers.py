@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from labster.models import UserSave, ErrorInfo, DeviceInfo, UserAttempt
-from student.models import UserProfile
+from labster.models import UserSave, ErrorInfo, DeviceInfo, UserAttempt, LabsterUser
 
 
 class LabSerializer(serializers.Serializer):
@@ -93,7 +92,7 @@ class LabsterUserSerializer(serializers.ModelSerializer):
     nationality_name = serializers.Field('nationality.name')
 
     class Meta:
-        model = UserProfile
+        model = LabsterUser
         fields = (
             'user_id', 'date_of_birth', 'nationality', 'language', 'unique_id',
             'is_labster_verified',

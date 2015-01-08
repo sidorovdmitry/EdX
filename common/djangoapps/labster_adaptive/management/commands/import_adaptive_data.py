@@ -13,7 +13,7 @@ https://s3-us-west-2.amazonaws.com/labster/adaptive/item_bank.csv
 """
 
 ADAPTIVE_CYTOGENETICS_LAB = 35
-ADAPTIVE_CYTOGENETICS_TEST = 43
+# ADAPTIVE_CYTOGENETICS_TEST = 44
 
 
 def create_answer(problem, text, is_correct, order, score=None):
@@ -35,24 +35,24 @@ def create_answer(problem, text, is_correct, order, score=None):
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        path_0 = args[0]
-        path_1 = args[1]
+        lab_id = args[0]
+        path_0 = args[1]
+        path_1 = args[2]
 
-        lab_id = ADAPTIVE_CYTOGENETICS_TEST
+        QuizBlock.objects.filter(lab__id=lab_id).update(is_active=False)
         Problem.objects.filter(quiz_block__lab__id=lab_id).update(is_active=False)
         Answer.objects.filter(problem__quiz_block__lab__id=lab_id).update(is_active=False)
         # Problem.objects.filter(quiz_block__lab__id=lab_id).delete()
 
-        self.import_psychological_questions(path_0)
-        self.import_adaptive_questions(path_1)
+        if path_0 != 'none':
+            self.import_psychological_questions(path_0, lab_id)
+        self.import_adaptive_questions(path_1, lab_id)
 
-    def import_psychological_questions(self, path):
+    def import_psychological_questions(self, path, lab_id):
         # No,ID,Question,Correct Answer,Possible Answer 1,Possible Answer 2,Possible Answer 3,Possible Answer 4,Possible Answer 5,Image,Categories,Direction for scoring,Recieve feedback,Final Question,QuizBlock
 
         with open(path, 'rb') as csv_file:
             reader = csv.reader(csv_file)
-
-            lab_id = ADAPTIVE_CYTOGENETICS_TEST
 
             for row in list(reader)[1:]:
                 problem_order = int(row[0].strip())
@@ -74,7 +74,10 @@ class Command(BaseCommand):
                 try:
                     quiz_block = QuizBlock.objects.get(lab_id=lab_id, element_id=quiz_block_id)
                 except QuizBlock.DoesNotExist:
-                    quiz_block = QuizBlock.objects.create(lab_id=lab_id, element_id=quiz_block_id)
+                    quiz_block = QuizBlock(lab_id=lab_id, element_id=quiz_block_id)
+
+                quiz_block.is_active = True
+                quiz_block.save()
 
                 try:
                     problem = Problem.objects.get(element_id=item_number, quiz_block=quiz_block)
@@ -87,7 +90,7 @@ class Command(BaseCommand):
                 problem.max_attempts = 1
                 problem.order = problem_order
                 problem.randomize_option_order = False
-                # problem.no_score = True
+                problem.no_score = True
                 problem.is_adaptive = True
                 problem.direction_for_scoring = direction_for_scoring
                 problem.save()
@@ -111,7 +114,7 @@ class Command(BaseCommand):
                 create_answer(problem, answer_3, False, 4, answer_scores[3])
                 create_answer(problem, answer_4, False, 5, answer_scores[4])
 
-    def import_adaptive_questions(self, path):
+    def import_adaptive_questions(self, path, lab_id):
 
         # Image,Question,Correct answer,Wrong answer,Wrong answer,Wrong
         # answer,No,ID
@@ -119,13 +122,15 @@ class Command(BaseCommand):
         with open(path, 'rb') as csv_file:
             reader = csv.reader(csv_file)
 
-            lab_id = ADAPTIVE_CYTOGENETICS_TEST
             quiz_block_id = 'QuizblockPreTest'
 
             try:
                 quiz_block = QuizBlock.objects.get(lab_id=lab_id, element_id=quiz_block_id)
             except QuizBlock.DoesNotExist:
-                quiz_block = QuizBlock.objects.create(lab_id=lab_id, element_id=quiz_block_id)
+                quiz_block = QuizBlock(lab_id=lab_id, element_id=quiz_block_id)
+
+            quiz_block.is_active = True
+            quiz_block.save()
 
             for problem_order, row in enumerate(list(reader)[1:], start=1):
                 image_url = row[0].strip()

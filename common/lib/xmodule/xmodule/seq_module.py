@@ -171,7 +171,7 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
 
         # fetch labs
         try:
-            from labster.models import Lab
+            from labster.models import Lab, LabsterUser
             from student.models import UserProfile
 
             lab = Lab.objects.get(id=self.lab_id)
@@ -197,11 +197,12 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                     pass
 
             user_profile = UserProfile.objects.get(user_id=user_id)
+            labster_user = LabsterUser.objects.get(user_id=user_id)
             nutshell_play_lab_url = reverse(
                 'labster_nutshell_play_lab',
                 args=[self.course_id.to_deprecated_string(), lab_proxy.id])
 
-            if lab.id == 43:
+            if lab.id in [43, 44]:
                 result_url = reverse('labster_adaptive_test_result',
                                     args=[self.course_id.to_deprecated_string(), lab_proxy.id])
             else:
@@ -214,6 +215,7 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                 'user_token': token,
                 'user_save': user_save,
                 'user_profile': user_profile,
+                'labster_user': labster_user,
                 'unity_log_url': reverse('labster-api:create-unity-log', args=[lab_proxy.id]),
                 'user_attempt': user_attempt,
                 'result_url': result_url,

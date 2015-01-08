@@ -134,7 +134,8 @@ def generate_lab_proxy_data(
     lab_proxy, quiz_blocks=None, quiz_ids=None, filters=None,
     file_name=None,
     process_score=False,
-    score_file_name=None):
+    score_file_name=None,
+    active_only=False):
 
     ## row
     # QuizBlock, QuizID, Email, User ID, Question, Correct Answer, Answer,
@@ -175,7 +176,7 @@ def generate_lab_proxy_data(
         attempt_groups[user_attempt.user_id] += 1
 
         user = user_attempt.user
-        unique_id = user.profile.unique_id
+        unique_id = user.labster_user.unique_id
         if not unique_id:
             unique_id = str(user.id)
 
@@ -200,6 +201,10 @@ def generate_lab_proxy_data(
             if quiz_ids and problem.element_id not in quiz_ids:
                 continue
 
+            if active_only:
+                if not problem.is_active:
+                    continue
+
             score['attempt_count'] += 1
 
             is_correct = "yes" if user_answer.is_correct else ""
@@ -218,7 +223,8 @@ def generate_lab_proxy_data(
                 user_answer.completion_time,
                 user_answer.attempt_count,
                 quiz_block.element_id,
-                "{}-{}".format(user.email, attempt_groups[user.id]),
+                # "{}-{}".format(user.email, attempt_groups[user.id]),
+                "{}-{}".format(user.email, user_attempt.id),
                 user_answer.created_at.strftime('%Y-%m-%d'),
             ]
 

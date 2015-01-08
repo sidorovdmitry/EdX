@@ -93,6 +93,7 @@ from third_party_auth import pipeline, provider
 from xmodule.error_module import ErrorDescriptor
 
 from labster.user_utils import generate_unique_username
+from labster.models import LabsterUser
 
 
 log = logging.getLogger("edx.student")
@@ -1116,9 +1117,12 @@ def _do_create_account(post_vars, extended_profile=None):
     profile.city = post_vars.get('city')
     profile.country = post_vars.get('country')
     profile.goals = post_vars.get('goals')
-    profile.user_type = post_vars.get('user_type')
-    profile.user_school_level = post_vars.get('user_school_level')
-    profile.phone_number = post_vars.get('phone_number')
+
+    labster_user = LabsterUser(user=user)
+    labster_user.user_type = post_vars.get('user_type')
+    labster_user.user_school_level = post_vars.get('user_school_level')
+    labster_user.phone_number = post_vars.get('phone_number')
+    labster_user.save()
 
     # add any extended profile information in the denormalized 'meta' field in the profile
     if extended_profile:

@@ -82,6 +82,7 @@ def get_backoffice_urls():
 def home(request):
     template_name = 'labster/backoffice.html'
     user_profile = UserProfile.objects.get(user=request.user)
+    labster_user = LabsterUser.objects.get(user=request.user)
     bo_user = create_user(request.user, user_profile.name, format='json')
 
     token = bo_user['token']
@@ -89,7 +90,7 @@ def home(request):
     backoffice = {
         'user_id': bo_user['id'],
         'user_country': user_profile.country,
-        'user_edu_level': user_profile.user_school_level
+        'user_edu_level': labster_user.user_school_level
     }
 
     backoffice_urls = get_backoffice_urls()
