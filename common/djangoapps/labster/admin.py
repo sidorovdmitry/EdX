@@ -11,7 +11,7 @@ from labster.models import (
     LanguageLab, Lab, ErrorInfo, DeviceInfo, UserSave, Token, LabProxy,
     UnityLog, UserAnswer, LabsterUserLicense, ProblemProxy,
     UnityPlatformLog, QuizBlock, Problem, Answer, AdaptiveProblem,
-    LabProxyData, UserAttempt)
+    LabProxyData, UserAttempt, LabsterUser)
 from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_block_file_url
 
 
@@ -242,6 +242,11 @@ class UserAttemptAdmin(admin.ModelAdmin):
         return obj.lab_proxy.id
 
 
+class LabsterUserAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(LabsterUser, LabsterUserAdmin)
 admin.site.register(LanguageLab)
 # admin.site.register(ErrorInfo, ErrorInfoAdmin)
 # admin.site.register(DeviceInfo, DeviceInfoAdmin)

@@ -14,6 +14,9 @@ from django.db.models import Count, Q, Sum
 from django.db.models.signals import pre_save, post_save
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.utils.translation import ugettext_noop
+
+from django_countries import CountryField
 
 from xmodule_django.models import CourseKeyField, LocationKeyField
 
@@ -23,6 +26,49 @@ from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_bloc
 PLATFORM_NAME = 'platform'
 URL_PREFIX = getattr(settings, 'LABSTER_UNITY_URL_PREFIX', '')
 ENGINE_FILE = 'labster.unity3d'
+
+
+class LabsterUser(models.Model):
+    user = models.OneToOneField(User, related_name='labster_user')
+
+    USER_TYPE_STUDENT = 1
+    USER_TYPE_TEACHER = 2
+    USER_TYPE_OTHER = 3
+    USER_TYPE_CHOICES = (
+        (USER_TYPE_STUDENT, ugettext_noop('Student')),
+        (USER_TYPE_TEACHER, ugettext_noop('Teacher')),
+        (USER_TYPE_OTHER, ugettext_noop('Other')),
+    )
+    user_type = models.IntegerField(choices=USER_TYPE_CHOICES, blank=True, null=True)
+    phone_number = models.CharField(max_length=100, blank=True, default="")
+
+    USER_HIGH_SCHOOL = 1
+    USER_UNIVERSITY = 2
+    USER_SCHOOL_LEVEL_CHOICES = (
+        (USER_HIGH_SCHOOL, ugettext_noop('High School')),
+        (USER_UNIVERSITY, ugettext_noop('University / College')),
+    )
+    user_school_level = models.IntegerField(choices=USER_SCHOOL_LEVEL_CHOICES, blank=True, null=True)
+
+    # labster verified account
+    language = models.CharField(blank=True, max_length=255, db_index=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    nationality = CountryField(blank=True, null=True)
+    unique_id = models.CharField(max_length=100, blank=True, db_index=True)
+
+    def __unicode__(self):
+        return unicode(self.user)
+
+    @property
+    def token_key(self):
+        from rest_framework.authtoken.models import Token
+        token, _ = Token.objects.get_or_create(user=self.user)
+        return token.key
+
+    @property
+    def is_labster_verified(self):
+        reqs = [self.language, self.date_of_birth, self.nationality, self.unique_id]
+        return all(reqs)
 
 
 class NutshellUser(models.Model):
