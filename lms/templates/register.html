@@ -14,6 +14,7 @@
 <%! from datetime import date %>
 <%! from third_party_auth import pipeline, provider %>
 <%! import calendar %>
+<%! from labster.models import LabsterUser %>
 
 <%block name="pagetitle">${_("Register for {platform_name}").format(platform_name=platform_name)}</%block>
 <%block name="headextra">
@@ -270,7 +271,7 @@
               <label for="user_type">${_("Occupation")}</label>
               <select id="user_type" name="user_type">
                 <option value="">--</option>
-                %for key, value in UserProfile.USER_TYPE_CHOICES:
+                %for key, value in LabsterUser.USER_TYPE_CHOICES:
                 <option value="${key}">${value}</option>
                 %endfor
               </select>
@@ -283,7 +284,7 @@
               <label for="user_school_level">${_("Education")}</label>
               <select id="user_school_level" name="user_school_level">
                 <option value="">--</option>
-                %for key, value in UserProfile.USER_SCHOOL_LEVEL_CHOICES:
+                %for key, value in LabsterUser.USER_SCHOOL_LEVEL_CHOICES:
                 <option value="${key}">${value}</option>
                 %endfor
               </select>

@@ -15,8 +15,6 @@ from django.http.multipartparser import parse_header, ChunkIter
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
-from student.models import UserProfile
-
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.models import Token
@@ -36,7 +34,7 @@ from labster.api.serializers import (
 from labster.authentication import GetTokenAuthentication
 from labster.models import (
     UserSave, ErrorInfo, DeviceInfo, LabProxy, UserAttempt, UnityLog,
-    UserAnswer)
+    UserAnswer, LabsterUser)
 from labster.parsers.problem_parsers import MultipleChoiceProblemParser
 from labster.renderers import LabsterXMLRenderer, LabsterDirectXMLRenderer
 from labster.masters import get_problem
@@ -307,11 +305,11 @@ class UserView(AuthMixin, RetrieveUpdateAPIView):
     def get_object(self):
         try:
             return self.get_queryset().get(user__id=self.kwargs.get('user_id'))
-        except UserProfile.DoesNotExist:
+        except LabsterUser.DoesNotExist:
             raise Http404
 
     def get_queryset(self):
-        return UserProfile.objects.all()
+        return LabsterUser.objects.all()
 
 
 class CustomFileUploadParser(BaseParser):

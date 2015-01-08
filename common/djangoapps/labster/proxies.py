@@ -176,7 +176,7 @@ def generate_lab_proxy_data(
         attempt_groups[user_attempt.user_id] += 1
 
         user = user_attempt.user
-        unique_id = user.profile.unique_id
+        unique_id = user.labster_user.unique_id
         if not unique_id:
             unique_id = str(user.id)
 
