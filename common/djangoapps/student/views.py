@@ -434,7 +434,6 @@ def complete_course_mode_info(course_id, enrollment):
 @ensure_csrf_cookie
 def dashboard(request):
     user = request.user
-    labster_user = LabsterUser(user=user)
 
     # for microsites, we want to filter and only show enrollments for courses within
     # the microsites 'ORG'
@@ -553,7 +552,6 @@ def dashboard(request):
         'current_language': current_language,
         'current_language_code': cur_lang_code,
         'user': user,
-        'labster_user': labster_user,
         'duplicate_provider': None,
         'logout_url': reverse(logout_user),
         'platform_name': settings.PLATFORM_NAME,

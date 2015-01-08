@@ -70,6 +70,14 @@ class LabsterUser(models.Model):
         reqs = [self.language, self.date_of_birth, self.nationality, self.unique_id]
         return all(reqs)
 
+    @property
+    def is_teacher(self):
+        return self.user_type == self.USER_TYPE_TEACHER
+
+    @property
+    def is_student(self):
+        return self.user_type == self.USER_TYPE_STUDENT
+
 
 class NutshellUser(models.Model):
     user = models.OneToOneField(User)
