@@ -14,11 +14,11 @@
       </tr>
       </thead>
       <tbody>
-      <tr ng-repeat="payment_product in voucher.products">
-        <td class="lab-description">{{ payment_product.name }}</td>
+      <tr ng-repeat="product in voucher.products">
+        <td class="lab-description">{{ product.name }}</td>
         <td class="align-right">1</td>
-        <td class="align-right"></td>
-        <td class="align-right">{{ payment_product.total|currency:"USD " }}</td>
+        <td class="align-right">{{ voucher.week_subscription }}</td>
+        <td class="align-right">{{ product.total|currency:"USD " }}</td>
       </tr>
       </tbody>
       <tfoot>
