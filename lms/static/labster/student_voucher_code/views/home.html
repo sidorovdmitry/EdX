@@ -2,11 +2,12 @@
   <div class="margin-bottom-20">
     <p>This is a Voucher system. If you have the voucher code, the system will generate the list of the labs based on the voucher.
       Contact your teacher for more information.</p>
+    <p></p>
   </div>
 
-  <p>Enter the voucher code here</p>
+  <p>The voucher code is consist of 10 characters. It can be lower case, upper case, and numbers.</p>
   <form ng-submit="submit()">
-    <input type="text" ng-model="voucher_code" required />
+    <input type="text" ng-model="voucher_code" required placeholder="Enter the voucher code" />
     <input type="submit" value="Submit">
   </form>
 </div>
