@@ -8,6 +8,8 @@ from edxmako.shortcuts import render_to_response
 
 from student.models import UserProfile
 
+from labster.models import LabsterUser
+
 
 def get_base_url():
     from django.conf import settings
