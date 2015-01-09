@@ -1,6 +1,8 @@
 <div ng-show="voucher == null">
-  <p>We could not find the voucher that you entered. Please contact your teacher for the valid voucher</p>
+  <p>Please ensure that you have copy-pasted the correct voucher (i.e. without quotes or spaces). The voucher code should be 10 characters.</p>
+  <p>If the code still does not work, please contact your teacher for a valid voucher.</p>
 </div>
+
 <div ng-show="voucher != null">
   <p>
     Your voucher has been approved. Here are the overview of the labs that will be included as well as the total price .
@@ -35,7 +37,7 @@
       </tfoot>
     </table>
     <p>
-      By checking the "Terms and Conditions" box, you agree that you have read, understand, and accept the terms and conditions described in this <a href="/tos">page</a>.
+      Please read the terms and conditions <a href="/tos">(Link)</a>, and tick off the box if you agree, and press “Continue” in order to proceed to the payment.
     </p>
     <p><input type="checkbox" ng-model="agree_tos" ng-change="updateBtnPayment()" /> I have read and agree to the Terms & Conditions.</div></p>
     <div class="pull-right">

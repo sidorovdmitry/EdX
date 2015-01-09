@@ -1,6 +1,7 @@
 <div ng-show="payment == null">
-  <p>We could not find the voucher that you entered. Please contact your teacher for the valid voucher</p>
+  <p>We could not find the payment that you are looking for. Please contact your teacher for more assistance.</p>
 </div>
+
 <div ng-show="payment != null">
   <div class="labster-lab-list">
     <p>Date: {{ payment.created_at | date }}</p>
