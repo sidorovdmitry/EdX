@@ -1,0 +1,52 @@
+<div ng-show="payment == null">
+  <p>We could not find the payment that you are looking for. Please contact your teacher for more assistance.</p>
+</div>
+
+<div ng-show="payment != null">
+  <div class="labster-lab-list">
+    <p>Date: {{ payment.created_at | date }}</p>
+    <table>
+      <thead>
+      <tr>
+        <th>Lab</th>
+        <th class="align-right">Licenses</th>
+        <th class="align-right">Subscriptions</th>
+        <th class="align-right">Total Price</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="product in voucher.products">
+        <td class="lab-description">{{ product.name }}</td>
+        <td class="align-right">1</td>
+        <td class="align-right">{{ voucher.week_subscription }}</td>
+        <td class="align-right">{{ product.total|currency:"USD " }}</td>
+      </tr>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td>Subtotal</td>
+        <td></td>
+        <td></td>
+        <td class="align-right">{{ voucher.price|currency:"USD " }}</td>
+      </tr>
+      <tr>
+        <td>VAT</td>
+        <td></td>
+        <td></td>
+        <td class="align-right">
+          {{ payment.vat|currency:"USD " }} <br/>
+        </td>
+      </tr>
+      <tr>
+        <td>Total</td>
+        <td></td>
+        <td></td>
+        <td class="align-right">{{ voucher.price|currency:"USD " }}</td>
+      </tr>
+      </tfoot>
+    </table>
+    <div class="pull-right">
+      <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ voucher.price }}" description="{{ payment_description(voucher.id, voucher.price) }}"></stripe>
+    </div>
+  </div>
+</div>

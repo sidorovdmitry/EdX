@@ -1,0 +1,47 @@
+<div ng-show="voucher == null">
+  <p>Please ensure that you have copy-pasted the correct voucher (i.e. without quotes or spaces). The voucher code should be 10 characters.</p>
+  <p>If the code still does not work, please contact your teacher for a valid voucher.</p>
+</div>
+
+<div ng-show="voucher != null">
+  <p>
+    Your voucher has been approved. Here are the overview of the labs that will be included as well as the total price .
+  </p>
+  <div class="labster-lab-list">
+    <table>
+      <thead>
+      <tr>
+        <th>Lab</th>
+        <th class="align-right">Total Price</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="payment_product in voucher.products">
+        <td class="lab-description">{{ payment_product.name }}</td>
+        <td class="align-right">{{ payment_product.total|currency:"USD " }}</td>
+      </tr>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td>Subtotal</td>
+        <td class="align-right">{{ voucher.price|currency:"USD " }}</td>
+      </tr>
+      <tr>
+        <td>VAT</td>
+        <td class="align-right">0<br/></td>
+      </tr>
+      <tr>
+        <td>Total</td>
+        <td class="align-right">{{ voucher.price|currency:"USD " }}</td>
+      </tr>
+      </tfoot>
+    </table>
+    <p>
+      Please read the terms and conditions <a href="/tos">(Link)</a>, and tick off the box if you agree, and press “Continue” in order to proceed to the payment.
+    </p>
+    <p><input type="checkbox" ng-model="agree_tos" ng-change="updateBtnPayment()" /> I have read and agree to the Terms & Conditions.</div></p>
+    <div class="pull-right">
+      <a ng-class="btnPayment" ng-click="goToPayment()">Continue</a>
+    </div>
+  </div>
+</div>
