@@ -789,6 +789,7 @@ class LabsterUserLicense(models.Model):
     """
     course_id = CourseKeyField(max_length=255, db_index=True)
     email = models.EmailField(max_length=255)
+    voucher_code = models.CharField(max_length=50, blank=True, default="")
 
     created_at = models.DateTimeField(default=timezone.now)
     expired_at = models.DateTimeField(blank=True, null=True)
