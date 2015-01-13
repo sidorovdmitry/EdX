@@ -1,4 +1,5 @@
 import six
+import json
 from collections import defaultdict
 
 try:
@@ -14,15 +15,16 @@ from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response
 from django.utils import timezone
 from django.utils.xmlutils import SimplerXMLGenerator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, DetailView
 
 from rest_framework.authtoken.models import Token
 
 from courseware.courses import get_course_by_id
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
+from student.models import CourseEnrollment
 
 from labster.models import LabProxy, UserSave, UserAttempt, Problem, UserAnswer, QuizBlock
+from labster.models import LabsterCourseLicense, LabsterUserLicense
 from labster.reports import get_attempts_and_answers
 from labster.tasks import send_play_lab, send_invite_students
 
@@ -407,6 +409,29 @@ class NutshellInviteStudents(View):
         return HttpResponse(1)
 
 
+class EnrollStudent(View):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        email = data.get('email')
+        license_id = data.get('license_id')
+        try:
+            user = User.objects.get(email=email)
+            course_license = LabsterCourseLicense.objects.get(license_id=license_id)
+        except:
+            return HttpResponseBadRequest('invalid email or license_id')
+
+        record, _ = CourseEnrollment.objects.get_or_create(
+            user=user, course_id=course_license.course_id)
+        record.is_active = True
+        record.save()
+
+        user_license, _ = LabsterUserLicense.objects.get_or_create(
+            email=email,
+            course_id=course_license.course_id)
+
+        return HttpResponse(json.dumps({'success': True}))
+
+
 settings_xml = SettingsXml.as_view()
 server_xml = ServerXml.as_view()
 platform_xml = PlatformXml.as_view()
@@ -416,3 +441,4 @@ lab_result = login_required(LabResult.as_view())
 adaptive_test_result = login_required(AdaptiveTestResult.as_view())
 nutshell_play_lab = login_required(NutshellPlayLab.as_view())
 nutshell_invite_students = login_required(NutshellInviteStudents.as_view())
+enroll_student = login_required(EnrollStudent.as_view())
