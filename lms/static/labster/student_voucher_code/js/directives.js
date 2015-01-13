@@ -3,13 +3,14 @@ angular.module('StudentVoucherCode')
   .directive('stripe', function ($location, $http) {
     return {
       restrict: 'E',
-      scope: {paymentId: '@', email: '@', amount: '@', description: '@'},
+      scope: {paymentId: '@', email: '@', amount: '@', description: '@', voucherCode: '@'},
       link: function (scope, element, attr) {
 
         var submitStripe = function (token) {
           var url = window.backofficeUrls.payment + scope.paymentId + "/charge_stripe/";
           var post_data = {
-            'stripe_token': token.id
+            'stripe_token': token.id,
+            'voucher_code': scope.voucherCode
           };
 
           $http.post(url, post_data, {
@@ -19,8 +20,25 @@ angular.module('StudentVoucherCode')
           })
 
             .success(function (data, status, headers, config) {
-              var url = '/student_voucher_code/#/invoice/' + scope.paymentId + '/thank-you';
-              window.location.href = url;
+
+              // register the student to the course
+              // using the license id given
+              var license_id = data.license_id;
+              $http.post(
+                '/labster/enroll-student/',
+                {
+                  'license_id': license_id,
+                  'email': scope.email
+                },
+                {
+                    headers: {
+                        'X-CSRFToken': window.csrfToken
+                    }
+                })
+                .success(function(data, status, headers, config) {
+                  var url = '/student_voucher_code/#/invoice/' + scope.paymentId + '/thank-you';
+                  window.location.href = url;
+                });
             })
         };
 

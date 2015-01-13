@@ -26,6 +26,7 @@
 %>
 <script>
 window.stripeKey = "${stripe_publishable_key}";  // publishable
+window.csrfToken = "${csrf_token}";
 window.requestUser = {
   id: "${user.id}",
   email: "${user.email}",

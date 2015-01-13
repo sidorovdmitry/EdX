@@ -46,7 +46,7 @@
       </tfoot>
     </table>
     <div class="pull-right">
-      <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ voucher.price }}" description="{{ payment_description(voucher.id, voucher.price) }}"></stripe>
+      <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ voucher.price }}" description="{{ payment_description(voucher.id, voucher.price) }}" voucher-code="{{ voucher.id }}"></stripe>
     </div>
   </div>
 </div>
