@@ -819,10 +819,10 @@ class LabsterUserLicense(models.Model):
 class LabsterCourseLicense(models.Model):
     user = models.ForeignKey(User)  # the teacher
     course_id = CourseKeyField(max_length=255, db_index=True)
-    license_id = models.IntegerField(unique=True)
+    license_id = models.IntegerField(db_index=True)
 
     class Meta:
-        unique_together = ('user', 'course_id')
+        unique_together = ('course_id', 'license_id')
 
 
 def get_user_attempts_from_lab_proxy(lab_proxy):
