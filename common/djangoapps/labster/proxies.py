@@ -16,10 +16,9 @@ from xmodule.modulestore.django import modulestore
 
 from labster.masters import get_problem_as_platform_xml, get_quiz_block_as_platform_xml
 from labster.models import LabProxy, ProblemProxy, LabProxyData, UserAttempt, UserAnswer
-from labster.models import Lab, QuizBlock, Problem, UserAnswer
+from labster.models import Lab, QuizBlock, Problem
 from labster.parsers.problem_parsers import QuizParser
 from labster.quiz_blocks import create_xblock, update_problem, validate_lab_proxy
-from labster.utils import get_hashed_text
 
 
 USER_ID = 19  # kriwil@gmail.com
@@ -131,13 +130,12 @@ def get_lab_proxy_as_platform_xml(lab_proxy):
 
 
 def generate_lab_proxy_data(
-    lab_proxy, quiz_blocks=None, quiz_ids=None, filters=None,
-    file_name=None,
-    process_score=False,
-    score_file_name=None,
-    active_only=False):
+        lab_proxy, quiz_blocks=None, quiz_ids=None, filters=None,
+        file_name=None,
+        process_score=False,
+        score_file_name=None,
+        active_only=False):
 
-    ## row
     # QuizBlock, QuizID, Email, User ID, Question, Correct Answer, Answer,
     # Is Correct, Completion Time
 
@@ -167,6 +165,7 @@ def generate_lab_proxy_data(
     user_attempts = user_attempts.exclude(user__email__endswith='labster.com')
     user_attempts = user_attempts.exclude(user__email__endswith='liv.it')
     user_attempts = user_attempts.exclude(user__email='mitsurudy@gmail.com')
+    user_attempts = user_attempts.exclude(user__email='kriwil@gmail.com')
 
     user_attempts = user_attempts.order_by('user__id', 'created_at')
     attempt_groups = defaultdict(int)
