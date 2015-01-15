@@ -416,18 +416,19 @@ class EnrollStudent(View):
         license_id = data.get('license_id')
         try:
             user = User.objects.get(email=email)
-            course_license = LabsterCourseLicense.objects.get(license_id=license_id)
         except:
             return HttpResponseBadRequest('invalid email or license_id')
 
-        record, _ = CourseEnrollment.objects.get_or_create(
-            user=user, course_id=course_license.course_id)
-        record.is_active = True
-        record.save()
+        course_licenses = LabsterCourseLicense.objects.filter(license_id=license_id)
+        for course_license in course_licenses:
+            record, _ = CourseEnrollment.objects.get_or_create(
+                user=user, course_id=course_license.course_id)
+            record.is_active = True
+            record.save()
 
-        user_license, _ = LabsterUserLicense.objects.get_or_create(
-            email=email,
-            course_id=course_license.course_id)
+            user_license, _ = LabsterUserLicense.objects.get_or_create(
+                email=email,
+                course_id=course_license.course_id)
 
         return HttpResponse(json.dumps({'success': True}))
 
