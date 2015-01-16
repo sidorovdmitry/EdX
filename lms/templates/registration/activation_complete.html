@@ -45,7 +45,7 @@
     %else:
       <h1>${_("Account already active")}</h1>
     %endif
-    <p><i>This page will be redirected to dashboard in <span id="countdown"></span></i></p>
+    <p><i>This page will be redirected to dashboard in <span id="countdown">5</span> <span id="countdown-suffix">seconds</span></i></p>
     <hr class="horizontal-divider">
 
     <p>
@@ -67,10 +67,16 @@
 <script>
   var seconds = 5;
   var countdown = document.getElementById("countdown");
+  var countdown_sfx = document.getElementById("countdown-suffix");
 
   setInterval(function () {
     seconds = seconds - 1;
+    var secondText = "second";
+    if (seconds > 1) {
+      secondText = secondText + "s";
+    }
     countdown.innerHTML = seconds;
+    countdown_sfx.innerHTML = secondText;
     if (seconds == 0) {
       window.location.href = "/dashboard";
     }
