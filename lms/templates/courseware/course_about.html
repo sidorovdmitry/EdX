@@ -186,7 +186,7 @@
             % if course.start > timezone.now():
             <span class="register disabled">${_("The Course Is Not Started Yet")}</span>
             % else:
-              % if user.labster_user.is_teacher:
+              % if user.is_authenticated() and user.labster_user.is_teacher:
                 <a href="#try-course-modal" rel="leanModal" class="try-course">
                   ${_("Try Course for Free")}
                 </a>
