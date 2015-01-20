@@ -42,7 +42,7 @@ angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate'])
         templateUrl: window.baseUrl + 'labster/backoffice/payment_paid.html'
       })
 
-      .when('/invoice/:paymentId/:userId/cancel-order', {
+      .when('/invoice/:paymentId/cancel-order', {
         controller: 'PaymentCancelController',
         templateUrl: window.baseUrl + 'labster/backoffice/payment_cancel.html'
       })
