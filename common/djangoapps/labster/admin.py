@@ -244,22 +244,19 @@ class UserAttemptAdmin(admin.ModelAdmin):
 
 
 class LabsterUserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'user_id', 'username', 'full_name', 'user_type_display')
+    list_display = ('email', 'user_id', 'username', 'user_type_display')
     search_fields = ('user__email', 'user__first_name', 'user__last_name',)
     list_filter = ('user__is_active', 'user_type',)
     raw_id_fields = ('user',)
 
     def email(self, obj):
-        return obj.email
+        return obj.user.email
 
     def user_id(self, obj):
         return obj.user.id
 
     def username(self, obj):
-        return obj.username
-
-    def full_name(self, obj):
-        return obj.user.get_full_name()
+        return obj.user.username
 
     def user_type_display(self, obj):
         return obj.get_user_type_display()
