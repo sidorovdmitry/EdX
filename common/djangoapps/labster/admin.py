@@ -252,6 +252,9 @@ class LabsterUserAdmin(admin.ModelAdmin):
     def email(self, obj):
         return obj.email
 
+    def user_id(self, obj):
+        return obj.user.id
+
     def username(self, obj):
         return obj.username
 
