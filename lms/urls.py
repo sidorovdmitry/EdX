@@ -533,6 +533,8 @@ if settings.FEATURES.get('LABSTER'):
         url(r'^labs/licenses/$', 'labster.backoffice.views.home', name="labster_backoffice"),
         url(r'^labs/purchases/$', 'labster.backoffice.views.home', name="labster_backoffice"),
         url(r'^labs/invoice/(?P<paymentId>\d+)/$', 'labster.backoffice.views.home', name="labster_backoffice"),
+        url(r'^labs/invoice/(?P<paymentId>\d+)/thank-you/$', 'labster.backoffice.views.home', name="labster_backoffice"),
+        url(r'^labs/invoice/(?P<paymentId>\d+)/cancel-order/$', 'labster.backoffice.views.home', name="labster_backoffice"),
         url(r'^labs/renew-license/(.+)/$', 'labster.backoffice.views.home', name="labster_backoffice"),
         url(r'^student_voucher_code/$', 'labster.student_voucher_code.views.home', name="labster_student_voucher_code"),
         url('^labster/', include('labster.urls')),
