@@ -529,14 +529,8 @@ if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
 # Labster
 if settings.FEATURES.get('LABSTER'):
     urlpatterns += (
-        url(r'^labs/$', 'labster.backoffice.views.home', name="labster_backoffice"),
-        url(r'^labs/licenses/$', 'labster.backoffice.views.home', name="labster_backoffice"),
-        url(r'^labs/purchases/$', 'labster.backoffice.views.home', name="labster_backoffice"),
-        url(r'^labs/invoice/(?P<paymentId>\d+)/$', 'labster.backoffice.views.home', name="labster_backoffice"),
-        url(r'^labs/invoice/(?P<paymentId>\d+)/thank-you/$', 'labster.backoffice.views.home', name="labster_backoffice"),
-        url(r'^labs/invoice/(?P<paymentId>\d+)/cancel-order/$', 'labster.backoffice.views.home', name="labster_backoffice"),
-        url(r'^labs/renew-license/(.+)/$', 'labster.backoffice.views.home', name="labster_backoffice"),
         url(r'^student_voucher_code/$', 'labster.student_voucher_code.views.home', name="labster_student_voucher_code"),
+        url('^labs/', include('labster.backoffice_urls')),
         url('^labster/', include('labster.urls')),
     )
 

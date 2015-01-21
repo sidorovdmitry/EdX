@@ -19,7 +19,7 @@ angular.module('LabsterBackOffice')
           })
 
             .success(function (data, status, headers, config) {
-              var url = '/labs/#/invoice/' + scope.paymentId + '/thank-you';
+              var url = '/labs/invoice/' + scope.paymentId + '/thank-you';
               window.location.href = url;
             })
         };

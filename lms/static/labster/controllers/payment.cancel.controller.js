@@ -22,7 +22,7 @@ angular.module('LabsterBackOffice')
           'Authorization': "Token " + window.requestUser.backoffice.token
         }
       }).success(function (data, status, headers, config) {
-        console.log("success");
+        $location.url('/invoice/cancel-order/complete');
       }).error(function (data, status, headers, config) {
       });
     }

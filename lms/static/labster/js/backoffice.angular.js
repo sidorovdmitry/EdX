@@ -42,6 +42,10 @@ angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate'])
         templateUrl: window.baseUrl + 'labster/backoffice/payment_cancel.html'
       })
 
+      .when('/invoice/cancel-order/complete', {
+        templateUrl: window.baseUrl + 'labster/backoffice/payment_cancel_finished.html'
+      })
+
       .when('/purchases', {
         controller: 'PaymentListController',
         templateUrl: window.baseUrl + 'labster/backoffice/payment_list.html'
