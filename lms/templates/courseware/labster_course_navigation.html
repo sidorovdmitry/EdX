@@ -1,0 +1,173 @@
+## mako
+<%! from django.utils.translation import ugettext as _ %>
+<%page args="active_page=None" />
+
+<%
+if active_page is None and active_page_context is not UNDEFINED:
+  # If active_page is not passed in as an argument, it may be in the context as active_page_context
+  active_page = active_page_context
+
+def url_class(is_active):
+  if is_active:
+    return "active"
+  return ""
+%>
+<%! from xmodule.tabs import CourseTabList %>
+<%! from courseware.access import has_access %>
+<%! from django.conf import settings %>
+<%! from django.core.urlresolvers import reverse %>
+<%! from django.utils.translation import ugettext as _ %>
+<%! from courseware.views import notification_image_for_tab %>
+<%! from staticfiles.storage import staticfiles_storage %>
+<%! from student.models import CourseAccessRole %>
+<% import waffle %>
+<%
+invite_students_url = "{}#view-membership".format(reverse('instructor_dashboard', args=[course.id.to_deprecated_string()]))
+%>
+
+% if disable_tabs is UNDEFINED or not disable_tabs:
+<nav class="${active_page} course-material">
+  <div class="inner-wrapper">
+    <ol class="course-tabs">
+      % for tab in CourseTabList.iterate_displayable(course, settings, user.is_authenticated(), has_access(user, 'staff', course, course.id)):
+        <%
+            tab_is_active = (tab.tab_id == active_page) or (tab.tab_id == default_tab)
+            tab_image = notification_image_for_tab(tab, user, course)
+        %>
+        % if waffle.flag_is_active(request, 'visual_treatment'):
+          <li class="${"prominent" if tab.name in ("Courseware", "Course Content") else ""}">
+        % else:
+          <li>
+        % endif
+             <a href="${tab.link_func(course, reverse) | h}" class="${url_class(tab_is_active)}">
+                 ${_(tab.name) | h}
+                 % if tab_is_active:
+                   <span class="sr">, current location</span>
+                 %endif
+                 % if tab_image:
+                   ## Translators: 'needs attention' is an alternative string for the
+                   ## notification image that indicates the tab "needs attention".
+                   <img src="${tab_image}" alt="${_('needs attention')}" />
+                 %endif
+             </a>
+          </li>
+      % endfor
+    <%block name="extratabs" />
+        % if masquerade is not UNDEFINED:
+          % if staff_access and masquerade is not None:
+            <!-- li style="float:right"><a href="#" id="staffstatus">${_("Staff view")}</a></li -->
+          % endif
+        % endif
+        <%
+        roles = CourseAccessRole.objects.filter(user=user, course_id=course.id).values_list('role', flat=True)
+        %>
+        % if 'staff' in roles:
+          <li style="float:right"><a href="${invite_students_url}" id="invitestudents" style="color:green">${_("Manage Students")}</a></li>
+          % if course.labster_demo:
+          <li style="float:right"><a href="#invite-students-modal" rel="leanModal" class="invite-students" style="color:green" data-course-name="${course.display_name_with_default}" data-course-location="${course.location.org}/${course.location.course}/${course.location.run}">${_("Invite Students to Try Course")}</a></li>
+          % endif
+        % endif
+    </ol>
+  </div>
+</nav>
+%endif
+
+% if masquerade is not UNDEFINED:
+  % if staff_access and masquerade is not None:
+<script type="text/javascript">
+masq = (function(){
+    var el = $('#staffstatus');
+    var setstat = function(status){
+        if (status=='student'){
+            el.html('<font color="green">${_("Student view")}</font>');
+        }else{
+            el.html('<font color="red">${_("Staff view")}</font>');
+        }
+    }
+    setstat('${masquerade}');
+
+    el.click(function(){
+        $.ajax({ url: '/masquerade/toggle',
+                 type: 'GET',
+                 success: function(result){
+                     setstat(result.status);
+                     location.reload();
+                 },
+                 error: function() {
+                     alert('Error: cannot connect to server');
+                 }
+               });
+    });
+}() );
+</script>
+  % endif
+% endif
+
+<script>
+  window.cms_base = "${settings.CMS_BASE}";
+  window.user_token_key = "${request.user.profile.token_key}";
+</script>
+<script type="text/javascript" src="${staticfiles_storage.url('js/invite_students.js')}"></script>
+
+<section id="invite-students-modal" class="modal invite-students-modal" aria-hidden="true">
+  <div class="inner-wrapper" role="alertdialog" aria-labelledy="invite-students-modal-title">
+    <button class="close-modal">
+      <i class="icon-remove"></i>
+      <span class="sr">
+        ${_('Close')}
+      </span>
+    </button>
+
+    <header>
+      <h2 id="invite-students-modal-title">
+        ${_("Invite Students to Try")} <span id="invite-students-course-name"></span>
+        <span class="sr">,
+          ${_("window open")}
+        </span>
+      </h2>
+      <h2 id="invite-students-run-title" style="display:none">
+        Preparing the Course
+      </h2>
+      <h2 id="invite-students-complete-title" style="display:none">
+        Invitations sent successfully!
+      </h2>
+      <hr/>
+    </header>
+    <div id="invite-students-error" class="modal-form-error"></div>
+    <div id="invite-students-content">
+      <form id="invite-students-run" style="display:none" action="">
+        <p>Please wait while we are preparing the course for you</p>
+        <p><progress style="width:100%"></progress></p>
+      </form>
+      <form id="invite-students-form" method="post" data-remote="true" action="">
+        <input id="invite-students-course-location" type="hidden" value="" name="course_location">
+        <p>You can invite up to 3 students or colleagues to try the Labster labs
+        for free, and help evaluate the fit with your science courses.</p>
+        <p>This is a great way to quickly hear from your own students,
+        how they like Labster.</p>
+        <p>
+          <div><input type="email" name="student_emails" placeholder="1st student email" required></div>
+          <div><input type="email" name="student_emails" placeholder="2nd student email"></div>
+          <div><input type="email" name="student_emails" placeholder="3rd student email"></div>
+        </p>
+        <div class="submit">
+          <input name="submit" type="submit" value="${_('Send invitation to students')}" />
+        </div>
+      </form>
+      <form id="invite-students-complete" style="display:none" action="#" method="get">
+        <p>Your students have now received an invitation to try Labster for free, and we have created a private course for you and your students, so you can easily follow their progress from our teacher dashboard.</p>
+        <p>Once you and your students have evaluated it, you can buy more licenses for all your students
+        easily using the "Buy student licenses" button and a credit card.</p>
+        <p>We will also contact you one of the coming days, to hear more about how your evaluation of Labster is going. </p>
+        <p>If you have any questions, please feel free to call us or email us at any time.</p>
+        <p>We are here ready to help you get going with Labster.<br>
+        <p>You can see our contact info on our
+        <a href="http://labster.com/support" target="_blank">support page</a>.</p>
+        <div class="submit">
+          <input name="submit" type="submit" value="${_('Enter Your New Course')}" />
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
