@@ -134,7 +134,7 @@ def index(request, extra_context={}, user=AnonymousUser()):
     context = {'courses': courses}
 
     context.update(extra_context)
-    return render_to_response('index.html', context)
+    return render_to_response('labster_index.html', context)
 
 
 def embargo(_request):
