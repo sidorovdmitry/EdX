@@ -333,7 +333,7 @@
             <% show_refund_option = (course.id in show_refund_option_for) %>
             <% is_paid_course = (course.id in enrolled_courses_either_paid) %>
             <% user_course_role = user_course_roles[course.id] %>
-            <%include file='dashboard/_dashboard_course_listing.html' args="course=course, enrollment=enrollment, show_courseware_link=show_courseware_link, cert_status=cert_status, show_email_settings=show_email_settings, course_mode_info=course_mode_info, show_refund_option = show_refund_option, is_paid_course = is_paid_course, user_course_role=user_course_role" />
+            <%include file='dashboard/labster_dashboard_course_listing.html' args="course=course, enrollment=enrollment, show_courseware_link=show_courseware_link, cert_status=cert_status, show_email_settings=show_email_settings, course_mode_info=course_mode_info, show_refund_option = show_refund_option, is_paid_course = is_paid_course, user_course_role=user_course_role" />
       % endfor
 
       </ul>
