@@ -81,7 +81,7 @@ def get_backoffice_urls():
 
 
 @login_required
-def home(request):
+def home(request, *args, **kwargs):
     template_name = 'labster/backoffice.html'
     user_profile = UserProfile.objects.get(user=request.user)
     labster_user = LabsterUser.objects.get(user=request.user)

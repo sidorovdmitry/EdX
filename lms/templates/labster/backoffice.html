@@ -81,6 +81,7 @@ window.labList = JSON.parse('${lab_list}');
 <script src="${static.url('labster/js/backoffice.angular.services.js')}"></script>
 </%block>
 
+<base href="/labs/">
 <section class="container dashboard labster-bo" id="dashboard-main" aria-hidden="false" ng-app="LabsterBackOffice">
   <section class="profile-sidebar">
     <a href="/" class="sidebar-button">Back to Dashboard</a>
@@ -90,27 +91,17 @@ window.labList = JSON.parse('${lab_list}');
     <section class="user-info">
       <ul>
         <li>
-          <span class="title"><a href="#/">Home</a></span>
+          <span class="title"><a href="/labs">Home </a></span>
         </li>
         <li>
-          <span class="title"><a href="#licenses">Licenses</a></span>
+          <span class="title"><a href="licenses">Licenses</a></span>
         </li>
         <li>
-          <span class="title"><a href="#purchases">Invoices</a></span>
+          <span class="title"><a href="purchases">Invoices</a></span>
         </li>
-        <!--
-        <li>
-          <span class="title">
-            <a href="#licenses">Licenses</a>
-            (<a href="#license/new">Buy New</a>)
-          </span>
-        </li>
-        <li>
-          <span class="title"><a href="#histories">Histories</a></span>
-        </li>
-        -->
       </ul>
     </section>
   </section>
   <section class="my-courses" id="my-courses" ng-view>Loading &hellip;</section>
 </section>
+</base>

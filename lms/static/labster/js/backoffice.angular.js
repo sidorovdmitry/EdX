@@ -1,6 +1,6 @@
 angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate'])
 
-  .config(function ($routeProvider) {
+  .config(function ($routeProvider, $locationProvider) {
     $routeProvider
       .when('/', {
         controller: 'HomeController',
@@ -10,11 +10,6 @@ angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate'])
       .when('/licenses', {
         controller: 'LicenseListController',
         templateUrl: window.baseUrl + 'labster/backoffice/license_list.html'
-      })
-
-      .when('/purchases', {
-        controller: 'PaymentListController',
-        templateUrl: window.baseUrl + 'labster/backoffice/payment_list.html'
       })
 
       .when('/license/new/personal', {
@@ -47,8 +42,19 @@ angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate'])
         templateUrl: window.baseUrl + 'labster/backoffice/payment_cancel.html'
       })
 
+      .when('/purchases', {
+        controller: 'PaymentListController',
+        templateUrl: window.baseUrl + 'labster/backoffice/payment_list.html'
+      })
+
       .otherwise({
         redirectTo: '/'
+      });
+
+      // use the HTML5 History API
+      $locationProvider.html5Mode({
+        enabled: true,
+        requireBase: true
       });
   })
 
