@@ -404,7 +404,7 @@ def register_user(request, extra_context=None):
         overrides['selected_provider'] = current_provider.NAME
         context.update(overrides)
 
-    return render_to_response('register.html', context)
+    return render_to_response('labster_register.html', context)
 
 
 def complete_course_mode_info(course_id, enrollment):
@@ -1543,7 +1543,7 @@ def activate_account(request, key):
                     CourseEnrollment.enroll(student[0], cea.course_id)
 
         resp = render_to_response(
-            "registration/activation_complete.html",
+            "registration/labster_activation_complete.html",
             {
                 'user_logged_in': user_logged_in,
                 'already_active': already_active,
