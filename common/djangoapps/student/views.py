@@ -564,7 +564,7 @@ def dashboard(request):
         context['duplicate_provider'] = pipeline.get_duplicate_provider(messages.get_messages(request))
         context['provider_user_states'] = pipeline.get_provider_user_states(user)
 
-    return render_to_response('dashboard.html', context)
+    return render_to_response('labster_dashboard.html', context)
 
 
 def try_change_enrollment(request):
