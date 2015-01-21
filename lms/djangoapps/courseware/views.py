@@ -91,7 +91,7 @@ def courses(request):
     courses = get_courses(request.user, request.META.get('HTTP_HOST'))
     courses = sort_by_announcement(courses)
 
-    return render_to_response("courseware/courses.html", {'courses': courses})
+    return render_to_response("courseware/labster_courses.html", {'courses': courses})
 
 
 def render_accordion(request, course, chapter, section, field_data_cache):
@@ -680,7 +680,7 @@ def course_about(request, course_id):
 
     is_shib_course = uses_shib(course)
 
-    return render_to_response('courseware/course_about.html', {
+    return render_to_response('courseware/labster_course_about.html', {
         'course': course,
         'staff_access': staff_access,
         'studio_url': studio_url,
