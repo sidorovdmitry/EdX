@@ -11,6 +11,7 @@
         <th>Labs</th>
         <th class="align-right">Total Price</th>
         <th class="align-right">Status</th>
+        <th class="align-right">Cancel</th>
       </tr>
     </thead>
     <tbody>
@@ -26,6 +27,9 @@
         <td class="align-right">
           <span ng-show="payment.paid">paid</span>
           <span ng-hide="payment.paid">unpaid</span>
+        </td>
+        <td class="align-right">
+          <a ng-hide="payment.paid" href="invoice/{{ payment.id }}/cancel-order">Cancel</a>
         </td>
       </tr>
     </tbody>
