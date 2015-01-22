@@ -2,14 +2,13 @@
   <h2>Cancel Order</h2>
 </header>
 <div class="labster-lab-list">
-  <h3>Are you sure you want to Cancel this order? </h3> <br/>
   <p>
   If you have more students using your labs then you have licenses available. The most recently added students will no longer be able to access the labs.
   </p>
   <br/>
 
   <h3>Order Information</h3>
-  <p>Created at : {{ payment.created_at | date:'longDate' }}</p>
+  <p>Created at: {{ payment.created_at | date:'longDate' }}</p>
   <table>
     <thead>
       <tr>
@@ -29,10 +28,9 @@
     </tbody>
   </table>
 
-  <a class="btn-labster-invoice pull-right" ng-click="cancelOrder()">Yes, please cancel the order</a>
+  <a class="btn-labster-invoice pull-left" ng-click="cancelOrder()">Cancel Order</a>
 
-  <div class="clear"></div>
-
+  <div class="clear margin-bottom-80"></div>
   <h3>License Overview</h3> <br/>
   Ordered (unpaid):
 
