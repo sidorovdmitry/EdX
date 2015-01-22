@@ -6,10 +6,8 @@ from courseware.courses import course_image_url, get_course_about_section
 from django.utils import timezone
 %>
 <%page args="course" />
-<article id="${course.id.to_deprecated_string()}" class="course">
-  % if course.start > timezone.now():
-    <span class="status">${_("Coming Soon")}</span>
-  % elif course.is_newish:
+<article id="${course.id | h}" class="course">
+  %if course.is_newish:
     <span class="status">${_("New")}</span>
   % endif
   <a href="${reverse('about_course', args=[course.id.to_deprecated_string()])}">
@@ -30,7 +28,7 @@ from django.utils import timezone
         <div class="bottom">
           <span class="university">${get_course_about_section(course, 'university')}</span>
           % if not course.start_date_is_still_default:
-          <span class="start-date">${course.start_date_text}</span>
+          <span class="start-date">${course.start_datetime_text()}</span>
           % endif
         </div>
       </section>

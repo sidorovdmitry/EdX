@@ -61,16 +61,16 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                 var previewAction = this.$el.find('.button-preview'),
                     viewLiveAction = this.$el.find('.button-view');
                 if (this.model.get('published')) {
-                    viewLiveAction.removeClass(disabledCss);
+                    viewLiveAction.removeClass(disabledCss).attr('aria-disabled', false);
                 }
                 else {
-                    viewLiveAction.addClass(disabledCss);
+                    viewLiveAction.addClass(disabledCss).attr('aria-disabled', true);
                 }
                 if (this.model.get('has_changes') || !this.model.get('published')) {
-                    previewAction.removeClass(disabledCss);
+                    previewAction.removeClass(disabledCss).attr('aria-disabled', false);
                 }
                 else {
-                    previewAction.addClass(disabledCss);
+                    previewAction.addClass(disabledCss).attr('aria-disabled', true);
                 }
             }
         });
@@ -100,7 +100,7 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
 
             onSync: function(model) {
                 if (ViewUtils.hasChangedAttributes(model, [
-                    'has_changes', 'published', 'edited_on', 'edited_by', 'visibility_state'
+                    'has_changes', 'published', 'edited_on', 'edited_by', 'visibility_state', 'has_explicit_staff_lock'
                 ])) {
                    this.render();
                 }
@@ -118,7 +118,9 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                     publishedBy: this.model.get('published_by'),
                     released: this.model.get('released_to_students'),
                     releaseDate: this.model.get('release_date'),
-                    releaseDateFrom: this.model.get('release_date_from')
+                    releaseDateFrom: this.model.get('release_date_from'),
+                    hasExplicitStaffLock: this.model.get('has_explicit_staff_lock'),
+                    staffLockFrom: this.model.get('staff_lock_from')
                 }));
 
                 return this;
@@ -161,12 +163,13 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
             },
 
             toggleStaffLock: function (e) {
-                var xblockInfo = this.model, self=this, enableStaffLock,
+                var xblockInfo = this.model, self=this, enableStaffLock, hasInheritedStaffLock,
                     saveAndPublishStaffLock, revertCheckBox;
                 if (e && e.preventDefault) {
                     e.preventDefault();
                 }
-                enableStaffLock = xblockInfo.get('visibility_state') !== VisibilityState.staffOnly;
+                enableStaffLock = !xblockInfo.get('has_explicit_staff_lock');
+                hasInheritedStaffLock = xblockInfo.get('ancestor_has_staff_lock');
 
                 revertCheckBox = function() {
                     self.checkStaffLock(!enableStaffLock);
@@ -189,8 +192,14 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                 };
 
                 this.checkStaffLock(enableStaffLock);
-                if (enableStaffLock) {
-                    ViewUtils.runOperationShowingMessage(gettext('Hiding Unit from Students&hellip;'),
+                if (enableStaffLock && !hasInheritedStaffLock) {
+                    ViewUtils.runOperationShowingMessage(gettext('Hiding from Students&hellip;'),
+                        _.bind(saveAndPublishStaffLock, self));
+                } else if (enableStaffLock && hasInheritedStaffLock) {
+                    ViewUtils.runOperationShowingMessage(gettext('Explicitly Hiding from Students&hellip;'),
+                        _.bind(saveAndPublishStaffLock, self));
+                } else if (!enableStaffLock && hasInheritedStaffLock) {
+                    ViewUtils.runOperationShowingMessage(gettext('Inheriting Student Visibility&hellip;'),
                         _.bind(saveAndPublishStaffLock, self));
                 } else {
                     ViewUtils.confirmThenRunOperation(gettext("Make Visible to Students"),
@@ -209,8 +218,8 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
             },
 
             checkStaffLock: function(check) {
-                this.$('.action-staff-lock i').removeClass('icon-check icon-check-empty');
-                this.$('.action-staff-lock i').addClass(check ? 'icon-check' : 'icon-check-empty');
+                this.$('.action-staff-lock i').removeClass('fa-check-square-o fa-square-o');
+                this.$('.action-staff-lock i').addClass(check ? 'fa-check-square-o' : 'fa-square-o');
             }
         });
 

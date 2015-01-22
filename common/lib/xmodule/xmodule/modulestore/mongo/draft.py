@@ -11,13 +11,12 @@ import logging
 
 from opaque_keys.edx.locations import Location
 from xmodule.exceptions import InvalidVersionError
-from xmodule.modulestore import PublishState, ModuleStoreEnum
+from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.exceptions import (
-    ItemNotFoundError, DuplicateItemError, InvalidBranchSetting, DuplicateCourseError
+    ItemNotFoundError, DuplicateItemError, DuplicateCourseError, InvalidBranchSetting
 )
 from xmodule.modulestore.mongo.base import (
-    MongoModuleStore, MongoRevisionKey, as_draft, as_published,
-    SORT_REVISION_FAVOR_DRAFT
+    MongoModuleStore, MongoRevisionKey, as_draft, as_published, SORT_REVISION_FAVOR_DRAFT
 )
 from xmodule.modulestore.store_utilities import rewrite_nonportable_content_links
 from xmodule.modulestore.draft_and_published import UnsupportedRevisionError, DIRECT_ONLY_CATEGORIES
@@ -47,7 +46,7 @@ class DraftModuleStore(MongoModuleStore):
     This module also includes functionality to promote DRAFT modules (and their children)
     to published modules.
     """
-    def get_item(self, usage_key, depth=0, revision=None):
+    def get_item(self, usage_key, depth=0, revision=None, **kwargs):
         """
         Returns an XModuleDescriptor instance for the item at usage_key.
 
@@ -148,14 +147,17 @@ class DraftModuleStore(MongoModuleStore):
         :param course_key: which course to delete
         :param user_id: id of the user deleting the course
         """
+        # Note: does not need to inform the bulk mechanism since after the course is deleted,
+        # it can't calculate inheritance anyway. Nothing is there to be dirty.
         # delete the assets
         super(DraftModuleStore, self).delete_course(course_key, user_id)
 
         # delete all of the db records for the course
         course_query = self._course_key_to_son(course_key)
         self.collection.remove(course_query, multi=True)
+        self.delete_all_asset_metadata(course_key, user_id)
 
-    def clone_course(self, source_course_id, dest_course_id, user_id, fields=None):
+    def clone_course(self, source_course_id, dest_course_id, user_id, fields=None, **kwargs):
         """
         Only called if cloning within this store or if env doesn't set up mixed.
         * copy the courseware
@@ -292,7 +294,7 @@ class DraftModuleStore(MongoModuleStore):
                 else ModuleStoreEnum.RevisionOption.draft_preferred
         return super(DraftModuleStore, self).get_parent_location(location, revision, **kwargs)
 
-    def create_xmodule(self, location, definition_data=None, metadata=None, runtime=None, fields={}, **kwargs):
+    def create_xblock(self, runtime, course_key, block_type, block_id=None, fields=None, **kwargs):
         """
         Create the new xmodule but don't save it. Returns the new module with a draft locator if
         the category allows drafts. If the category does not allow drafts, just creates a published module.
@@ -303,13 +305,11 @@ class DraftModuleStore(MongoModuleStore):
         :param runtime: if you already have an xmodule from the course, the xmodule.runtime value
         :param fields: a dictionary of field names and values for the new xmodule
         """
-        self._verify_branch_setting(ModuleStoreEnum.Branch.draft_preferred)
-
-        if location.category not in DIRECT_ONLY_CATEGORIES:
-            location = as_draft(location)
-        return wrap_draft(
-            super(DraftModuleStore, self).create_xmodule(location, definition_data, metadata, runtime, fields)
+        new_block = super(DraftModuleStore, self).create_xblock(
+            runtime, course_key, block_type, block_id, fields, **kwargs
         )
+        new_block.location = self.for_branch_setting(new_block.location)
+        return wrap_draft(new_block)
 
     def get_items(self, course_key, revision=None, **kwargs):
         """
@@ -331,11 +331,6 @@ class DraftModuleStore(MongoModuleStore):
                         returns only Published items
                     if the branch setting is ModuleStoreEnum.Branch.draft_preferred,
                         returns either Draft or Published, preferring Draft items.
-            kwargs (key=value): what to look for within the course.
-                Common qualifiers are ``category`` or any field name. if the target field is a list,
-                then it searches for the given value in the list not list equivalence.
-                Substring matching pass a regex object.
-                ``name`` is another commonly provided key (Location based stores)
         """
         def base_get_items(key_revision):
             return super(DraftModuleStore, self).get_items(course_key, key_revision=key_revision, **kwargs)
@@ -400,7 +395,7 @@ class DraftModuleStore(MongoModuleStore):
             DuplicateItemError: if the source or any of its descendants already has a draft copy. Only
                 useful for unpublish b/c we don't want unpublish to overwrite any existing drafts.
         """
-        # verify input conditions
+        # verify input conditions: can only convert to draft branch; so, verify that's the setting
         self._verify_branch_setting(ModuleStoreEnum.Branch.draft_preferred)
         _verify_revision_is_published(location)
 
@@ -422,6 +417,8 @@ class DraftModuleStore(MongoModuleStore):
             item['_id']['revision'] = MongoRevisionKey.draft
             # ensure keys are in fixed and right order before inserting
             item['_id'] = self._id_dict_to_son(item['_id'])
+            bulk_record = self._get_bulk_ops_record(location.course_key)
+            bulk_record.dirty = True
             try:
                 self.collection.insert(item)
             except pymongo.errors.DuplicateKeyError:
@@ -439,19 +436,18 @@ class DraftModuleStore(MongoModuleStore):
         # convert the subtree using the original item as the root
         self._breadth_first(convert_item, [location])
 
-    def update_item(self, xblock, user_id, allow_not_found=False, force=False, isPublish=False):
+    def update_item(self, xblock, user_id, allow_not_found=False, force=False, isPublish=False, **kwargs):
         """
         See superclass doc.
         In addition to the superclass's behavior, this method converts the unit to draft if it's not
         direct-only and not already draft.
         """
-        self._verify_branch_setting(ModuleStoreEnum.Branch.draft_preferred)
+        draft_loc = self.for_branch_setting(xblock.location)
 
-        # if the xblock is direct-only, update the PUBLISHED version
-        if xblock.location.category in DIRECT_ONLY_CATEGORIES:
+        # if the revision is published, defer to base
+        if draft_loc.revision == MongoRevisionKey.published:
             return super(DraftModuleStore, self).update_item(xblock, user_id, allow_not_found)
 
-        draft_loc = as_draft(xblock.location)
         if not super(DraftModuleStore, self).has_item(draft_loc):
             try:
                 # ignore any descendants which are already draft
@@ -545,7 +541,7 @@ class DraftModuleStore(MongoModuleStore):
             )
         self._delete_subtree(location, as_functions)
 
-    def _delete_subtree(self, location, as_functions):
+    def _delete_subtree(self, location, as_functions, draft_only=False):
         """
         Internal method for deleting all of the subtree whose revisions match the as_functions
         """
@@ -559,10 +555,23 @@ class DraftModuleStore(MongoModuleStore):
             next_tier = []
             for child_loc in current_entry.get('definition', {}).get('children', []):
                 child_loc = course_key.make_usage_key_from_deprecated_string(child_loc)
-                for rev_func in as_functions:
-                    current_loc = rev_func(child_loc)
-                    current_son = current_loc.to_deprecated_son()
-                    next_tier.append(current_son)
+
+                # single parent can have 2 versions: draft and published
+                # get draft parents only while deleting draft module
+                if draft_only:
+                    revision = MongoRevisionKey.draft
+                else:
+                    revision = ModuleStoreEnum.RevisionOption.all
+
+                parents = self._get_raw_parent_locations(child_loc, revision)
+                # Don't delete modules if one of its parents shouldn't be deleted
+                # This should only be an issue for courses have ended up in
+                # a state where modules have multiple parents
+                if all(parent.to_deprecated_son() in to_be_deleted for parent in parents):
+                    for rev_func in as_functions:
+                        current_loc = rev_func(child_loc)
+                        current_son = current_loc.to_deprecated_son()
+                        next_tier.append(current_son)
 
             return next_tier
 
@@ -597,26 +606,33 @@ class DraftModuleStore(MongoModuleStore):
                 _internal(next_tier)
 
         _internal([root_usage.to_deprecated_son() for root_usage in root_usages])
-        self.collection.remove({'_id': {'$in': to_be_deleted}}, safe=self.collection.safe)
+        if len(to_be_deleted) > 0:
+            bulk_record = self._get_bulk_ops_record(root_usages[0].course_key)
+            bulk_record.dirty = True
+            self.collection.remove({'_id': {'$in': to_be_deleted}}, safe=self.collection.safe)
 
+    @MongoModuleStore.memoize_request_cache
     def has_changes(self, xblock):
         """
-        Check if the xblock or its children have been changed since the last publish.
+        Check if the subtree rooted at xblock has any drafts and thus may possibly have changes
         :param xblock: xblock to check
-        :return: True if the draft and published versions differ
+        :return: True if there are any drafts anywhere in the subtree under xblock (a weaker
+            condition than for other stores)
         """
-
         # don't check children if this block has changes (is not public)
-        if self.compute_publish_state(xblock) != PublishState.public:
+        if getattr(xblock, 'is_draft', False):
             return True
         # if this block doesn't have changes, then check its children
         elif xblock.has_children:
+            # fix a bug where dangling pointers should imply a change
+            if len(xblock.children) > len(xblock.get_children()):
+                return True
             return any([self.has_changes(child) for child in xblock.get_children()])
         # otherwise there are no changes
         else:
             return False
 
-    def publish(self, location, user_id):
+    def publish(self, location, user_id, **kwargs):
         """
         Publish the subtree rooted at location to the live course and remove the drafts.
         Such publishing may cause the deletion of previously published but subsequently deleted
@@ -678,7 +694,11 @@ class DraftModuleStore(MongoModuleStore):
                                 # So, do not delete the child.  It will be published when the new parent is published.
                                 pass
 
-            super(DraftModuleStore, self).update_item(item, user_id, isPublish=True, is_publish_root=is_root)
+            # update the published (not draft) item (ignoring that item is "draft"). The published
+            # may not exist; (if original_published is None); so, allow_not_found
+            super(DraftModuleStore, self).update_item(
+                item, user_id, isPublish=True, is_publish_root=is_root, allow_not_found=True
+            )
             to_be_deleted.append(as_draft(item_location).to_deprecated_son())
 
         # verify input conditions
@@ -687,10 +707,12 @@ class DraftModuleStore(MongoModuleStore):
 
         _internal_depth_first(location, True)
         if len(to_be_deleted) > 0:
+            bulk_record = self._get_bulk_ops_record(location.course_key)
+            bulk_record.dirty = True
             self.collection.remove({'_id': {'$in': to_be_deleted}})
         return self.get_item(as_published(location))
 
-    def unpublish(self, location, user_id):
+    def unpublish(self, location, user_id, **kwargs):
         """
         Turn the published version into a draft, removing the published version.
 
@@ -703,7 +725,7 @@ class DraftModuleStore(MongoModuleStore):
     def revert_to_published(self, location, user_id=None):
         """
         Reverts an item to its last published version (recursively traversing all of its descendants).
-        If no published version exists, a VersionConflictError is thrown.
+        If no published version exists, an InvalidVersionError is thrown.
 
         If a published version exists but there is no draft version of this item or any of its descendants, this
         method is a no-op. It is also a no-op if the root item is in DIRECT_ONLY_CATEGORIES.
@@ -732,7 +754,7 @@ class DraftModuleStore(MongoModuleStore):
             # If 2 versions versions exist, we can assume one is a published version. Go ahead and do the delete
             # of the draft version.
             if versions_found.count() > 1:
-                self._delete_subtree(root_location, [as_draft])
+                self._delete_subtree(root_location, [as_draft], draft_only=True)
             elif versions_found.count() == 1:
                 # Since this method cannot be called on something in DIRECT_ONLY_CATEGORIES and we call
                 # delete_subtree as soon as we find an item with a draft version, if there is only 1 version
@@ -781,25 +803,18 @@ class DraftModuleStore(MongoModuleStore):
 
         return queried_children
 
-    def compute_publish_state(self, xblock):
+    def has_published_version(self, xblock):
         """
-        Returns whether this xblock is draft, public, or private.
-
-        Returns:
-            PublishState.draft - content is in the process of being edited, but still has a previous
-                version deployed to LMS
-            PublishState.public - content is locked and deployed to LMS
-            PublishState.private - content is editable and not deployed to LMS
+        Returns True if this xblock has an existing published version regardless of whether the
+        published version is up to date.
         """
         if getattr(xblock, 'is_draft', False):
             published_xblock_location = as_published(xblock.location)
             try:
                 xblock.runtime.lookup_item(published_xblock_location)
             except ItemNotFoundError:
-                return PublishState.private
-            return PublishState.draft
-        else:
-            return PublishState.public
+                return False
+        return True
 
     def _verify_branch_setting(self, expected_branch_setting):
         """

@@ -9,8 +9,9 @@ function(Backbone, _, str, gettext, GroupModel, GroupCollection) {
         defaults: function() {
             return {
                 name: '',
+                scheme: 'random',
                 description: '',
-                version: null,
+                version: 2,
                 groups: new GroupCollection([
                     {
                         name: gettext('Group A'),
@@ -71,6 +72,7 @@ function(Backbone, _, str, gettext, GroupModel, GroupCollection) {
             return {
                 id: this.get('id'),
                 name: this.get('name'),
+                scheme: this.get('scheme'),
                 description: this.get('description'),
                 version: this.get('version'),
                 groups: this.get('groups').toJSON()
@@ -80,14 +82,14 @@ function(Backbone, _, str, gettext, GroupModel, GroupCollection) {
         validate: function(attrs) {
             if (!_.str.trim(attrs.name)) {
                 return {
-                    message: gettext('Group Configuration name is required'),
+                    message: gettext('Group Configuration name is required.'),
                     attributes: {name: true}
                 };
             }
 
-            if (attrs.groups.length < 2) {
+            if (attrs.groups.length < 1) {
                 return {
-                    message: gettext('There must be at least two groups'),
+                    message: gettext('There must be at least one group.'),
                     attributes: { groups: true }
                 };
             } else {
@@ -100,7 +102,7 @@ function(Backbone, _, str, gettext, GroupModel, GroupCollection) {
                 });
                 if (!_.isEmpty(invalidGroups)) {
                     return {
-                        message: gettext('All groups must have a name'),
+                        message: gettext('All groups must have a name.'),
                         attributes: { groups: invalidGroups }
                     };
                 }

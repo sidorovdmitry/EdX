@@ -47,9 +47,10 @@ site_status_msg = get_site_status_msg(course_id)
     </h1>
 
     % if course:
-    <h2><span class="provider">${course.display_org_with_default | h}:</span> ${course.display_name_with_default}</h2>
+    <h2><span class="provider">${course.display_org_with_default | h}:</span> ${course.display_number_with_default | h} ${course.display_name_with_default}</h2>
     % endif
 
+    % if user.is_authenticated():
     <ol class="left nav-global authenticated">
       <%block name="navigation_global_links_authenticated">
         % if settings.FEATURES.get('COURSES_ARE_BROWSABLE'):
@@ -59,7 +60,6 @@ site_status_msg = get_site_status_msg(course_id)
         % endif
       </%block>
     </ol>
-    % if user.is_authenticated():
     <ol class="user">
       <li class="primary">
         <a href="${reverse('dashboard')}" class="user-link">
@@ -75,18 +75,15 @@ site_status_msg = get_site_status_msg(course_id)
               <li><a href="${marketing_link('FAQ')}">${_("Help")}</a></li>
             % endif
           </%block>
-          % if user.is_superuser and user.is_staff:
-          <li><a href="${reverse('labster_backoffice')}" role="menuitem">${_("Labs")}</a></li>
-          % endif
-          <li><a href="${reverse('logout')}" role="menuitem">${_("Log Out")}</a></li>
+          <li><a href="${reverse('logout')}" role="menuitem">${_("Sign out")}</a></li>
         </ul>
       </li>
     </ol>
-      % if display_shopping_cart: # see shoppingcart.context_processor.user_has_cart_context_processor
+      % if should_display_shopping_cart_func(): # see shoppingcart.context_processor.user_has_cart_context_processor
         <ol class="user">
           <li class="primary">
             <a class="shopping-cart" href="${reverse('shoppingcart.views.show_cart')}">
-              <i class="icon-shopping-cart"></i> ${_("Shopping Cart")}
+              <i class="icon fa fa-shopping-cart"></i> ${_("Shopping Cart")}
             </a>
           </li>
         </ol>
@@ -123,9 +120,9 @@ site_status_msg = get_site_status_msg(course_id)
     <li class="nav-courseware-01">
       % if not settings.FEATURES['DISABLE_LOGIN_BUTTON']:
           % if course and settings.FEATURES.get('RESTRICT_ENROLL_BY_REG_METHOD') and course.enrollment_domain:
-          <a class="cta cta-login" href="${reverse('course-specific-login', args=[course.id.to_deprecated_string()])}${login_query()}">${_("Log in")}</a>
+          <a class="cta cta-login" href="${reverse('course-specific-login', args=[course.id.to_deprecated_string()])}${login_query()}">${_("Sign in")}</a>
           % else:
-          <a class="cta cta-login" href="/login${login_query()}">${_("Log in")}</a>
+          <a class="cta cta-login" href="/login${login_query()}">${_("Sign in")}</a>
           % endif
       % endif
     </li>
