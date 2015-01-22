@@ -12,7 +12,6 @@ angular.module('LabsterBackOffice')
     .success(function (data, status, headers, config) {
       $scope.allPayments = data.payments;
       $scope.payment = $filter('filter')(data.payments, {id:$scope.paymentId})[0]
-      console.log($scope.allPayments);
     });
 
     $scope.cancelOrder = function(){
