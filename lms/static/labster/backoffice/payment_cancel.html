@@ -1,0 +1,82 @@
+<header>
+  <h2>Cancel Order</h2>
+</header>
+<div class="labster-lab-list">
+  <h3>Are you sure you want to Cancel this order? </h3> <br/>
+  <p>
+  If you have more students using your labs then you have licenses available. The most recently added students will no longer be able to access the labs.
+  </p>
+  <br/>
+
+  <h3>Order Information</h3>
+  <p>Created at : {{ payment.created_at | date:'longDate' }}</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Invoice number</th>
+        <th>Lab</th>
+        <th class="align-right">Licenses</th>
+        <th class="align-right">Subscriptions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="payment_product in payment.payment_products">
+        <td>{{ payment.invoice_number}}</td>
+        <td class="lab-description">{{ payment_product.product_name }}</td>
+        <td class="align-right">{{ payment_product.item_count }}</td>
+        <td class="align-right">{{ payment_product.month_subscription }} months</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <a class="btn-labster-invoice pull-right" ng-click="cancelOrder()">Yes, please cancel the order</a>
+
+  <div class="clear"></div>
+
+  <h3>License Overview</h3> <br/>
+  Ordered (unpaid):
+
+    <table>
+      <thead>
+        <tr>
+          <th>Invoice number</th>
+          <th>Lab</th>
+          <th>Created Date</th>
+          <th class="align-right">Licenses</th>
+          <th class="align-right">Subscriptions</th>
+        </tr>
+      </thead>
+      <tbody ng-repeat="payment in allPayments | filter: { paid: false }">
+        <tr ng-repeat="payment_product in payment.payment_products">
+            <td>{{ payment.invoice_number}}</td>
+            <td class="lab-description">{{ payment_product.product_name }}</td>
+            <td>{{ payment.created_at | date:'longDate' }}</td>
+            <td class="align-right">{{ payment_product.item_count }}</td>
+            <td class="align-right">{{ payment_product.month_subscription }} months</td>
+        </tr>
+      </tbody>
+    </table>
+
+  <p>Paid licenses:</p>
+  <table>
+      <thead>
+        <tr>
+          <th>Invoice number</th>
+          <th>Lab</th>
+          <th>Created Date</th>
+          <th class="align-right">Licenses</th>
+          <th class="align-right">Subscriptions</th>
+        </tr>
+      </thead>
+      <tbody ng-repeat="payment in allPayments | filter: { paid: true }">
+        <tr ng-repeat="payment_product in payment.payment_products">
+            <td>{{ payment.invoice_number}}</td>
+            <td class="lab-description">{{ payment_product.product_name }}</td>
+            <td>{{ payment.created_at | date:'longDate' }}</td>
+            <td class="align-right">{{ payment_product.item_count }}</td>
+            <td class="align-right">{{ payment_product.month_subscription }} months</td>
+        </tr>
+      </tbody>
+    </table>
+
+

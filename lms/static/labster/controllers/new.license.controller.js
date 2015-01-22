@@ -172,6 +172,9 @@ angular.module('LabsterBackOffice')
       if ($scope.institution_type != 1) {
         $scope.vat_error = LicenseService.checkVatFormat($scope.institution_vat_number);
         $scope.institution_error = LicenseService.checkInstitution($scope.institution_name);
+      } else {
+        $scope.vat_error = "";
+        $scope.institution_error = "";
       }
       if (!$scope.institution_error.length && !$scope.vat_error.length) {
         $scope.checkoutButton = "Processing...";
