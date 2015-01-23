@@ -22,9 +22,11 @@ class LabKeyword(models.Model):
 
     SOURCE_PROBLEM = 1
     SOURCE_ENGINE_XML = 2
+    SOURCE_MANUAL = 3
     SOURCES = (
         (SOURCE_PROBLEM, 'problem'),
         (SOURCE_ENGINE_XML, 'engine XML'),
+        (SOURCE_MANUAL, 'manual'),
     )
     source = models.IntegerField(choices=SOURCES, blank=True, null=True)
 

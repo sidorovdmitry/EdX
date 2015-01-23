@@ -16,15 +16,21 @@ def get_labs_from_keywords(keywords):
         the first one is it tries to fetch labs with all keywords (AND)
         then it tries to fetch lab with any keywords (OR)
     """
-    keyword_list = keywords.split()
-    if not len(keyword_list):
+    if not keywords:
         return []
 
+    keyword_list = keywords.split()
+    primary_lab_ids = []
     and_lab_ids = []
     or_lab_ids = []
 
-    # and
     results = LabKeyword.objects.all()
+
+    # primary
+    primary_results = results.filter(keyword__icontains=keywords)
+    primary_lab_ids = primary_results.values_list('lab_id', flat=True)
+
+    # and
     and_filters = reduce(operator.and_, (Q(keyword__icontains=keyword) for keyword in keyword_list))
     and_results = results.filter(and_filters)
     and_lab_ids = and_results.values_list('lab_id', flat=True)
@@ -35,7 +41,7 @@ def get_labs_from_keywords(keywords):
         or_results = results.filter(or_filters)
         or_lab_ids = or_results.values_list('lab_id', flat=True)
 
-    lab_ids = list(and_lab_ids) + list(or_lab_ids)
+    lab_ids = list(primary_lab_ids) + list(and_lab_ids) + list(or_lab_ids)
     lab_ids = uniqify(lab_ids)
     labs = Lab.objects.in_bulk(lab_ids)
     ordered_labs = [labs[lab_id] for lab_id in lab_ids]
