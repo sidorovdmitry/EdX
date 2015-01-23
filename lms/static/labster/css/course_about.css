@@ -3,7 +3,7 @@
 }
 .learning {
   margin-left: 10px;
-  list-style: circle;
+  list-style: disc;
 }
 .learning li {
   border: 0 !important;
