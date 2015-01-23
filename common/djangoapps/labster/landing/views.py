@@ -9,9 +9,10 @@ from django.db.models import Count
 from edxmako.shortcuts import render_to_response
 
 from util.cache import cache_if_anonymous
-from courseware.courses import get_courses, get_popular_courses_labster, sort_by_announcement
+from courseware.courses import get_courses, sort_by_announcement
 
 from labster.models import UserAttempt, Lab
+from labster.courses import get_popular_courses_labster
 
 
 @ensure_csrf_cookie
