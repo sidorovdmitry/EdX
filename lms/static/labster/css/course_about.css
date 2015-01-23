@@ -1,13 +1,13 @@
-.topics {
+.learning {
   list-style: circle;
 }
-.topics li {
+.learning li {
   border: 0 !important;
   margin-bottom: 0 !important;
 }
 .clear {
   clear: both;
 }
-.course-info .course-sidebar .important-dates li .icon.topics{
-
+.course-info .course-sidebar .important-dates li .icon.learning{
+  background-image: url("../../images/portal-icons/learning-icon.png");
 }
