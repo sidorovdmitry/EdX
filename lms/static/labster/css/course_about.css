@@ -1,0 +1,13 @@
+.topics {
+  list-style: circle;
+}
+.topics li {
+  border: 0 !important;
+  margin-bottom: 0 !important;
+}
+.clear {
+  clear: both;
+}
+.course-info .course-sidebar .important-dates li .icon.topics{
+
+}
