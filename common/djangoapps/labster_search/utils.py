@@ -1,0 +1,45 @@
+import bleach
+import re
+import requests
+
+from lxml import etree
+
+
+def clean_string(string):
+    return re.sub('[\(\)\?!,.]+', '', string)
+
+
+def get_keywords(text):
+    """
+    Get list of word from text
+    """
+    words = []
+    for word in text.split():
+        word = bleach.clean(word, strip=True)
+        word = clean_string(word).strip().lower()
+        if word and len(word) > 3:
+            words.append(word)
+    return words
+
+
+def get_keywords_from_sentences(sentences):
+    keywords_list = [get_keywords(sentence) for sentence in sentences]
+    keywords = [word for words in keywords_list for word in words]
+    return keywords
+
+
+def get_sentences_from_xml(url):
+    response = requests.get(url)
+    assert response.status_code == 200, "no XML file"
+
+    root = etree.fromstring(response.content)
+    sentences = []
+    for el in root.iter():
+        if el.tag != 'Conversation':
+            continue
+
+        sentence = el.attrib.get('Sentence', '')
+        if sentence:
+            sentences.append(sentence)
+
+    return sentences

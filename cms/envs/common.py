@@ -642,6 +642,7 @@ if FEATURES.get('LABSTER'):
     INSTALLED_APPS += (
         'labster',
         'labster_adaptive',
+        'labster_search',
         'corsheaders',
         'rest_framework',
         'rest_framework.authtoken',
