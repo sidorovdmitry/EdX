@@ -2,7 +2,7 @@ from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from xmodule.modulestore.django import modulestore
 
 
-def get_popular_courses_labster(courses_id, max=6):
+def get_popular_courses(courses_id, max=6):
     '''
     Returns a list of most popular courses
     '''

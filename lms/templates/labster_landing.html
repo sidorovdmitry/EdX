@@ -31,9 +31,9 @@ show_partners = microsite.get_value('show_partners', True)
         <div class="wrap-hero">
           <h2>Award Winning <strong>Virtual Laboratories</strong> for <strong>High Schools</strong> and <strong>Colleges</strong></h2>
           <div class="form-labs">
-            <form action="">
-              <input type="text" placeholder="Search for a lab or topic" class="txt-labs"/>
-              <input type="button" name="button" value="" onclick="showUser()" class="sbt-labs"/>
+            <form action="/courses" method="get">
+              <input type="text" placeholder="Search for a lab or topic" class="txt-labs" name="q" value="">
+              <input type="submit" class="sbt-labs" value="">
             </form>
           </div> <!-- end form-labs -->
           <a href="#" class="view-all">View All Labs</a>

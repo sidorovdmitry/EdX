@@ -16,7 +16,11 @@ show_partners = microsite.get_value('show_partners', True)
 
 %>
 
-<%block name="pagetitle">${_("Labster")}</%block>
+<%block name="pagetitle">
+  % if keywords:
+  Search: ${keywords} |
+  % endif
+  ${_("Labster")}</%block>
 
 <%block name="headextra">
 <link rel="stylesheet" href="${static.url('labster/css/landing.css')}">
@@ -31,12 +35,12 @@ show_partners = microsite.get_value('show_partners', True)
         <div class="wrap-hero">
           <h2>Search for Virtual Lab Simulations</h2>
           <div class="form-labs">
-            <form action="">
-              <input type="text" placeholder="Search for a lab or topic" class="txt-labs"/>
-              <input type="button" name="button" value="" onclick="showUser()" class="sbt-labs"/>
+            <form action="" method="get">
+              <input type="text" placeholder="Search for a lab or topic" class="txt-labs" name="q" value="${keywords}">
+              <input type="submit" class="sbt-labs" value="">
             </form>
           </div> <!-- end form-labs -->
-          <a href="#" class="view-all">View All Labs</a>
+          <a href="/courses" class="view-all">View All Labs</a>
         </div> <!-- end wrap-hero -->
       </div> <!-- end hero -->
     </div> <!-- end container -->
@@ -46,13 +50,17 @@ show_partners = microsite.get_value('show_partners', True)
     <section class="highlighted-courses">
 
       <header class="heading-title">
-        <h3>Our Most Popular Labs</h3>
+        % if keywords:
+        <h3>${len(courses)} Relevant Labs Found</h3>
+        % else:
+        <h3>Browse Our Labs</h3>
+        % endif
       </header>
 
       <section class="courses">
         <ul class="courses-listing">
           <!-- list labs -->
-          %for course in popular_labs:
+          %for course in courses:
             <li class="courses-listing-item">
               <%include file="../course.html" args="course=course" />
             </li>
@@ -61,7 +69,7 @@ show_partners = microsite.get_value('show_partners', True)
         </ul>
       </section>
     </section>
-    <!-- end section highlighted-courses -->
+    <!-- end section highlighted-courses --
 
     </section>
   </section>

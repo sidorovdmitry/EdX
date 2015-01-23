@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import redirect
 from django_future.csrf import ensure_csrf_cookie
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import AnonymousUser
 from django.db.models import Count
 
 from edxmako.shortcuts import render_to_response
@@ -11,8 +11,9 @@ from edxmako.shortcuts import render_to_response
 from util.cache import cache_if_anonymous
 from courseware.courses import get_courses, sort_by_announcement
 
+from labster.courses import get_popular_courses
 from labster.models import UserAttempt, Lab
-from labster.courses import get_popular_courses_labster
+from labster_search.search import get_courses_from_keywords
 
 
 @ensure_csrf_cookie
@@ -62,7 +63,7 @@ def index(request, user=AnonymousUser()):
         list_courses_id.append(course_id)
 
     # get courses based on course id
-    popular_labs = get_popular_courses_labster(courses_id)
+    popular_labs = get_popular_courses(courses_id)
 
     context = {
         'courses': courses,
@@ -90,32 +91,16 @@ def courses(request, user=AnonymousUser()):
     if domain is False:
         domain = request.META.get('HTTP_HOST')
 
-    courses = get_courses(user, domain=domain)
-    courses = sort_by_announcement(courses)
-
-    # get 5 popular labs
-    user_attempts = UserAttempt.objects.all().values('lab_proxy__lab').annotate(total=Count('lab_proxy__lab')).order_by('-total')
-    labs_id = []
-
-    # get the lab foreign key
-    for lab_id in user_attempts:
-        labs_id.append(lab_id['lab_proxy__lab'])
-
-    # get course_id
-    # courses_id = Lab.objects.filter(id__in=labs_id).values_list('demo_course_id', flat=True)
-    courses_id = Lab.objects.filter(id__in=labs_id).values_list('demo_course_id', flat=True)
-    list_courses_id = []
-    for course_id in courses_id:
-        if not course_id:
-            continue
-        list_courses_id.append(course_id)
-
-    # get courses based on course id
-    popular_labs = get_popular_courses_labster(courses_id)
+    keywords = request.GET.get('q', '').strip()
+    if keywords:
+        courses = get_courses_from_keywords(keywords)
+    else:
+        courses = get_courses(user, domain=domain)
+        courses = sort_by_announcement(courses)
 
     context = {
         'courses': courses,
-        'popular_labs': popular_labs,
+        'keywords': keywords,
     }
 
     return render_to_response('courseware/labster_courses.html', context)

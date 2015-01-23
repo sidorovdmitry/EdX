@@ -29,10 +29,11 @@ def get_labs_from_keywords(keywords):
     and_results = results.filter(and_filters)
     and_lab_ids = and_results.values_list('lab_id', flat=True)
 
-    # or
-    or_filters = reduce(operator.or_, (Q(keyword__icontains=keyword) for keyword in keyword_list))
-    or_results = results.filter(or_filters)
-    or_lab_ids = or_results.values_list('lab_id', flat=True)
+    if len(keywords) > 1:
+        # or
+        or_filters = reduce(operator.or_, (Q(keyword__icontains=keyword) for keyword in keyword_list))
+        or_results = results.filter(or_filters)
+        or_lab_ids = or_results.values_list('lab_id', flat=True)
 
     lab_ids = list(and_lab_ids) + list(or_lab_ids)
     lab_ids = uniqify(lab_ids)
