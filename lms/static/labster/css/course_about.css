@@ -1,4 +1,8 @@
+.learning-container .learning-description {
+  margin-left: 28px;
+}
 .learning {
+  margin-left: 10px;
   list-style: circle;
 }
 .learning li {
