@@ -39,6 +39,7 @@
   <script type="text/javascript">
   function show_all_tags() {
       $('.hide_tags').show();
+      $('.link_tags').hide();
     };
   (function() {
     $(".register").click(function(event) {
@@ -342,16 +343,20 @@
             <p>The following list are topics, techniques and terms covered in this lab, in prioritized order, to give you a quick overview of the lab.</p>
             <div class="clear"></div>
             <ol class="learning">
-              <li>Electron transport chain</li>
-              <li>Specmetrometry</li>
-              <li>Pigment Extraction</li>
-              <li>Photosystem II</li>
-              <li>Reaction Center</li>
-              <li class="hide_tags">ini hideeeeeeee</li>
+              % for keyword in primary_keywords[:5]:
+              <li>${keyword.display_name}</li>
+              % endfor
+              % for keyword in primary_keywords[5:]:
+                <li class="hide_tags">${keyword.display_name}</li>
+              % endfor
+              % if primary_keywords:
+                <li class="link_tags">
+                  <a onclick="show_all_tags()">Show All</a>
+                </li>
+              % endif
             </ol>
           </li>
         </ol>
-        <a onclick="show_all_tags()">Show All</a>
       </section>
 
 

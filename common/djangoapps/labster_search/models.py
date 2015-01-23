@@ -9,6 +9,7 @@ class LabKeyword(models.Model):
 
     lab = models.ForeignKey(Lab)
     keyword = models.CharField(max_length=255, db_index=True)
+    display_name = models.CharField(max_length=255, blank=True, default="")
     rank = models.IntegerField(default=0)
     frequency = models.IntegerField(default=0, db_index=True)
 
@@ -22,9 +23,11 @@ class LabKeyword(models.Model):
 
     SOURCE_PROBLEM = 1
     SOURCE_ENGINE_XML = 2
+    SOURCE_MANUAL = 3
     SOURCES = (
         (SOURCE_PROBLEM, 'problem'),
         (SOURCE_ENGINE_XML, 'engine XML'),
+        (SOURCE_MANUAL, 'manual'),
     )
     source = models.IntegerField(choices=SOURCES, blank=True, null=True)
 
