@@ -11,3 +11,6 @@
 .course-info .course-sidebar .important-dates li .icon.learning{
   background-image: url("../../images/portal-icons/learning-icon.png");
 }
+.hide_tags {
+  display: none;
+}

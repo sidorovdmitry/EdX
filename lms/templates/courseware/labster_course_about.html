@@ -37,6 +37,9 @@
 <%block name="js_extra">
 
   <script type="text/javascript">
+  function show_all_tags() {
+      $('.hide_tags').show();
+    };
   (function() {
     $(".register").click(function(event) {
       if ( ! $(event.currentTarget).hasClass('disabled')) {
@@ -344,9 +347,11 @@
               <li>Pigment Extraction</li>
               <li>Photosystem II</li>
               <li>Reaction Center</li>
+              <li class="hide_tags">ini hideeeeeeee</li>
             </ol>
           </li>
         </ol>
+        <a onclick="show_all_tags()">Show All</a>
       </section>
 
 
