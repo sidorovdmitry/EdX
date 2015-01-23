@@ -35,11 +35,14 @@ def get_sentences_from_xml(url):
     root = etree.fromstring(response.content)
     sentences = []
     for el in root.iter():
-        if el.tag != 'Conversation':
-            continue
+        if el.tag == 'Conversation':
+            sentence = el.attrib.get('Sentence', '')
+            if sentence:
+                sentences.append(sentence)
 
-        sentence = el.attrib.get('Sentence', '')
-        if sentence:
-            sentences.append(sentence)
+        elif el.tag == 'StartConversation':
+            sentence = el.attrib.get('ConversationSentence', '')
+            if sentence:
+                sentences.append(sentence)
 
     return sentences

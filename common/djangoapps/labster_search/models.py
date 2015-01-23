@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 from labster.models import Lab, Problem
-from labster_search.utils import get_keywords, get_sentences_from_xml, get_keywords_from_sentences
+from labster_search.utils import get_sentences_from_xml, get_keywords_from_sentences
 
 
 class LabKeyword(models.Model):
