@@ -91,7 +91,7 @@ CC_PROCESSOR['CyberSource']['PURCHASE_ENDPOINT'] = '/shoppingcart/payment_fake/'
 LABSTER_UNITY_URL_PREFIX = "https://labster.s3.amazonaws.com/unity/"
 LABSTER_UNITY_API_PREFIX = "http://localhost:8000"
 
-PLATFORM_NAME = 'LabsterX'
+PLATFORM_NAME = 'Virtual Lab Simulations for Biology Education'
 THEME_NAME = 'labster'
 FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
 

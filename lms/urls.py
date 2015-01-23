@@ -11,6 +11,7 @@ if settings.DEBUG or settings.FEATURES.get('ENABLE_DJANGO_ADMIN_SITE'):
     admin.autodiscover()
 
 urlpatterns = ('',  # nopep8
+    url(r'^landing$', 'labster.landing.views.index', name="labster-landing"),
     url(r'robots\.txt$', 'labster.static_views.lms_robots', name="robots.txt"),
 
     url(r'^invalid-browser/$', 'labster.lms.views.invalid_browser', name='invalid_browser'),

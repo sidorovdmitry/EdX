@@ -1,0 +1,312 @@
+<%! from django.utils.translation import ugettext as _ %>
+
+<%! from django.core.urlresolvers import reverse %>
+<%inherit file="main.html" />
+<%namespace name='static' file='static_content.html'/>
+
+<%! from microsite_configuration import microsite %>
+
+<%
+homepage_overlay_html = microsite.get_value('homepage_overlay_html')
+
+show_homepage_promo_video = microsite.get_value('show_homepage_promo_video', True)
+homepage_promo_video_youtube_id = microsite.get_value('homepage_promo_video_youtube_id', "oairUMkieak")
+
+show_partners = microsite.get_value('show_partners', True)
+
+%>
+
+<%block name="pagetitle">${_("Labster")}</%block>
+
+<%block name="headextra">
+<link rel="stylesheet" href="${static.url('labster/css/landing.css')}">
+</%block>
+
+<!-- start header -->
+
+  <section class="home">
+    <header class="landing-home">
+      <div class="container">
+        <div class="hero">
+          <div class="wrap-hero">
+            <h2>Award Winning <strong>Virtual Laboratories</strong> for <strong>High Schools</strong> and <strong>Colleges</strong></h2>
+            <div class="form-labs">
+              <form action="">
+                <input type="text" placeholder="Search for a lab or topic" class="txt-labs"/>
+                <input type="button" name="button" value="" onclick="showUser()" class="sbt-labs"/>
+              </form>
+            </div> <!-- end form-labs -->
+            <a href="#" class="view-all">View All Labs</a>
+          </div> <!-- end wrap-hero -->
+        </div> <!-- end hero -->
+      </div> <!-- end container -->
+
+      <div class="outer-wrapper">
+        <div class="title">
+          <hgroup>
+            <h1>Empowering the Next Generation of Scientist</h1>
+            <h2>Virtual labs and courses for anyone, anywhere, anytime</h2>
+          </hgroup>
+        </div> <!-- end title -->
+
+        <a href="https://edx.labster.com/#video-modal" class="media" rel="leanModal">
+          <div class="hero">
+          </div> <!-- end hero -->
+        </a>
+      </div> <!-- outer-wrapper -->
+    </header> <!-- end landing-home -->
+
+    <section class="container">
+
+      <section class="clients">
+        <ul>
+          <li><img src="${static.url('images/landing/cust-1.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-2.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-3.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-4.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-5.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-6.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-7.jpg')}" alt="client"></li>
+        </ul>
+      </section>
+      <!-- end section customers/clients  -->
+
+      <section class="highlighted-courses">
+
+        <header class="heading-title">
+          <h3>Our Most Popular Labs</h3>
+        </header>
+
+        <section class="courses">
+          <ul class="courses-listing">
+            <!-- list labs -->
+            <li class="courses-listing-item">
+              <article id="LabsterX/Photosynthesis/2014" class="course">
+                <a href="https://edx.labster.com/courses/LabsterX/Photosynthesis/2014/about">
+                  <div class="inner-wrapper">
+                    <header class="course-preview">
+                      <hgroup>
+                        <h2>Photosynthesis</h2>
+                      </hgroup>
+                      <div class="info-link">➔</div>
+                    </header>
+                    <section class="info">
+                      <div class="cover-image">
+                        <img src="./Welcome   LabsterX_files/photosyntesis.png" alt="Photosynthesis Photosynthesis Cover Image">
+                      </div>
+                      <div class="desc">
+                        <p>In the photosynthesis lab students will learn about the molecular processes that enable plants and algae to convert the light energy into chemical energy. You will measure the redox potential of the electron transport chain and extract pigments from an algal strain, that could be a promising candidate for bio fuel production.</p>
+                      </div>
+
+                    </section>
+                  </div>
+                  <div class="meta-info">
+                    <p class="university">LabsterX</p>
+                  </div>
+                </a>
+              </article>
+            </li>
+            <!-- end list labs -->
+            <!-- list labs -->
+            <li class="courses-listing-item">
+              <article id="LabsterX/AnimalGenetics/2014" class="course">
+                <a href="https://edx.labster.com/courses/LabsterX/AnimalGenetics/2014/about">
+                  <div class="inner-wrapper">
+                    <header class="course-preview">
+                      <hgroup>
+                        <h2>Animal Genetics</h2>
+                      </hgroup>
+                      <div class="info-link">➔</div>
+                    </header>
+                    <section class="info">
+                      <div class="cover-image">
+                        <img src="./Welcome   LabsterX_files/animal_genetics.jpg" alt="AnimalGenetics Animal Genetics Cover Image">
+                      </div>
+                      <div class="desc">
+                        <p>Learn about the Mendelian inheritance of double muscling in cattle. Find the responsible gene using linkage analysis and learn how mutation in this gene alters gene expression resulting in double muscled cattle.</p>
+                      </div>
+
+                    </section>
+                  </div>
+                  <div class="meta-info">
+                    <p class="university">LabsterX</p>
+                  </div>
+                </a>
+              </article>
+            </li>
+            <!-- end list labs -->
+            <!-- list labs -->
+            <li class="courses-listing-item">
+              <article id="LabsterX/GeneRegulation/2014" class="course">
+                <a href="https://edx.labster.com/courses/LabsterX/GeneRegulation/2014/about">
+                  <div class="inner-wrapper">
+                    <header class="course-preview">
+                      <hgroup>
+                        <h2>Gene Regulation</h2>
+                      </hgroup>
+                      <div class="info-link">➔</div>
+                    </header>
+                    <section class="info">
+                      <div class="cover-image">
+                        <img src="./Welcome   LabsterX_files/gene_regulation.jpg" alt="GeneRegulation Gene Regulation Cover Image">
+                      </div>
+                      <div class="desc">
+                        <p>In this lab, students will learn about gene expression regulation and its real life application.</p>
+                      </div>
+
+                    </section>
+                  </div>
+                  <div class="meta-info">
+                    <p class="university">LabsterX</p>
+                  </div>
+                </a>
+              </article>
+            </li>
+            <!-- end list labs -->
+            <!-- list labs -->
+            <li class="courses-listing-item">
+              <article id="LabsterX/INT/2014" class="course">
+                <a href="https://edx.labster.com/courses/LabsterX/INT/2014/about">
+                  <div class="inner-wrapper">
+                    <header class="course-preview">
+                      <hgroup>
+                        <h2>Introductory Lab</h2>
+                      </hgroup>
+                      <div class="info-link">➔</div>
+                    </header>
+                    <section class="info">
+                      <div class="cover-image">
+                        <img src="./Welcome   LabsterX_files/small_intro.jpg" alt="INT Introductory Lab Cover Image">
+                      </div>
+                      <div class="desc">
+                        <p>Learn about lab safety, scientific methods, diffusion and osmosis, acids, bases and how to prepare buffers.</p>
+                      </div>
+
+                    </section>
+                  </div>
+                  <div class="meta-info">
+                    <p class="university">LabsterX</p>
+                  </div>
+                </a>
+              </article>
+            </li>
+            <!-- end list labs -->
+            <!-- list labs -->
+            <li class="courses-listing-item">
+              <article id="LabsterX/MDG101/2014" class="course">
+                <a href="https://edx.labster.com/courses/LabsterX/MDG101/2014/about">
+                  <div class="inner-wrapper">
+                    <header class="course-preview">
+                      <hgroup>
+                        <h2>Medical Genetics Lab</h2>
+                      </hgroup>
+                      <div class="info-link">➔</div>
+                    </header>
+                    <section class="info">
+                      <div class="cover-image">
+                        <img src="./Welcome   LabsterX_files/medical_genetics.jpg" alt="MDG101 Medical Genetics Lab Cover Image">
+                      </div>
+                      <div class="desc">
+                        <p>Learn about Mendelian genetics, linkage analysis, hereditary cancer, tumor suppressor, oncogenes and how to identify a defective gene in a family.</p>
+                      </div>
+
+                    </section>
+                  </div>
+                  <div class="meta-info">
+                    <p class="university">LabsterX</p>
+                  </div>
+                </a>
+              </article>
+            </li>
+            <!-- end list labs -->
+            <!-- list labs -->
+            <li class="courses-listing-item">
+              <article id="LabsterX/MolecularCloning/2014" class="course">
+                <a href="https://edx.labster.com/courses/LabsterX/MolecularCloning/2014/about">
+                  <div class="inner-wrapper">
+                    <header class="course-preview">
+                      <hgroup>
+                        <h2>Molecular Cloning</h2>
+                      </hgroup>
+                      <div class="info-link">➔</div>
+                    </header>
+                    <section class="info">
+                      <div class="cover-image">
+                        <img src="./Welcome   LabsterX_files/molecular_cloning.jpg" alt="MolecularCloning Molecular Cloning Cover Image">
+                      </div>
+                      <div class="desc">
+                        <p>Dive into recombinant DNA technology with cell division, transcription and translation. Includes concepts in restriction enzymes, cloning and reporter genes.</p>
+                      </div>
+
+                    </section>
+                  </div>
+                  <div class="meta-info">
+                    <p class="university">LabsterX</p>
+                  </div>
+                </a>
+              </article>
+            </li>
+            <!-- end list labs -->
+          </ul>
+        </section>
+      </section>
+      <!-- end section highlighted-courses -->
+
+      <section class="why-labster">
+        <header class="heading-title">
+          <h3>Why Use Labster?</h3>
+        </header>
+        <section class="why-left">
+          <h4>Real-World Scenarios</h4>
+          <p>Integrate real-world scenarios with 3D animations visualizing life science down to the molecular level.</p>
+
+          <h4>Increased Student Engagement and Learnings</h4>
+          <p>Integrate curriculum theory and relevant quiz questions with hands-on virtual practices and animations that increase student engagement and learnings. </p>
+
+          <h4>Learn Through Trial & Error</h4>
+          <p>Track your students online progress and use data to pin-point focus areas. Students learn through trial & error repeating experiments when necessary.</p>
+        </section>
+        <section class="why-right">
+          <img src="${static.url('images/landing/labster-room.jpg')}" alt="Labster">
+        </section>
+      </section>
+      <!-- end section why labster -->
+
+      <section class="highlighted-courses">
+        <header class="heading-title">
+          <h3>Browse All Labs</h3>
+        </header>
+        % if settings.FEATURES.get('COURSES_ARE_BROWSABLE'):
+          <section class="courses">
+            <ul class="courses-listing">
+              %for course in courses:
+              <li class="courses-listing-item">
+                <%include file="course.html" args="course=course" />
+              </li>
+              %endfor
+            </ul>
+          </section>
+          % endif
+
+        </section>
+      </section>
+    </section>
+
+
+  <%block name="js_extra">
+  <script type="text/javascript">
+    $(window).load(function() {
+     if(getParameterByName('next')) {
+      $('#login').trigger("click");
+    }
+  })
+  </script>
+  </%block>
+
+  % if show_signup_immediately is not UNDEFINED:
+  ## NOTE: This won't work in production, because anonymous views are cached, so it will
+  ## show either with or without this extra js for 3 minutes at a time.
+  <script type="text/javascript">
+    $(window).load(function() {$('#signup_action').trigger("click");});
+  </script>
+  % endif
