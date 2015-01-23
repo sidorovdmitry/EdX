@@ -45,7 +45,8 @@ class LabKeyword(models.Model):
 
 def get_keywords_from_lab_problems(lab):
     problems = Problem.get_by_lab(lab)
-    sentences = [problem.sentence for problem in problems]
+    sentences = [lab.name]
+    sentences.extend([problem.sentence for problem in problems])
     return get_keywords_from_sentences(sentences)
 
 
