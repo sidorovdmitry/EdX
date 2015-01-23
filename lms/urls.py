@@ -11,7 +11,6 @@ if settings.DEBUG or settings.FEATURES.get('ENABLE_DJANGO_ADMIN_SITE'):
     admin.autodiscover()
 
 urlpatterns = ('',  # nopep8
-    url(r'^landing$', 'labster.landing.views.index', name="labster-landing"),
     url(r'robots\.txt$', 'labster.static_views.lms_robots', name="robots.txt"),
 
     url(r'^invalid-browser/$', 'labster.lms.views.invalid_browser', name='invalid_browser'),
@@ -19,7 +18,8 @@ urlpatterns = ('',  # nopep8
     # certificate view
     url(r'^update_certificate$', 'certificates.views.update_certificate'),
     url(r'^request_certificate$', 'certificates.views.request_certificate'),
-    url(r'^$', 'branding.views.index', name="root"),   # Main marketing page, or redirect to courseware
+    url(r'^$', 'labster.landing.views.index', name="root"),
+    # url(r'^$', 'branding.views.index', name="root"),   # Main marketing page, or redirect to courseware
     url(r'^dashboard$', 'student.views.dashboard', name="dashboard"),
     url(r'^resend_activation_email$', 'student.views.resend_activation_email', name='resend_activation_email'),
     url(r'^login$', 'student.views.signin_user', name="signin_user"),
