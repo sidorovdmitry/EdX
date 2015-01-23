@@ -129,9 +129,21 @@ a.view-all {color: #fff; text-transform: uppercase; margin-left: 20px;}
 }
 
 .labster-search.home > header {
-    height: 300px;
+    height: 300px !important;
 }
 
 .labster-search.home .hero {
-    height: inherit;
+    height: inherit !important;
+}
+
+.highlighted-courses .courses .course .info .bottom .start-date, .find-courses .courses .course .info .bottom .start-date {
+    display: none !important;
+}
+
+.highlighted-courses .courses .course .info .desc, .find-courses .courses .course .info .desc {
+    height: 140px !important;
+}
+
+.highlighted-courses .courses .course .info .bottom, .find-courses .courses .course .info .bottom {
+    display: none !important;
 }

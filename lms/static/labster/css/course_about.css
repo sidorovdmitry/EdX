@@ -1,5 +1,9 @@
+.learning-container .learning-description {
+  margin-left: 28px;
+}
 .learning {
-  list-style: circle;
+  margin-left: 10px;
+  list-style: disc;
 }
 .learning li {
   border: 0 !important;

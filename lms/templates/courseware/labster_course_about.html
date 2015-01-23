@@ -338,9 +338,9 @@
           % if get_course_about_section(course, "prerequisites"):
             <li class="prerequisites"><div class="icon prereq"></div><p>${_("Prerequisites")}</p><span class="start-date">${get_course_about_section(course, "prerequisites")}</span></li>
           % endif
-          <li>
+          <li class="learning-container">
             <div class="icon learning"></div><p>${_("Learning Outcomes and Topics")}</p>
-            <p>The following list are topics, techniques and terms covered in this lab, in prioritized order, to give you a quick overview of the lab.</p>
+            <p class="learning-description">The following list are topics, techniques and terms covered in this lab, in prioritized order, to give you a quick overview of the lab.</p>
             <div class="clear"></div>
             <ol class="learning">
               % for keyword in primary_keywords[:5]:
