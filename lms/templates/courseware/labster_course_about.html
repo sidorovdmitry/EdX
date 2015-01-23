@@ -312,7 +312,9 @@
         <ol class="important-dates">
           <li><div class="icon course-number"></div><p>${_("Course Name")}</p><span class="course-number">${get_course_about_section(course, "title")}</span></li>
           % if not course.start_date_is_still_default:
-          <li><div class="icon start"></div><p>${_("Classes Start")}</p><span class="start-date">${course.start_date_text}</span></li>
+            % if course.start > timezone.now():
+              <li><div class="icon start"></div><p>${_("Classes Start")}</p><span class="start-date">${course.start_date_text}</span></li>
+            % endif
           % endif
             ## We plan to ditch end_date (which is not stored in course metadata),
             ## but for backwards compatibility, show about/end_date blob if it exists.
