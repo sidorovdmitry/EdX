@@ -127,3 +127,11 @@ a.view-all {color: #fff; text-transform: uppercase; margin-left: 20px;}
    -moz-box-shadow: 0px 0px 0px #ffffff !important;
         box-shadow: 0px 0px 0px #ffffff !important;
 }
+
+.labster-search.home > header {
+    height: 300px;
+}
+
+.labster-search.home .hero {
+    height: inherit;
+}
