@@ -10,6 +10,7 @@ class LabKeyword(models.Model):
     lab = models.ForeignKey(Lab)
     keyword = models.CharField(max_length=255, db_index=True)
     rank = models.IntegerField(default=0)
+    frequency = models.IntegerField(default=0, db_index=True)
 
     KEYWORD_PRIMARY = 1
     KEYWORD_SECONDARY = 2
@@ -50,13 +51,14 @@ def get_keywords_from_lab_problems(lab):
 
 def update_lab_keywords(lab, keywords, keyword_type, source):
     for keyword in keywords:
-        obj, _ = LabKeyword.objects.get_or_create(
+        obj, created = LabKeyword.objects.get_or_create(
             lab=lab,
             keyword=keyword,
             keyword_type=keyword_type)
-        if not obj.source:
-            obj.source = source
-            obj.save()
+
+        obj.frequency += 1
+        obj.source = source
+        obj.save()
 
 
 def update_lab_keywords_from_problems(lab):
@@ -81,10 +83,12 @@ def update_lab_keywords_from_xml(lab):
     )
 
 
-def update_all_lab_keywords(delete_all=False):
-    if delete_all:
-        LabKeyword.objects.all().delete()
+def update_lab_keyword_content(lab):
+    LabKeyword.objects.filter(lab=lab).delete()
+    update_lab_keywords_from_problems(lab)
+    update_lab_keywords_from_xml(lab)
 
+
+def update_all_lab_keywords():
     for lab in Lab.objects.all():
-        update_lab_keywords_from_problems(lab)
-        update_lab_keywords_from_xml(lab)
+        update_lab_keyword_content(lab)
