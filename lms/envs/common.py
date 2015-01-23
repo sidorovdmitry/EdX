@@ -42,7 +42,7 @@ from lms.lib.xblock.mixin import LmsBlockMixin
 PLATFORM_NAME = "LabsterX"
 CC_MERCHANT_NAME = PLATFORM_NAME
 PLATFORM_TWITTER_ACCOUNT = "@labster"
-PLATFORM_FACEBOOK_ACCOUNT = "http://www.facebook.com/YourPlatformFacebookAccount"
+PLATFORM_FACEBOOK_ACCOUNT = "http://www.facebook.com/teamlabster"
 
 COURSEWARE_ENABLED = True
 ENABLE_JASMINE = False
