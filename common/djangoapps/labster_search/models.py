@@ -9,6 +9,7 @@ class LabKeyword(models.Model):
 
     lab = models.ForeignKey(Lab)
     keyword = models.CharField(max_length=255, db_index=True)
+    display_name = models.CharField(max_length=255, blank=True, default="")
     rank = models.IntegerField(default=0)
     frequency = models.IntegerField(default=0, db_index=True)
 
