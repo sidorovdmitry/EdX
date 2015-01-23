@@ -7,14 +7,21 @@
 }
 .link_tags {
   list-style: none;
-  padding-top: 20px;
+  /*padding-top: 20px;*/
 }
 .clear {
   clear: both;
 }
+.hide_tags {
+  display: none;
+}
 .course-info .course-sidebar .important-dates li .icon.learning{
   background-image: url("../../images/portal-icons/learning-icon.png");
 }
-.hide_tags {
-  display: none;
+.course-info .course-sidebar > section.course-summary {
+  padding-bottom: 0;
+}
+.course-info .course-sidebar .important-dates li:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
 }
