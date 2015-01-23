@@ -49,5 +49,6 @@ class TestLongUsernameEmail(TestCase):
         obj = json.loads(response.content)
         self.assertEqual(
             obj['value'],
-            "Email cannot be more than 75 characters long",
+            "Username cannot be more than 30 characters long",
+            # "Email cannot be more than 75 characters long",
         )

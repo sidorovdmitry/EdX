@@ -39,7 +39,7 @@ class FaviconTestCase(TestCase):
         self.assertEqual(resp.status_code, 301)
         self.assertRedirects(
             resp,
-            "/static/themes/labster/images/foo.ico",
+            "/static/images/foo.ico",
             status_code=301, target_status_code=404  # @@@ how to avoid 404?
         )
 
@@ -52,6 +52,6 @@ class FaviconTestCase(TestCase):
         self.assertEqual(resp.status_code, 301)
         self.assertRedirects(
             resp,
-            "/static/themes/labster/images/foo.ico",
+            "/static/images/foo.ico",
             status_code=301, target_status_code=404  # @@@ how to avoid 404?
         )
