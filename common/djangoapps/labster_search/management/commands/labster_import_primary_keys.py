@@ -24,6 +24,7 @@ class Command(BaseCommand):
                     keyword_type=LabKeyword.KEYWORD_PRIMARY,
                 )
 
+                obj.display_name = keyword
                 obj.source = LabKeyword.SOURCE_MANUAL
                 obj.rank = rank
                 obj.save()

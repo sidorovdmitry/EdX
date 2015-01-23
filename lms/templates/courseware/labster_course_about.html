@@ -339,11 +339,9 @@
             <p>The following list are topics, techniques and terms covered in this lab, in prioritized order, to give you a quick overview of the lab.</p>
             <div class="clear"></div>
             <ol class="learning">
-              <li>Electron transport chain</li>
-              <li>Specmetrometry</li>
-              <li>Pigment Extraction</li>
-              <li>Photosystem II</li>
-              <li>Reaction Center</li>
+              % for keyword in primary_keywords:
+              <li>${keyword.display_name}</li>
+              % endfor
             </ol>
           </li>
         </ol>

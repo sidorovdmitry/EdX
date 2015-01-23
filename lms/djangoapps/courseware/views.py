@@ -52,6 +52,8 @@ from microsite_configuration import microsite
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from instructor.enrollment import uses_shib
 
+from labster.courses import get_primary_keywords
+
 log = logging.getLogger("edx.courseware")
 
 template_imports = {'urllib': urllib}
@@ -680,6 +682,7 @@ def course_about(request, course_id):
 
     is_shib_course = uses_shib(course)
 
+    primary_keywords = get_primary_keywords(course_key)
     return render_to_response('courseware/labster_course_about.html', {
         'course': course,
         'staff_access': staff_access,
@@ -695,6 +698,7 @@ def course_about(request, course_id):
         'invitation_only': invitation_only,
         'active_reg_button': active_reg_button,
         'is_shib_course': is_shib_course,
+        'primary_keywords': primary_keywords,
     })
 
 
