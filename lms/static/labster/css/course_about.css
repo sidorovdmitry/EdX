@@ -5,6 +5,10 @@
   border: 0 !important;
   margin-bottom: 0 !important;
 }
+.link_tags {
+  list-style: none;
+  padding-top: 20px;
+}
 .clear {
   clear: both;
 }
