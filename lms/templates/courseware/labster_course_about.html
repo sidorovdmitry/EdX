@@ -16,7 +16,7 @@
 
 <%inherit file="../main.html" />
 <%block name="headextra">
-
+  <link rel="stylesheet" href="${static.url('labster/css/course_about.css')}">
   <%
     if self.theme_enabled():
       google_analytics_file = u'../{ga}'.format(
@@ -227,7 +227,7 @@
           <a class="instructor-info-action" href="${studio_url}">${_("View About Page in studio")}</a>
         </div>
       % endif
-      
+
       <nav>
         <a href="#" class="active">${_("Overview")}</a>
       ##  <a href="#">${_("FAQ")}</a>
@@ -334,6 +334,18 @@
           % if get_course_about_section(course, "prerequisites"):
             <li class="prerequisites"><div class="icon prereq"></div><p>${_("Prerequisites")}</p><span class="start-date">${get_course_about_section(course, "prerequisites")}</span></li>
           % endif
+          <li>
+            <p><div class="icon topics"></div>${_("Learning Outcomes and Topics")}</p>
+            <p>The following list are topics, techniques and terms covered in this lab, in prioritized order, to give you a quick overview of the lab.</p>
+            <div class="clear"></div>
+            <ol class="topics">
+              <li>Electron transport chain</li>
+              <li>Specmetrometry</li>
+              <li>Pigment Extraction</li>
+              <li>Photosystem II</li>
+              <li>Reaction Center</li>
+            </ol>
+          </li>
         </ol>
       </section>
 
