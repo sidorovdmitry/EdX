@@ -27,5 +27,7 @@ def get_primary_keywords(course_id, count=10):
     except Lab.DoesNotExist:
         return []
 
-    lab_keywords = LabKeyword.objects.filter(lab=lab).order_by('-rank')
+    lab_keywords = LabKeyword.objects\
+        .filter(lab=lab, keyword_type=LabKeyword.KEYWORD_PRIMARY)\
+        .order_by('-rank')
     return lab_keywords[:count]
