@@ -5,15 +5,15 @@ from labster.models import Lab
 from labster_search.models import LabKeyword
 
 
-def get_popular_courses(courses_id, max=6):
+def get_popular_courses(courses_id):
     '''
     Returns a list of most popular courses
     '''
     courses = []
 
-    for course_id in courses_id[:max]:
+    for course_id in courses_id:
         course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
-        course = modulestore().get_course(course_key, depth=1)
+        course = modulestore().get_course(course_key)
         if course:
             courses.append(course)
 

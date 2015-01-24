@@ -54,7 +54,6 @@ def index(request, user=AnonymousUser()):
         labs_id.append(lab_id['lab_proxy__lab'])
 
     # get course_id
-    # courses_id = Lab.objects.filter(id__in=labs_id).values_list('demo_course_id', flat=True)
     courses_id = Lab.objects.filter(id__in=labs_id).values_list('demo_course_id', flat=True)
     list_courses_id = []
     for course_id in courses_id:
@@ -63,7 +62,7 @@ def index(request, user=AnonymousUser()):
         list_courses_id.append(course_id)
 
     # get courses based on course id
-    popular_labs = get_popular_courses(courses_id)
+    popular_labs = get_popular_courses(list_courses_id)[:6]
 
     context = {
         'courses': courses,
