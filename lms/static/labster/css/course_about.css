@@ -11,7 +11,7 @@
 }
 .link_tags {
   list-style: none;
-  /*padding-top: 20px;*/
+  cursor:pointer;
 }
 .clear {
   clear: both;
