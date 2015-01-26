@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 # edx+test0001@labster.com
@@ -31,9 +32,8 @@ class Command(BaseCommand):
             password = get_password(email)
 
             try:
-                User.objects.get(email=email)
-                User.objects.get(username=username)
-            except User.DoesNotExist:
+                User.objects.filter(Q(username=username) | Q(email=email))[0]
+            except:
                 User.objects.create_user(
                     username=username,
                     email=email,
