@@ -11,7 +11,7 @@
 
 <%inherit file="../main.html" />
 <%block name="headextra">
-
+  <link rel="stylesheet" href="${static.url('labster/css/course_about.css')}">
   <%
     if self.theme_enabled():
       google_analytics_file = u'../{ga}'.format(
@@ -32,6 +32,10 @@
 <%block name="js_extra">
 
   <script type="text/javascript">
+  function show_all_tags() {
+      $('.hide_tags').show();
+      $('.link_tags').hide();
+    };
   (function() {
     $(".register").click(function(event) {
       $("#class_enroll_form").submit();
@@ -301,7 +305,9 @@
         <ol class="important-dates">
           <li class="important-dates-item"><i class="icon fa fa-info-sign"></i><p class="important-dates-item-title">${_("Course Number")}</p><span class="important-dates-item-text course-number">${course.display_number_with_default | h}</span></li>
           % if not course.start_date_is_still_default:
+            % if course.start > timezone.now():
             <li class="important-dates-item"><i class="icon fa fa-calendar"></i><p class="important-dates-item-title">${_("Classes Start")}</p><span class="important-dates-item-text start-date">${course.start_datetime_text()}</span></li>
+            % endif
           % endif
             ## We plan to ditch end_date (which is not stored in course metadata),
             ## but for backwards compatibility, show about/end_date blob if it exists.
@@ -336,6 +342,24 @@
           % if get_course_about_section(course, "prerequisites"):
             <li class="important-dates-item"><i class="icon fa fa-book"></i><p class="important-dates-item-title">${_("Prerequisites")}</p><span class="important-dates-item-text prerequisites">${get_course_about_section(course, "prerequisites")}</span></li>
           % endif
+          <li class="learning-container">
+            <div class="icon learning"></div><p>${_("Learning Outcomes and Topics")}</p>
+            <p class="learning-description">The following list are topics, techniques and terms covered in this lab, in prioritized order, to give you a quick overview of the lab.</p>
+            <div class="clear"></div>
+            <ol class="learning">
+              % for keyword in primary_keywords[:5]:
+              <li>${keyword.display_name}</li>
+              % endfor
+              % for keyword in primary_keywords[5:]:
+                <li class="hide_tags">${keyword.display_name}</li>
+              % endfor
+              % if primary_keywords:
+                <li class="link_tags">
+                  <a href="#" onclick="show_all_tags()">Show All</a>
+                </li>
+              % endif
+            </ol>
+          </li>
         </ol>
       </section>
 

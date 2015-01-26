@@ -11,6 +11,7 @@ from django.utils import timezone
 from edxmako.shortcuts import render_to_string
 from xmodule.modulestore import ModuleStoreEnum
 from opaque_keys.edx.keys import CourseKey
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from xmodule.modulestore.django import modulestore
 from xmodule.contentstore.content import StaticContent
 from xmodule.modulestore.exceptions import ItemNotFoundError

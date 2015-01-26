@@ -1,0 +1,149 @@
+.content-wrapper {padding-top: 75px;}
+.nav-global {
+  margin-top: 5px !important;
+}
+.nav-global li {margin-right: 0px !important;}
+.landing-home {
+  background: #eee url(../../images/landing/bg-header.jpg) center no-repeat !important;
+  border-bottom:none !important;
+  -webkit-box-shadow: inset 0px 0px 0px #ffffff !important;
+   -moz-box-shadow: inset 0px 0px 0px #ffffff !important;
+        box-shadow: inset 0px 0px 0px #ffffff !important;
+}
+.hero {
+  width: 583px;
+  height: 304px;
+  background: url(../../images/landing/bg-search-form.jpg) no-repeat;
+}
+.hero h2 {
+  color: #fff;
+  font-size: 1.8em;
+  text-transform: none;
+  font-weight: 300;
+  margin-bottom: 1.4em;
+}
+.wrap-hero {
+  padding: 40px 30px 30px 30px;
+}
+.form-labs {margin-bottom: 1.4em;}
+.form-labs .txt-labs{
+  width: 340px;
+  height: 55px;
+  position: relative;
+  font-size: 20px;
+  font-weight: normal;
+  border: none;
+  float: left;
+  border-radius: 0;
+  -webkit-border-top-left-radius: 3px !important;
+-webkit-border-bottom-left-radius: 3px !important;
+-moz-border-radius-topleft: 3px !important;
+-moz-border-radius-bottomleft: 3px !important;
+border-top-left-radius: 3px !important;
+border-bottom-left-radius: 3px !important;
+  -webkit-box-shadow: 0px 0px 0px #ffffff;
+   -moz-box-shadow: 0px 0px 0px #ffffff;
+        box-shadow: 0px 0px 0px #ffffff;
+
+}
+.form-labs .txt-labs:focus {
+  -webkit-box-shadow: 0px 0px 0px #ffffff;
+   -moz-box-shadow: 0px 0px 0px #ffffff;
+        box-shadow: 0px 0px 0px #ffffff;
+}
+.form-labs .sbt-labs{
+  width: 55px;
+  height: 55px;
+  text-align: center;
+  background: #009ee7 url(../../images/landing/search0icon.png) center no-repeat;
+  cursor: pointer;
+  border: none;
+  opacity: 0.9;
+  border-radius: 0;
+  -webkit-border-top-right-radius: 3px !important;
+  -webkit-border-bottom-right-radius: 3px !important;
+  -moz-border-radius-topright: 3px !important;
+  -moz-border-radius-bottomright: 3px !important;
+  border-top-right-radius: 3px !important;
+  border-bottom-right-radius: 3px !important;
+  -webkit-box-shadow: 0px 0px 0px #ffffff;
+   -moz-box-shadow: 0px 0px 0px #ffffff;
+        box-shadow: 0px 0px 0px #ffffff;
+
+}
+.form-labs .sbt-labs:hover {
+  background: #009ee7 url(../../images/landing/search0icon.png) center no-repeat !important;
+  opacity: 1;
+  -webkit-box-shadow: 0px 0px 0px #ffffff;
+   -moz-box-shadow: 0px 0px 0px #ffffff;
+        box-shadow: 0px 0px 0px #ffffff;
+}
+.form-labs input[type="submit"]:active:not(:disabled),
+.form-labs input[type="submit"]:focus:not(:disabled),
+.form-labs input[type="button"]:active:not(:disabled),
+.form-labs input[type="button"]:focus:not(:disabled),
+.form-labs button:active:not(:disabled),
+.form-labs button:focus:not(:disabled),
+.form-labs .button:active:not(:disabled),
+.form-labs .button:focus:not(:disabled) {
+    box-shadow: inset 0 0 0px 0 #000
+}
+a.view-all {color: #fff; text-transform: uppercase; margin-left: 20px;}
+.clients {padding: 3em 0;}
+.clients ul {list-style: none;margin:0;padding: 0; text-align: center;}
+.clients li {
+  display: inline;
+}
+.clients li img {max-width: 150px;}
+.heading-title {
+  text-align: center;
+  font-size: 2em;
+  padding-top: 1em;
+  padding-bottom: 0.5em;
+}
+.why-labster  {overflow: hidden; margin-bottom: 40px;}
+.why-labster h4{
+  margin-bottom: 7px;
+  font-weight: bold;
+}
+.why-labster p {margin-bottom: 40px;}
+.why-left {
+  padding-top: 60px;
+  width: 40%;
+  float: left;
+}
+.why-right {
+  padding-top: 60px;
+  float: right;
+  width: 50%;
+}
+
+/* lab list */
+.course {
+  -webkit-border-radius: 0px !important;
+  -moz-border-radius: 0px !important;
+  border-radius: 0px !important;
+  -webkit-box-shadow: 0px 0px 0px #ffffff !important;
+   -moz-box-shadow: 0px 0px 0px #ffffff !important;
+        box-shadow: 0px 0px 0px #ffffff !important;
+}
+
+.labster-search.home > header {
+    height: 300px !important;
+}
+
+.labster-search.home .hero {
+    height: inherit !important;
+}
+
+.highlighted-courses .courses .course .info .bottom .start-date, .find-courses .courses .course .info .bottom .start-date {
+    display: none !important;
+}
+
+.highlighted-courses .courses .course .info .desc, .find-courses .courses .course .info .desc {
+    height: 140px !important;
+}
+
+.highlighted-courses .courses .course .info .bottom, .find-courses .courses .course .info .bottom {
+    display: none !important;
+}

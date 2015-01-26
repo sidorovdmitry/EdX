@@ -11,7 +11,7 @@ angular.module('LabsterBackOffice')
 
       .success(function (data, status, headers, config) {
         angular.forEach(data, function (payment) {
-          payment.detail_url = '#/invoice/' + payment.id;
+          payment.detail_url = '/labs/invoice/' + payment.id;
           payment.created_date = moment(payment.created_at).format('ll');
         });
 

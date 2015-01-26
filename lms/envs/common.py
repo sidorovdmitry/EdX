@@ -44,13 +44,12 @@ CC_MERCHANT_NAME = PLATFORM_NAME
 # Shows up in the platform footer, eg "(c) COPYRIGHT_YEAR"
 COPYRIGHT_YEAR = "2015"
 
-PLATFORM_FACEBOOK_ACCOUNT = "http://www.facebook.com/YourPlatformFacebookAccount"
-PLATFORM_TWITTER_ACCOUNT = "@YourPlatformTwitterAccount"
+PLATFORM_FACEBOOK_ACCOUNT = "http://www.facebook.com/teamlabster"
+PLATFORM_TWITTER_ACCOUNT = "@labster"
 PLATFORM_TWITTER_URL = "https://twitter.com/YourPlatformTwitterAccount"
 PLATFORM_MEETUP_URL = "http://www.meetup.com/YourMeetup"
 PLATFORM_LINKEDIN_URL = "http://www.linkedin.com/company/YourPlatform"
 PLATFORM_GOOGLE_PLUS_URL = "https://plus.google.com/YourGooglePlusAccount/"
-
 
 COURSEWARE_ENABLED = True
 ENABLE_JASMINE = False
@@ -1690,6 +1689,7 @@ if FEATURES.get('LABSTER'):
     INSTALLED_APPS += (
         'labster',
         'labster_adaptive',
+        'labster_search',
         'corsheaders',
         'rest_framework.authtoken',
     )

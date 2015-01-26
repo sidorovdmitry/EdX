@@ -1,5 +1,11 @@
+.clear {
+    clear: both;
+}
 .margin-bottom-20 {
     margin-bottom: 20px;
+}
+.margin-bottom-80 {
+    margin-bottom: 80px;
 }
 .vertical-align-baseline {
     vertical-align: baseline !important;

@@ -321,6 +321,10 @@ class Problem(models.Model):
     def __unicode__(self):
         return "{}: {}".format(self.quiz_block, self.element_id)
 
+    @classmethod
+    def get_by_lab(cls, lab):
+        return cls.objects.filter(quiz_block__lab=lab)
+
     @property
     def correct_answers(self):
         try:

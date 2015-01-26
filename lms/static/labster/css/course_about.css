@@ -1,0 +1,31 @@
+.learning-container .learning-description {
+  margin-left: 28px;
+}
+.learning {
+  margin-left: 10px;
+  list-style: disc;
+}
+.learning li {
+  border: 0 !important;
+  margin-bottom: 0 !important;
+}
+.link_tags {
+  list-style: none;
+  /*padding-top: 20px;*/
+}
+.clear {
+  clear: both;
+}
+.hide_tags {
+  display: none;
+}
+.course-info .course-sidebar .important-dates li .icon.learning{
+  background-image: url("../../images/portal-icons/learning-icon.png");
+}
+.course-info .course-sidebar > section.course-summary {
+  padding-bottom: 0;
+}
+.course-info .course-sidebar .important-dates li:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+}

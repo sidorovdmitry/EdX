@@ -1,0 +1,57 @@
+<%! from django.utils.translation import ugettext as _ %>
+<%inherit file="../main.html" />
+
+<%namespace name='static' file='../static_content.html'/>
+
+<%block name="pagetitle">${_("Courses")}</%block>
+<%! from microsite_configuration import microsite %>
+
+<section class="find-courses">
+
+<%
+  course_index_overlay_text = microsite.get_value('course_index_overlay_text', _("Explore free courses from leading universities."))
+
+  # not sure why this is, but if I use static.url('images/edx_bw.png') then the HTML rendering
+  # of this template goes wonky
+
+  logo_file = microsite.get_value(
+    'course_index_overlay_logo_file', settings.STATIC_URL + 'images/edx_bw.png')
+%>
+
+  <header class="search">
+    <div class="inner-wrapper main-search">
+      <div class="title">
+        <hgroup>
+          <h1>${_("Empowering the Next Generation of Scientist")}</h1>
+          <h2>${_("Virtual labs and courses for anyone, anywhere, anytime")}</h2>
+        </hgroup>
+      </div>
+      <a href="#video-modal" class="media" rel="leanModal">
+        <div class="hero">
+        </div>
+      </a>
+    </div>
+  </header>
+
+  <section class="container">
+    <section class="courses">
+      <ul class="courses-listing">
+        %for course in courses:
+        <li class="courses-listing-item">
+          <%include file="../course.html" args="course=course" />
+        </li>
+        %endfor
+      </ul>
+    </section>
+  </section>
+</section>
+
+<section id="video-modal" class="modal home-page-video-modal video-modal">
+  <div class="inner-wrapper">
+    <%
+       youtube_video_id = "oairUMkieak"
+    %>
+    <iframe width="640" height="360" src="//www.youtube.com/embed/${youtube_video_id}?showinfo=0" frameborder="0" allowfullscreen></iframe>
+  </div>
+</section>
+

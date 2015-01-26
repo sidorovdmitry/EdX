@@ -68,6 +68,10 @@ import survey.utils
 import survey.views
 
 from util.views import ensure_valid_course_key
+
+from labster.courses import get_primary_keywords
+
+
 log = logging.getLogger("edx.courseware")
 
 template_imports = {'urllib': urllib}
@@ -809,6 +813,7 @@ def course_about(request, course_id):
 
     is_shib_course = uses_shib(course)
 
+    primary_keywords = get_primary_keywords(course_key)
     return render_to_response('courseware/labster_course_about.html', {
         'course': course,
         'staff_access': staff_access,
@@ -830,6 +835,7 @@ def course_about(request, course_id):
         'disable_courseware_header': True,
         'is_shopping_cart_enabled': _is_shopping_cart_enabled,
         'cart_link': reverse('shoppingcart.views.show_cart'),
+        'primary_keywords': primary_keywords,
     })
 
 
