@@ -4,12 +4,12 @@ from django.contrib.auth.models import User
 
 
 # edx+test0001@labster.com
-EMAIL_FORMAT = "edx+test{number}@labster.com"
+EMAIL_FORMAT = "edx+test{number}user@labster.com"
 USERNAME_FORMAT = "edx_test{number}"
 
 
-def get_password(email):
-    return email.split('@')[0]
+def get_password(number):
+    return "edx+test{}".format(str(number).zfill(4))
 
 
 class Command(BaseCommand):
@@ -33,7 +33,7 @@ class Command(BaseCommand):
             try:
                 User.objects.get(email=email)
             except User.DoesNotExist:
-                User.objects.get_or_create(
+                User.objects.create_user(
                     username=username,
                     email=email,
                     password=password)
