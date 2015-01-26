@@ -18,11 +18,16 @@ class Command(BaseCommand):
                 rank = int(float(rank) * 100)
 
                 lab = Lab.objects.get(name=lab_name)
-                obj, _ = LabKeyword.objects.get_or_create(
-                    lab=lab,
-                    keyword=keyword.lower(),
-                    keyword_type=LabKeyword.KEYWORD_PRIMARY,
-                )
+                try:
+                    obj = LabKeyword.objects.get(
+                        lab=lab,
+                        keyword=keyword.lower(),
+                        keyword_type=LabKeyword.KEYWORD_PRIMARY)
+                except LabKeyword.DoesNotExist:
+                    obj = LabKeyword(
+                        lab=lab,
+                        keyword=keyword.lower(),
+                        keyword_type=LabKeyword.KEYWORD_PRIMARY)
 
                 obj.display_name = keyword
                 obj.source = LabKeyword.SOURCE_MANUAL

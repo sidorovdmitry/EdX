@@ -1,200 +1,206 @@
-Photosynthesis IBL,light reaction,10
-Photosynthesis IBL,photosystem II,9.9
-Photosynthesis IBL,electron transport chain,9.7
-Photosynthesis IBL,reaction center,9.6
-Photosynthesis IBL,spectrometry,9.2
-Photosynthesis IBL,pigment extraction,9.2
-Photosynthesis IBL,photosynthesis,9.1
-Photosynthesis IBL,proton gradient,9.1
-Photosynthesis IBL,Hill reaction,9.1
-Photosynthesis IBL,wavelength,9
-Photosynthesis IBL,experimental controls,8.9
-Photosynthesis IBL,DCPIP,8.5
-Photosynthesis IBL,negative control,8.5
-Photosynthesis IBL,positive control,8.5
-Photosynthesis IBL,chloroplast,8
-Photosynthesis IBL,photopigment,8
-Photosynthesis IBL,thylakoid,8
-Photosynthesis IBL,scientific process,8
-Photosynthesis IBL,spectrophotometer,8
-Photosynthesis IBL,plastoquinone,8
-Photosynthesis IBL,oxydation,8
-Photosynthesis IBL,reduction,8
-Photosynthesis IBL,centrifuagation,8
-Photosynthesis IBL,water splitting,8
-Photosynthesis IBL,sunlight,7
-Photosynthesis IBL,electromagnetic wave,7
-Photosynthesis IBL,excitation energy,7
-Photosynthesis IBL,oxygen,7
-Photosynthesis IBL,centrifuge,7
-Photosynthesis IBL,solubility,7
+Photosynthesis IBL,Photosystem II,10
+Photosynthesis IBL,Electron Transport Chain,9.9
+Photosynthesis IBL,Reaction Center,9.7
+Photosynthesis IBL,Spectrometry,9.6
+Photosynthesis IBL,Pigment extraction,9.2
+Photosynthesis IBL,Photosynthesis,9.2
+Photosynthesis IBL,Proton gradient,9.1
+Photosynthesis IBL,Hill Reaction,9.1
+Photosynthesis IBL,Wavelength,9.1
+Photosynthesis IBL,Experimental controls,9
+Photosynthesis IBL,DCPIP,8.9
+Photosynthesis IBL,Negative control,8.5
+Photosynthesis IBL,Positive control,8.5
+Photosynthesis IBL,Chloroplast,8.5
+Photosynthesis IBL,Photopigment,8
+Photosynthesis IBL,Thylakoid,8
+Photosynthesis IBL,Scientific Process,8
+Photosynthesis IBL,Spectrophotometer,8
+Photosynthesis IBL,Plastoquinone,8
+Photosynthesis IBL,Oxydation,8
+Photosynthesis IBL,Reduction,8
+Photosynthesis IBL,Centrifuagation,8
+Photosynthesis IBL,Water splitting,8
+Photosynthesis IBL,Sunlight,8
+Photosynthesis IBL,Electromagnetic wave,7
+Photosynthesis IBL,Excitation Energy,7
+Photosynthesis IBL,Oxygen,7
+Photosynthesis IBL,Centrifuge,7
+Photosynthesis IBL,Solubility,7
 Photosynthesis IBL,DCMU,7
-Photosynthesis IBL,conjugated systems,7
-Photosynthesis IBL,choose lab techniques,7
-Photosynthesis IBL,chlorophyll,6
-Photosynthesis IBL,light absorption,6
-Photosynthesis IBL,rate of photosynthesis,6
-Photosynthesis IBL,colors,6
-Photosynthesis IBL,charge separation,6
-Photosynthesis IBL,ATP synthase,6
-Photosynthesis IBL,reduced,6
-Photosynthesis IBL,oxidized,6
-Photosynthesis IBL,redox,5
-Photosynthesis IBL,hydrophobic,5
-Photosynthesis IBL,hydrophillic,5
-Photosynthesis IBL,water,5
-Photosynthesis IBL,polar,5
-Photosynthesis IBL,apolar,5
-Photosynthesis IBL,vortex,5
-Photosynthesis IBL,algae,4
-Photosynthesis IBL,algal,4
-Photosynthesis IBL,organic molecules,4
+Photosynthesis IBL,Conjugated Systems,7
+Photosynthesis IBL,Choose lab techniques,7
+Photosynthesis IBL,Chlorophyll,7
+Photosynthesis IBL,Light Absorption,6
+Photosynthesis IBL,Rate of Photosynthesis,6
+Photosynthesis IBL,Colors,6
+Photosynthesis IBL,Charge Separation,6
+Photosynthesis IBL,ATP Synthase,6
+Photosynthesis IBL,Reduced,6
+Photosynthesis IBL,Oxidized,6
+Photosynthesis IBL,Redox,6
+Photosynthesis IBL,Hydrophobic,5
+Photosynthesis IBL,Hydrophillic,5
+Photosynthesis IBL,Water,5
+Photosynthesis IBL,Polar,5
+Photosynthesis IBL,Apolar,5
+Photosynthesis IBL,Vortex,5
+Photosynthesis IBL,Algae,5
+Photosynthesis IBL,Algal,4
+Photosynthesis IBL,Organic Molecules,4
 Photosynthesis IBL,NADPH,4
 Photosynthesis IBL,NADP+,4
 Photosynthesis IBL,ATP,4
 Photosynthesis IBL,ADP,4
-Photosynthesis IBL,photosystem I,4
-Photosynthesis IBL,light harvesting complex,4
-Photosynthesis IBL,oxygen revolving center,4
-Photosynthesis IBL,chemical energy,3
-Photosynthesis IBL,structure of atoms,3
-Photosynthesis IBL,molecular orbital,3
-Photosynthesis IBL,hexane,3
-Photosynthesis IBL,pipette,3
-Photosynthesis IBL,calvin cycle,2
-Photosynthesis IBL,carbon dioxide,2
+Photosynthesis IBL,Photosystem I,4
+Photosynthesis IBL,Light Harvesting Complex,4
+Photosynthesis IBL,Oxygen Revolving Center,4
+Photosynthesis IBL,Chemical Energy,4
+Photosynthesis IBL,Structure of Atoms,3
+Photosynthesis IBL,Molecular Orbital,3
+Photosynthesis IBL,Hexane,3
+Photosynthesis IBL,Pipette,3
+Photosynthesis IBL,Calvin Cycle,3
+Photosynthesis IBL,Carbon Dioxide,2
 Photosynthesis IBL,CO2,2
-Photosynthesis IBL,biofuel,2
-Microscopy,identify microscopic structures,10
-Microscopy,epithelial cell,9.8
-Microscopy,limits of microscopy,9.6
-Microscopy,small intestine,9.4
-Microscopy,villi,9
-Microscopy,microvilli,9
-Microscopy,magnification,9
-Microscopy,resolution,9
-Microscopy,fluorescent microscopy,8.9
+Photosynthesis IBL,Biofuel,2
+Microscopy,Identify Microscopic Structures,10
+Microscopy,Epithelial Cell,9.8
+Microscopy,Limits of Microscopy,9.6
+Microscopy,Small Intestine,9.4
+Microscopy,Villi,9
+Microscopy,Microvilli,9
+Microscopy,Magnification,9
+Microscopy,Resolution,9
+Microscopy,Fluorescent Microscopy,8.9
 Microscopy,TEM,8.8
-Microscopy,light microscope,8.7
-Microscopy,objectives,8
-Microscopy,extracellular tissue,8
-Microscopy,goblet cell,8
-Microscopy,analize results,8
-Microscopy,villus,7.5
-Microscopy,smooth muscle cells,7.5
-Microscopy,extracellular matrix,7
-Microscopy,brush border,7
-Microscopy,simple columnar epithelium,7
-Microscopy,transmission electron microscope,7
-Microscopy,wavelengths,7
-Microscopy,inflammation,7
-Microscopy,chemical staining,6
-Microscopy,lymphocyte,6
-Microscopy,lamina propria,6
-Microscopy,mucus,6
-Microscopy,virus,6
-Microscopy,barrier function of epithelium,6
-Microscopy,apical side,6
-Microscopy,basal side,6
+Microscopy,Light Microscope,8.7
+Microscopy,Objectives,8
+Microscopy,Extracellular Tissue,8
+Microscopy,Goblet Cell,8
+Microscopy,Analize Results,8
+Microscopy,Villus,7.5
+Microscopy,Smooth Muscle Cells,7.5
+Microscopy,Extracellular Matrix,7
+Microscopy,Brush Border,7
+Microscopy,Simple Columnar Epithelium,7
+Microscopy,Transmission Electron Microscope,7
+Microscopy,Wavelengths,7
+Microscopy,Inflammation,7
+Microscopy,Chemical Staining,6
+Microscopy,Lymphocyte,6
+Microscopy,Lamina Propria,6
+Microscopy,Mucus,6
+Microscopy,Virus,6
+Microscopy,Barrier Function Of Epithelium,6
+Microscopy,Apical side,6
+Microscopy,Basal side,6
 Microscopy,MAS,6
-Microscopy,cell junctions,6
-Microscopy,peristaltic movement,5
-Microscopy,connective tissue,5
-Microscopy,intestinal lumen,5
-Microscopy,immunology,5
-Microscopy,immune system,5
-Microscopy,immersion oil,5
-Microscopy,nutrient uptake,5
-Microscopy,retro virus,5
+Microscopy,Cell Junctions,6
+Microscopy,Peristaltic Movement,5
+Microscopy,Connective Tissue,5
+Microscopy,Intestinal Lumen,5
+Microscopy,Immunology,5
+Microscopy,Immune System,5
+Microscopy,Immersion Oil,5
+Microscopy,Nutrient Uptake,5
+Microscopy,Retro Virus,5
 Microscopy,DAPI,5
-Microscopy,filter dice,5
-Microscopy,electromagentic waves,5
-Microscopy,absorptive enterocytes,4
-Microscopy,mitochondria,4
-Microscopy,digestion,4
-Microscopy,desmosomes,4
-Microscopy,adherens junctions,4
-Microscopy,tight junctions,4
-Microscopy,contrast,4
-Microscopy,malabsorbtion syndrome,4
-Microscopy,eosin,3
-Microscopy,fuchsin,3
-Microscopy,anilin,3
-Microscopy,orange G,3
-Microscopy,crypt of Lieberkuhn,3
-Microscopy,RNA virus,3
-Microscopy,mucin,3
-Microscopy,revolving nose piece,3
-Microscopy,refraction,3
-Microscopy,glycocalyx,3
-Microscopy,brush cells,3
-Microscopy,chiken,3
-Microscopy,phalloidin,3
-Microscopy,actin fibers,3
-Microscopy,UV light,3
-Microscopy,antibodies,3
-Microscopy,antibody,3
-Microscopy,H&E stain,2
-Bacteria Isolation,bacterial isolation,10
-Bacteria Isolation,streaking technique,10
-Bacteria Isolation,incubation,9
-Bacteria Isolation,Salmonella shigella agar,9
-Bacteria Isolation,colony selection,9
-Bacteria Isolation,sterile technique,9
-Bacteria Isolation,practical lab work,8
-Bacteria Isolation,bacterial identification,8
-Bacteria Isolation,Salmonella infection,7.8
-Bacteria Isolation,wire loop,7.6
-Bacteria Isolation,growth temperature,7
-Bacteria Isolation,agar plate,7
-Bacteria Isolation,incubator,7
-Bacteria Isolation,antibiotics,7
-Bacteria Isolation,inoculation,7
-Bacteria Isolation,sterililization,6.9
+Microscopy,Filter Dice,5
+Microscopy,Electromagentic Waves,5
+Microscopy,Absorptive Enterocytes,4
+Microscopy,Mitochondria,4
+Microscopy,Digestion,4
+Microscopy,Desmosomes,4
+Microscopy,Adherens Junctions,4
+Microscopy,Tight Junctions,4
+Microscopy,Contrast,4
+Microscopy,Malabsorbtion Syndrome,4
+Microscopy,Eosin,3
+Microscopy,Fuchsin,3
+Microscopy,Anilin,3
+Microscopy,Orange G,3
+Microscopy,Crypt Of Lieberkuhn,3
+Microscopy,RNA Virus,3
+Microscopy,Mucin,3
+Microscopy,Revolving Nose Piece,3
+Microscopy,Refraction,3
+Microscopy,Glycocalyx,3
+Microscopy,Brush Cells,3
+Microscopy,Chiken,3
+Microscopy,Phalloidin,3
+Microscopy,Actin Fibers,3
+Microscopy,UV Light,3
+Microscopy,Antibodies,3
+Microscopy,Antibody,3
+Microscopy,H&E Stain,2
+Bacteria Isolation,Bacterial Isolation,10
+Bacteria Isolation,Streaking Technique,10
+Bacteria Isolation,Incubation,9
+Bacteria Isolation,Salmonella Shigella Agar,9
+Bacteria Isolation,Colony Selection,9
+Bacteria Isolation,Sterile Technique,9
+Bacteria Isolation,Practical lab work,8
+Bacteria Isolation,Bacterial identification,8
+Bacteria Isolation,Salmonella Infection,7.8
+Bacteria Isolation,Wire loop,7.6
+Bacteria Isolation,Growth Temperature,7
+Bacteria Isolation,Agar Plate,7
+Bacteria Isolation,Incubator,7
+Bacteria Isolation,Antibiotics,7
+Bacteria Isolation,Inoculation,7
+Bacteria Isolation,Sterililization,6.9
 Bacteria Isolation,E. coli,6
 Bacteria Isolation,Escherichia coli,6
-Bacteria Isolation,antibiotic resistance,6
-Bacteria Isolation,growh medium,6
-Bacteria Isolation,bacteria growth,6
-Bacteria Isolation,selection pressure,6
-Bacteria Isolation,growth media,6
-Bacteria Isolation,Salmonella pandemic,5
-Bacteria Isolation,experimental control,4
-Bacteria Isolation,negative control,3
-Bacteria Isolation,positive control,3
-Next Generation Sequencing,next generation sequencing,10
-Next Generation Sequencing,cluster generation,10
-Next Generation Sequencing,NGS workflow,10
-Next Generation Sequencing,SNP profiling,9
-Next Generation Sequencing,A-tailing,9
-Next Generation Sequencing,adapter ligation,9
-Next Generation Sequencing,end-repair,8
-Next Generation Sequencing,data analysis,8
-Next Generation Sequencing,flow cell,8
-Next Generation Sequencing,bridge PCR,8
-Next Generation Sequencing,magnetic beads,7
-Next Generation Sequencing,parallel sequencing,7
-Next Generation Sequencing,single-end sequencing,7
+Bacteria Isolation,Antibiotic Resistance,6
+Bacteria Isolation,Growh Medium,6
+Bacteria Isolation,Bacteria Growth,6
+Bacteria Isolation,Selection Pressure,6
+Bacteria Isolation,Growth Media,6
+Bacteria Isolation,Salmonella Pandemic,5
+Bacteria Isolation,Experimental control,4
+Bacteria Isolation,Negative control,3
+Bacteria Isolation,Positive control,3
+Next Generation Sequencing,Next Generation Sequencing,10
+Next Generation Sequencing,Cluster Generation,10
+Next Generation Sequencing,NGS Workflow,10
+Next Generation Sequencing,SNP Profiling,9
+Next Generation Sequencing,A-Tailing,9
+Next Generation Sequencing,Adapter ligation,9
+Next Generation Sequencing,End-Repair,8
+Next Generation Sequencing,Data analysis,8
+Next Generation Sequencing,Flow Cell,8
+Next Generation Sequencing,Bridge PCR,8
+Next Generation Sequencing,Magnetic beads,7
+Next Generation Sequencing,Parallel sequencing,7
+Next Generation Sequencing,Single-end sequencing,7
 Next Generation Sequencing,PCR,6
-Next Generation Sequencing,ancient DNA samples,5
-Next Generation Sequencing,DNA purification,5
-Next Generation Sequencing,blunt end,5
+Next Generation Sequencing,Ancient DNA samples,5
+Next Generation Sequencing,DNA Purification,5
+Next Generation Sequencing,Blunt end,5
 Next Generation Sequencing,Greenlandic man,5
-Next Generation Sequencing,taq-polymerase,5
-Next Generation Sequencing,polymerase,4
-Next Generation Sequencing,nucleotides,4
-Next Generation Sequencing,base pairing,4
-Next Generation Sequencing,sanger sequencing,4
-Next Generation Sequencing,fluorophore,4
+Next Generation Sequencing,Taq-Polymerase,5
+Next Generation Sequencing,Polymerase,4
+Next Generation Sequencing,Nucleotides,4
+Next Generation Sequencing,Base Pairing,4
+Next Generation Sequencing,Sanger Sequencing,4
+Next Generation Sequencing,Fluorophore,4
 Next Generation Sequencing,FASTQ,4
-Next Generation Sequencing,ancient bones,3
-Next Generation Sequencing,nuclease,3
-Next Generation Sequencing,adenine,3
-Next Generation Sequencing,primer,3
-Next Generation Sequencing,complementary sequence,3
-Next Generation Sequencing,ligation,3
-Next Generation Sequencing,T4 DNA polymerase,3
-Next Generation Sequencing,thyrosine,2
+Next Generation Sequencing,Ancient bones,3
+Next Generation Sequencing,Nuclease,3
+Next Generation Sequencing,Adenine,3
+Next Generation Sequencing,Primer,3
+Next Generation Sequencing,Complementary sequence,3
+Next Generation Sequencing,Ligation,3
+Next Generation Sequencing,T4 DNA Polymerase,3
+Next Generation Sequencing,Tyrosine,2
+Molecular Cloning,Molecular cloning ,10.5
+Molecular Cloning,Green Fluorescence Protein,10.4
+Molecular Cloning,Expression system,10
+Molecular Cloning,eGFP,10
+Molecular Cloning,Cloning,9
+Molecular Cloning,Gene expression,9
+Molecular Cloning,RAD52,9
 Molecular Cloning,DNA,8
 Molecular Cloning,Reporter gene,8
 Molecular Cloning,Plasmid,7
@@ -227,6 +233,22 @@ Molecular Cloning,Spread technique,3
 Molecular Cloning,Buffer,3
 Molecular Cloning,Zeocin,3
 Molecular Cloning,Jellyfish,2
+Cytogenetics,Cytogenetics,10.5
+Cytogenetics,Array Comparative Genomic Hybridization,10.3
+Cytogenetics,Karyotyping,10.2
+Cytogenetics,Chromosomal abnormality,10.1
+Cytogenetics,Amniotic cell culture,9
+Cytogenetics,Gene mutation,9
+Cytogenetics,Clinical geneticists,9
+Cytogenetics,Karyotype,8
+Cytogenetics,Karyotype analysis,8
+Cytogenetics,Parent consultation,8
+Cytogenetics,Translocation,8
+Cytogenetics,Microarray,7
+Cytogenetics,Microarray scanner,7
+Cytogenetics,Sonographer,6
+Cytogenetics,Obstetrician,6
+Cytogenetics,Ultrasound,6
 Cytogenetics,Lesihman staining,5
 Cytogenetics,Colcemid,5
 Cytogenetics,Diagnosis,5
@@ -252,6 +274,22 @@ Cytogenetics,Gain and loss,1
 Cytogenetics,Copy number variation,1
 Cytogenetics,Duplication,1
 Cytogenetics,Abortion,1
+Gene Regulation Lab,Gene regulation,10.5
+Gene Regulation Lab,Induced pluripotent stem cell,10.4
+Gene Regulation Lab,Transcription factor,10.3
+Gene Regulation Lab,Pluriotency,10.1
+Gene Regulation Lab,Gene expression,10
+Gene Regulation Lab,Embryonic stem cell,9
+Gene Regulation Lab,Inverted microscope,9
+Gene Regulation Lab,Promoter,9
+Gene Regulation Lab,Enhancer,9
+Gene Regulation Lab,SOX2,9
+Gene Regulation Lab,OCT4,9
+Gene Regulation Lab,KLF4,9
+Gene Regulation Lab,c-MYC,9
+Gene Regulation Lab,Shinya Yamanaka,8
+Gene Regulation Lab,gene,8
+Gene Regulation Lab,RNA level,8
 Gene Regulation Lab,Protein level,8
 Gene Regulation Lab,Expression level,8
 Gene Regulation Lab,Blind girl,7
@@ -319,33 +357,33 @@ CSI,DNA extraction,6
 CSI,DNA replication,5
 CSI,DNA template,5
 CSI,Blood,5
-Introductory Lab,acids and bases,10
+Introductory Lab,Acids and Bases,10
 Introductory Lab,pH calculations,9.9
 Introductory Lab,pH simulation,9.6
-Introductory Lab,blood typing,9.5
-Introductory Lab,osmosis,9.4
-Introductory Lab,rate of diffusion,9.3
-Introductory Lab,water potential,9.2
-Introductory Lab,blood types,8.2
-Introductory Lab,solutions,8.1
-Introductory Lab,Rhesus factor,8.1
-Introductory Lab,biosafety,8
-Introductory Lab,diffusion,8
-Introductory Lab,strong acid dissociation,7
-Introductory Lab,strong base dissociation,7
-Introductory Lab,solvent,6.2
-Introductory Lab,solute,6.2
-Introductory Lab,hypotonic solution,6.1
-Introductory Lab,hypertonic solution,6.1
-Introductory Lab,hydronium,6
+Introductory Lab,Blood typing,9.5
+Introductory Lab,Osmosis,9.4
+Introductory Lab,Rate of diffusion,9.3
+Introductory Lab,Water potential,9.2
+Introductory Lab,Blood types,8.2
+Introductory Lab,Solutions,8.1
+Introductory Lab,Rhesus Factor,8.1
+Introductory Lab,Biosafety,8
+Introductory Lab,Diffusion,8
+Introductory Lab,Strong acid dissociation,7
+Introductory Lab,Strong base dissociation,7
+Introductory Lab,Solvent,6.2
+Introductory Lab,Solute,6.2
+Introductory Lab,Hypotonic solution,6.1
+Introductory Lab,Hypertonic solution,6.1
+Introductory Lab,Hydronium,6
 Introductory Lab,pKa value,6
-Introductory Lab,Brønsted-Lowry definition,6
-Introductory Lab,hydroxide,6
-Introductory Lab,semipermeable membrane,6
+Introductory Lab,Brønsted-Lowry Definition,6
+Introductory Lab,Hydroxide,6
+Introductory Lab,Semipermeable membrane,6
 Introductory Lab,H2SO4,5
 Introductory Lab,ICE chart,5
-Introductory Lab,alkalosis,5
-Introductory Lab,molarity,4
-Introductory Lab,equilibrium,4
-Introductory Lab,concentrations,4
+Introductory Lab,Alkalosis,5
+Introductory Lab,Molarity,4
+Introductory Lab,Equilibrium,4
+Introductory Lab,Concentrations,4
 Introductory Lab,HCl,3
