@@ -32,6 +32,7 @@ class Command(BaseCommand):
 
             try:
                 User.objects.get(email=email)
+                User.objects.get(username=username)
             except User.DoesNotExist:
                 User.objects.create_user(
                     username=username,
