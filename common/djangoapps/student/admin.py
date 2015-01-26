@@ -7,6 +7,7 @@ from student.models import CourseEnrollment, Registration, PendingNameChange, Co
     CourseEnrollmentAdmin
 from ratelimitbackend import admin
 
+
 admin.site.register(UserProfile)
 
 admin.site.register(UserTestGroup)

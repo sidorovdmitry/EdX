@@ -351,7 +351,7 @@ def course_listing(request):
         if not isinstance(c, ErrorDescriptor) and (c.id not in unsucceeded_action_course_keys)
     ]
 
-    return render_to_response('labster_index.html', {
+    return render_to_response('index.html', {
         'courses': courses,
         'unsucceeded_course_actions': unsucceeded_course_actions,
         'user': request.user,
