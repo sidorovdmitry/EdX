@@ -20,7 +20,7 @@ class Command(BaseCommand):
         try:
             start = args[1]
         except:
-            start = 0
+            start = 1
 
         finished = False
         total = 0
@@ -29,7 +29,7 @@ class Command(BaseCommand):
         while not finished:
             username = USERNAME_FORMAT.format(number=str(current).zfill(4))
             email = EMAIL_FORMAT.format(number=str(current).zfill(4))
-            password = get_password(email)
+            password = get_password(current)
 
             try:
                 User.objects.filter(Q(username=username) | Q(email=email))[0]
