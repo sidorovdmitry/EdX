@@ -16,10 +16,9 @@ from xmodule.modulestore.django import modulestore
 
 from labster.masters import get_problem_as_platform_xml, get_quiz_block_as_platform_xml
 from labster.models import LabProxy, ProblemProxy, LabProxyData, UserAttempt, UserAnswer
-from labster.models import Lab, QuizBlock, Problem, UserAnswer
+from labster.models import Lab, QuizBlock, Problem
 from labster.parsers.problem_parsers import QuizParser
 from labster.quiz_blocks import create_xblock, update_problem, validate_lab_proxy
-from labster.utils import get_hashed_text
 
 
 USER_ID = 19  # kriwil@gmail.com
@@ -131,12 +130,12 @@ def get_lab_proxy_as_platform_xml(lab_proxy):
 
 
 def generate_lab_proxy_data(
-    lab_proxy, quiz_blocks=None, quiz_ids=None, filters=None,
-    file_name=None,
-    process_score=False,
-    score_file_name=None):
+        lab_proxy, quiz_blocks=None, quiz_ids=None, filters=None,
+        file_name=None,
+        process_score=False,
+        score_file_name=None,
+        active_only=False):
 
-    ## row
     # QuizBlock, QuizID, Email, User ID, Question, Correct Answer, Answer,
     # Is Correct, Completion Time
 
@@ -154,6 +153,7 @@ def generate_lab_proxy_data(
         'Number of Attempts',
         'QuizBlock',
         'Attempt Group',
+        'Date',
     ]
 
     writer.writerow(headers)
@@ -165,6 +165,7 @@ def generate_lab_proxy_data(
     user_attempts = user_attempts.exclude(user__email__endswith='labster.com')
     user_attempts = user_attempts.exclude(user__email__endswith='liv.it')
     user_attempts = user_attempts.exclude(user__email='mitsurudy@gmail.com')
+    user_attempts = user_attempts.exclude(user__email='kriwil@gmail.com')
 
     user_attempts = user_attempts.order_by('user__id', 'created_at')
     attempt_groups = defaultdict(int)
@@ -174,7 +175,7 @@ def generate_lab_proxy_data(
         attempt_groups[user_attempt.user_id] += 1
 
         user = user_attempt.user
-        unique_id = user.profile.unique_id
+        unique_id = user.labster_user.unique_id
         if not unique_id:
             unique_id = str(user.id)
 
@@ -185,6 +186,7 @@ def generate_lab_proxy_data(
             'score': 0,
             'raw_score': 0,
             'attempt_count': 0,
+            'date': user_attempt.created_at.strftime('%Y-%m-%d'),
         }
 
         user_answers = UserAnswer.objects.filter(attempt=user_attempt)
@@ -197,6 +199,10 @@ def generate_lab_proxy_data(
 
             if quiz_ids and problem.element_id not in quiz_ids:
                 continue
+
+            if active_only:
+                if not problem.is_active:
+                    continue
 
             score['attempt_count'] += 1
 
@@ -216,13 +222,16 @@ def generate_lab_proxy_data(
                 user_answer.completion_time,
                 user_answer.attempt_count,
                 quiz_block.element_id,
-                "{}-{}".format(user.email, attempt_groups[user.id]),
+                # "{}-{}".format(user.email, attempt_groups[user.id]),
+                "{}-{}".format(user.email, user_attempt.id),
+                user_answer.created_at.strftime('%Y-%m-%d'),
             ]
 
             writer.writerow(row)
 
         if score['attempt_count']:
             score['score'] = 100 * score['raw_score'] / score['attempt_count']
+            score['date'] = user_attempt.created_at.strftime('%Y-%m-%d')
             scores.append(score)
 
     now = timezone.now()
@@ -250,6 +259,7 @@ def export_score(scores):
         'Name',
         'Email',
         'Score',
+        'Date',
     ]
 
     writer.writerow(headers)
@@ -260,6 +270,7 @@ def export_score(scores):
             score['name'],
             score['email'],
             score['score'],
+            score['date'],
         ]
 
         writer.writerow(row)

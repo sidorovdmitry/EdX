@@ -6,6 +6,7 @@ from ratelimitbackend import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',  # nopep8
+    url(r'robots\.txt$', 'labster.static_views.cms_robots', name="robots.txt"),
 
     url(r'^transcripts/upload$', 'contentstore.views.upload_transcripts', name='upload_transcripts'),
     url(r'^transcripts/download$', 'contentstore.views.download_transcripts', name='download_transcripts'),

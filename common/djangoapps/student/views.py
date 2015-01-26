@@ -93,6 +93,7 @@ from third_party_auth import pipeline, provider
 from xmodule.error_module import ErrorDescriptor
 
 from labster.user_utils import generate_unique_username
+from labster.models import LabsterUser
 
 
 log = logging.getLogger("edx.student")
@@ -133,7 +134,7 @@ def index(request, extra_context={}, user=AnonymousUser()):
     context = {'courses': courses}
 
     context.update(extra_context)
-    return render_to_response('index.html', context)
+    return render_to_response('labster_index.html', context)
 
 
 def embargo(_request):
@@ -403,7 +404,7 @@ def register_user(request, extra_context=None):
         overrides['selected_provider'] = current_provider.NAME
         context.update(overrides)
 
-    return render_to_response('register.html', context)
+    return render_to_response('labster_register.html', context)
 
 
 def complete_course_mode_info(course_id, enrollment):
@@ -563,7 +564,7 @@ def dashboard(request):
         context['duplicate_provider'] = pipeline.get_duplicate_provider(messages.get_messages(request))
         context['provider_user_states'] = pipeline.get_provider_user_states(user)
 
-    return render_to_response('dashboard.html', context)
+    return render_to_response('labster_dashboard.html', context)
 
 
 def try_change_enrollment(request):
@@ -1116,9 +1117,12 @@ def _do_create_account(post_vars, extended_profile=None):
     profile.city = post_vars.get('city')
     profile.country = post_vars.get('country')
     profile.goals = post_vars.get('goals')
-    profile.user_type = post_vars.get('user_type')
-    profile.user_school_level = post_vars.get('user_school_level')
-    profile.phone_number = post_vars.get('phone_number')
+
+    labster_user = LabsterUser(user=user)
+    labster_user.user_type = post_vars.get('user_type')
+    labster_user.user_school_level = post_vars.get('user_school_level')
+    labster_user.phone_number = post_vars.get('phone_number')
+    labster_user.save()
 
     # add any extended profile information in the denormalized 'meta' field in the profile
     if extended_profile:
@@ -1539,7 +1543,7 @@ def activate_account(request, key):
                     CourseEnrollment.enroll(student[0], cea.course_id)
 
         resp = render_to_response(
-            "registration/activation_complete.html",
+            "registration/labster_activation_complete.html",
             {
                 'user_logged_in': user_logged_in,
                 'already_active': already_active,

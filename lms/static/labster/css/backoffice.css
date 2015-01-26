@@ -1,3 +1,12 @@
+.clear {
+    clear: both;
+}
+.margin-bottom-20 {
+    margin-bottom: 20px;
+}
+.margin-bottom-80 {
+    margin-bottom: 80px;
+}
 .vertical-align-baseline {
     vertical-align: baseline !important;
 }
@@ -129,7 +138,8 @@
     /*text-align: center;*/
 }
 .labster-box .labster-box-content {
-    height: 245px;
+    /*height: 245px;*/
+    height: 335px;
     position: relative;
 }
 .labster-box-content ul {

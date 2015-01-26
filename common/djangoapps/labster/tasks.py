@@ -21,8 +21,8 @@ def send_nutshell(user_id, lab_id=None):
     except User.DoesNotExist:
         return (None, None)
 
-    profile = user.profile
-    if profile.user_type != profile.USER_TYPE_TEACHER:
+    labster_user = user.labster_user
+    if labster_user.user_type != labster_user.USER_TYPE_TEACHER:
         return (None, None)
 
     if lab_id:
@@ -41,9 +41,10 @@ def create_nutshell_data(user_id):
         return
 
     profile = user.profile
+    labster_user = user.labster_user
     name = profile.name
     email = user.email
-    phone = profile.phone_number
+    phone = labster_user.phone_number
     contact_id, lead_id = create_new_lead(name, email, phone)
 
     NutshellUser.objects.get_or_create(

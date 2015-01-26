@@ -182,7 +182,10 @@ def answer_from_xml(xml_string):
 def get_hashed_text(text):
     if not text:
         return ''
-    return hashlib.md5(text.encode('utf-8').strip()).hexdigest()
+    try:
+        return hashlib.md5(text.encode('utf-8').strip()).hexdigest()
+    except UnicodeDecodeError:
+        return hashlib.md5(text.strip()).hexdigest()
 
 
 def get_engine_xml_url(prefix, engine_xml):

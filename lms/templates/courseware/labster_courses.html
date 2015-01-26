@@ -1,0 +1,94 @@
+<%! from django.utils.translation import ugettext as _ %>
+
+<%! from django.core.urlresolvers import reverse %>
+<%inherit file="../main.html" />
+<%namespace name='static' file='../static_content.html'/>
+
+<%! from microsite_configuration import microsite %>
+
+<%
+homepage_overlay_html = microsite.get_value('homepage_overlay_html')
+
+show_homepage_promo_video = microsite.get_value('show_homepage_promo_video', True)
+homepage_promo_video_youtube_id = microsite.get_value('homepage_promo_video_youtube_id', "oairUMkieak")
+
+show_partners = microsite.get_value('show_partners', True)
+
+%>
+
+<%block name="pagetitle">
+  % if keywords:
+  Search: ${keywords} |
+  % endif
+  ${_("Labster")}</%block>
+
+<%block name="headextra">
+<link rel="stylesheet" href="${static.url('labster/css/landing.css')}">
+</%block>
+
+<!-- start header -->
+
+<section class="home labster-search">
+  <header class="landing-home">
+    <div class="container">
+      <div class="hero">
+        <div class="wrap-hero">
+          <h2>Search for Virtual Lab Simulations</h2>
+          <div class="form-labs">
+            <form action="" method="get">
+              <input type="text" placeholder="Search for a lab or topic" class="txt-labs" name="q" value="${keywords}">
+              <input type="submit" class="sbt-labs" value="">
+            </form>
+          </div> <!-- end form-labs -->
+          <a href="/courses" class="view-all">View All Labs</a>
+        </div> <!-- end wrap-hero -->
+      </div> <!-- end hero -->
+    </div> <!-- end container -->
+  </header> <!-- end landing-home -->
+
+  <section class="container">
+    <section class="highlighted-courses">
+
+      <header class="heading-title">
+        % if keywords:
+        <h3>${len(courses)} Relevant Labs Found</h3>
+        % else:
+        <h3>Browse Our Labs</h3>
+        % endif
+      </header>
+
+      <section class="courses">
+        <ul class="courses-listing">
+          <!-- list labs -->
+          %for course in courses:
+            <li class="courses-listing-item">
+              <%include file="../course.html" args="course=course" />
+            </li>
+          %endfor
+          <!-- end list labs -->
+        </ul>
+      </section>
+    </section>
+    <!-- end section highlighted-courses --
+
+    </section>
+  </section>
+
+
+  <%block name="js_extra">
+  <script type="text/javascript">
+    $(window).load(function() {
+     if(getParameterByName('next')) {
+      $('#login').trigger("click");
+    }
+  })
+  </script>
+  </%block>
+
+  % if show_signup_immediately is not UNDEFINED:
+  ## NOTE: This won't work in production, because anonymous views are cached, so it will
+  ## show either with or without this extra js for 3 minutes at a time.
+  <script type="text/javascript">
+    $(window).load(function() {$('#signup_action').trigger("click");});
+  </script>
+  % endif

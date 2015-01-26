@@ -6,10 +6,12 @@ import inspect
 from path import path
 from django.http import Http404
 from django.conf import settings
+from django.utils import timezone
 
 from edxmako.shortcuts import render_to_string
 from xmodule.modulestore import ModuleStoreEnum
 from opaque_keys.edx.keys import CourseKey
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from xmodule.modulestore.django import modulestore
 from xmodule.contentstore.content import StaticContent
 from xmodule.modulestore.exceptions import ItemNotFoundError
@@ -337,7 +339,21 @@ def sort_by_announcement(courses):
     key = lambda course: course.sorting_score
     courses = sorted(courses, key=key)
 
-    return courses
+    sorted_courses = []
+    current_courses = []
+    future_courses = []
+    now = timezone.now()
+
+    for course in courses:
+        if course.start > now:
+            future_courses.append(course)
+        else:
+            current_courses.append(course)
+
+    sorted_courses.extend(current_courses)
+    sorted_courses.extend(future_courses)
+
+    return sorted_courses
 
 
 def get_cms_course_link(course, page='course'):

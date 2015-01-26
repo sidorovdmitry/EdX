@@ -105,7 +105,7 @@ LANGUAGES = [
   <div>${lab.name}</div>
   -->
 
-  % if not user_profile.is_labster_verified:
+  % if not labster_user.is_labster_verified:
   <div id="labsterVerifiedForm" class="labster-verified-form" style="display:none">
     <h2>Upgrade to Labster Verified Account - It's Free!</h2>
     <p>In order to access this virtual laboratory with scientific measurement of learning, you will need an extended verification of your Labster account for professional use.</p>
@@ -117,7 +117,7 @@ LANGUAGES = [
         <select name="nationality">
           <option value="">--</option>
           %for code, country_name in COUNTRIES:
-            %if user_profile.nationality == code:
+            %if labster_user.nationality == code:
             <option value="${code}" selected>${ unicode(country_name) }</option>
             %else:
             <option value="${code}">${ unicode(country_name) }</option>
@@ -127,7 +127,7 @@ LANGUAGES = [
       </div>
       <div class="input-group">
         <label>Language</label>
-        <select name="language" value="${user_profile.language}">
+        <select name="language" value="${labster_user.language}">
           <option value="">--</option>
           % for code, label in LANGUAGES:
             % if code == DEFAULT_LANGUAGE:
@@ -140,12 +140,12 @@ LANGUAGES = [
       </div>
       <div class="input-group">
         <label>Unversity ID Number</label>
-        <input type="text" name="unique_id" value="${user_profile.unique_id}">
+        <input type="text" name="unique_id" value="${labster_user.unique_id}">
       </div>
       <div class="input-group">
         <label>Date of Birth</label>
-        % if user_profile.date_of_birth:
-        <input type="text" class="datepicker" name="date_of_birth" value="${user_profile.date_of_birth}">
+        % if labster_user.date_of_birth:
+        <input type="text" class="datepicker" name="date_of_birth" value="${labster_user.date_of_birth}">
         % else:
         <input type="text" class="datepicker" name="date_of_birth" value="">
         % endif
@@ -174,12 +174,12 @@ LANGUAGES = [
     <p>To help you get started using our labs for the first time, please read through these quick guides below. If you have already used our labs in the past, you can skip these steps, and go directly to the next section.</p>
     <div class="browser ie opera" style="display:none">
       <h3>Please Use Modern Browser</h3>
-      <p>For Labster's virtual labs we recommend using modern browsers like Chrome, Firefox or Safari, as the experience is much better with these browser.</p>
+      <p>For Labster's virtual labs we recommend using modern browsers like Firefox or Safari, as the experience is much better with these browser.</p>
       <p>Therefore, if you already have installed one of the browsers above, please launch the browser, and login again to this course from that browser.</p>
-      <p>If you do not have one of these browsers above, please download Google Chrome using the button below, and then login to Labster again, with the new browser.</p>
-      <p><a target="_blank" href="https://google.com/chrome/browser/" class="button-labster-blue download-chrome">
-        <span><img src="https://labsterim.s3.amazonaws.com/media/uploads/edx/chrome_0.png"></span>
-        Download Google Chrome</a></p>
+      <p>If you do not have one of these browsers above, please download Mozilla Firefox using the button below, and then login to Labster again, with the new browser.</p>
+      <p><a target="_blank" href="https://www.mozilla.org/en-US/firefox/new/" class="button-labster-blue download-chrome">
+        <span><img src="https://labsterim.s3.amazonaws.com/media/uploads/edx/firefox.png"></span>
+        Download Mozilla Firefox</a></p>
     </div>
     <div class="browser chrome firefox safari" style="display:none">
       <h3>Unity3D Player</h3>
@@ -296,7 +296,7 @@ LANGUAGES = [
     var isVerifiedLab = false;
     % endif
 
-    % if user_profile.is_labster_verified:
+    % if labster_user.is_labster_verified:
     var isVerifiedLabster = true;
     % else:
     var isVerifiedLabster = false;
@@ -583,7 +583,7 @@ LANGUAGES = [
     function gaLogEvent(category, action, label, value, noninteract) {}
 
     function OpenResult() {
-      OpenLink(window.location.origin + '/labster/lab/LabsterX/AdaptiveCytogenetics/2014/49/result/');
+      OpenLink(window.location.origin + "${result_url}");
     }
 
     function OpenLink(link) {

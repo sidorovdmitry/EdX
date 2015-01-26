@@ -9,10 +9,15 @@ from labster.api.views import LabProxyView, AnswerProblem, Wiki, ArticleSlug
 from labster.api.views import UserAuth, PlayLab, FinishLab, LabSettings
 from labster.api.views import UnityPlayLab, CreateLog, CreateUnityLog
 
+from labster_search.api_views import Search
+
 
 urlpatterns = patterns('',  # nopep8
 
     url('^$', APIRoot.as_view(), name='root'),
+
+    url('^collect-response/(?P<action>\w+)/$', 'labster.api.views.collect_response'),
+
     url('auth/$', UserAuth.as_view(), name='auth'),
     url('^users/(?P<user_id>\d+)/$', UserView.as_view(), name='users'),
 
@@ -26,6 +31,8 @@ urlpatterns = patterns('',  # nopep8
     url('^wiki/(?P<course_id>[^/]+/[^/]+/[^/]+)/?$', Wiki.as_view(), name='wiki'),
     # since article can have children it might conflict with course-wiki, so I add keyword article in the end
     url('^wiki/article/(?P<article_slug>.+/|)$', ArticleSlug.as_view(), name='wiki-article'),
+
+    url('^search/$', Search.as_view(), name='search'),
 
     # unused
     url('^labs/(?P<lab_id>\d+)/log/error/$', CreateError.as_view(), name='log-error'),

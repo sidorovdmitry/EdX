@@ -106,7 +106,7 @@ def course_notifications_handler(request, course_key_string=None, action_state_i
     Handle incoming requests for notifications in a RESTful way.
 
     course_key_string and action_state_id must both be set; else a HttpBadResponseRequest is returned.
-    
+
     For each of these operations, the requesting user must have access to the course;
     else a PermissionDenied error is returned.
 
@@ -351,7 +351,7 @@ def course_listing(request):
         if not isinstance(c, ErrorDescriptor) and (c.id not in unsucceeded_action_course_keys)
     ]
 
-    return render_to_response('index.html', {
+    return render_to_response('labster_index.html', {
         'courses': courses,
         'unsucceeded_course_actions': unsucceeded_course_actions,
         'user': request.user,

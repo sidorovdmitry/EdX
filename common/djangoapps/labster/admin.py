@@ -11,7 +11,7 @@ from labster.models import (
     LanguageLab, Lab, ErrorInfo, DeviceInfo, UserSave, Token, LabProxy,
     UnityLog, UserAnswer, LabsterUserLicense, ProblemProxy,
     UnityPlatformLog, QuizBlock, Problem, Answer, AdaptiveProblem,
-    LabProxyData, UserAttempt)
+    LabProxyData, UserAttempt, LabsterUser, LabsterCourseLicense)
 from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_block_file_url
 
 
@@ -136,7 +136,7 @@ class LabProxyAdmin(BaseAdmin):
 
 
 class LabProxyDataAdmin(admin.ModelAdmin):
-    list_display = ('id', 'data_file_link', 'lab_proxy_id')
+    list_display = ('id', 'data_file_link', 'lab_proxy_id', 'created_at')
     list_filter = ('lab_proxy',)
 
     def lab_proxy_id(self, obj):
@@ -228,6 +228,7 @@ class UserAnswerAdmin(admin.ModelAdmin):
 
 class LabsterUserLicenseAdmin(admin.ModelAdmin):
     list_display = ('course_id', 'email', 'created_at', 'expired_at')
+    search_fields = ('email', 'course_id')
 
 
 class UserAttemptAdmin(admin.ModelAdmin):
@@ -242,6 +243,34 @@ class UserAttemptAdmin(admin.ModelAdmin):
         return obj.lab_proxy.id
 
 
+class LabsterUserAdmin(admin.ModelAdmin):
+    list_display = ('email', 'user_id', 'username', 'user_type_display')
+    search_fields = ('user__email', 'user__first_name', 'user__last_name',)
+    list_filter = ('user__is_active', 'user_type',)
+    raw_id_fields = ('user',)
+
+    def email(self, obj):
+        return obj.user.email
+
+    def user_id(self, obj):
+        return obj.user.id
+
+    def username(self, obj):
+        return obj.user.username
+
+    def user_type_display(self, obj):
+        return obj.get_user_type_display()
+
+
+class LabsterCourseLicenseAdmin(admin.ModelAdmin):
+    list_display = ('user', 'user_id', 'course_id', 'license_id')
+    search_fields = ('user__id', 'course_id')
+
+    def user_id(self, obj):
+        return obj.user.id
+
+
+admin.site.register(LabsterUser, LabsterUserAdmin)
 admin.site.register(LanguageLab)
 # admin.site.register(ErrorInfo, ErrorInfoAdmin)
 # admin.site.register(DeviceInfo, DeviceInfoAdmin)
@@ -263,6 +292,7 @@ admin.site.register(LabProxyData, LabProxyDataAdmin)
 admin.site.register(UnityLog, UnityLogAdmin)
 admin.site.register(UnityPlatformLog, UnityPlatformLogAdmin)
 admin.site.register(LabsterUserLicense, LabsterUserLicenseAdmin)
+admin.site.register(LabsterCourseLicense, LabsterCourseLicenseAdmin)
 
 
 # remove defaul UserAdmin and replace it

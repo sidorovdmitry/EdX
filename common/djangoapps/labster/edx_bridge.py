@@ -106,7 +106,7 @@ def get_or_create_course(source, target, user):
 
 def force_create_course(source, target, user, extra_fields=None):
     from student.roles import CourseRole
-    from student.models import UserProfile, CourseEnrollment
+    from labster.models import LabsterUser
 
     source_course_key = SlashSeparatedCourseKey.from_deprecated_string(source)
     source_course = get_course_by_id(source_course_key)
@@ -158,10 +158,10 @@ def force_create_course(source, target, user, extra_fields=None):
 
     copy_about_fields(user, source_course_key, course_key, course)
 
-    UserProfile.objects\
+    LabsterUser.objects\
         .filter(user_id=user.id)\
-        .exclude(user_type=UserProfile.USER_TYPE_TEACHER)\
-        .update(user_type=UserProfile.USER_TYPE_TEACHER)
+        .exclude(user_type=LabsterUser.USER_TYPE_TEACHER)\
+        .update(user_type=LabsterUser.USER_TYPE_TEACHER)
 
     return course
 
@@ -259,6 +259,8 @@ def upload_image(course_key, upload_file):
 
 
 def unregister_course(user, course_id):
+    from student.models import CourseEnrollment
+
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
     if CourseEnrollment.is_enrolled(user, course_key):
         CourseEnrollment.unenroll(user, course_key)

@@ -48,6 +48,7 @@ def create_problem_from_tree(quiz_block, tree):
         problem.current_conv_popup_id = child.attrib.get('CurrentConvPopupId', '')
         problem.image_id = child.attrib.get('ImageId', '')
         problem.read_more_url = child.attrib.get('ReadMoreUrl', '')
+        problem.quiz_group = child.attrib.get('QuizGroup', '')
         problem.is_explorable = child.attrib.get('IsExplorable') == 'true'
         problem.order = order
 
@@ -166,6 +167,8 @@ def get_problem_as_platform_xml(problem):
         extra['ImageId'] = problem.image_id
     if problem.read_more_url:
         extra['ReadMoreUrl'] = problem.read_more_url
+    if problem.quiz_group:
+        extra['QuizGroup'] = problem.quiz_group
 
     if not problem.randomize_option_order:
         extra['RandomizeOptionOrder'] = "false"

@@ -5,12 +5,13 @@ import os
 import requests
 
 from django.conf import settings
+from django.utils import timezone
 from labster.models import NutshellUser
 
 
 ENDPOINT_DISCOVER_URL = 'http://api.nutshell.com/v1/json'
-API_KEY = getattr(settings, 'NUTSHELL_API_KEY')
-USERNAME = getattr(settings, 'NUTSHELL_USERNAME')
+API_KEY = getattr(settings, 'NUTSHELL_API_KEY', '')
+USERNAME = getattr(settings, 'NUTSHELL_USERNAME', '')
 TAG = 'EdX'
 SOURCE_ID = 11
 PLAY_LAB_ACTIVITY_ID = 47
@@ -149,7 +150,6 @@ class Nutshell:
         name = "View {}".format(course_name)
         description = "{} views {}".format(user_name, course_name)
         self.new_activity(lead_id, VIEW_COURSE_ACTIVITY_ID, name, description)
-
 
     def invite_students(self, lead_id, user_name, course_id):
         name = "Invite Students to {}".format(course_id)

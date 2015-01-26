@@ -122,7 +122,7 @@ def instructor_dashboard_2(request, course_id):
         'analytics_dashboard_message': analytics_dashboard_message
     }
 
-    return render_to_response('instructor/instructor_dashboard_2/instructor_dashboard_2.html', context)
+    return render_to_response('instructor/instructor_dashboard_2/labster_instructor_dashboard_2.html', context)
 
 
 """

@@ -14,6 +14,9 @@ from django.db.models import Count, Q, Sum
 from django.db.models.signals import pre_save, post_save
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.utils.translation import ugettext_noop
+
+from django_countries import CountryField
 
 from xmodule_django.models import CourseKeyField, LocationKeyField
 
@@ -23,6 +26,57 @@ from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_bloc
 PLATFORM_NAME = 'platform'
 URL_PREFIX = getattr(settings, 'LABSTER_UNITY_URL_PREFIX', '')
 ENGINE_FILE = 'labster.unity3d'
+
+
+class LabsterUser(models.Model):
+    user = models.OneToOneField(User, related_name='labster_user')
+
+    USER_TYPE_STUDENT = 1
+    USER_TYPE_TEACHER = 2
+    USER_TYPE_OTHER = 3
+    USER_TYPE_CHOICES = (
+        (USER_TYPE_STUDENT, ugettext_noop('Student')),
+        (USER_TYPE_TEACHER, ugettext_noop('Teacher')),
+        (USER_TYPE_OTHER, ugettext_noop('Other')),
+    )
+    user_type = models.IntegerField(choices=USER_TYPE_CHOICES, blank=True, null=True)
+    phone_number = models.CharField(max_length=100, blank=True, default="")
+
+    USER_HIGH_SCHOOL = 1
+    USER_UNIVERSITY = 2
+    USER_SCHOOL_LEVEL_CHOICES = (
+        (USER_HIGH_SCHOOL, ugettext_noop('High School')),
+        (USER_UNIVERSITY, ugettext_noop('University / College')),
+    )
+    user_school_level = models.IntegerField(choices=USER_SCHOOL_LEVEL_CHOICES, blank=True, null=True)
+
+    # labster verified account
+    language = models.CharField(blank=True, max_length=255, db_index=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    nationality = CountryField(blank=True, null=True)
+    unique_id = models.CharField(max_length=100, blank=True, db_index=True)
+
+    def __unicode__(self):
+        return unicode(self.user)
+
+    @property
+    def token_key(self):
+        from rest_framework.authtoken.models import Token
+        token, _ = Token.objects.get_or_create(user=self.user)
+        return token.key
+
+    @property
+    def is_labster_verified(self):
+        reqs = [self.language, self.date_of_birth, self.nationality, self.unique_id]
+        return all(reqs)
+
+    @property
+    def is_teacher(self):
+        return self.user_type == self.USER_TYPE_TEACHER
+
+    @property
+    def is_student(self):
+        return self.user_type == self.USER_TYPE_STUDENT
 
 
 class NutshellUser(models.Model):
@@ -225,6 +279,7 @@ class Problem(models.Model):
     image_id = models.CharField(max_length=100, default="", blank=True)
     read_more_url = models.CharField(max_length=100, default="", blank=True)
     is_explorable = models.BooleanField(default=False)
+    quiz_group = models.CharField(max_length=100, default="", blank=True)
 
     is_adaptive = models.BooleanField(default=False)
 
@@ -247,6 +302,7 @@ class Problem(models.Model):
     image_url = models.URLField(max_length=500, blank=True, default="")
     scales = models.ManyToManyField(Scale, blank=True)
     categories = models.ManyToManyField(Category, blank=True)
+    direction_for_scoring = models.CharField(max_length=50, blank=True, default="")
     # end of adaptive fields
 
     is_active = models.BooleanField(default=True)
@@ -259,6 +315,10 @@ class Problem(models.Model):
 
     def __unicode__(self):
         return "{}: {}".format(self.quiz_block, self.element_id)
+
+    @classmethod
+    def get_by_lab(cls, lab):
+        return cls.objects.filter(quiz_block__lab=lab)
 
     @property
     def correct_answers(self):
@@ -300,6 +360,7 @@ class Answer(models.Model):
     order = models.IntegerField(default=0)
 
     # for adaptive
+    score = models.IntegerField(blank=True, null=True)
     difficulty = models.IntegerField(blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
@@ -404,6 +465,12 @@ class UserAttempt(models.Model):
     lab_proxy = models.ForeignKey(LabProxy)
     user = models.ForeignKey(User)
 
+    problems = models.ManyToManyField(
+        Problem, blank=True,
+        help_text="Problems used for this attempt. Empty means any currently active problems.")
+    score = models.DecimalField(
+        max_digits=5, decimal_places=2, blank=True, null=True)
+
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
 
@@ -461,8 +528,7 @@ class UserAttempt(models.Model):
     def progress_in_percent(self):
         return 100 * self.answers_count / self.problems_count
 
-    @cached_property
-    def score(self):
+    def get_score(self):
         user_answers = UserAnswer.objects.filter(
             attempt=self,
             is_correct=True,
@@ -727,6 +793,7 @@ class LabsterUserLicense(models.Model):
     """
     course_id = CourseKeyField(max_length=255, db_index=True)
     email = models.EmailField(max_length=255)
+    voucher_code = models.CharField(max_length=50, blank=True, default="")
 
     created_at = models.DateTimeField(default=timezone.now)
     expired_at = models.DateTimeField(blank=True, null=True)
@@ -756,10 +823,10 @@ class LabsterUserLicense(models.Model):
 class LabsterCourseLicense(models.Model):
     user = models.ForeignKey(User)  # the teacher
     course_id = CourseKeyField(max_length=255, db_index=True)
-    license_id = models.IntegerField(unique=True)
+    license_id = models.IntegerField(db_index=True)
 
     class Meta:
-        unique_together = ('user', 'course_id')
+        unique_together = ('course_id', 'license_id')
 
 
 def get_user_attempts_from_lab_proxy(lab_proxy):

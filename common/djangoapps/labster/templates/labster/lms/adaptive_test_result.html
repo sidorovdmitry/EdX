@@ -1,0 +1,196 @@
+{% extends "main_django.html" %}
+
+{% block body %}
+
+{% if course %}
+{% include "courseware/labster_course_navigation.html" with active_page_context="courseware" %}
+{% endif %}
+<style>
+.lab-result-wrapper {
+  padding: 30px 40px;
+  line-height: 24px;
+}
+.lab-result-wrapper .score span {
+  display: inline-block;
+  background-color: #c3dcbf;
+  padding: 5px 10px;
+}
+.lab-result-wrapper h2,
+.lab-result-wrapper h3,
+.lab-result-wrapper h4,
+.lab-result-wrapper p,
+.lab-result-wrapper ul {
+  margin: 0 0 20px 0;
+  padding: 0;
+}
+.lab-result-wrapper ul {
+  padding-left: 20px;
+}
+.lab-result-wrapper table.result-table {
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  margin: 0 0 40px 0;
+}
+.lab-result-wrapper table.result-table th {
+  background-color: #eee;
+}
+.lab-result-wrapper table.result-table th,
+.lab-result-wrapper table.result-table td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+}
+
+</style>
+
+<section class="container">
+  <div class="lab-result-wrapper">
+
+    <h2>Congratulation on finishing the Test</h2>
+    <h3 class="score">Medical Genetics Test Score
+      <span>{{ score }}%</span></h3>
+
+    {% if show_result %}
+    <table class="result-table">
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>Question</th>
+          <th>Answer</th>
+          <th>Correct Answer</th>
+          <th>Correct?</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for answer in user_answers %}
+        <tr class="{% if answer.is_correct %}correct{% endif %}">
+          <td>{{ forloop.counter }}</td>
+          <td>{{ answer.question }}</td>
+          <td>{{ answer.answer_string }}</td>
+          <td>{{ answer.correct_answer }}</td>
+          <td>{{ answer.is_correct|yesno:"Yes," }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+    {% endif %}
+
+    {% if psy_scores %}
+    <hr>
+
+    <h3>Personality Feedback</h3>
+    <p>You have been assessed based on the Five-Factor Model of Personality, which is the leading and most commonly used taxonomy of personality. Below we present your results as a percentile score and a description of the five factors.</p>
+
+    <h4>Extroversion</h4>
+    <p>The trait is marked by pronounced engagement with the external world.</p>
+    <p>Extraverts (a high score) enjoy interacting with people, and are often perceived as full of energy. They tend to be enthusiastic, action-oriented individuals. They possess high group visibility, like to talk, and assert themselves. They tend to be enthusiastic, action-oriented, individuals who are likely to say "Yes!" or "Let's go!" to opportunities for excitement. </p>
+    <p>Introverts (a low score) lack the exuberance, energy, and activity levels of extroverts. They tend to be quiet, low-key, deliberate, and disengaged from the social world. Their lack of social involvement should not be interpreted as shyness or depression; the introvert simply needs less stimulation than an extrovert and prefers to be alone.</p>
+    <p class="score">Score <span>{{ psy_scores.EXTROVERSION }}%</span></p>
+
+    <h4>Agreeableness</h4>
+    <p>Agreeableness reflects individual differences in concern with cooperation and social harmony. Agreeable individuals (high scores) value getting along with others. They are therefore considerate, friendly, generous, helpful, and willing to compromise in the interest of others'. Agreeable people also have an optimistic view of human nature. They believe people are basically honest, decent, and trustworthy.</p>
+    <p>Individuals low on agreeableness (low score) can place self-interest above getting along with others. They are generally unconcerned with others' acceptance, and therefore are unlikely to extend themselves for other people. Sometimes their skepticism about others' motives causes them to be suspicious, unfriendly, and uncooperative.</p>
+    <p>Agreeableness is obviously advantageous for attaining and maintaining popularity. Agreeable people are better liked than individuals low on agreeableness. On the other hand, agreeableness is not useful in situations that require tough or absolute objective decisions. People low on agreeableness can make excellent scientists, critics, or soldiers.</p>
+    <p class="score">Score <span>{{ psy_scores.AGREABLENESS }}%</span></p>
+
+    <h4>Conscientiousness</h4>
+    <p>Conscientiousness concerns the way in which we control, regulate, and direct our impulses. Impulses are not inherently bad; occasionally time constraints require a snap decision, and acting on our first impulse can be an effective response. Also, in times of play rather than work, acting spontaneously and impulsively can be fun. Impulsive individuals (low score) can be seen by others as colorful and fun-to-be-with. </p>
+    <p>The benefits of high conscientiousness are obvious. Conscientious individuals (high score) avoid trouble and achieve high levels of success through purposeful planning and persistence. They are also positively regarded by others as reliable. On the negative side, they can be compulsive perfectionists and may be workaholics. Furthermore, extremely conscientious individuals might be regarded as stuffy and boring. Unconscientious people may be criticized for their unreliability, lack of ambition, and failure to stay within the lines, but they will experience many short-lived pleasures and they will never be called stuffy.</p>
+    <p class="score">Score <span>{{ psy_scores.CONCIENCIOUSNESS }}%</span></p>
+
+    <h4>Neuroticism </h4>
+    <p>Neuroticism refers to the tendency to experience negative feelings. People high in Neuroticism (high score) are emotionally reactive. They respond emotionally to events that would not affect most people, and their reactions tend to be more intense than normal. They are more likely to interpret ordinary situations as threatening, and minor frustrations as hopelessly difficult. These problems in emotional regulation can diminish a neurotic's ability to think clearly, make decisions, and cope effectively with stress. On a positive note, individuals high on neuroticism tend to be more sensitive and may have higher levels of empathy. These characteristics are important in many work settings where it is important to be compassionate.</p>
+    <p>At the other end of the scale, individuals who score low in Neuroticism are less easily upset and are less emotionally reactive. They tend to be calm, emotionally stable, and free from persistent negative feelings. These individuals can stay calm even in highly stressful situations.</p>
+    <p class="score">Score <span>{{ psy_scores.NEUROTICISM }}%</span></p>
+
+    <h4>Openness to Experience</h4>
+    <p>Openness to Experience describes a dimension of cognitive style that distinguishes imaginative, creative people from down-to-earth, conventional people. Open people (high score) are intellectually curious. They tend to think and act in individualistic and nonconforming ways. People with low scores on openness to experience tend to have narrow, common interests. They prefer the plain, straightforward, and obvious over the complex, ambiguous, and subtle. They may regard the arts and sciences with suspicion, regarding these endeavors as abstruse or of no practical use. Closed people prefer familiarity over novelty; they are conservative and resistant to change.</p>
+    <p>Open and closed styles of thinking are useful in different environments. The intellectual style of the open person may serve a professor well, but research has shown that closed thinking is related to superior job performance in police work, sales, and a number of service occupations.</p>
+    <p class="score">Score <span>{{ psy_scores.OPPENESS }}%</span></p>
+
+    <h3>Feedback about motivation and attitudes about this course</h3>
+
+    <h4>Intrinsic goal orientation </h4>
+    <p>Goal orientation refers to the student’s perception of the reasons why s/he is engaging in a learning task. On this questionnaire, goal orientation refers to student’s general goals or orientation to the course as a whole. Intrinsic goal orientation concerns the degree to which the student perceives him/herself to be participating in a task for reasons such as challenge, curiosity, mastery. Having an intrinsic goal orientation towards an academic task indicates that the student’s participation in the task is an end all to itself, rather than participation being a means to an end.</p>
+    <p class="score">Score <span>{{ psy_scores.INTRINSIC_GOAL_ORIENTATION }}%</span></p>
+
+    <h4>Extrinsic goal orientation</h4>
+    <p>Extrinsic goal orientation complements intrinsic goal orientation, and concerns the degree to which the student perceives him/herself to be participating in a task for reasons such as grades, rewards, performance, evaluation by others and competition. When one is high in extrinsic goal orientation, engaging in a learning task is the means to an end. The main concern the student has is related to issues that are not directly related to participating in the task itself (such as grades, rewards, comparing one’s performance to that of others). Again, this refers to the general orientation to the course as a whole.</p>
+    <p class="score">Score <span>{{ psy_scores.EXTRINSIC_GOAL_ORIENTATION }}%</span></p>
+
+    <h4>Task value</h4>
+    <p>Task value differs from goal orientation in that task value refers to the student’s evaluation of how interesting, how important and how useful the task is (“what do I think of this task?”). Goal orientation refers to the reasons why the student is participating in the task (“Why am I doing this?”). High task value should lead to more involvement in one’s learning. In this questionnaire task value refers to students’ perceptions of the course material in terms of interest, importance, and utility.</p>
+    <p class="score">Score <span>{{ psy_scores.TASK_VALUE }}%</span></p>
+
+    <h4>Control of Learning Beliefs</h4>
+    <p>Control of learning refers to students’ beliefs that their efforts to learn will result in positive outcomes. It concerns the belief that outcomes are contingent on one’s own effort, in contrast to external factors such as the teacher. If students believe that their efforts to study make a difference in their learning, they should be more likely to study more strategically and effectively. That is, if the student feels that she can control her academic performance, she is more likely to put forth what is needed strategically to effect the desired changes.</p>
+    <p class="score">Score <span>{{ psy_scores.PERCEIVED_ACADEMIC_CONTROL }}%</span></p>
+
+    <h4>Self-efficacy for Learning and Performance</h4>
+    <p>This scale assess two aspects of expectancy: Expectancy for success and self-efficacy. Expectancy for success refers to performance expectations, and relates specifically to task performance (how well the student will perform on the task). Self-efficacy is a self-appraisal of one’s ability to master a task. Self-efficacy includes judgments about one’s ability to accomplish a task as well as one’s confidence in one’s skills to perform that task.</p>
+    <p class="score">Score <span>{{ psy_scores.SELF_EFFICACY }}%</span></p>
+
+    <h4>Critical Thinking</h4>
+    <p>Critical thinking refers to the degree to which students report applying previous knowledge to new situations in order to solve problems, reach decisions, or make critical evaluations with respect to standards of excellence.</p>
+    <p class="score">Score <span>{{ psy_scores.CRITICAL_THINKING }}%</span></p>
+
+     
+    <h3>Feedback about attitude toward general studies at the University</h3>
+    <p>Below we present your results as a percentile score and a description of three general learning approaches that have been well documented in educational research. That is Deep, Strategic and Superficial learning approaches. We also provide feedback about your score on perceived academic control and academic buoyancy scales. </p>
+    <h4>Deep approach to learning</h4>
+
+    <p>Students who take a deep approach (high score) have the intention of understanding, engaging with,
+    operating in and valuing the subject in their studies. </p>
+
+    <p>Such students:</p>
+    <ul>
+      <li>Actively seek to understand the material / the subject</li>
+      <li>Interact vigorously with the content</li>
+      <li>Make use of evidence, inquiry and evaluation</li>
+      <li>Take a broad view and relate ideas to one another</li>
+      <li>Are motivated by interest</li>
+      <li>Relate new ideas to previous knowledge</li>
+      <li>Relate concepts to everyday experience</li>
+      <li>Tend to read and; study beyond the course requirements</li>
+    </ul>
+    <p class="score">Score <span>{{ psy_scores.DEEP_APPROACH_TO_LEARNING }}%</span></p>
+    <h4>Surface approach to learning</h4>
+
+    <p>Students who take a surface approach (high score) tend not to have the primary intention of becoming interested in and of understanding the subject, but rather their motivation tends to be that of jumping through the necessary hoops in order to acquire the grade, or the qualification. When asked, university staff typically criticize this approach but they frequently acknowledge that the majority of their students tend to take this approach.</p>
+
+    <p>Students who take a surface approach:</p>
+    <ul>
+      <li>Try to learn in order to repeat what they have learned</li>
+      <li>Memorize information needed for assessments</li>
+      <li>Take a narrow view and concentrate on detail</li>
+      <li>Fail to distinguish principles from examples</li>
+      <li>Tend to stick closely to the course requirements</li>
+      <li>Are motivated by fear of failure</li>
+    </ul>
+    <p class="score">Score <span>{{ psy_scores.SURFACE_APPROACH_TO_LEARNING }}%</span></p>
+    <h4>Strategic approach to learning</h4>
+
+    <p>The strategic or achieving approach (high score) is that approach which students are said to take when they wish to achieve positive outcomes in terms of obtaining a pass or better in the subject. </p>
+
+    <p>Students taking this approach:</p>
+    <ul>
+      <li>Intend to obtain high grades</li>
+      <li>Organize their time and distribute their effort to greatest effect</li>
+      <li>Ensure that the conditions and materials for studying are appropriate</li>
+      <li>Use previous exam papers to predict questions</li>
+      <li>Are alert to cues about marking schemes</li>
+    </ul>
+    <p class="score">Score <span>{{ psy_scores.STRATEGIC_APPROACH_TO_LEARNING }}%</span></p>
+    <h4>Perceived Academic Control</h4>
+    <p>Perceived academic control is the belief one has the capacity to predict or influence academic outcomes. Individuals with a high perceived academic control believe outcomes in their studies derive primarily from their own actions: for example, when receiving test results, people with high perceived academic control tend to praise or blame themselves and their abilities. People with a low perceived academic control tend to praise or blame external factors such as the teacher or the test.</p>
+    <p class="score">Score <span>{{ psy_scores.PERCEIVED_ACADEMIC_CONTROL }}%</span></p>
+    <h4>Academic buoyancy</h4>
+    <p>Academic buoyancy is the capacity to overcome setbacks, challenges, and difficulties that are part of everyday academic life.</p>
+    <p class="score">Score <span>{{ psy_scores.ACADEMIC_BOUYANCY }}%</span></p>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

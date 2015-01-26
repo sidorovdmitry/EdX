@@ -1,4 +1,6 @@
 import six
+import json
+from collections import defaultdict
 
 try:
     import cStringIO.StringIO as StringIO
@@ -13,15 +15,16 @@ from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import render, render_to_response
 from django.utils import timezone
 from django.utils.xmlutils import SimplerXMLGenerator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, DetailView
 
 from rest_framework.authtoken.models import Token
 
 from courseware.courses import get_course_by_id
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
+from student.models import CourseEnrollment
 
-from labster.models import LabProxy, UserSave, UserAttempt
+from labster.models import LabProxy, UserSave, UserAttempt, Problem, UserAnswer, QuizBlock
+from labster.models import LabsterCourseLicense, LabsterUserLicense
 from labster.reports import get_attempts_and_answers
 from labster.tasks import send_play_lab, send_invite_students
 
@@ -284,6 +287,110 @@ class LabResult(DetailView):
         return context
 
 
+class AdaptiveTestResult(DetailView):
+    template_name = "labster/lms/adaptive_test_result.html"
+    model = LabProxy
+
+    def get_cytogenetics_score(self, user, lab_proxy):
+        attempt = UserAttempt.objects\
+            .filter(user=user, lab_proxy=lab_proxy)\
+            .exclude(useranswer=None)\
+            .order_by('-created_at')[0]
+
+        # scored
+        quiz_block_id = 'QuizblockPreTest'
+        quiz_block = QuizBlock.objects.get(lab=lab_proxy.lab, element_id=quiz_block_id)
+        problems = Problem.objects\
+            .filter(is_active=True, quiz_block=quiz_block)\
+            .order_by('order')
+
+        answers = UserAnswer.objects.filter(attempt=attempt, problem__in=problems)
+        answers_by_quiz_id = {a.problem.element_id: a for a in answers}
+        answered = []
+
+        score = 0
+        user_answers = []
+        for problem in problems:
+            if problem.element_id in answered:
+                continue
+
+            answered.append(problem.element_id)
+            answer = answers_by_quiz_id.get(problem.element_id)
+            if answer:
+                user_answers.append(answer)
+                if answer.is_correct:
+                    score += 1
+
+        score = score * 100 / problems.count()
+        return score, user_answers
+
+    def get_psychological_scores(self, user, lab_proxy):
+        attempt = UserAttempt.objects\
+            .filter(user=user, lab_proxy=lab_proxy)\
+            .exclude(useranswer=None)\
+            .order_by('-created_at')[0]
+
+        NEG_SCORES = {
+            'Completely disagree': 5,
+            'Disagree': 4,
+            'Neither agree nor disagree': 3,
+            'Agree': 2,
+            'Completely agree': 1,
+        }
+
+        POS_SCORES = {
+            'Completely disagree': 1,
+            'Disagree': 2,
+            'Neither agree nor disagree': 3,
+            'Agree': 4,
+            'Completely agree': 5,
+        }
+
+        quiz_block_ids = ['QuizBlockSection1', 'QuizBlockSection2', 'QuizBlockSection3', 'QuizBlockSection4']
+        quiz_blocks = QuizBlock.objects.filter(lab=lab_proxy.lab, element_id__in=quiz_block_ids)
+        problems = Problem.objects.filter(is_active=True, quiz_block__in=quiz_blocks)
+        if not problems.exists():
+            return None
+
+        answers = UserAnswer.objects.filter(attempt=attempt, problem__in=problems)
+
+        raw_scores = defaultdict(int)
+        scores = defaultdict(int)
+        counts = defaultdict(int)
+        for answer in answers:
+            category = answer.problem.categories.values_list('name', flat=True)[0]
+            category = category.upper().replace(' ', '_').replace('-', '_')
+
+            counts[category] += 1
+            if answer.problem.direction_for_scoring == 'negative':
+                raw_scores[category] += NEG_SCORES[answer.answer_string]
+            else:
+                raw_scores[category] += POS_SCORES[answer.answer_string]
+
+        for category, score in raw_scores.items():
+            scores[category] = score * 100 / (counts[category] * 5)
+        return scores
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(AdaptiveTestResult, self).get_context_data(*args, **kwargs)
+        course_id = self.kwargs.get('course_id')
+        course = get_course_by_id(SlashSeparatedCourseKey.from_deprecated_string(course_id))
+        user = self.request.user
+        lab_proxy = context['object']
+
+        psy_scores = self.get_psychological_scores(user, lab_proxy)
+        score, user_answers = self.get_cytogenetics_score(user, lab_proxy)
+
+        context.update({
+            'user_answers': user_answers,
+            'course': course,
+            'score': score,
+            'psy_scores': psy_scores,
+            'show_result': lab_proxy.lab.id == 44,
+        })
+        return context
+
+
 class NutshellPlayLab(View):
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -302,11 +409,37 @@ class NutshellInviteStudents(View):
         return HttpResponse(1)
 
 
+class EnrollStudent(View):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        email = data.get('email')
+        license_id = data.get('license_id')
+        try:
+            user = User.objects.get(email=email)
+        except:
+            return HttpResponseBadRequest('invalid email or license_id')
+
+        course_licenses = LabsterCourseLicense.objects.filter(license_id=license_id)
+        for course_license in course_licenses:
+            record, _ = CourseEnrollment.objects.get_or_create(
+                user=user, course_id=course_license.course_id)
+            record.is_active = True
+            record.save()
+
+            user_license, _ = LabsterUserLicense.objects.get_or_create(
+                email=email,
+                course_id=course_license.course_id)
+
+        return HttpResponse(json.dumps({'success': True}))
+
+
 settings_xml = SettingsXml.as_view()
 server_xml = ServerXml.as_view()
 platform_xml = PlatformXml.as_view()
 start_new_lab = StartNewLab.as_view()
 continue_lab = ContinueLab.as_view()
 lab_result = login_required(LabResult.as_view())
+adaptive_test_result = login_required(AdaptiveTestResult.as_view())
 nutshell_play_lab = login_required(NutshellPlayLab.as_view())
 nutshell_invite_students = login_required(NutshellInviteStudents.as_view())
+enroll_student = login_required(EnrollStudent.as_view())

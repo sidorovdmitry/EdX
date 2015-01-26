@@ -11,12 +11,15 @@ if settings.DEBUG or settings.FEATURES.get('ENABLE_DJANGO_ADMIN_SITE'):
     admin.autodiscover()
 
 urlpatterns = ('',  # nopep8
+    url(r'robots\.txt$', 'labster.static_views.lms_robots', name="robots.txt"),
+
     url(r'^invalid-browser/$', 'labster.lms.views.invalid_browser', name='invalid_browser'),
 
     # certificate view
     url(r'^update_certificate$', 'certificates.views.update_certificate'),
     url(r'^request_certificate$', 'certificates.views.request_certificate'),
-    url(r'^$', 'branding.views.index', name="root"),   # Main marketing page, or redirect to courseware
+    url(r'^$', 'labster.landing.views.index', name="root"),
+    # url(r'^$', 'branding.views.index', name="root"),   # Main marketing page, or redirect to courseware
     url(r'^dashboard$', 'student.views.dashboard', name="dashboard"),
     url(r'^resend_activation_email$', 'student.views.resend_activation_email', name='resend_activation_email'),
     url(r'^login$', 'student.views.signin_user', name="signin_user"),
@@ -222,7 +225,8 @@ if settings.COURSEWARE_ENABLED:
         # url(r'^edit_circuit/(?P<circuit>[^/]*)$', 'circuit.views.edit_circuit'),
         # url(r'^save_circuit/(?P<circuit>[^/]*)$', 'circuit.views.save_circuit'),
 
-        url(r'^courses/?$', 'branding.views.courses', name="courses"),
+        # url(r'^courses/?$', 'branding.views.courses', name="courses"),
+        url(r'^courses/?$', 'labster.landing.views.courses', name="courses"),
         url(r'^change_enrollment$',
             'student.views.change_enrollment', name="change_enrollment"),
         url(r'^change_email_settings$', 'student.views.change_email_settings', name="change_email_settings"),
@@ -527,8 +531,9 @@ if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
 # Labster
 if settings.FEATURES.get('LABSTER'):
     urlpatterns += (
-        url(r'^labs/$', 'labster.backoffice.views.home', name="labster_backoffice"),
         url(r'^student_license/(?P<course_id>[^/]+/[^/]+/[^/]+)/$', 'labster.student_license.views.home', name="labster_student_license"),
+        url(r'^student_voucher_code/$', 'labster.student_voucher_code.views.home', name="labster_student_voucher_code"),
+        url('^labs/', include('labster.backoffice_urls')),
         url('^labster/', include('labster.urls')),
     )
 
