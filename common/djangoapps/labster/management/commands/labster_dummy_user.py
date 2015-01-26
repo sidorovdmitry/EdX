@@ -39,8 +39,8 @@ class Command(BaseCommand):
                     password=password)
                 total += 1
 
-                self.stdout.write("{} -> email: {}, password: {}\n".format(
-                    total, email, password))
+                self.stdout.write("email: {}, password: {}\n".format(
+                    email, password))
 
             current += 1
 
