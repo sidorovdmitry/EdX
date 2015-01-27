@@ -83,8 +83,8 @@
   <h1 class="align-left"> Payment Method</h1>
   <table class="table-no-border">
     <tbody>
-      <tr><td>Please choose your preferred payment methods below:</td></tr>
-      <tr>
+      <tr style="display:none;"><td>Please choose your preferred payment methods below:</td></tr>
+      <tr ng-show="payment.payment_type == 'stripe'">
         <td ng-show="payment.total <= 500 && ! payment.paid">
           <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}" description="{{ payment_description(payment.payment_products, payment.total) }}"></stripe>
         </td>
@@ -92,7 +92,7 @@
           <a class="labster-disabled-btn btn-labster-invoice" ng-click="pop_up_open()"><i class='fa fa-credit-card'></i> Credit Card</a>
         </td>
       </tr>
-      <tr>
+      <tr ng-show="payment.payment_type == 'manual'">
         <td>
           <a ng-show="payment.total <= 500" ng-click="show_information = !show_information" class="btn-labster-invoice"><i class='fa fa-exchange'></i> Wire Transfer</a>
           <a ng-show="payment.total > 500" class="btn-labster-invoice labster-disabled-btn"><i class='fa fa-exchange'></i> Wire Transfer</a>
