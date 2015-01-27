@@ -818,8 +818,8 @@ def progress_all(request, course_id):
 
 
 def _progress_all(request, course_key):
-    from labster.models import LabProxy, UserAttempt
-    # from labster.reports import get_attempts_and_answers
+    from labster.models import LabProxy, Problem, UserAttempt
+    from labster.reports import get_attempts_and_answers
 
     """
     Unwrapped version of "progress_all".
@@ -831,57 +831,56 @@ def _progress_all(request, course_key):
     students_context = []
     course = get_course_with_access(request.user, 'load', course_key, depth=None)
     staff_access = has_access(request.user, 'staff', course)
-    student_objects = CourseEnrollment.objects.filter(course_id=course_key, is_active=True)
+
+    student_objects = CourseEnrollment.objects\
+        .filter(course_id=course_key, is_active=True)\
+        .select_related('user')\
+        .prefetch_related('user__profile')
     # Requesting access to a different student's profile
     if not staff_access:
         raise Http404
 
-    lab_id = None
     location = None
     for section in course.get_children():
         for sub_section in section.get_children():
-            if sub_section.lab_id:
-                lab_id = sub_section.lab_id
+            if not location and sub_section.lab_id:
                 location = sub_section.location
 
     lab_proxy = LabProxy.objects.get(location=location)
+    attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy)\
+        .exclude(useranswer=None).order_by('-created_at')\
+        .select_related('user')
+
+    attempts_by_user = defaultdict(list)
+    for attempt in attempts:
+        attempts_by_user[attempt.user.id].append(attempt)
+
+    if lab_proxy.lab_id == 35:
+        quiz_ids = ["Cyto-{}-Post".format(i) for i in range(11, 41)]
+        problems = list(Problem.objects.filter(is_active=True, element_id__in=quiz_ids))
+
     for student in student_objects:
-        attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy, user=student.user).order_by('-created_at')
-        attempt = None
-        progress_in_percent = score = 0
-        if attempts:
+        attempts = get_attempts_and_answers(
+            lab_proxy, student.user, latest_only=True,
+            attempts=attempts_by_user.get(student.user.id, []),
+            problems=problems)
+
+        try:
             attempt = attempts[0]
-            progress_in_percent = attempt.progress_in_percent
-            score = attempt.score
+        except IndexError:
+            attempt = None
+            score = 0
+        else:
+            score = attempt.custom_score
 
         context = {
             'user': student.user,
             'attempt': attempt,
-            'progress_in_percent': progress_in_percent,
             'score': score,
+            'detail_url': reverse('student_progress_detail', args=[course_key, student.user.id]),
         }
 
         students_context.append(context)
-
-    # for item in student_objects:
-    #     student_id = item.user_id
-    #     student_user = User.objects.get(id=int(student_id))
-    #     # additional DB lookup (this kills the Progress page in particular).
-    #     student = User.objects.prefetch_related("groups").get(id=student_user.id)
-
-    #     courseware_summary = grades.progress_summary(student, request, course)
-    #     grade_summary = grades.grade(student, request, course)
-
-    #     if courseware_summary is None:
-    #         # if the student is indeed registered, it means the course is not
-    #         # started yet
-    #         continue
-    #     student_context = {
-    #         'courseware_summary': courseware_summary,
-    #         'grade_summary': grade_summary,
-    #         'student': student,
-    #     }
-    #     students_context.append(student_context)
 
     studio_url = get_studio_url(course_key, 'settings/grading')
     context = {
@@ -898,33 +897,31 @@ def _progress_all(request, course_key):
 
 
 @login_required
-def student_detail(request, course_id, student_id):
+def progress_detail(request, course_id, student_id):
     """
         Create page for student detail
     """
+    from labster.models import LabProxy
+    from labster.reports import get_attempts_and_answers
+
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
     student = User.objects.get(id=int(student_id))
     course = modulestore().get_course(course_key)
 
-    # user attempts
-    from labster.models import UserAttempt
-    user_attempts = UserAttempt.objects.filter(user=student).order_by('-created_at')
+    location = None
+    for section in course.get_children():
+        for sub_section in section.get_children():
+            if not location and sub_section.lab_id:
+                location = sub_section.location
 
-    problems = get_problems_student_in_course(request, student, course, course_key)
-    total_score = sum(item['score'] for item in problems)
-    total_time_spent = sum(item['time_spent'] for item in problems)
-    total_attempts = sum(item['attempts'] for item in problems)
-    difficult_problems = get_most_difficult_problem(problems, 3)
+    lab_proxy = LabProxy.objects.get(location=location)
+    attempts = get_attempts_and_answers(lab_proxy, student, latest_only=True)
 
     context = {
         'student': student,
         'course': course,
-        'problems': problems,
-        'total_score': total_score,
-        'total_attempts': total_attempts,
-        'total_time_spent': total_time_spent,
-        'difficult_problems': difficult_problems,
-        'user_attempts': user_attempts,
+        'attempts': attempts,
+        'progress_all_url': reverse('progress_all_students', args=[course_id]),
     }
 
     with grades.manual_transaction():
