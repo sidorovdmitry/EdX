@@ -284,3 +284,7 @@ table.table-vat td:last-child {
 .cursor-pointer {
     cursor:pointer;
 }
+.credit-card {
+    background-image: "../../images/backoffice/cc_icon.png";
+    background-repeat: no-repeat;
+}
