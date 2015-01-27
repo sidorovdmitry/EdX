@@ -1357,6 +1357,9 @@ MKTG_URL_LINK_MAP = {
     'PRIVACY': None,  # 'privacy_edx',
     'JOBS': 'jobs',
     'PRESS': 'press',
+    'CAREER': 'career',
+    'PRICING': 'pricing',
+    'TESTIMONIAL': 'testimonial',
 
     # Verified Certificates
     'WHAT_IS_VERIFIED_CERT': 'verified-certificate',
