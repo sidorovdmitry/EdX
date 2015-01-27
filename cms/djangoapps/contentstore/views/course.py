@@ -406,7 +406,7 @@ def course_listing(request):
 
     in_process_course_actions = [format_in_process_course_view(uca) for uca in in_process_course_actions]
 
-    return render_to_response('labster_index.html', {
+    return render_to_response('index.html', {
         'courses': courses,
         'in_process_course_actions': in_process_course_actions,
         'user': request.user,
