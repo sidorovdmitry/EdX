@@ -127,12 +127,15 @@ class AnswerAdmin(BaseAdmin):
     raw_id_fields = ('problem',)
 
     def queryset(self, request):
-        return Answer.objects.filter(is_active=True)
+        return Answer.objects.filter(is_active=True).select_related('problem')
 
 
 class LabProxyAdmin(BaseAdmin):
     list_display = ('id', 'course_from_location', 'lab', 'location', 'is_active', 'created_at')
     list_filter = ('is_active',)
+
+    def queryset(self, request):
+        return LabProxy.objects.all().select_related('lab')
 
 
 class LabProxyDataAdmin(admin.ModelAdmin):
@@ -194,6 +197,10 @@ class UnityLogAdmin(admin.ModelAdmin):
     list_filter = ('log_type',)
     list_display = ('user', 'lab_proxy', 'log_type', 'created_at')
 
+    def queryset(self, request):
+        return UnityLog.objects.all()\
+            .select_related('user', 'lab_proxy', 'lab_proxy__lab')
+
 
 class UnityPlatformLogAdmin(admin.ModelAdmin):
     list_filter = ('tag',)
@@ -205,6 +212,10 @@ class UnityPlatformLogAdmin(admin.ModelAdmin):
 
     def lab(self, obj):
         return obj.lab_proxy.lab.name
+
+    def queryset(self, request):
+        return UnityPlatformLog.objects.all()\
+            .select_related('user', 'lab_proxy', 'lab_proxy__lab')
 
 
 class UserAnswerAdmin(admin.ModelAdmin):
@@ -225,6 +236,10 @@ class UserAnswerAdmin(admin.ModelAdmin):
             return ''
         return obj.attempt.id
 
+    def queryset(self, request):
+        return UserAnswer.objects.all().select_related(
+            'user', 'lab_proxy__lab', 'attempt')
+
 
 class LabsterUserLicenseAdmin(admin.ModelAdmin):
     list_display = ('course_id', 'email', 'created_at', 'expired_at')
@@ -241,6 +256,10 @@ class UserAttemptAdmin(admin.ModelAdmin):
 
     def lab_proxy_id(self, obj):
         return obj.lab_proxy.id
+
+    def queryset(self, request):
+        return UserAttempt.objects.all().select_related(
+            'lab_proxy', 'lab_proxy__lab', 'user')
 
 
 class LabsterUserAdmin(admin.ModelAdmin):

@@ -13,75 +13,77 @@
 
 <%include file="/courseware/labster_course_navigation.html" args="active_page='instructor'" />
 
+<style>
+.lab-result-wrapper {
+  padding: 30px 40px;
+}
+.lab-result-wrapper table {
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  margin: 0 0 40px 0;
+}
+.lab-result-wrapper table th {
+  background-color: #eee;
+}
+.lab-result-wrapper table th,
+.lab-result-wrapper table td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+}
+/*
+.lab-result-wrapper table tr.correct td {
+  background-color: #c3dcbf;
+}
+*/
+.lab-result-wrapper h3.score {
+  margin: 0 0 10px 0;
+  text-align: right;
+  font-size: 30px;
+}
+.lab-result-wrapper h3.score span {
+  display: inline-block;
+  background-color: #c3dcbf;
+  padding: 5px 10px;
+}
+</style>
+
+
 <div class="container">
   <div class="profile-wrapper">
-    <div class="course-info" id="course-info-progress" aria-label="${_('Course Progress')}">
-      <header>
-        <h1>Student quiz detail for student: ${student}</h1>
-      </header>
+    <div class="course-info lab-result-wrapper" id="course-info-progress" aria-label="${_('Result Detail')}">
 
-      <div class="progress-all-students">
-        <h3>The 3 top most difficult questions:</h3> <br/>
-        <table class="progress-all-table">
-          <tr>            
-            <th>Problem</th>
-            <th>Time Spent</th>
-            <th>Score</th>
-            <th>Attempt count</th>
-          </tr>
-          %for problem in difficult_problems:
-            <tr>
-              <td>${problem['problem']}</td>
-              <td>${problem['time_spent']}</td>
-              <td>${problem['score']}</td>
-              <td>${problem['attempts']}</td>
-            </tr>
-          %endfor
-        </table>
-        <br/><br/> <br/>
+      <a href="${progress_all_url}">View all students</a>
 
-        <h3>Detail report:</h3><br/>
-        <table class="progress-all-table">
-          <tr>            
-            <th>Problem</th>
-            <th>Time Spent</th>
-            <th>Score</th>
-            <th>Attempt count</th>
-          </tr>
-          %for problem in problems:          
-            <tr>
-              <td>${problem['problem']}</td>
-              <td>${problem['time_spent']}</td>
-              <td>${problem['score']}</td>
-              <td>${problem['attempts']}</td>
-            </tr>
-          %endfor
-          <tr>
-              <td>Total : </td>
-              <td>${total_time_spent}</td>
-              <td>${total_score}</td>
-              <td>${total_attempts}</td>
-              <td></td>
-            </tr>
-        </table>
-      </div>
+    % for attempt in attempts:
+    % if attempt.answers:
+    <h3 class="score">Score
+      <span>${attempt.custom_score}%</span></h3>
+    <table>
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>Question</th>
+          <th>Answer</th>
+          <th>Correct Answer</th>
+          <th>Is Correct?</th>
+        </tr>
+      </thead>
+      <tbody>
+        % for answer in attempt.answers:
+        <tr class="${'correct' if answer.is_correct else ''}">
+          <td>${(loop.index + 1)}</td>
+          <td>${answer.question}</td>
+          <td>${answer.answer_string}</td>
+          <td>${answer.correct_answer}</td>
+          <td>${'yes' if answer.is_correct else ''}</td>
+        </tr>
+        % endfor
+      </tbody>
+    </table>
+    % endif
+    % endfor
 
-      %if user_attempt:
-      <div class="progress-all-students" style="margin-top:36px">      
-        <table class="progress-all-table">
-          <tr>
-            <th>Lab</th>
-            <th>Attempt count</th>
-          </tr>
-          %for each in user_attempts:
-          <tr>
-            <td>${each.lab_proxy.lab.name}</td>
-            <td>${each.get_total_play_count()}</td>
-          </tr>
-          %endfor
-        </table>
-      </div>  <!-- progress-all-students -->
-      %endif
 
     </div> <!-- course-info -->
   </div> <!-- profile-wrapper -->

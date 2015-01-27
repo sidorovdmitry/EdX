@@ -296,9 +296,9 @@ if settings.COURSEWARE_ENABLED:
         url(r'^courses/{}/progress/(?P<student_id>[^/]*)/$'.format(settings.COURSE_ID_PATTERN),
             'courseware.views.progress', name="student_progress"),
         url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/progress_all_students$',
-            'courseware.views.progress_all', name="progress_all"),
-        url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/(?P<student_id>\d+)/student_detail$',
-            'courseware.views.student_detail', name="student_detail"),
+            'courseware.views.progress_all', name="progress_all_students"),
+        url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/(?P<student_id>\d+)/student_progress_detail$',
+            'courseware.views.progress_detail', name="student_progress_detail"),
 
         # For the instructor
         url(r'^courses/{}/instructor$'.format(settings.COURSE_ID_PATTERN),

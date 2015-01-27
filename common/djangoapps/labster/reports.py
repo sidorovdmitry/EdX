@@ -3,11 +3,14 @@ from collections import defaultdict
 from labster.models import UserAnswer, UserAttempt, Problem, get_user_attempts_from_lab_proxy
 
 
-def get_attempts_and_answers(lab_proxy, user, latest_only=False):
+def get_attempts_and_answers(
+        lab_proxy, user, latest_only=False,
+        attempts=None,
+        problems=None):
 
-    # attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy)\
-    attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy, user=user)\
-        .exclude(useranswer=None).order_by('-created_at')
+    if not attempts:
+        attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy, user=user)\
+            .exclude(useranswer=None).order_by('-created_at')
 
     if latest_only:
         attempts = list(attempts)[:1]
@@ -17,7 +20,8 @@ def get_attempts_and_answers(lab_proxy, user, latest_only=False):
     # special case for LAB_ID 35 (adaptive cytogenetics)
     if lab_proxy.lab_id == 35:
         quiz_ids = ["Cyto-{}-Post".format(i) for i in range(11, 41)]
-        problems = Problem.objects.filter(is_active=True, element_id__in=quiz_ids)
+        if not problems:
+            problems = Problem.objects.filter(is_active=True, element_id__in=quiz_ids)
         answers = answers.filter(problem__in=problems)
 
     answers_by_attempt = defaultdict(list)
@@ -35,7 +39,7 @@ def get_attempts_and_answers(lab_proxy, user, latest_only=False):
         # FIXME: for LAB_ID 35 only
         if lab_proxy.lab_id == 35:
             correct_count = len([answer for answer in attempt.answers if answer.is_correct])
-            attempt.custom_score = 100 * correct_count / problems.count()
+            attempt.custom_score = 100 * correct_count / len(problems)
 
             if attempt.custom_score > 100:
                 attempt.custom_score = 100
