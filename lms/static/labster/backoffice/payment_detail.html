@@ -89,13 +89,13 @@
           <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}" description="{{ payment_description(payment.payment_products, payment.total) }}"></stripe>
         </td>
         <td ng-show="payment.total > 500 && ! payment.paid">
-          <a class="labster-disabled-btn btn-labster-invoice" ng-click="pop_up_open()">Credit Card</a>
+          <a class="labster-disabled-btn btn-labster-invoice" ng-click="pop_up_open()"><i class='fa fa-credit-card'></i> Credit Card</a>
         </td>
       </tr>
       <tr>
         <td>
-          <a ng-show="payment.total <= 500" ng-click="show_information = !show_information" class="btn-labster-invoice">Wire Transfer</a>
-          <a ng-show="payment.total > 500" class="btn-labster-invoice labster-disabled-btn">Wire Transfer</a>
+          <a ng-show="payment.total <= 500" ng-click="show_information = !show_information" class="btn-labster-invoice"><i class='fa fa-exchange'></i> Wire Transfer</a>
+          <a ng-show="payment.total > 500" class="btn-labster-invoice labster-disabled-btn"><i class='fa fa-exchange'></i> Wire Transfer</a>
         </td>
       </tr>
     </tbody>
@@ -122,7 +122,7 @@
   </div>
 
   <div class="clear"></div>
-  <div>
+  <div style="display:none;">
     <h1 class="align-left">Get Invoice Email</h1>
     <p>If you wish you get an invoice to your email, please click <a class="cursor-pointer" ng-click="get_invoice()">here</a>.</p>
   </div>
