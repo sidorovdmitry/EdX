@@ -80,7 +80,7 @@
     Please note, that if we have not received the payment within 14 days, the licenses will be disabled again.
   </p>
   <br/><br/>
-  <h1 class="align-left">Payment Method</h1>
+  <h1 class="align-left"> Payment Method</h1>
   <table class="table-no-border">
     <tbody>
       <tr><td>Please choose your preferred payment methods below:</td></tr>
@@ -121,6 +121,11 @@
     </table>
   </div>
 
+  <div class="clear"></div>
+  <div>
+    <h1 class="align-left">Get Invoice Email</h1>
+    <p>If you wish you get an invoice to your email, please click <a class="cursor-pointer" ng-click="get_invoice()">here</a>.</p>
+  </div>
 </div>
 
 <script type="text/ng-template" id="invoice_information">
@@ -128,4 +133,10 @@
     <hr>
     <p>Credit Card can only be used for transactions up to 500 USD.
 Please use Wire Transfer instead for larger transactions.</p>
+</script>
+
+<script type="text/ng-template" id="get_invoice">
+    <h2 class="align-center">Invoice</h2>
+    <hr>
+    <p>We have sent the invoice to your email. Please check your inbox to check it out.</p>
 </script>

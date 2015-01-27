@@ -15,7 +15,7 @@ angular.module('LabsterBackOffice')
     $scope.showLabForm = true;
     $scope.is_eu_country = false;
     $scope.is_denmark = false;
-    $scope.checkoutButton = "Continue to Payment";
+    $scope.loading = false;
     $scope.institution_vat_number = "";
     $scope.institution_name = "";
     $scope.vat_error = "";
@@ -177,7 +177,9 @@ angular.module('LabsterBackOffice')
         $scope.institution_error = "";
       }
       if (!$scope.institution_error.length && !$scope.vat_error.length) {
-        $scope.checkoutButton = "Processing...";
+        // show loading spin
+        $scope.loading = true;
+
         var url = window.backofficeUrls.buyLab;
         data = {
           user: window.requestUser.backoffice.user.id,
