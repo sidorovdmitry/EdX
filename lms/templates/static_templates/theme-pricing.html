@@ -1,0 +1,72 @@
+<%! from django.utils.translation import ugettext as _ %>
+<%inherit file="../main.html" />
+
+<%block name="pagetitle">${_("Pricing")}</%block>
+
+<%block name="headextra">
+<link rel="stylesheet" href="${static.url('labster/css/landing.css')}">
+
+</%block>
+
+<div class="content-wrapper pricing-wrapper" id="content">
+  <section class="container">
+    <section class="pricing">
+      <header class="heading-title">
+        <h3>Pricing</h3>
+      </header>
+
+      <div class="labster-pricing-list">
+        <div class="labster-box">
+          <header><h4>University/College Packages</h4></header>
+          <div class="labster-box-content">
+            <ul>
+              <li class="lab-price2"><sup>$</sup><span>19.99</span> <small>/lab</small></li>
+              <li class="individu">individual labs</li>
+              <li class="or"><span>OR</span></li>
+              <li class="lab-price2 all"><sup>$</sup><span>4.99</span></li>
+              <li class="header">Contains <b>all</b> current labs +<br>new labs released</li>
+              <li class="license">License is valid for a full semester</li>
+              <li class="btn-price">
+                <a class="btn-buy" href="#">BUY</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="labster-box labster-box-green">
+          <header><h4>High School Packages</h4></header>
+          <div class="labster-box-content">
+            <ul>
+              <li class="lab-price2"><sup>$</sup><span>7.99</span> <small>/lab</small></li>
+              <li class="individu">individual labs</li>
+              <li class="or"><span>OR</span></li>
+              <li class="lab-price2 all"><sup>$</sup><span>29.99</span></li>
+              <li class="header">Contains <b>all</b> current labs +<br>new labs released</li>
+              <li class="license">License is valid for a full<br>school year (August-July).</li>
+              <li class="btn-price">
+                <a class="btn-buy" href="#">BUY</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="pricing-desc">
+        <p><strong>Labster can be acquired through single-lab licenses and an all-lab license.</strong></p>
+        <p><strong>All prices are per student, excl. VAT.</strong></p>
+        <p style="color:#999;">* We recommend that you consider purchasing this all-lab package, which will provide your student with access to our many labs. This will allow the students to even continue their learning in other fields or more advanced levels, after completing the core courses.
+        </p>
+      </div>
+
+      <p class="call-pricing"><strong>Call +45  61 43 72 44 to learn more about our pricing.</strong></p>
+
+      <section class="curriculum-coverage">
+        <header class="heading-title">
+          <h3>Curriculum Coverage</h3>
+        </header>
+        <a href="#" class="btn-edx btn-edx-banner">View Our Curriculum Coverage Here</a>
+      </section>
+    </section>
+  </section>
+
+</div>
+<!-- end div content-wrapper -->
