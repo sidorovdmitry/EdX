@@ -1,16 +1,17 @@
 <%! from django.utils.translation import ugettext as _ %>
 <%inherit file="../main.html" />
+<%namespace name='static' file='../static_content.html'/>
 
 <%block name="pagetitle">${_("Contact")}</%block>
 
 <%block name="headextra">
-<link rel="stylesheet" href="${static.url('labster/css/landing.css')}">
+<link rel="stylesheet" href="${static.url('labster/css/static_pages.css')}">
 
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.idTabs.min.js"></script>
+<script type="text/javascript" src="${static.url('labster/lib/jquery.idTabs.min.js')}"></script>
 </%block>
 
-<div class="content-wrapper contact-wrapper" id="content">
+<div class="contact-wrapper">
   <section class="container">
     <section class="about-contact">
       <header class="heading-title">
@@ -32,13 +33,13 @@
 
       <section class="clients">
         <ul>
-          <li><img src="images/cust-1.jpg" alt="client"></li>
-          <li><img src="images/cust-2.jpg" alt="client"></li>
-          <li><img src="images/cust-3.jpg" alt="client"></li>
-          <li><img src="images/cust-4.jpg" alt="client"></li>
-          <li><img src="images/cust-5.jpg" alt="client"></li>
-          <li><img src="images/cust-6.jpg" alt="client"></li>
-          <li><img src="images/cust-7.jpg" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-1.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-2.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-3.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-4.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-5.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-6.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/cust-7.jpg')}" alt="client"></li>
         </ul>
       </section>
       <!-- end section customers/clients  -->

@@ -1,14 +1,14 @@
 <%! from django.utils.translation import ugettext as _ %>
 <%inherit file="../main.html" />
-
+<%namespace name='static' file='../static_content.html'/>
 <%block name="pagetitle">${_("Testimonial")}</%block>
 
 <%block name="headextra">
-<link rel="stylesheet" href="${static.url('labster/css/landing.css')}">
+<link rel="stylesheet" href="${static.url('labster/css/static_pages.css')}">
 
 </%block>
 
-<div class="content-wrapper testimonial-wrapper" id="content">
+<div class="testimonial-wrapper" id="content">
   <section class="container">
     <section class="testimonial">
       <header class="heading-title">
