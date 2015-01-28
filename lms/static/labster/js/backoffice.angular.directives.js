@@ -47,6 +47,15 @@ angular.module('LabsterBackOffice')
     };
   })
 
+  .directive('processing', function () {
+    // add spinning icon when clicked
+    return function(scope, element, attr) {
+      element.on('click', function(ev) {
+        $(this).html('<i class=\'fa fa-refresh fa-spin\'></i> Processing');
+      });
+    }
+  })
+
   .directive('numeric', function() {
     return {
       require: 'ngModel',
