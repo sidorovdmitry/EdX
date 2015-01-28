@@ -165,7 +165,7 @@ angular.module('LabsterBackOffice')
       });
     }; // end of duplicateLabs
 
-    $scope.buyLabs = function () {
+    $scope.buyLabs = function (payment_method) {
       var list_product;
 
       $scope.isProcessing = true;
@@ -183,7 +183,7 @@ angular.module('LabsterBackOffice')
         var url = window.backofficeUrls.buyLab;
         data = {
           user: window.requestUser.backoffice.user.id,
-          payment_type: $scope.payment_method,
+          payment_type: payment_method,
           institution_type : $scope.institution_type,
           institution_name : $scope.institution_name,
           country : $scope.country.id,

@@ -79,30 +79,19 @@
   <p>
     Please note, that if we have not received the payment within 14 days, the licenses will be disabled again.
   </p>
-  <br/><br/>
-  <h1 class="align-left"> Payment Method</h1>
+
   <table class="table-no-border">
     <tbody>
-      <tr style="display:none;"><td>Please choose your preferred payment methods below:</td></tr>
       <tr ng-show="payment.payment_type == 'stripe'">
-        <td ng-show="payment.total <= 500 && ! payment.paid">
-          <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}" description="{{ payment_description(payment.payment_products, payment.total) }}"></stripe>
-        </td>
-        <td ng-show="payment.total > 500 && ! payment.paid">
-          <a class="labster-disabled-btn btn-labster-invoice" ng-click="pop_up_open()"><i class='fa fa-credit-card'></i> Credit Card</a>
-        </td>
-      </tr>
-      <tr ng-show="payment.payment_type == 'manual'">
         <td>
-          <a ng-show="payment.total <= 500" ng-click="show_information = !show_information" class="btn-labster-invoice"><i class='fa fa-exchange'></i> Wire Transfer</a>
-          <a ng-show="payment.total > 500" class="btn-labster-invoice labster-disabled-btn"><i class='fa fa-exchange'></i> Wire Transfer</a>
+          <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}" description="{{ payment_description(payment.payment_products, payment.total) }}"></stripe>
         </td>
       </tr>
     </tbody>
   </table>
 
-  <div class="slide" ng-show="show_information || payment.total > 500">
-    <h2 class="no-text-transform"><strong>Payments via Wire Transfer:</strong></h2>
+  <div class="slide" ng-show="payment.payment_type == 'manual'">
+    <h2 class="no-text-transform"><strong>Wire Transfer Payment Instruction:</strong></h2>
     <p>
       You may use the wire transfer information below, to transfer the amount to our bank account. <br/>
       We will then daily check for the incoming wire transfer, which usually take 5-7 business day for international transfer.
@@ -120,12 +109,6 @@
       </tbody>
     </table>
   </div>
-
-  <div class="clear"></div>
-  <div style="display:none;">
-    <h1 class="align-left">Get Invoice Email</h1>
-    <p>If you wish you get an invoice to your email, please click <a class="cursor-pointer" ng-click="get_invoice()">here</a>.</p>
-  </div>
 </div>
 
 <script type="text/ng-template" id="invoice_information">
@@ -133,10 +116,4 @@
     <hr>
     <p>Credit Card can only be used for transactions up to 500 USD.
 Please use Wire Transfer instead for larger transactions.</p>
-</script>
-
-<script type="text/ng-template" id="get_invoice">
-    <h2 class="align-center">Invoice</h2>
-    <hr>
-    <p>We have sent the invoice to your email. Please check your inbox to check it out.</p>
 </script>

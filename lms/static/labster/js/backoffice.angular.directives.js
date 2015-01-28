@@ -1,12 +1,21 @@
 angular.module('LabsterBackOffice')
 
-  .directive('stripe', function ($location, $http) {
+  .directive('stripe', function ($location, $http, ngDialog) {
     return {
       restrict: 'E',
       scope: {paymentId: '@', email: '@', amount: '@', description: '@'},
       link: function (scope, element, attr) {
 
+        function showProgress() {
+          // show progress page while sending data to backoffice api
+          ngDialog.open({
+              template: '<h2 class="align-center">Please wait. We are processing your payment.</h2>',
+              plain: true
+          })
+        };
+
         var submitStripe = function (token) {
+          showProgress();
           var url = window.backofficeUrls.payment + scope.paymentId + "/charge_stripe/";
           var post_data = {
             'stripe_token': token.id
@@ -42,9 +51,18 @@ angular.module('LabsterBackOffice')
           });
         });
       },
-      template: '<a class="btn-labster-invoice"><i class=\'fa fa-credit-card\'></i> Credit Card</a>',
+      template: '<a class="btn-labster-regular width-25" id="stripe-button"><i class=\'fa fa-credit-card\'></i> Pay with Credit Card</a>',
       replace: true
     };
+  })
+
+  .directive('processing', function () {
+    // add spinning icon when clicked
+    return function(scope, element, attr) {
+      element.on('click', function(ev) {
+        $(this).html('<i class=\'fa fa-refresh fa-spin\'></i> Processing');
+      });
+    }
   })
 
   .directive('numeric', function() {

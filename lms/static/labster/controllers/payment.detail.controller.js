@@ -1,9 +1,10 @@
 angular.module('LabsterBackOffice')
 
-  .controller('PaymentDetailController', function ($scope, $routeParams, $http, ngDialog) {
+  .controller('PaymentDetailController', function ($scope, $routeParams, $http, $timeout, ngDialog) {
     $scope.user = window.requestUser;
     $scope.payment = null;
     $scope.show_information = false;
+    $scope.invoiceId = "00" + paymentId;
 
     var paymentId = $routeParams.paymentId;
     var url = window.backofficeUrls.payment + paymentId + "/";
@@ -33,6 +34,7 @@ angular.module('LabsterBackOffice')
         data.total = parseFloat(data.total).toFixed(2);
         data.created_date = moment(data.created_at).format('ll');
         $scope.payment = data;
+        checkStripe();
       });
 
     $scope.payment_description = function (payment_products, total) {
@@ -45,5 +47,12 @@ angular.module('LabsterBackOffice')
       return lab_count + " labs with " + total_license + " licenses. ($" + total + ")";
     };
 
-    $scope.invoiceId = "00" + paymentId;
+    function checkStripe() {
+      // show stripe form immediately if the user chose to pay with credit card
+      if ($scope.payment.payment_type == "stripe") {
+        $timeout(function() {
+          angular.element('#stripe-button').trigger('click');
+        }, 100);
+      }
+    };
   });
