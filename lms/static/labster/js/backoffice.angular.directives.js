@@ -1,12 +1,21 @@
 angular.module('LabsterBackOffice')
 
-  .directive('stripe', function ($location, $http) {
+  .directive('stripe', function ($location, $http, ngDialog) {
     return {
       restrict: 'E',
       scope: {paymentId: '@', email: '@', amount: '@', description: '@'},
       link: function (scope, element, attr) {
 
+        function showProgress() {
+          // show progress page while sending data to backoffice api
+          ngDialog.open({
+              template: '<h2 class="align-center">Please wait. We are processing your payment.</h2>',
+              plain: true
+          })
+        };
+
         var submitStripe = function (token) {
+          showProgress();
           var url = window.backofficeUrls.payment + scope.paymentId + "/charge_stripe/";
           var post_data = {
             'stripe_token': token.id

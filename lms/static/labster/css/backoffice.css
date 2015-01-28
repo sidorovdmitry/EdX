@@ -295,3 +295,16 @@ table.table-vat td:last-child {
 .width-25{
     width: 25%;
 }
+.cover-page {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:1000;
+    background-color:grey;
+    opacity: .8;
+    overflow-x: hidden;
+    overflow-y: auto;
+ }
+
