@@ -42,7 +42,7 @@ angular.module('LabsterBackOffice')
           });
         });
       },
-      template: '<a class="btn-labster-invoice"><i class=\'fa fa-credit-card\'></i> Credit Card</a>',
+      template: '<a class="btn-labster-regular width-25"><i class=\'fa fa-credit-card\'></i> Pay with Credit Card</a>',
       replace: true
     };
   })
