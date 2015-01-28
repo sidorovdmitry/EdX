@@ -1,4 +1,4 @@
-<%! from django_countries.countries import COUNTRIES %>
+<%! from django_countries import countries %>
 <%
 DEFAULT_LANGUAGE = 'en'
 LANGUAGES = [
@@ -116,7 +116,7 @@ LANGUAGES = [
         <label>Nationality</label>
         <select name="nationality">
           <option value="">--</option>
-          %for code, country_name in COUNTRIES:
+          %for code, country_name in countries:
             %if labster_user.nationality == code:
             <option value="${code}" selected>${ unicode(country_name) }</option>
             %else:
