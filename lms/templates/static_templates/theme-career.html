@@ -1,0 +1,81 @@
+<%! from django.utils.translation import ugettext as _ %>
+<%inherit file="../main.html" />
+<%namespace name='static' file='../static_content.html'/>
+<%block name="pagetitle">${_("Career")}</%block>
+
+<%block name="headextra">
+<link rel="stylesheet" href="${static.url('labster/css/static_pages.css')}">
+
+</%block>
+
+<div class="career-wrapper" id="content">
+  <section class="container">
+    <section class="career">
+      <header class="heading-title">
+        <h3>Careers</h3>
+      </header>
+
+      <p>In all applications, your motivation letter should advertise how your presence in the company can improve what we do. We can see your qualifications and experience in your CV; what we can’t see is how you would use them at Labster.</p>
+
+        <p>Unsolicited applications are always welcomed, if you think you have what it takes to be a part of Labster! Please send information about yourself and what you do to maris@labster.com to learn more.</p>
+
+          <div class="open-position">
+            <header class="heading-title">
+              <h3>Open Positions</h3>
+            </header>
+
+            paste code here (rbox widget)
+          </div>
+          <!-- end open position -->
+
+          <hr>
+
+          <section class="2-column career-column">
+            <div class="career-list">
+              <section class="left-50">
+                <h3>Entrepreneur Lifestyle</h3>
+                <p>With a distinctly entrepreneurial vibe, working at Labster will grow your capacity as a leader.  Our team is driven, hardworking, idea-heavy and responsible, and we love to inspire each other to grow and learn. What else would you expect from a company that’s making next-generation science education solutions?</p>
+              </section>
+              <section class="right-50">
+                <img width="100%" src="http://www.labster.com/wp-content/uploads/2014/06/jobs-pic1.jpg" class=" vc_box_border_grey attachment-large" alt="jobs pic1">
+              </section>
+            </div>
+
+            <div class="career-list">
+              <section class="left-50">
+                <img width="100%" src="http://www.labster.com/wp-content/uploads/2014/06/jobs-pic3-e1403690462850.jpg" class=" vc_box_border_grey attachment-large" alt="jobs pic3">
+
+              </section>
+              <section class="right-50">
+                <h3>Entrepreneur Lifestyle</h3>
+                <p>We share desks and tips with the best startup gurus in the business at Founders House in Copenhagen. At the very center of Copenhagen, in <a href="http://www.foundershouse.dk/" target="blank">Founders House</a> you can turn to your left for coding help from your developer neighbor, or to your right for marketing strategies from self-made CMOs. But in addition to our knowledge pool, Founders House has fun! FIFA tournaments, friday beer and in-house competitions are not uncommon.</p>
+              </section>
+            </div>
+
+            <div class="career-list">
+              <section class="left-50">
+                <h3>Small company = Small hierarchy</h3>
+                <p>We’re a small team, which means a flat hierarchy. It’s a working environment Denmark is known for, but Labster encourages it tenfold. You’ll undoubtedly have lasting, important input on the direction of the company when you get to talk with the CEO daily.</p>
+              </section>
+              <section class="right-50">
+                <img width="100%" src="http://www.labster.com/wp-content/uploads/2014/12/labster-logo.jpg" class=" vc_box_border_grey attachment-large" alt="labster logo (1)">
+              </section>
+            </div>
+
+            <div class="career-list">
+              <section class="left-50">
+               <img width="100%" src="http://www.labster.com/wp-content/uploads/2014/06/jobs-pic4.jpeg" class=" vc_box_border_grey attachment-large" alt="jobs pic4">
+             </section>
+             <section class="right-50">
+               <h3>Flexible working hours and travel</h3>
+               <p>We believe in flexible work hours and a good work-life balance -we are interested in the output and having happy co-workers. Our development team is located at Bali, Indonesia, and is led by co-founder Michael Bodekaer. So be prepared for travelling if you join Labster! </p>
+             </section>
+           </div>
+         </section>
+         <!-- end section 2-column  -->
+
+       </section>
+     </section>
+
+   </div>
+   <!-- end div content-wrapper -->

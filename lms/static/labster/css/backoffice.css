@@ -281,3 +281,10 @@ a.btn-labster-checkout {
 table.table-vat td:last-child {
     width: 450px;
 }
+.cursor-pointer {
+    cursor:pointer;
+}
+.credit-card {
+    background-image: "../../images/backoffice/cc_icon.png";
+    background-repeat: no-repeat;
+}

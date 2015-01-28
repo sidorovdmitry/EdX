@@ -36,7 +36,7 @@ from django.conf import settings
       % endif
 
       <header>
-        <h1>${_("Course Progress for all Students")}</h1>
+        <h1>${_("Result for all Students")}</h1>
       </header>
 
      <div class="progress-all-students">
@@ -44,18 +44,15 @@ from django.conf import settings
           <tr>
              <th>Name</th>
              <th>Email</th>
-             <th>Progress</th>
              <th>Score</th>
           </tr>
      %for item in students_context:
       <tr>
           <td>${item['user'].profile.name}</td>
           <td>${item['user'].email}</td>
-          <td>
-            <progress max="100" value="${item['progress_in_percent']}" style="width:100%"></progress>
-            ${item['progress_in_percent']}%
+          <td>${item['score']}
+            (<a href="${item['detail_url']}"><small>detail</small></a>)
           </td>
-          <td>${item['score']}</td>
 
       </tr>
       %endfor

@@ -12,6 +12,18 @@ angular.module('LabsterBackOffice')
       ngDialog.open({ template: "invoice_information" });
     };
 
+    $scope.get_invoice = function() {
+      var get_invoice_url = window.backofficeUrls.payment + paymentId + "/get_invoice/";
+      $http.get(get_invoice_url, {
+        headers: {
+          'Authorization': "Token " + window.requestUser.backoffice.token
+        }})
+        .success(function(data, status, headers, config){
+          // show notification that we have sent an invoice email
+          ngDialog.open({ template: "get_invoice" });
+        });
+    };
+
     $http.get(url, {
         headers: {
           'Authorization': "Token " + window.requestUser.backoffice.token

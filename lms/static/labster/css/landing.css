@@ -101,6 +101,9 @@ a.view-all {color: #fff; text-transform: uppercase; margin-left: 20px;}
   padding-top: 1em;
   padding-bottom: 0.5em;
 }
+.heading-title h3 {
+  text-shadow: 0px 0px 25px white;
+}
 .why-labster  {overflow: hidden; margin-bottom: 40px;}
 .why-labster h4{
   margin-bottom: 7px;
@@ -129,21 +132,31 @@ a.view-all {color: #fff; text-transform: uppercase; margin-left: 20px;}
 }
 
 .labster-search.home > header {
-    height: 300px !important;
+  height: 300px !important;
 }
 
 .labster-search.home .hero {
-    height: inherit !important;
+  height: inherit !important;
 }
 
 .highlighted-courses .courses .course .info .bottom .start-date, .find-courses .courses .course .info .bottom .start-date {
-    display: none !important;
+  display: none !important;
 }
 
 .highlighted-courses .courses .course .info .desc, .find-courses .courses .course .info .desc {
-    height: 140px !important;
+  height: 140px !important;
 }
 
 .highlighted-courses .courses .course .info .bottom, .find-courses .courses .course .info .bottom {
-    display: none !important;
+  display: none !important;
 }
+.highlighted-courses .courses .course header.course-preview hgroup h2, .find-courses .courses .course header.course-preview hgroup h2 {
+  font-size: 1.2em;
+}
+.highlighted-courses .courses .course header.course-preview .info-link, .find-courses .courses .course header.course-preview .info-link {
+  display: none;
+}
+.highlighted-courses .courses .course .meta-info, .find-courses .courses .course .meta-info {
+  display: none;
+}
+

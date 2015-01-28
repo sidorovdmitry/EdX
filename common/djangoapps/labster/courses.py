@@ -20,7 +20,7 @@ def get_popular_courses(courses_id):
     return courses
 
 
-def get_primary_keywords(course_id, count=10):
+def get_primary_keywords(course_id):
     # lab
     try:
         lab = Lab.objects.get(demo_course_id=course_id)
@@ -30,4 +30,4 @@ def get_primary_keywords(course_id, count=10):
     lab_keywords = LabKeyword.objects\
         .filter(lab=lab, keyword_type=LabKeyword.KEYWORD_PRIMARY)\
         .order_by('-rank')
-    return lab_keywords[:count]
+    return lab_keywords

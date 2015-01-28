@@ -189,7 +189,23 @@
       </tr>
     </tfoot>
   </table>
-  <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ payment.total }}" description="{{ payment_description(payment.payment_products, payment.total) }}"></stripe>
-  <a type="button"
-  class="btn-labster-checkout pull-right" ng-click="buyLabs()">{{ checkoutButton }}</a>
+
+  <div>
+    <h2><strong>Choose payment method:</strong></h2>
+    <table class="table-no-border">
+      <tr>
+        <td><input type="radio" ng-model="payment_method" value="stripe"> <i class='fa fa-credit-card'></i> Credit card</td>
+        <td><input type="radio" ng-model="payment_method" value="manual"> <i class='fa fa-exchange'></i> Wire transfer </td>
+      </tr>
+    </table>
+  </div>
+
+  <div ng-show="loading">
+    <a type="button" class="btn-labster-checkout pull-right" ng-click="buyLabs()"><i class='fa fa-refresh fa-spin'></i> Processing</a>
+  </div>
+
+  <div ng-show="!loading">
+    <a type="button" class="btn-labster-checkout pull-right" ng-click="buyLabs()">Continue to Payment</a>
+  </div>
+
 </div>

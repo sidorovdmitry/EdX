@@ -347,15 +347,15 @@
             <p class="learning-description">The following list are topics, techniques and terms covered in this lab, in prioritized order, to give you a quick overview of the lab.</p>
             <div class="clear"></div>
             <ol class="learning">
-              % for keyword in primary_keywords[:5]:
+              % for keyword in primary_keywords[:10]:
               <li>${keyword.display_name}</li>
               % endfor
-              % for keyword in primary_keywords[5:]:
+              % for keyword in primary_keywords[10:]:
                 <li class="hide_tags">${keyword.display_name}</li>
               % endfor
               % if primary_keywords:
                 <li class="link_tags">
-                  <a href="#" onclick="show_all_tags()">Show All</a>
+                  <a onclick="show_all_tags()">Show All</a>
                 </li>
               % endif
             </ol>

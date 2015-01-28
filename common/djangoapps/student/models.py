@@ -1311,6 +1311,8 @@ class CourseAccessRole(models.Model):
 
 class CourseAccessRoleAdmin(admin.ModelAdmin):
     raw_id_fields = ("user",)
+    search_fields = ('user__email', 'course_id')
+    list_filter = ('org', 'role')
 
 #### Helper methods for use from python manage.py shell and other classes.
 

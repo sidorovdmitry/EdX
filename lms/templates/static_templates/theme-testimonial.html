@@ -1,0 +1,170 @@
+<%! from django.utils.translation import ugettext as _ %>
+<%inherit file="../main.html" />
+<%namespace name='static' file='../static_content.html'/>
+<%block name="pagetitle">${_("Testimonial")}</%block>
+
+<%block name="headextra">
+<link rel="stylesheet" href="${static.url('labster/css/static_pages.css')}">
+
+</%block>
+
+<div class="testimonial-wrapper" id="content">
+  <section class="container">
+    <section class="testimonial">
+      <header class="heading-title">
+        <h3>What Our Users Think About Labster</h3>
+      </header>
+
+      <div class="edx-testimonial">
+        <div class="photo-testi">
+          <img src="http://www.labster.com/wp-content/uploads/2014/07/Andreas-Martin.jpg" alt="">
+        </div>
+        <div class="content-testi">
+          <div class="txt-testi">
+            <span class="laquo"></span>
+            Students have only limited possibilities to design their own experiments or explore alternative approaches besides the optimized procedures taught in class. This makes it more challenging for students to learn how to develop workarounds, decide on criteria for acceptable data quality, data manipulations, and reasonable conclusions that can be drawn. <strong>Labster offers a great possibility for teaching these advanced concepts in an innovative and engaging way.</strong>
+          </div>
+
+          <div class="sign-testi">
+            <p class="author">Andreas Martin</p>
+            <p class="metadata">Assistant Professor, UC Berkeley</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="edx-testimonial edx-testimonial-right">
+        <div class="photo-testi">
+          <img src="http://www.labster.com/wp-content/uploads/2014/05/Lise-Lotte-Hansen-e1405339510776.jpg" alt="">
+        </div>
+        <div class="content-testi">
+          <div class="txt-testi">
+            <!--span class="laquo"></span-->
+            “After six hours of learning, you might be a bit tired. But at this lecture at 2 PM, all 250 of my students were ready with their computers on, eager to learn and so excited! The Labster session went really well : <strong>From the built-in user statistics and the feedback I have gotten from my students, I see that using Labster has been a very positive experience for them, and that they have learned a lot from it.</strong>
+          </div>
+
+          <div class="sign-testi">
+            <p class="author">Lise Lotte Hansen</p>
+            <p class="metadata">Lecturer, Aarhus University</p>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="edx-testimonial">
+        <div class="photo-testi">
+          <img src="http://www.labster.com/wp-content/uploads/2014/05/gert-dandanell.jpg" alt="">
+        </div>
+        <div class="content-testi">
+          <div class="txt-testi">
+            <span class="laquo"></span>
+            My favorite features of the Enzyme Kinetics lab are that students see the enzyme kinetics progress curve and learn to manipulate data. Furthermore, the simulated apparatus looks and acts exactly like real-life apparatus, which helps me to reach the goal of using virtual laboratories to prepare students for when they enter a wet lab. <strong>After implementing Labster this year, I can see that my students finish the wetlab exercises faster than without virtual labs.</strong>
+          </div>
+
+          <div class="sign-testi">
+            <p class="author">Gert Dandanell</p>
+            <p class="metadata">Associate Professor, Biomolecular Sciences, University of Copenhagen</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="edx-testimonial edx-testimonial-right">
+        <div class="photo-testi">
+          <img src="http://www.labster.com/wp-content/uploads/2014/05/Kambiz.jpg" alt="">
+        </div>
+        <div class="content-testi">
+          <div class="txt-testi">
+            <!--span class="laquo"></span-->
+            By taking advantage of all the latest technologies, <strong>Labster has pioneered a novel solution that can be very beneficial to universities and students globally.</strong> With this impressive and highly portable platform, there exist an enormous potential to improve the learning outcomes and motivation of students in the fields of science and technology.
+          </div>
+
+          <div class="sign-testi">
+            <p class="author">Kambiz Hamadani</p>
+            <p class="metadata">Asistant Professor, California State University, San Marcos</p>
+          </div>
+        </div>
+      </div>
+
+      <section class="banner-testi">
+        <header class="heading-title">
+          <h3>Educators</h3>
+          <h4>Try out Labster for Free</h4>
+        </header>
+        <a href="#" class="btn-edx btn-edx-black">Sign Up Now</a>
+      </section>
+
+      <div class="edx-testimonial">
+        <div class="photo-testi">
+          <img src="http://www.labster.com/wp-content/plugins/ts-visual-composer-extend/images/Default_Person.jpg" alt="">
+        </div>
+        <div class="content-testi">
+          <div class="txt-testi">
+            <span class="laquo"></span>
+            I would recommend Labster to all fellow educators, as I am convinced that it does what it is supposed to do: to teach and motivate. Labster is a novel educational format, where the students teach themselves. <strong>They are completely immersed in the simulations, as it is very interactive. Very often, they even get surprised when the lecture ends, because of their high engagement!</strong>
+            </div>
+
+            <div class="sign-testi">
+              <p class="author">Camilla Sichlau Bruun</p>
+              <p class="metadata">Lecturer, Universiy of Copenhagen</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="edx-testimonial edx-testimonial-right">
+          <div class="photo-testi">
+            <img src="http://www.labster.com/wp-content/uploads/2014/05/Phil_Gibson_1.jpg" alt="">
+          </div>
+          <div class="content-testi">
+            <div class="txt-testi">
+              <!--span class="laquo"></span-->
+              Labster makes problem-based learning easily accessible, and relates well to the lives of students. It is the best virtual solution for integrating practical and theoretical learning, and lets students manipulate with lab tools, as if they were in a real-life lab. It has several advantages over its competitors: <strong>First, it has scientific fidelity built into every scenario, which requires input from multiple areas of expertise, to ensure both high scientific and educational standards.</strong> Second, the material is rigorous and not shy of challenging concepts. Third, the virtuality of the labs allows for ready access on multiple devices teamed with scoring tools for progression management. Finally, <strong>nobody is as far along in the biotech space as Labster.</strong>
+            </div>
+
+            <div class="sign-testi">
+              <p class="author">Dr. Philip Gibson</p>
+              <p class="metadata">Bioscience Program Director at Gwinnett Technical College, and Labster Ambassador</p>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="edx-testimonial">
+          <div class="photo-testi">
+            <img src="http://www.labster.com/wp-content/uploads/2014/05/kate-spohr09_best.jpg" alt="">
+          </div>
+          <div class="content-testi">
+            <div class="txt-testi">
+              <span class="laquo"></span>
+              High schools, community colleges, and universities have an urgent need for innovative, effective and engaging learning tools that teach core lab skills and concepts used in molecular biology. The self-paced nature of Labster makes it particularly useful to a broad range of students from varied backgrounds.
+            </div>
+
+            <div class="sign-testi">
+              <p class="author">Kate Spohr</p>
+              <p class="metadata">Education Manager at Berkeley</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="edx-testimonial edx-testimonial-right">
+          <div class="photo-testi">
+            <img src="http://www.labster.com/wp-content/uploads/2014/05/Mette-Voldby-Larsen.png" alt="">
+          </div>
+          <div class="content-testi">
+            <div class="txt-testi">
+              <!--span class="laquo"></span-->
+              The thing I like the best about Labster is that it’s similar to a computer game, which is much more fun and motivating for students. You are often not aware that you are learning something, but you are indeed! My students can work in the lab on their own and learn at their own pace. They reflect better on the mistakes they make, and they are able to get immediate feedback on their learning. <strong>I think the Labster platform is very attractive, and I would definitely recommend it to other educators who want to improve their student’s motivation and make learning more fun.</strong>
+            </div>
+
+            <div class="sign-testi">
+              <p class="author">Mette Voldby Larsen</p>
+              <p class="metadata">Associate professor, Technical University of Denmark</p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </section>
+
+  </div>
+  <!-- end div content-wrapper -->

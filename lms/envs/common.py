@@ -1587,7 +1587,7 @@ EDXMKTG_COOKIE_NAME = 'edxloggedin'
 MKTG_URLS = {}
 MKTG_URL_LINK_MAP = {
     'ABOUT': 'about_edx',
-    'CONTACT': None,  # 'contact',
+    'CONTACT': 'contact',  # 'contact',
     'FAQ': None,  # 'help_edx',
     'COURSES': 'courses',
     'ROOT': 'root',
@@ -1598,6 +1598,9 @@ MKTG_URL_LINK_MAP = {
     'PRESS': 'press',
     'BLOG': 'blog',
     'DONATE': 'donate',
+    'CAREER': 'career',
+    'PRICING': 'pricing',
+    'TESTIMONIAL': 'testimonial',
 
     # Verified Certificates
     'WHAT_IS_VERIFIED_CERT': 'verified-certificate',

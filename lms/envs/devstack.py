@@ -101,7 +101,7 @@ FEATURES['ENABLE_VIDEO_ABSTRACTION_LAYER_API'] = True
 LABSTER_UNITY_URL_PREFIX = "https://labster.s3.amazonaws.com/unity/"
 LABSTER_UNITY_API_PREFIX = "http://localhost:8000"
 
-PLATFORM_NAME = 'Virtual Lab Simulations for Biology Education'
+PLATFORM_NAME = 'LabsterX'
 THEME_NAME = 'labster'
 FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
 
