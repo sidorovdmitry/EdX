@@ -48,7 +48,7 @@ def course_key_from_str(arg):
 def duplicate_course(source, target, user, fields=None):
     source_course_id = course_key_from_str(source)
     dest_course_id = course_key_from_str(target)
-    org = dest_course_id.split('/')[0]
+    org = target.split('/')[0]
 
     mstore = modulestore()
     # delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
