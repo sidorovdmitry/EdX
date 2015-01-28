@@ -9,6 +9,8 @@ from bok_choy.page_object import PageObject
 from bok_choy.promise import EmptyPromise, Promise
 from bok_choy.javascript import wait_for_js, js_defined
 
+import logging
+log = logging.getLogger('VideoPage')
 
 VIDEO_BUTTONS = {
     'CC': '.hide-subtitles',
@@ -122,20 +124,24 @@ class VideoPage(PageObject):
         else:
             return '.vert.vert-0'
 
-    def get_element_selector(self, class_name):
+    def get_element_selector(self, class_name, vertical=True):
         """
         Construct unique element selector.
 
         Arguments:
             class_name (str): css class name for an element.
+            vertical (bool): do we need vertical css selector or not. vertical css selector is not present in Studio
 
         Returns:
             str: Element Selector.
 
         """
-        return '{vertical} {video_element}'.format(
-            vertical=self.get_video_vertical_selector(self.current_video_display_name),
-            video_element=class_name)
+        if vertical:
+            return '{vertical} {video_element}'.format(
+                vertical=self.get_video_vertical_selector(self.current_video_display_name),
+                video_element=class_name)
+        else:
+            return class_name
 
     def use_video(self, video_display_name):
         """
@@ -253,6 +259,17 @@ class VideoPage(PageObject):
         """
         self._captions_visibility(False)
 
+    def is_captions_visible(self):
+        """
+        Get current visibility sate of captions.
+
+        Returns:
+            bool: True means captions are visible, False means captions are not visible
+
+        """
+        caption_state_selector = self.get_element_selector(CSS_CLASS_NAMES['closed_captions'])
+        return not self.q(css=caption_state_selector).present
+
     @wait_for_js
     def _captions_visibility(self, captions_new_state):
         """
@@ -265,28 +282,16 @@ class VideoPage(PageObject):
         states = {True: 'Shown', False: 'Hidden'}
         state = states[captions_new_state]
 
-        caption_state_selector = self.get_element_selector(CSS_CLASS_NAMES['closed_captions'])
-
-        def _captions_current_state():
-            """
-            Get current visibility sate of captions.
-
-            Returns:
-                bool: True means captions are visible, False means captions are not visible
-
-            """
-            return not self.q(css=caption_state_selector).present
-
         # Make sure that the CC button is there
         EmptyPromise(lambda: self.is_button_shown('CC'),
                      "CC button is shown").fulfill()
 
         # toggle captions visibility state if needed
-        if _captions_current_state() != captions_new_state:
+        if self.is_captions_visible() != captions_new_state:
             self.click_player_button('CC')
 
             # Verify that captions state is toggled/changed
-            EmptyPromise(lambda: _captions_current_state() == captions_new_state,
+            EmptyPromise(lambda: self.is_captions_visible() == captions_new_state,
                          "Captions are {state}".format(state=state)).fulfill()
 
     @property
@@ -298,9 +303,7 @@ class VideoPage(PageObject):
             str: Captions Text.
 
         """
-        # wait until captions rendered completely
-        captions_rendered_selector = self.get_element_selector(CSS_CLASS_NAMES['captions_rendered'])
-        self.wait_for_element_presence(captions_rendered_selector, 'Captions Rendered')
+        self.wait_for_captions()
 
         captions_selector = self.get_element_selector(CSS_CLASS_NAMES['captions_text'])
         subs = self.q(css=captions_selector).html
@@ -346,6 +349,11 @@ class VideoPage(PageObject):
 
         """
         button_selector = self.get_element_selector(VIDEO_BUTTONS[button])
+
+        # If we are going to click pause button, Ensure that player is not in buffering state
+        if button == 'pause':
+            self.wait_for(lambda: self.state != 'buffering', 'Player is Ready for Pause')
+
         self.q(css=button_selector).first.click()
 
         button_states = {'play': 'playing', 'pause': 'pause'}
@@ -532,9 +540,7 @@ class VideoPage(PageObject):
         captions_selector = self.get_element_selector(CSS_CLASS_NAMES['captions'])
         EmptyPromise(lambda: self.q(css=captions_selector).visible, 'Subtitles Visible').fulfill()
 
-        # wait until captions rendered completely
-        captions_rendered_selector = self.get_element_selector(CSS_CLASS_NAMES['captions_rendered'])
-        self.wait_for_element_presence(captions_rendered_selector, 'Captions Rendered')
+        self.wait_for_captions()
 
         return True
 
@@ -657,6 +663,11 @@ class VideoPage(PageObject):
         state_selector = self.get_element_selector(CSS_CLASS_NAMES['video_container'])
         current_state = self.q(css=state_selector).attrs('class')[0]
 
+        # For troubleshooting purposes show what the current state is.
+        # The debug statements will only be displayed in the event of a failure.
+        logging.debug("Current state of '{}' element is '{}'".format(state_selector, current_state))
+
+        # See the JS video player's onStateChange function
         if 'is-playing' in current_state:
             return 'playing'
         elif 'is-paused' in current_state:
@@ -796,3 +807,10 @@ class VideoPage(PageObject):
 
         classes = self.q(css=selector).attrs('class')[0].split()
         return 'active' in classes
+
+    def wait_for_captions(self):
+        """
+        Wait until captions rendered completely.
+        """
+        captions_rendered_selector = self.get_element_selector(CSS_CLASS_NAMES['captions_rendered'])
+        self.wait_for_element_presence(captions_rendered_selector, 'Captions Rendered')

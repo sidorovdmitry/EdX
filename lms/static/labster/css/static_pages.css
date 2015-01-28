@@ -348,7 +348,7 @@ a.view-all {color: #fff; text-transform: uppercase; margin-left: 20px;}
   margin: 0 auto;
 }
 .curriculum-coverage {
-  background: #4180c1 url(images/curriculum-banner.png) top right no-repeat;
+  background: #4180c1 url(../../images/landing/curriculum-banner.png) top right no-repeat;
   width: 61%;
   height: 145px;
   padding: 20px;

@@ -16,7 +16,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_noop
 
-from django_countries import CountryField
+from django_countries.fields import CountryField
 
 from xmodule_django.models import CourseKeyField, LocationKeyField
 
@@ -76,6 +76,11 @@ class LabsterUser(models.Model):
     def is_student(self):
         return self.user_type == self.USER_TYPE_STUDENT
 
+
+def create_labster_user(sender, instance, created, **kwargs):
+    if created:
+        LabsterUser.objects.get_or_create(user=instance)
+post_save.connect(create_labster_user, sender=User)
 
 class NutshellUser(models.Model):
     user = models.OneToOneField(User)

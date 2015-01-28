@@ -10,9 +10,9 @@ class TestLongUsernameEmail(TestCase):
     def setUp(self):
         self.url = reverse('create_account')
         self.url_params = {
-            'username': 'username',
+            'username': 'foobar',
             'email': 'foo_bar' + '@bar.com',
-            'name': 'foo bar',
+            'name': 'username username username username',
             'password': '123',
             'terms_of_service': 'true',
             'honor_code': 'true',
@@ -49,5 +49,6 @@ class TestLongUsernameEmail(TestCase):
         obj = json.loads(response.content)
         self.assertEqual(
             obj['value'],
-            "Email cannot be more than 75 characters long",
+            "Username cannot be more than 30 characters long",
+            # "Email cannot be more than 75 characters long",
         )

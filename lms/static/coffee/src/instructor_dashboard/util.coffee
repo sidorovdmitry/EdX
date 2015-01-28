@@ -121,17 +121,21 @@ create_task_list_table = ($table_tasks, tasks_data) ->
 
 # Formats the subject field for email content history table
 subject_formatter = (row, cell, value, columnDef, dataContext) ->
-  if !value then return gettext("An error occurred retrieving your email. Please try again later, and contact technical support if the problem persists.")
+  if value is null then return gettext("An error occurred retrieving your email. Please try again later, and contact technical support if the problem persists.")
   subject_text = $('<span>').text(value['subject']).html()
   return '<p><a href="#email_message_' + value['id']+ '" id="email_message_' + value['id'] + '_trig">' + subject_text + '</a></p>'
 
+# Formats the author field for the email content history table
+sent_by_formatter = (row, cell, value, columnDef, dataContext) ->
+  if value is null then return "<p>" + gettext("Unknown") + "</p>" else return '<p>' + value + '</p>'
+
 # Formats the created field for the email content history table
 created_formatter = (row, cell, value, columnDef, dataContext) ->
-  if !value then return "<p>" + gettext("Unknown") + "</p>" else return '<p>' + value + '</p>'
+  if value is null then return "<p>" + gettext("Unknown") + "</p>" else return '<p>' + value + '</p>'
 
 # Formats the number sent field for the email content history table
 number_sent_formatter = (row, cell, value, columndDef, dataContext) ->
-  if !value then return "<p>" + gettext("Unknown") + "</p>" else return '<p>' + value + '</p>'
+  if value is null then return "<p>" + gettext("Unknown") + "</p>" else return '<p>' + value + '</p>'
 
 # Creates a table to display the content of bulk course emails
 # sent in the past
@@ -153,6 +157,14 @@ create_email_content_table = ($table_emails, $table_emails_inner, email_data) ->
       minWidth: 80
       cssClass: "email-content-cell"
       formatter: subject_formatter
+    ,
+      id: 'requester'
+      field: 'requester'
+      name: gettext('Sent By')
+      minWidth: 80
+      maxWidth: 100
+      cssClass: "email-content-cell"
+      formatter: sent_by_formatter
     ,
       id: 'created'
       field: 'created'
@@ -197,13 +209,13 @@ create_email_message_views = ($messages_wrapper, emails) ->
     $email_header.append $('<input>', type: "button", name: "copy-email-body-text", value: gettext("Copy Email To Editor"), id: "copy_email_" + email_id)
 
     $close_button = $ '<a>', href: '#', class: "close-modal"
-    $close_button.append $ '<i>', class: 'icon-remove'
+    $close_button.append $ '<i>', class: 'icon fa fa-times'
     $email_header.append $close_button
 
     # HTML escape the subject line
     subject_text = $('<span>').text(email_info.email['subject']).html()
     $email_header.append $('<h2>', class: "message-bold").html('<em>' + gettext('Subject:') + '</em> ' + subject_text)
-
+    $email_header.append $('<h2>', class: "message-bold").html('<em>' + gettext('Sent By:') + '</em> ' + email_info.requester)
     $email_header.append $('<h2>', class: "message-bold").html('<em>' + gettext('Time Sent:') + '</em> ' + email_info.created)
     $email_header.append $('<h2>', class: "message-bold").html('<em>' + gettext('Sent To:') + '</em> ' + email_info.sent_to)
     $email_wrapper.append $email_header
@@ -256,7 +268,9 @@ class PendingInstructorTasks
   ### Pending Instructor Tasks Section ####
   constructor: (@$section) ->
     # Currently running tasks
+    @$running_tasks_section = find_and_assert @$section, ".running-tasks-section"
     @$table_running_tasks = find_and_assert @$section, ".running-tasks-table"
+    @$no_tasks_message = find_and_assert @$section, ".no-pending-tasks-message"
 
     # start polling for task list
     # if the list is in the DOM
@@ -275,10 +289,41 @@ class PendingInstructorTasks
       success: (data) =>
         if data.tasks.length
           create_task_list_table @$table_running_tasks, data.tasks
+          @$no_tasks_message.hide()
+          @$running_tasks_section.show()
         else
           console.log "No pending instructor tasks to display"
+          @$running_tasks_section.hide()
+          @$no_tasks_message.empty()
+          @$no_tasks_message.append $('<p>').text gettext("No tasks currently running.")
+          @$no_tasks_message.show()
       error: std_ajax_err => console.error "Error finding pending instructor tasks to display"
     ### /Pending Instructor Tasks Section ####
+
+class KeywordValidator
+
+    @keyword_regex = /%%+[^%]+%%/g
+    @keywords = ['%%USER_ID%%', '%%USER_FULLNAME%%', '%%COURSE_DISPLAY_NAME%%', '%%COURSE_END_DATE%%']
+
+    @validate_string: (string) =>
+      regex_match = string.match(@keyword_regex)
+      found_keywords = if regex_match == null then [] else regex_match
+      invalid_keywords = []
+      is_valid = true
+      keywords = @keywords
+
+      for found_keyword in found_keywords
+        do (found_keyword) ->
+          if found_keyword not in keywords
+            invalid_keywords.push found_keyword
+
+      if invalid_keywords.length != 0
+        is_valid = false
+
+      return {
+        is_valid: is_valid,
+        invalid_keywords: invalid_keywords
+      }
 
 # export for use
 # create parent namespaces if they do not already exist.
@@ -294,3 +339,4 @@ if _?
     create_email_content_table: create_email_content_table
     create_email_message_views: create_email_message_views
     PendingInstructorTasks: PendingInstructorTasks
+    KeywordValidator: KeywordValidator

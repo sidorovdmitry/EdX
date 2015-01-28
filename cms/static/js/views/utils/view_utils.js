@@ -5,7 +5,7 @@ define(["jquery", "underscore", "gettext", "js/views/feedback_notification", "js
     function ($, _, gettext, NotificationView, PromptView) {
         var toggleExpandCollapse, showLoadingIndicator, hideLoadingIndicator, confirmThenRunOperation,
             runOperationShowingMessage, disableElementWhileRunning, getScrollOffset, setScrollOffset,
-            setScrollTop, redirect, hasChangedAttributes;
+            setScrollTop, redirect, reload, hasChangedAttributes, deleteNotificationHandler;
 
         /**
          * Toggles the expanded state of the current element.
@@ -88,10 +88,25 @@ define(["jquery", "underscore", "gettext", "js/views/feedback_notification", "js
          * a JQuery promise.
          */
         disableElementWhileRunning = function(element, operation) {
-            element.addClass("is-disabled");
+            element.addClass("is-disabled").attr('aria-disabled', true);
             return operation().always(function() {
-                element.removeClass("is-disabled");
+                element.removeClass("is-disabled").attr('aria-disabled', false);
             });
+        };
+
+        /**
+         * Returns a handler that removes a notification, both dismissing it and deleting it from the database.
+         * @param callback function to call when deletion succeeds
+         */
+        deleteNotificationHandler = function(callback) {
+            return function (event) {
+                event.preventDefault();
+                $.ajax({
+                    url: $(this).data('dismiss-link'),
+                    type: 'DELETE',
+                    success: callback
+                });
+            };
         };
 
         /**
@@ -133,6 +148,13 @@ define(["jquery", "underscore", "gettext", "js/views/feedback_notification", "js
         };
 
         /**
+         * Reloads the page. This is broken out as its own function for unit testing.
+         */
+        reload = function() {
+            window.location.reload();
+        };
+
+        /**
          * Returns true if a model has changes to at least one of the specified attributes.
          * @param model The model in question.
          * @param attributes The list of attributes to be compared.
@@ -158,10 +180,12 @@ define(["jquery", "underscore", "gettext", "js/views/feedback_notification", "js
             'confirmThenRunOperation': confirmThenRunOperation,
             'runOperationShowingMessage': runOperationShowingMessage,
             'disableElementWhileRunning': disableElementWhileRunning,
+            'deleteNotificationHandler': deleteNotificationHandler,
             'setScrollTop': setScrollTop,
             'getScrollOffset': getScrollOffset,
             'setScrollOffset': setScrollOffset,
             'redirect': redirect,
+            'reload': reload,
             'hasChangedAttributes': hasChangedAttributes
         };
     });

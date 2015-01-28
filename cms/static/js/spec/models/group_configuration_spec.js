@@ -99,7 +99,8 @@ define([
                         'id': 10,
                         'name': 'My Group Configuration',
                         'description': 'Some description',
-                        'version': 1,
+                        'version': 2,
+                        'scheme': 'random',
                         'groups': [
                             {
                                 'version': 1,
@@ -114,9 +115,10 @@ define([
                         'id': 10,
                         'name': 'My Group Configuration',
                         'description': 'Some description',
+                        'scheme': 'random',
                         'showGroups': false,
                         'editing': false,
-                        'version': 1,
+                        'version': 2,
                         'groups': [
                             {
                                 'version': 1,
@@ -183,15 +185,14 @@ define([
                 expect(model.isValid()).toBeTruthy();
             });
 
-            it('requires at least two groups', function() {
+            it('requires at least one group', function() {
                 var group1 = new GroupModel({ name: 'Group A' }),
-                    group2 = new GroupModel({ name: 'Group B' }),
                     model = new GroupConfigurationModel({ name: 'foo' });
 
-                model.get('groups').reset([group1]);
+                model.get('groups').reset([]);
                 expect(model.isValid()).toBeFalsy();
 
-                model.get('groups').add(group2);
+                model.get('groups').add(group1);
                 expect(model.isValid()).toBeTruthy();
             });
 

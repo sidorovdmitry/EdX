@@ -23,20 +23,9 @@
 
 <%include file="_discussion_course_navigation.html" args="active_page='discussion'" />
 
-<script>
-$(function() {
-  $('.discussion-body').on('click', '.home-new-post-btn', function(ev) {
-    ev.preventDefault();
-    $('.course-tabs .new-post-btn').click();
-  });
-});
-</script>
-
-<article class="new-post-article"></article>
-
 <section class="discussion container" id="discussion-container"
          data-roles="${roles}"
-         data-course-id="${course_id}"
+         data-course-id="${course_id | h}"
          data-user-info="${user_info}"
          data-threads="${threads}"
          data-thread-pages="${thread_pages}"
@@ -48,6 +37,8 @@ $(function() {
     <div class="discussion-body">
         <div class="forum-nav"></div>
         <div class="discussion-column">
+          <article class="new-post-article" style="display: none"></article>
+          <div class="forum-content"></div>
         </div>
     </div>
 </section>

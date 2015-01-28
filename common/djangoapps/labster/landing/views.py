@@ -17,7 +17,7 @@ from labster_search.search import get_courses_from_keywords
 
 
 @ensure_csrf_cookie
-@cache_if_anonymous
+@cache_if_anonymous()
 def index(request, user=AnonymousUser()):
     '''
     Redirects to main page -- info page if user authenticated, or marketing if not

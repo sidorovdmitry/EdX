@@ -28,6 +28,7 @@ class TestCase(testutil.TestCase, test.TestCase):
 
 @unittest.skipUnless(
     testutil.AUTH_FEATURES_KEY in settings.FEATURES, testutil.AUTH_FEATURES_KEY + ' not in settings.FEATURES')
+@unittest.skipUnless(settings.FEATURES['ENABLE_THIRD_PARTY_AUTH'], 'third party is not on')
 class GetAuthenticatedUserTestCase(TestCase):
     """Tests for get_authenticated_user."""
 
@@ -70,6 +71,7 @@ class GetAuthenticatedUserTestCase(TestCase):
 
 @unittest.skipUnless(
     testutil.AUTH_FEATURES_KEY in settings.FEATURES, testutil.AUTH_FEATURES_KEY + ' not in settings.FEATURES')
+@unittest.skipUnless(settings.FEATURES['ENABLE_THIRD_PARTY_AUTH'], 'third party is not on')
 class GetProviderUserStatesTestCase(testutil.TestCase, test.TestCase):
     """Tests generation of ProviderUserStates."""
 
@@ -132,6 +134,7 @@ class GetProviderUserStatesTestCase(testutil.TestCase, test.TestCase):
 
 @unittest.skipUnless(
     testutil.AUTH_FEATURES_KEY in settings.FEATURES, testutil.AUTH_FEATURES_KEY + ' not in settings.FEATURES')
+@unittest.skipUnless(settings.FEATURES['ENABLE_THIRD_PARTY_AUTH'], 'third party is not on')
 class UrlFormationTestCase(TestCase):
     """Tests formation of URLs for pipeline hook points."""
 

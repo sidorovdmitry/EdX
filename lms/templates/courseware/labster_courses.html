@@ -62,16 +62,14 @@ show_partners = microsite.get_value('show_partners', True)
           <!-- list labs -->
           %for course in courses:
             <li class="courses-listing-item">
-              <%include file="../course.html" args="course=course" />
+              <%include file="../labster_course.html" args="course=course" />
             </li>
           %endfor
           <!-- end list labs -->
         </ul>
       </section>
     </section>
-    <!-- end section highlighted-courses --
-
-    </section>
+    <!-- end section highlighted-courses -->
   </section>
 
 

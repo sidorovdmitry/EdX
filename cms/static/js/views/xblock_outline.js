@@ -54,37 +54,7 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
             },
 
             renderTemplate: function() {
-                var xblockInfo = this.model,
-                    childInfo = xblockInfo.get('child_info'),
-                    parentInfo = this.parentInfo,
-                    xblockType = this.getXBlockType(this.model.get('category'), this.parentInfo),
-                    xblockTypeDisplayName = this.getXBlockType(this.model.get('category'), this.parentInfo, true),
-                    parentType = parentInfo ? this.getXBlockType(parentInfo.get('category')) : null,
-                    addChildName = null,
-                    defaultNewChildName = null,
-                    html,
-                    isCollapsed = this.shouldRenderChildren() && !this.shouldExpandChildren();
-                if (childInfo) {
-                    addChildName = interpolate(gettext('New %(component_type)s'), {
-                        component_type: childInfo.display_name
-                    }, true);
-                    defaultNewChildName = childInfo.display_name;
-                }
-                html = this.template({
-                    xblockInfo: xblockInfo,
-                    visibilityClass: XBlockViewUtils.getXBlockVisibilityClass(xblockInfo.get('visibility_state')),
-                    typeListClass: XBlockViewUtils.getXBlockListTypeClass(xblockType),
-                    parentInfo: this.parentInfo,
-                    xblockType: xblockType,
-                    xblockTypeDisplayName: xblockTypeDisplayName,
-                    parentType: parentType,
-                    childType: childInfo ? this.getXBlockType(childInfo.category, xblockInfo) : null,
-                    childCategory: childInfo ? childInfo.category : null,
-                    addChildLabel: addChildName,
-                    defaultNewChildName: defaultNewChildName,
-                    isCollapsed: isCollapsed,
-                    includesChildren: this.shouldRenderChildren()
-                });
+                var html = this.template(this.getTemplateContext());
                 if (this.parentInfo) {
                     this.setElement($(html));
                 } else {
@@ -92,12 +62,47 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                 }
             },
 
+            getTemplateContext: function() {
+                var xblockInfo = this.model,
+                    childInfo = xblockInfo.get('child_info'),
+                    parentInfo = this.parentInfo,
+                    xblockType = XBlockViewUtils.getXBlockType(this.model.get('category'), this.parentInfo),
+                    xblockTypeDisplayName = XBlockViewUtils.getXBlockType(this.model.get('category'), this.parentInfo, true),
+                    parentType = parentInfo ? XBlockViewUtils.getXBlockType(parentInfo.get('category')) : null,
+                    addChildName = null,
+                    defaultNewChildName = null,
+                    isCollapsed = this.shouldRenderChildren() && !this.shouldExpandChildren();
+                if (childInfo) {
+                    addChildName = interpolate(gettext('New %(component_type)s'), {
+                        component_type: childInfo.display_name
+                    }, true);
+                    defaultNewChildName = childInfo.display_name;
+                }
+                return {
+                    xblockInfo: xblockInfo,
+                    visibilityClass: XBlockViewUtils.getXBlockVisibilityClass(xblockInfo.get('visibility_state')),
+                    typeListClass: XBlockViewUtils.getXBlockListTypeClass(xblockType),
+                    parentInfo: this.parentInfo,
+                    xblockType: xblockType,
+                    xblockTypeDisplayName: xblockTypeDisplayName,
+                    parentType: parentType,
+                    childType: childInfo ? XBlockViewUtils.getXBlockType(childInfo.category, xblockInfo) : null,
+                    childCategory: childInfo ? childInfo.category : null,
+                    addChildLabel: addChildName,
+                    defaultNewChildName: defaultNewChildName,
+                    isCollapsed: isCollapsed,
+                    includesChildren: this.shouldRenderChildren(),
+                    hasExplicitStaffLock: this.model.get('has_explicit_staff_lock'),
+                    staffOnlyMessage: this.model.get('staff_only_message')
+                };
+            },
+
             renderChildren: function() {
                 var self = this,
-                    xblockInfo = this.model;
-                if (xblockInfo.get('child_info')) {
-                    _.each(this.model.get('child_info').children, function(child) {
-                        var childOutlineView = self.createChildView(child, xblockInfo);
+                    parentInfo = this.model;
+                if (parentInfo.get('child_info')) {
+                    _.each(this.model.get('child_info').children, function(childInfo) {
+                        var childOutlineView = self.createChildView(childInfo, parentInfo);
                         childOutlineView.render();
                         self.addChildView(childOutlineView);
                     });
@@ -147,10 +152,17 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                     }
                 }
                 // Ensure that the children have been rendered before expanding
-                if (this.shouldRenderChildren() && !this.renderedChildren) {
+                this.ensureChildrenRendered();
+                BaseView.prototype.toggleExpandCollapse.call(this, event);
+            },
+
+            /**
+             * Verifies that the children are rendered (if they should be).
+             */
+            ensureChildrenRendered: function() {
+                if (!this.renderedChildren && this.shouldRenderChildren()) {
                     this.renderChildren();
                 }
-                BaseView.prototype.toggleExpandCollapse.call(this, event);
             },
 
             /**
@@ -173,27 +185,20 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                 return true;
             },
 
-            createChildView: function(xblockInfo, parentInfo, parentView) {
-                return new XBlockOutlineView({
-                    model: xblockInfo,
-                    parentInfo: parentInfo,
-                    initialState: this.initialState,
-                    expandedLocators: this.expandedLocators,
-                    template: this.template,
-                    parentView: parentView || this
-                });
+            getChildViewClass: function() {
+                return XBlockOutlineView;
             },
 
-            getXBlockType: function(category, parentInfo, translate) {
-                var xblockType = category;
-                if (category === 'chapter') {
-                    xblockType = translate ? gettext('section') : 'section';
-                } else if (category === 'sequential') {
-                    xblockType = translate ? gettext('subsection') : 'subsection';
-                } else if (category === 'vertical' && (!parentInfo || parentInfo.get('category') === 'sequential')) {
-                    xblockType = translate ? gettext('unit') : 'unit';
-                }
-                return xblockType;
+            createChildView: function(childInfo, parentInfo, options) {
+                var viewClass = this.getChildViewClass();
+                return new viewClass(_.extend({
+                    model: childInfo,
+                    parentInfo: parentInfo,
+                    parentView: this,
+                    initialState: this.initialState,
+                    expandedLocators: this.expandedLocators,
+                    template: this.template
+                }, options));
             },
 
             onSync: function(event) {
@@ -266,7 +271,7 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                 var self = this,
                     parentView = this.parentView;
                 event.preventDefault();
-                var xblockType = this.getXBlockType(this.model.get('category'), parentView.model, true);
+                var xblockType = XBlockViewUtils.getXBlockType(this.model.get('category'), parentView.model, true);
                 XBlockViewUtils.deleteXBlock(this.model, xblockType).done(function() {
                     if (parentView) {
                         parentView.onChildDeleted(self, event);
@@ -276,7 +281,7 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
 
             handleAddEvent: function(event) {
                 var self = this,
-                    target = $(event.target),
+                    target = $(event.currentTarget),
                     category = target.data('category');
                 event.preventDefault();
                 XBlockViewUtils.addXBlock(target).done(function(locator) {

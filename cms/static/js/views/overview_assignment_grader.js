@@ -16,7 +16,7 @@ define(["js/views/baseview", "jquery", "underscore", "gettext",
                     // TODO move to a template file
                     '<h4 class="status-label"><%= assignmentType %></h4>' +
                     '<a data-tooltip="Mark/unmark this subsection as graded" class="menu-toggle" href="#">' +
-                        '<% if (!hideSymbol) {%><i class="icon-ok"></i><%};%>' +
+                        '<% if (!hideSymbol) {%><i class="icon fa fa-check"></i><%};%>' +
                     '</a>' +
                     '<ul class="menu">' +
                         '<% graders.each(function(option) { %>' +
