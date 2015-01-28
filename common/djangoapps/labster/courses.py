@@ -1,4 +1,9 @@
+from opaque_keys import InvalidKeyError
+from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
+from student.roles import CourseInstructorRole, CourseStaffRole
+from student.models import CourseAccessRole, CourseEnrollment
+from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
 
 from labster.models import Lab
@@ -31,3 +36,61 @@ def get_primary_keywords(course_id):
         .filter(lab=lab, keyword_type=LabKeyword.KEYWORD_PRIMARY)\
         .order_by('-rank')
     return lab_keywords
+
+
+def course_key_from_str(arg):
+    try:
+        return CourseKey.from_string(arg)
+    except InvalidKeyError:
+        return SlashSeparatedCourseKey.from_deprecated_string(arg)
+
+
+def duplicate_course(source, target, user, fields=None):
+    source_course_id = course_key_from_str(source)
+    dest_course_id = course_key_from_str(target)
+    org = dest_course_id.split('/')[0]
+
+    mstore = modulestore()
+    # delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
+
+    # 'invitation_only': True,
+    # 'max_student_enrollments_allowed': license_count,
+    # 'labster_license': True,
+
+    try:
+        with mstore.bulk_operations(dest_course_id):
+            if mstore.clone_course(source_course_id, dest_course_id, ModuleStoreEnum.UserID.mgmt_command):
+                # purposely avoids auth.add_user b/c it doesn't have a caller to authorize
+                CourseInstructorRole(dest_course_id).add_users(
+                    *CourseInstructorRole(source_course_id).users_with_role()
+                )
+                CourseStaffRole(dest_course_id).add_users(
+                    *CourseStaffRole(source_course_id).users_with_role()
+                )
+    except:
+        return None
+
+    course = mstore.get_course(dest_course_id)
+
+    if fields:
+        for key, value in fields.items():
+            setattr(course, key, value)
+
+        mstore.update_item(course, user.id)
+
+    CourseAccessRole.objects.get_or_create(
+        user=user,
+        org=org,
+        course_id=dest_course_id,
+        role='staff')
+
+    CourseAccessRole.objects.get_or_create(
+        user=user,
+        org=org,
+        course_id=dest_course_id,
+        role='instructor')
+
+    CourseEnrollment.objects.get_or_create(
+        user=user, course_id=dest_course_id)
+
+    return course
