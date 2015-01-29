@@ -1,4 +1,4 @@
-angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate'])
+angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate', 'LocalStorageModule'])
 
   .config(function ($routeProvider, $locationProvider) {
     $routeProvider
@@ -12,14 +12,14 @@ angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate'])
         templateUrl: window.baseUrl + 'labster/backoffice/license_list.html'
       })
 
-      .when('/license/new/personal', {
-        controller: 'NewPersonalLicenseController',
-        templateUrl: window.baseUrl + 'labster/backoffice/new_personal_license.html'
-      })
-
       .when('/license/new/group/:group_type', {
         controller: 'NewLicenseController',
         templateUrl: window.baseUrl + 'labster/backoffice/new_license.html'
+      })
+
+      .when('/license/new/step2/', {
+        controller: 'NewLicenseStep2Controller',
+        templateUrl: window.baseUrl + 'labster/backoffice/new_license_step2.html'
       })
 
       .when('/renew-license/:licenses_id', {
@@ -61,6 +61,11 @@ angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate'])
         requireBase: true
       });
   })
+
+.config(function (localStorageServiceProvider) {
+  localStorageServiceProvider
+    .setPrefix('LabsterBackOffice');
+})
 
 .animation('.slide', function() {
     var NG_HIDE_CLASS = 'ng-hide';
