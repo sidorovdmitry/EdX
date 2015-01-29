@@ -52,19 +52,21 @@ class Command(BaseCommand):
             user = User.objects.get(email=email)
         except:
             user = User(email=email)
-        user.username = username
-        user.is_active = True
-        user.set_password(password)
-        user.save()
+            user.username = username
+            user.is_active = True
+            user.set_password(password)
+            user.save()
 
-        labster_user, _ = LabsterUser.objects.get_or_create(user=user)
-        labster_user.user_type = user_type
-        labster_user.user_school_level = user_school_level
-        labster_user.save()
+        labster_user, created = LabsterUser.objects.get_or_create(user=user)
+        if created:
+            labster_user.user_type = user_type
+            labster_user.user_school_level = user_school_level
+            labster_user.save()
 
-        user_profile, _ = UserProfile.objects.get_or_create(user=user)
-        user_profile.name = name
-        user_profile.save()
+        user_profile, created = UserProfile.objects.get_or_create(user=user)
+        if created:
+            user_profile.name = name
+            user_profile.save()
 
         return User.objects.get(id=user.id)
 

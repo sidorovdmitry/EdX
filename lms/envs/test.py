@@ -284,19 +284,21 @@ BROKER_TRANSPORT = 'memory'
 ######################### MARKETING SITE ###############################
 
 MKTG_URL_LINK_MAP = {
-    'ABOUT': 'about',
-    'CONTACT': 'contact',
-    'FAQ': 'help',
+    'ABOUT': 'about_edx',
+    'CONTACT': 'contact',  # 'contact',
+    'FAQ': None,  # 'help_edx',
     'COURSES': 'courses',
     'ROOT': 'root',
     'TOS': 'tos',
-    'HONOR': 'honor',
-    'PRIVACY': 'privacy',
+    'HONOR': None,  # 'honor',
+    'PRIVACY': None,  # 'privacy_edx',
     'JOBS': 'jobs',
-    'NEWS': 'news',
     'PRESS': 'press',
     'BLOG': 'blog',
     'DONATE': 'donate',
+    'CAREER': 'career',
+    'PRICING': 'pricing',
+    'TESTIMONIAL': 'testimonial',
 
     # Verified Certificates
     'WHAT_IS_VERIFIED_CERT': 'verified-certificate',
