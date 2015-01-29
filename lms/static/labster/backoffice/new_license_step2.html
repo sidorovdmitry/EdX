@@ -61,24 +61,23 @@
   </table>
 
   <div>
-    <h2><strong>Choose payment method below: </strong></h2>
+    <h2>Choose payment method below:</h2>
     <table class="table-no-border">
       <tr>
         <td>
-          <a processing ng-click="buyLabs('stripe')" class="btn-labster-invoice"><i class='fa fa-credit-card'></i> Credit Card</a>
-        </td>
-        <td>
-          <a processing ng-click="buyLabs('manual')" class="btn-labster-invoice"><i class='fa fa-exchange'></i> Wire Transfer</a>
+          <div ng-show="totalPrice >= 500">
+            <p>
+              <small>Credit Card can only be used for transactions up to 500 USD. <br/> Please use Wire Transfer instead for larger transactions.</small>
+            </p>
+            <a class="btn-labster-invoice labster-disabled-btn"><i class='fa fa-credit-card'></i> Credit Card</a>
+          </div>
+          <div ng-show="totalPrice < 500">
+            <a processing ng-click="buyLabs('stripe')" class="btn-labster-invoice"><i class='fa fa-credit-card'></i> Credit Card</a>
+          </div>
         </td>
       </tr>
       <tr>
-        <td>
-          <p ng-show="totalPrice >= 500">
-            <small>Credit Card can only be used for transactions up to 500 USD. <br/> Please use Wire Transfer instead for larger transactions</small>
-          </p>
-        </td>
-        <td>
-        </td>
+        <td><a processing ng-click="buyLabs('manual')" class="btn-labster-invoice"><i class='fa fa-exchange'></i> Wire Transfer</a></td>
       </tr>
     </table>
   </div>
