@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from labster.backoffice.views import get_payment
-from labster.edx_bridge import duplicate_course, unregister_course
+from labster.courses import duplicate_course
+from labster.edx_bridge import unregister_course
 from labster.models import Lab
 from labster.models import LabsterCourseLicense
 
@@ -76,15 +77,14 @@ class CourseDuplicateFromLabs(APIView):
                 'labster_license': True,
             }
 
-            scheme = 'https' if request.is_secure() else 'http'
             source = target = lab.demo_course_id.to_deprecated_string()
-            course = duplicate_course(source, target, request.user, extra_fields,
-                                    http_protocol=scheme)
+            course = duplicate_course(source, target, request.user, extra_fields)
 
-            course_ids.append(str(course.id))
+            if course:
+                course_ids.append(str(course.id))
 
-            LabsterCourseLicense.objects.create(
-                user=request.user, course_id=course.id, license_id=license_id)
+                LabsterCourseLicense.objects.create(
+                    user=request.user, course_id=course.id, license_id=license_id)
 
         response_data = {'courses': course_ids}
         return Response(response_data)

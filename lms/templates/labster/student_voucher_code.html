@@ -21,8 +21,8 @@
 
 <%block name="js_extra">
 <%
-  user_type = user.profile.get_user_type_display() if user.profile.user_type else ''
-  user_type_id = user.profile.user_type
+  user_type = user.labster_user.get_user_type_display() if user.labster_user.user_type else ''
+  user_type_id = user.labste_user.user_type
 %>
 <script>
 window.stripeKey = "${stripe_publishable_key}";  // publishable
@@ -30,8 +30,8 @@ window.csrfToken = "${csrf_token}";
 window.requestUser = {
   id: "${user.id}",
   email: "${user.email}",
-  name: "${user.profile.name}",
-  token: "${user.profile.token_key}",
+  name: "${user.labster_user.name}",
+  token: "${user.labster_user.token_key}",
   user_type: {
     label: "${user_type}",
     id: "${user_type_id}"
