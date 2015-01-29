@@ -22,7 +22,7 @@
 <%block name="js_extra">
 <%
   user_type = user.labster_user.get_user_type_display() if user.labster_user.user_type else ''
-  user_type_id = user.labste_user.user_type
+  user_type_id = user.labster_user.user_type
 %>
 <script>
 window.stripeKey = "${stripe_publishable_key}";  // publishable
