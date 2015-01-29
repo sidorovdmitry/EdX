@@ -1,4 +1,4 @@
-<div ng-show="showLabForm">
+<div>
   <header>
     <h2>BUY NEW LICENSES</h2>
   </header>
@@ -125,92 +125,6 @@
       </tfoot>
     </table>
     <a type="button"
-    ng-class="checkout_btn_class()" ng-click="subTotalPrice <= 0 || showVat()">Continue to Checkout <i class="fa fa-arrow-right"></i></a>
+    ng-class="checkout_btn_class()" ng-click="subTotalPrice <= 0 || showVatPage()">Continue to Checkout <i class="fa fa-arrow-right"></i></a>
   </div>
-</div>
-<div ng-show="!showLabForm" class="labster-lab-list">
-  <h2>Checkout</h2>
-  <table class="table-vat">
-    <tbody>
-      <tr class="edu-level">
-        <td colspan="2"><strong>Buyer Details</strong></td>
-      </tr>
-      <tr>
-        <td>Country</td>
-        <td>
-          <select class="form-control" ng-change="checkVat()" ng-model="country"
-          ng-options="country.name for country in countries"></select>
-        </td>
-      </tr>
-      <tr>
-        <td class="vertical-align-baseline">Institution type</td>
-        <td>
-          <label>
-            <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="1"> Personal <br/>
-          </label>
-          <label>
-            <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="2"> Private School <br/>
-          </label>
-          <label>
-            <input type="radio" ng-model="institution_type" ng-change="checkVat()" value="3"> Public School <br/>
-          </label>
-        </td>
-      </tr>
-      <tr class="edu-level">
-        <td colspan="2"><strong>Billing Information</strong></td>
-      </tr>
-      <tr ng-hide="institution_type == 1">
-        <td>Institution Name</td>
-        <td>
-          <input type="text" class="form-control" ng-model="institution_name">
-          <i style="color:red;">{{ institution_error }}</i>
-        </td>
-      </tr>
-      <tr ng-hide="institution_type == 1">
-        <td>VAT Number</td>
-        <td>
-          <input type="text" class="form-control" ng-model="institution_vat_number" >
-          <i style="color:red;">{{ vat_error }}</i>
-        </td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td>Subtotal</td>
-        <td class="align-right">{{ subTotalPrice|currency:"$" }}</td>
-      </tr>
-      <tr>
-        <td>Tax</td>
-        <td class="align-right">{{ tax|currency:"$" }}</td>
-      </tr>
-      <tr>
-        <td>Total</td>
-        <td class="align-right">{{ totalPrice|currency:"$" }}</td>
-      </tr>
-    </tfoot>
-  </table>
-
-  <div>
-    <h2><strong>Choose payment method below: </strong></h2>
-    <table class="table-no-border">
-      <tr>
-        <td>
-          <a processing ng-click="buyLabs('stripe')" class="btn-labster-invoice"><i class='fa fa-credit-card'></i> Credit Card</a>
-        </td>
-        <td>
-          <a processing ng-click="buyLabs('manual')" class="btn-labster-invoice"><i class='fa fa-exchange'></i> Wire Transfer</a>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p ng-show="totalPrice >= 500">
-            <small>Credit Card can only be used for transactions up to 500 USD. <br/> Please use Wire Transfer instead for larger transactions</small>
-          </p>
-        </td>
-        <td>
-        </td>
-      </tr>
-    </table>
-  </div>
-
 </div>
