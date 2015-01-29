@@ -72,12 +72,16 @@
             <a class="btn-labster-invoice labster-disabled-btn"><i class='fa fa-credit-card'></i> Credit Card</a>
           </div>
           <div ng-show="totalPrice < 500">
-            <a processing ng-click="buyLabs('stripe')" class="btn-labster-invoice"><i class='fa fa-credit-card'></i> Credit Card</a>
+            <a ng-show="!loading_cc" ng-click="buyLabs('stripe')" class="btn-labster-invoice"><i class='fa fa-credit-card'></i> Credit Card</a>
+            <a ng-show="loading_cc" class="btn-labster-invoice"><i class='fa fa-refresh fa-spin'></i> Processing</a>
           </div>
         </td>
       </tr>
       <tr>
-        <td><a processing ng-click="buyLabs('manual')" class="btn-labster-invoice"><i class='fa fa-exchange'></i> Wire Transfer</a></td>
+        <td>
+          <a ng-show="!loading_man" ng-click="buyLabs('manual')" class="btn-labster-invoice"><i class='fa fa-exchange'></i> Wire Transfer</a>
+          <a ng-show="loading_man" class="btn-labster-invoice"><i class='fa fa-refresh fa-spin'></i> Processing</a>
+        </td>
       </tr>
     </table>
   </div>
