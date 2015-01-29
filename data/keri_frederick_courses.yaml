@@ -1,0 +1,11 @@
+user:
+  email: "kpettengill@frederick.edu"
+  password: "kpettengill@frederick.edu"
+  name: "Keri Beth"
+  username: "KeriBeth"
+  user_type: 1
+  user_school_level: 1
+
+course:
+  org: "FrederickCollege"
+  license_count: 6
