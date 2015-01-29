@@ -62,6 +62,7 @@ angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate', 'LocalS
       });
   })
 
+// config local storage module
 .config(function (localStorageServiceProvider) {
   localStorageServiceProvider
     .setPrefix('LabsterBackOffice');
