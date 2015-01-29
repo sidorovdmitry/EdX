@@ -1,6 +1,30 @@
 <%! from django.utils.translation import ugettext as _ %>
 <%page args="section_data"/>
 
+% if settings.FEATURES.get('LABSTER') and section_data['license_count']['total'] is not None:
+<% license_count = section_data['license_count'] %>
+<div class="license-wrapper">
+  <h2>${_("License Details")}</h2>
+  <span class="tip">${_("Number of licences that is bought and used")}</span>
+  <br><br>
+  <table>
+    <tr>
+      <td>${_("Used")}</td>
+      <td>${license_count['used']}</td>
+    </tr>
+    <tr>
+      <td>${_("Available")}</td>
+      <td>${license_count['available']}</td>
+    </tr>
+    <tr style="color:green;border-top:1px solid #000">
+      <td style="padding-top:10px;"><b>${_("Total")}</b></td>
+      <td style="padding-top:10px;"><b>${license_count['total']}</b></td>
+    </tr>
+  </table>
+</div>
+  <hr>
+% endif
+
 %if settings.FEATURES.get('DISPLAY_ANALYTICS_ENROLLMENTS') or section_data.get('enrollment_message'):
   <div class="enrollment-wrapper">
     <h2>${_("Enrollment Information")}</h2>

@@ -27,6 +27,46 @@
   </div>
 </script>
 
+% if settings.FEATURES.get('LABSTER'):
+<script>
+window.userLicenses = JSON.parse('${section_data['user_licenses']}');
+window.courseId = "${course.id}";
+</script>
+<script type="text/template" id="license-row-template">
+<tr>
+<td>{{ email }}</td>
+<td><div class="revoke" data-email="{{ email }}"><i class="icon fa fa-clock-o"></i> Revoke Membership</div></td>
+</tr>
+</script>
+<div class="student-licenses-management membership-section">
+  <h2> ${_("Students")} </h2>
+  <div class="student-license-container active">
+    <div class="member-list-widget">
+      <div class="header">
+        <div class="title">Student License List</div>
+      </div>
+      <!-- <div class="info">Info</div> -->
+      <div class="member-list">
+        <table>
+          <thead>
+            <tr>
+              <td class="label">Email</td>
+              <td class="label">Membership</td>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="bottom-bar">
+        &nbsp;
+      </div>
+    </div>
+
+  </div>
+</div>
+<hr class="divider" />
+% endif
+
 <div class="batch-enrollment membership-section">
   <h2> ${_("Batch Enrollment")} </h2>
   <p>
@@ -274,4 +314,11 @@
         </script>
 
     </%block>
+% endif
+
+% if settings.FEATURES.get('LABSTER'):
+<%namespace name='static' file='/static_content.html'/>
+<%block name="js_extra">
+<script src="${static.url('js/labster.student-licenses.js')}"></script>
+</%block>
 % endif

@@ -811,6 +811,13 @@ class LabsterUserLicense(models.Model):
         expired = {'course_id': course_id, 'expired_at__gte': now}
         return cls.objects.filter(Q(**no_expired) | Q(**expired)).count()
 
+    @classmethod
+    def get_for_course(cls, course_id, as_json=False):
+        objs = cls.objects.filter(course_id=course_id)
+        if as_json:
+            return [obj.to_json() for obj in objs]
+        return objs
+
     def __unicode__(self):
         return "{} - {}".format(self.course_id, self.email)
 
@@ -821,6 +828,12 @@ class LabsterUserLicense(models.Model):
     def renew_to(self, expired_at):
         self.expired_at = expired_at
         self.save()
+
+    def to_json(self):
+        return {
+            'course_id': self.course_id.to_deprecated_string(),
+            'email': self.email,
+        }
 
 
 class LabsterCourseLicense(models.Model):

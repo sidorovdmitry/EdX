@@ -706,6 +706,8 @@ class BatchEnrollment
     # students who were not enrolled or allowed prior to unenroll action
     notunenrolled = []
 
+    postEnrollProcess(data_from_server);
+
     # categorize student results into the above arrays.
     for student_results in data_from_server.results
       # for a successful action.

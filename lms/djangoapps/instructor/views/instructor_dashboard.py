@@ -4,6 +4,7 @@ Instructor Dashboard Views
 
 import logging
 import datetime
+import json
 import uuid
 import pytz
 
@@ -225,6 +226,11 @@ def _section_course_info(course, access):
         message = _("Enrollment data is now available in {dashboard_link}.").format(dashboard_link=dashboard_link)
         section_data['enrollment_message'] = message
 
+    if settings.FEATURES.get('LABSTER'):
+        from labster.licenses import get_course_license_count
+        license_count = get_course_license_count(course_key.to_deprecated_string())
+        section_data['license_count'] = license_count
+
     try:
         advance = lambda memo, (letter, score): "{}: {}, ".format(letter, score) + memo
         section_data['grade_cutoffs'] = reduce(advance, course.grade_cutoffs.items(), "")[:-2]
@@ -261,6 +267,12 @@ def _section_membership(course, access):
         'list_course_students_url': reverse('list_course_students', kwargs={'course_id': unicode(course_key)}),
         'list_course_licenses_url': reverse('list_course_licenses', kwargs={'course_id': unicode(course_key)}),
     }
+
+    if settings.FEATURES.get('LABSTER'):
+        from labster.licenses import get_user_licenses
+        user_licenses = get_user_licenses(course_key)
+        section_data['user_licenses'] = json.dumps(user_licenses)
+
     return section_data
 
 

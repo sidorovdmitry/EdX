@@ -852,7 +852,7 @@ section.instructor-dashboard-content-2 {
     margin-top: $baseline;
   }
 
-  .member-lists-management {
+  .member-lists-management, .student-licenses-management {
 
     .wrapper-member-select {
       background-color: $light-gray;
@@ -865,7 +865,7 @@ section.instructor-dashboard-content-2 {
       padding: ($baseline/4);
     }
 
-    .auth-list-container, .student-list-container, .license-list-container {
+    .auth-list-container, .student-list-container, .license-list-container, .student-license-container {
       display: none;
       margin-bottom: ($baseline*1.5);
 
@@ -963,6 +963,10 @@ section.instructor-dashboard-content-2 {
             height: 57px;
         }
     }
+  }
+
+  .student-licenses-management {
+      margin-bottom: 57px;
   }
 }
 
@@ -1210,7 +1214,7 @@ input[name="subject"] {
   width:600px;
 }
 
-.enrollment-wrapper {
+.enrollment-wrapper, .license-wrapper {
   margin-bottom: $baseline * 2;
 
   .count {
@@ -1687,7 +1691,7 @@ input[name="subject"] {
   width:600px;
 }
 
-.enrollment-wrapper {
+.enrollment-wrapper, .license-wrapper {
   margin-bottom: $baseline * 2;
 
   .count {
