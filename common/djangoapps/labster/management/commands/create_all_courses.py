@@ -1,3 +1,5 @@
+import yaml
+
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 
@@ -17,10 +19,6 @@ ORG = "VUCVestegnen"
 UNIVERSITY = "VUC Vestegnen"
 
 
-def create_course_id(course_id):
-    return course_id.replace('LabsterX', ORG)
-
-
 def course_key_str(course_key):
     return course_key.to_deprecated_string()
 
@@ -38,11 +36,17 @@ def course_key_from_str(arg):
 
 class Command(BaseCommand):
 
+    def create_course_id(self, course_id):
+        org = self.config['course']['org']
+        return course_id.replace('LabsterX', org)
+
     def prepare(self):
-        email = "it@vucv.dk"
-        password = email
-        name = "Carsten Pedersen"
-        username = "CarstenPedersen"
+        email = self.config['user']['email']
+        password = self.config['user']['password']
+        username = self.config['user']['username']
+        name = self.config['user']['name']
+        user_type = self.config['user']['user_type']
+        user_school_level = self.config['user']['user_school_level']
 
         try:
             user = User.objects.get(email=email)
@@ -54,8 +58,8 @@ class Command(BaseCommand):
         user.save()
 
         labster_user, _ = LabsterUser.objects.get_or_create(user=user)
-        labster_user.user_type = LabsterUser.USER_TYPE_TEACHER
-        labster_user.user_school_level = LabsterUser.USER_HIGH_SCHOOL
+        labster_user.user_type = user_type
+        labster_user.user_school_level = user_school_level
         labster_user.save()
 
         user_profile, _ = UserProfile.objects.get_or_create(user=user)
@@ -66,8 +70,11 @@ class Command(BaseCommand):
 
     def create_courses(self):
         user = self.prepare()
+        license_count = self.config['course']['license_count']
+        license_count = self.config['course']['license_count']
+
         demo_course_ids = map(course_key_str, get_demo_course_ids())
-        new_course_ids = map(create_course_id, demo_course_ids)
+        new_course_ids = map(self.create_course_id, demo_course_ids)
 
         for source, target in zip(demo_course_ids, new_course_ids):
             source_course_id = course_key_from_str(source)
@@ -107,5 +114,23 @@ class Command(BaseCommand):
             CourseEnrollment.objects.get_or_create(
                 user=user, course_id=dest_course_id)
 
+            fields = {
+                'labster_demo': False,
+                'is_browsable': False,
+                'invitation_only': True,
+                'max_student_enrollments_allowed': license_count,
+                'labster_license': True,
+            }
+            if fields:
+                course = mstore.get_course(dest_course_id)
+                for key, value in fields.items():
+                    setattr(course, key, value)
+
+                mstore.update_item(course, user.id)
+
+    def load_config(self, *args, **kwargs):
+        self.config = yaml.load(file(args[0], 'r'))
+
     def handle(self, *args, **options):
+        self.load_config(*args, **options)
         self.create_courses()

@@ -1,0 +1,11 @@
+user:
+  email: "it@vucv.dk"
+  password: "it@vucv.dk"
+  name: "Carsten Pedersen"
+  username: "CarstenPedersen"
+  user_type: 1
+  user_school_level: 1
+
+course:
+  org: "VUCVestegnen"
+  license_count: 70
