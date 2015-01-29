@@ -285,6 +285,9 @@ a.btn-labster-regular {
 table.table-vat td:last-child {
     width: 450px;
 }
+table.table-method td {
+    width: 50%;
+}
 .cursor-pointer {
     cursor:pointer;
 }
@@ -294,6 +297,9 @@ table.table-vat td:last-child {
 }
 .width-25{
     width: 25%;
+}
+.width-50{
+    width: 50%;
 }
 .cover-page {
     position:fixed;
