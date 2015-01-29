@@ -1,0 +1,18 @@
+<h3 class="modal-section-title"><%= gettext('Select Lab') %></h3>
+<div class="modal-section-content lab-id">
+    <ul class="list-fields list-input">
+        <li class="field field-lab-id field-select">
+            <label for="lab_id" class="label"><%= gettext('Lab:') %></label>
+            <select class="input" id="lab_id">
+                <option value=""></option>
+                <% _.each(labster_labs, function(lab) { %>
+                  <% if (lab.id == lab_id) { %>
+                  <option value="<%= lab.id %>" selected><%= lab.name %></option>
+                  <% } else { %>
+                  <option value="<%= lab.id %>"><%= lab.name %></option>
+                  <% }; %>
+                <% }); %>
+            </select>
+        </li>
+    </ul>
+</div>

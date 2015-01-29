@@ -13,7 +13,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
 ) {
     'use strict';
     var CourseOutlineXBlockModal, SettingsXBlockModal, PublishXBlockModal, AbstractEditor, BaseDateEditor,
-        ReleaseDateEditor, DueDateEditor, GradingEditor, PublishEditor, StaffLockEditor;
+        ReleaseDateEditor, DueDateEditor, GradingEditor, PublishEditor, StaffLockEditor, LabEditor;
 
     CourseOutlineXBlockModal = BaseModal.extend({
         events : {
@@ -262,6 +262,10 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
         templateName: 'grading-editor',
         className: 'edit-settings-grading',
 
+        events: {
+            'change #grading_type': 'changeGradingType'
+        },
+
         afterRender: function () {
             AbstractEditor.prototype.afterRender.call(this);
             this.setValue(this.model.get('format'));
@@ -281,9 +285,49 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
             };
         },
 
+        changeGradingType: function () {
+            var val = this.getValue();
+            if (val.toUpperCase() === 'LAB') {
+                this.$el.parent().find('.edit-settings-lab').fadeIn();
+            } else {
+                this.$el.parent().find('.edit-settings-lab').fadeOut();
+            }
+        },
+
         getContext: function () {
             return {
                 graderTypes: JSON.parse(this.model.get('course_graders'))
+            };
+        }
+    });
+
+    LabEditor = AbstractEditor.extend({
+        templateName: 'lab-editor',
+        className: 'edit-settings-lab',
+
+        afterRender: function () {
+            AbstractEditor.prototype.afterRender.call(this);
+            if (this.$el.parent().find('#grading_type').val().toUpperCase() == 'LAB') {
+                this.$el.show();
+            } else {
+                this.$el.hide();
+            }
+        },
+
+        getValue: function () {
+            return this.$('#lab_id').val();
+        },
+
+        getRequestData: function () {
+            return {
+                'labId': this.getValue()
+            };
+        },
+
+        getContext: function () {
+            return {
+                labster_labs: JSON.parse(this.model.get('labster_labs')),
+                lab_id: this.model.get('lab_id')
             };
         }
     });
@@ -358,7 +402,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
             if (xblockInfo.isChapter()) {
                 editors = [ReleaseDateEditor, StaffLockEditor];
             } else if (xblockInfo.isSequential()) {
-                editors = [ReleaseDateEditor, GradingEditor, DueDateEditor, StaffLockEditor];
+                editors = [ReleaseDateEditor, GradingEditor, LabEditor, DueDateEditor, StaffLockEditor];
             } else if (xblockInfo.isVertical()) {
                 editors = [StaffLockEditor];
             }

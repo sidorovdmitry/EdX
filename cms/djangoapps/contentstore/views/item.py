@@ -159,7 +159,7 @@ def xblock_handler(request, usage_key_string):
                 xblock = _get_xblock(usage_key, request.user)
                 lab_id_changed = xblock.lab_id != lab_id
 
-            response =_save_xblock(
+            response = _save_xblock(
                 request.user,
                 _get_xblock(usage_key, request.user),
                 data=request.json.get('data'),
@@ -776,7 +776,7 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
 
         xblock_info.update({
             "labster_labs": json.dumps(labster_labs),
-            "lab_id": getattr(xblock, 'lab_id', None),
+            "lab_id": getattr(xblock, 'lab_id', ''),
         })
 
     if data is not None:

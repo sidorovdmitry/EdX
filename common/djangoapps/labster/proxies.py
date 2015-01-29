@@ -27,9 +27,12 @@ USER_ID = 19  # kriwil@gmail.com
 def prepare_lab(lab, location):
     user = User.objects.get(id=USER_ID)
 
-    lab_proxy, _ = LabProxy.objects.get_or_create(
-        lab=lab, location=location)
+    try:
+        lab_proxy = LabProxy.objects.get(location=location)
+    except LabProxy.DoesNotExist:
+        lab_proxy = LabProxy(location=location)
 
+    lab_proxy.lab = lab
     lab_proxy.is_active = True
     lab_proxy.save()
 
