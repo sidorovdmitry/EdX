@@ -53,7 +53,7 @@ class UserViewTest(APITestCase):
         labster_user = LabsterUser.objects.get(user=self.user)
         labster_user.date_of_birth = date(2000, 1, 1)
         labster_user.language = 'en'
-        labster_user.nationality = 1
+        labster_user.nationality = 'ID'
         labster_user.save()
 
     def test_not_logged_in(self):
@@ -79,17 +79,17 @@ class UserViewTest(APITestCase):
         self.assertEqual(
             content['date_of_birth'],
             labster_user.date_of_birth.strftime('%Y-%m-%d'))
-        self.assertEqual(content['nationality'], labster_user.nationality)
+        self.assertEqual(content['nationality'], labster_user.nationality.code)
         self.assertEqual(content['language'], labster_user.language)
         self.assertEqual(content['unique_id'], labster_user.unique_id)
         self.assertEqual(content['is_labster_verified'], labster_user.is_labster_verified)
         # self.assertEqual(content['name'], profile.name)
 
-    def test_post(self):
+    def test_put(self):
         self.client.login(username='username', password='password')
         data = {
-            'date_of_birth': "2000-01-01",
-            'nationality': "MY",
+            'date_of_birth': "2001-01-01",
+            'nationality': "US",
             'language': "zh",
             'unique_id': "aabbcc",
         }
@@ -100,7 +100,7 @@ class UserViewTest(APITestCase):
         self.assertEqual(
             data['date_of_birth'],
             labster_user.date_of_birth.strftime('%Y-%m-%d'))
-        self.assertEqual(data['nationality'], labster_user.nationality)
+        self.assertEqual(data['nationality'], labster_user.nationality.code)
         self.assertEqual(data['language'], labster_user.language)
         self.assertEqual(data['unique_id'], labster_user.unique_id)
 
