@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, url
 
-from labster.api.views import UserView
-from labster.api.users.views import UserCreate
+from labster.api.users.views import UserCreate, UserView
 
 
 urlpatterns = patterns('',  # nopep8

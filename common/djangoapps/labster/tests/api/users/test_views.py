@@ -96,11 +96,13 @@ class UserViewTest(APITestCase):
         response = self.client.put(self.url, data, format='json')
         self.assertEqual(response.status_code, 200)
 
-        content = json.loads(response.content)
-        self.assertEqual(data['date_of_birth'], content['date_of_birth'])
-        self.assertEqual(data['nationality'], content['nationality'])
-        self.assertEqual(data['language'], content['language'])
-        self.assertEqual(data['unique_id'], content['unique_id'])
+        labster_user = LabsterUser.objects.get(user=self.user)
+        self.assertEqual(
+            data['date_of_birth'],
+            labster_user.date_of_birth.strftime('%Y-%m-%d'))
+        self.assertEqual(data['nationality'], labster_user.nationality)
+        self.assertEqual(data['language'], labster_user.language)
+        self.assertEqual(data['unique_id'], labster_user.unique_id)
 
     # def test_post_update_name(self):
     #     self.client.login(username='username', password='password')

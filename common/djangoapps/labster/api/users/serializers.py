@@ -5,6 +5,8 @@ from django.utils import timezone
 
 from rest_framework import serializers
 
+from labster.models import LabsterUser
+
 
 def get_username(email, length=10):
     string = "{}{}".format(email, timezone.now().isoformat())
@@ -35,3 +37,22 @@ class UserCreateSerializer(serializers.Serializer):
             instance.email = attrs.get('email', instance.email)
 
         return User(**attrs)
+
+
+class LabsterUserSerializer(serializers.ModelSerializer):
+
+    user_id = serializers.Field('user.id')
+    is_labster_verified = serializers.Field('is_labster_verified')
+    nationality_name = serializers.Field('nationality.name')
+
+    class Meta:
+        model = LabsterUser
+        fields = (
+            'user_id',
+            'date_of_birth',
+            'nationality',
+            'language',
+            'unique_id',
+            'is_labster_verified',
+            'nationality_name',
+        )
