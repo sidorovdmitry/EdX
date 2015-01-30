@@ -94,7 +94,11 @@ class LabsterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = LabsterUser
         fields = (
-            'user_id', 'date_of_birth', 'nationality', 'language', 'unique_id',
+            'user_id',
+            'date_of_birth',
+            'nationality',
+            'language',
+            'unique_id',
             'is_labster_verified',
             'nationality_name',
         )
