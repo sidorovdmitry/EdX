@@ -41,6 +41,7 @@ class UserCreateTest(APITestCase):
         content = json.loads(response.content)
         self.assertEqual(content['id'], user.id)
         self.assertEqual(content['email'], user.email)
+        self.assertEqual(content['token_key'], user.labster_user.token_key)
 
 
 class UserViewTest(APITestCase):

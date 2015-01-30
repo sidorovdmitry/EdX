@@ -16,7 +16,11 @@ def get_username(email, length=10):
 class UserCreateSerializer(serializers.Serializer):
 
     id = serializers.Field()
+    token_key = serializers.SerializerMethodField('get_token')
     email = serializers.EmailField()
+
+    def get_token(self, obj):
+        return obj.labster_user.token_key
 
     def validate_email(self, attrs, source):
         value = attrs[source]
