@@ -89,7 +89,12 @@ border-bottom-left-radius: 3px !important;
 .form-labs .button:focus:not(:disabled) {
     box-shadow: inset 0 0 0px 0 #000
 }
-a.view-all {color: #fff; text-transform: uppercase; margin-left: 20px;}
+a.view-all {
+  color: #fff;
+  text-transform: uppercase;
+  text-shadow: 0 0 15px black;
+  margin-left: 20px;
+}
 .clients {padding: 3em 0;}
 .clients ul {list-style: none;margin:0;padding: 0; text-align: center;}
 .clients li {

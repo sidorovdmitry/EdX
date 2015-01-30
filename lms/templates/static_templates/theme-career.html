@@ -24,7 +24,24 @@
               <h3>Open Positions</h3>
             </header>
 
-            paste code here (rbox widget)
+            <style>
+              #rbox-opening-li-45530,
+              #rbox-opening-li-43688,
+              #rbox-opening-li-42814 { display:none;}
+            </style>
+
+            <script type="text/javascript" id="rbox-loader-script">
+              _rbox = { host_protocol:document.location.protocol, ready:function(cb){this.onready=cb;} };
+              (function(d, e) {
+                  var s, t, i, src=['/static/client-src-served/widget/21184/rbox_api.js', '/static/client-src-served/widget/21184/rbox_impl.js'];
+                  t = d.getElementsByTagName(e);
+                  t=t[t.length - 1];
+                  for(i=0; i<src.length; i++) {
+                      s = d.createElement(e);
+                      s.src = _rbox.host_protocol + '//w.recruiterbox.com' + src[i];
+                      t.parentNode.insertBefore(s, t.nextSibling);
+                  }})(document, 'script');
+            </script>
           </div>
           <!-- end open position -->
 
