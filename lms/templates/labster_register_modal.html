@@ -1,0 +1,394 @@
+<%! from django.utils.translation import ugettext as _ %>
+<%! from django.utils import timezone %>
+<%! from student.models import UserProfile %>
+<section id="register-modal" class="modal register-modal">
+  <div class="inner-wrapper register-wizard-0" role="alertdialog" aria-labelledy="register-modal-title">
+    <header>
+      <h2>
+        ${_("Sign up to take this course")}
+      </h2>
+      <hr/>
+    </header>
+    <form id="" action="#" method="post" class="labster-register-form">
+      <label>
+        Sign up with your email
+        <input type="email" name="email" placeholder="Email Address">
+        <span class="error-message">Error</span>
+      </label>
+      <div class="submit">
+        <button type="submit" class="labster-register button-labster-blue" data-original-html="Sign Up">${_('Sign up')}</button>
+      </div>
+    </form>
+  </div>
+  <div class="inner-wrapper register-wizard-1" role="alertdialog" aria-labelledy="register-modal-title">
+    <header>
+      <h2>
+        ${_("Almost there")}
+      </h2>
+      <hr/>
+    </header>
+    <form id="" action="#" method="post" class="labster-register-form">
+      <label>
+        Name
+        <input type="text" placeholder="Name" name="name">
+      </label>
+      <label>
+        Password
+        <input type="password" name="password">
+      </label>
+      <div class="submit">
+        <button type="submit" class="labster-register button-labster-blue" data-original-html="Sign Up">${_('Sign up')}</button>
+      </div>
+    </form>
+  </div>
+  <div class="inner-wrapper register-wizard-2-t teacher" role="alertdialog" aria-labelledy="register-modal-title">
+    <header>
+      <h2>
+        ${_("Last Questions")}
+      </h2>
+      <hr/>
+    </header>
+    <form id="" action="#" method="post" class="labster-register-form">
+      <label>
+        <div class="select-container">
+          <select name="user_school_level">
+            <option value="">Occupation</option>
+            <option value="1">High School</option>
+            <option value="2">University/College</option>
+          </select>
+        </div>
+      </label>
+      <label>
+        <input type="text" placeholder="School/Company Name" name="organization_name">
+      </label>
+      <label>
+        <input type="text" placeholder="Phone Number" name="phone_number">
+      </label>
+      <div class="submit">
+        <button type="submit" class="labster-register button-labster-blue" data-original-html="Complete Regisration">Complete Registration</button>
+      </div>
+    </form>
+  </div>
+  <div class="inner-wrapper register-wizard-2-s student" role="alertdialog" aria-labelledy="register-modal-title">
+    <header>
+      <h2>
+        ${_("Last Questions")}
+      </h2>
+      <hr/>
+    </header>
+    <form id="" action="#" method="post" class="labster-register-form">
+      <label>
+        <div class="select-container">
+          <select name="level_of_education">
+            <option value="">Higest Level of Education</option>
+            % for key, value in UserProfile.LEVEL_OF_EDUCATION_CHOICES:
+            <option value="${key}">${value}</option>
+            % endfor
+          </select>
+        </div>
+      </label>
+      <label>
+        <div class="select-container">
+          <select name="gender">
+            <option value="">Gender</option>
+            <option value="m">Male</option>
+            <option value="f">Female</option>
+            <option value="o">Other</option>
+          </select>
+        </div>
+      </label>
+      <label>
+        <div class="select-container">
+          <select name="year_of_birth">
+            <option value="">Year of Birth</option>
+            % for year in range(timezone.now().year - 10, timezone.now().year - 110, -1):
+            <option value="${year}">${year}</option>
+            % endfor
+          </select>
+        </div>
+      </label>
+      <div class="submit">
+        <button type="submit" class="labster-register button-labster-blue" data-original-html="Complete Regisration">Complete Registration</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="inner-wrapper register-wizard-3 teacher" role="alertdialog" aria-labelledy="register-modal-title">
+    <header>
+      <h2>
+        ${_("Registration Complete")}
+      </h2>
+      <hr/>
+    </header>
+    <form id="" action="#" method="get">
+      <div class="submit">
+        <input name="submit" type="submit" class="register" value="${_('Continue')}" />
+      </div>
+    </form>
+  </div>
+</section>
+
+
+<script>
+window.csrfToken = "${csrf_token}";
+function csrfSafeMethod(method) {
+  // these HTTP methods do not require CSRF protection
+  return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+function sameOrigin(url) {
+  // test that a given url is a same-origin URL
+  // url could be relative or scheme relative or absolute
+  var host = document.location.host; // host + port
+  var protocol = document.location.protocol;
+  var sr_origin = '//' + host;
+  var origin = protocol + sr_origin;
+  // Allow absolute or scheme relative URLs to same origin
+  return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+    (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+    // or any other URL that isn't scheme relative or absolute i.e relative.
+    !(/^(\/\/|http:|https:).*/.test(url));
+}
+$.ajaxSetup({
+  beforeSend: function(xhr, settings) {
+    if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+      // Send the token to same-origin, relative URLs only.
+      // Send the token only if the method warrants CSRF protection
+      // Using the CSRFToken value acquired earlier
+      xhr.setRequestHeader("X-CSRFToken", window.csrfToken);
+    }
+  }
+});
+
+$(function() {
+    var createUrl,
+        updateUrl,
+        containerFormZero,
+        containerFormOne,
+        containerFormTwoT,
+        containerFormTwoS,
+        containerFormThree,
+        buttonInSaving,
+        resetButton;
+
+    $('.new-register').click(function(ev) {
+      window.userType = $(this).data('user-type');
+    });
+
+    createUrl = "/labster/api/users/";
+    updateUrl = function(userId) {
+      return createUrl + userId + "/";
+    };
+
+    containerFormZero = $('.register-wizard-0');
+    containerFormOne = $('.register-wizard-1');
+    containerFormTwoT = $('.register-wizard-2-t');
+    containerFormTwoS = $('.register-wizard-2-s');
+    containerFormThree = $('.register-wizard-3');
+
+    buttonInSaving = function(button) {
+      button.data('original-html', button.html());
+      button.html('<i class="icon fa fa-spinner fa-spin"></i> Saving');
+    };
+
+    resetButton = function(button) {
+      button.html(button.data('original-html'));
+    };
+
+    containerFormZero.find('form').submit(function(ev) {
+      var inputEmail,
+          submit,
+          email,
+          erroMessage,
+          form;
+
+      form = containerFormZero.find('form');
+      inputEmail = form.find('input[name=email]');
+      submit = form.find('button[type=submit]');
+      errorMessage = form.find('.error-message');
+
+      email = inputEmail.val();
+
+      buttonInSaving(submit);
+      errorMessage.hide().empty();
+
+      if (email.length > 5) {
+        $.ajax({
+          url: createUrl,
+          type: "POST",
+          data: {email: email},
+          success: function(response) {
+            window.user = response;
+            containerFormZero.fadeOut(function() {
+              containerFormOne.fadeIn();
+            });
+
+          },
+          error: function(obj, msg, status) {
+            var response = JSON.parse(obj.responseText);
+            resetButton(submit);
+          }
+        });
+      } else {
+        resetButton(submit);
+      }
+
+      return false;
+    });
+
+    containerFormOne.find('form').submit(function(ev) {
+      var inputName,
+          inputPassword,
+          submit,
+          name,
+          password,
+          form;
+
+      form = containerFormOne.find('form');
+      inputName = form.find('input[name=name]');
+      inputPassword = form.find('input[name=password]');
+      submit = form.find('button[type=submit]');
+
+      name = inputName.val();
+      password = inputPassword.val();
+
+      buttonInSaving(submit);
+      errorMessage.hide().empty();
+
+      if (name.length > 0 && password.length > 0) {
+        $.ajax({
+          url: updateUrl(window.user.id),
+          type: "PUT",
+          data: {name: name, password: password, user_type: window.userType},
+          beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("Authorization", "Token " + window.user.token_key);
+          },
+          success: function(response) {
+            containerFormOne.fadeOut(function() {
+              if (parseInt(window.userType) === 1) {
+                containerFormTwoT.fadeIn();
+              } else {
+                containerFormTwoS.fadeIn();
+              }
+            });
+          },
+          error: function(obj, msg, status) {
+            resetButton(submit);
+          }
+        });
+      } else {
+        resetButton(submit);
+      }
+
+      return false;
+    });
+
+    containerFormTwoT.find('form').submit(function(ev) {
+      var inputUserSchoolLevel,
+          inputOrganizationName,
+          inputPhoneNumber,
+          submit,
+          userSchoolLevel,
+          organizationName,
+          phoneNumber,
+          form,
+          payload;
+
+      form = containerFormTwoT.find('form');
+      inputUserSchoolLevel = form.find('select[name=user_school_level]');
+      inputOrganizationName = form.find('input[name=organization_name]');
+      inputPhoneNumber = form.find('input[name=phone_number]');
+      submit = form.find('button[type=submit]');
+
+      userSchoolLevel = inputUserSchoolLevel.val();
+      organizationName = inputOrganizationName.val();
+      phoneNumber = inputPhoneNumber.val();
+
+      buttonInSaving(submit);
+      errorMessage.hide().empty();
+
+      payload = {
+        user_school_level: userSchoolLevel,
+        organization_name: organizationName,
+        phone_number: phoneNumber
+      };
+
+      if (userSchoolLevel.length > 0 && organizationName.length > 0 && phoneNumber.length > 0) {
+        $.ajax({
+          url: updateUrl(window.user.id),
+          type: "PUT",
+          data: payload,
+          beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("Authorization", "Token " + window.user.token_key);
+          },
+          success: function(response) {
+            containerFormTwoT.fadeOut(function() {
+              containerFormThree.fadeIn();
+            });
+          },
+          error: function(obj, msg, status) {
+            resetButton(submit);
+          }
+        });
+      } else {
+        resetButton(submit);
+      }
+
+      return false;
+    });
+
+    containerFormTwoS.find('form').submit(function(ev) {
+      var inputLevelOfEducation,
+          inputGender,
+          inputYearOfBirth,
+          submit,
+          levelOfEducation,
+          gender,
+          yearOfBirth,
+          form,
+          payload;
+
+      form = containerFormTwoS.find('form');
+      inputLevelOfEducation = form.find('select[name=level_of_education]');
+      inputGender = form.find('select[name=gender]');
+      inputYearOfBirth = form.find('select[name=year_of_birth]');
+      submit = form.find('button[type=submit]');
+
+      levelOfEducation = inputLevelOfEducation.val();
+      gender = inputGender.val();
+      yearOfBirth = inputYearOfBirth.val();
+
+      buttonInSaving(submit);
+      errorMessage.hide().empty();
+
+      payload = {
+        level_of_education: levelOfEducation,
+        gender: gender,
+        year_of_birth: yearOfBirth
+      };
+
+      if (levelOfEducation.length > 0 || gender.length > 0 || yearOfBirth.length > 0) {
+        $.ajax({
+          url: updateUrl(window.user.id),
+          type: "PUT",
+          data: payload,
+          beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("Authorization", "Token " + window.user.token_key);
+          },
+          success: function(response) {
+            containerFormTwoS.fadeOut(function() {
+              containerFormThree.fadeIn();
+            });
+          },
+          error: function(obj, msg, status) {
+            resetButton(submit);
+          }
+        });
+      } else {
+        resetButton(submit);
+      }
+
+      return false;
+    });
+
+});
+</script>

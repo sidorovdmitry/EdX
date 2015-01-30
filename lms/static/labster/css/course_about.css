@@ -29,3 +29,76 @@
   border-bottom: 0;
   margin-bottom: 0;
 }
+
+
+.course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.new-register {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    background-color: #1d354d;
+    background-image: -webkit-linear-gradient(top, #1d354d 0%,#00032c 50%,#00001d 50%,#00001f 100%);
+    background-image: linear-gradient(to bottom,#1d354d 0%,#00032c 50%,#00001d 50%,#00001f 100%);
+    border-bottom: 1px solid #000;
+    border-radius: 3px;
+    border: 1px solid #000;
+    /* box-shadow: inset 0 1px 0 0 #425259; */
+    box-sizing: border-box;
+    color: #fff;
+    display: inline-block;
+    font-size: inherit;
+    font-weight: bold;
+    font: normal 1.2rem/1.6rem "Lato","Source Sans";
+    letter-spacing: 1px;
+    margin: 0 10px 0 0;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 -1px 1px #000;
+    text-transform: uppercase;
+}
+
+.course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.register-teacher {
+    background-color: #54b551;
+    background-image: -webkit-linear-gradient(top, #54b551 0%,#429b40 100%);
+    background-image: linear-gradient(to bottom,#54b551 0%,#429b40 100%);
+    border-bottom: 1px solid #30772E;
+    border: 1px solid #30772E;
+    text-shadow: 0 -1px 1px #184C16;
+}
+
+button.labster-register {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 !important;
+}
+
+.labster-register-form .error-message {
+    color: red;
+    display: none;
+    font-size: smaller;
+    margin: -15px 0 10px 0;
+}
+
+.labster-register-form .select-container {
+    border-radius: 3px;
+    border: 1px solid #376492;
+    overflow: hidden;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.labster-register-form select {
+    width: 100%;
+    background: transparent;
+    padding: 5px 12px;
+    line-height: 1;
+    border: 0;
+    border-radius: 0;
+    font: italic 300 1rem/1.6rem "Lato","Crimson Text","Georgia";
+    color: #333;
+    -webkit-appearance: none;
+}
+
+.register-wizard-1, .register-wizard-2-t, .register-wizard-2-s, .register-wizard-3 {
+  display: none;
+}

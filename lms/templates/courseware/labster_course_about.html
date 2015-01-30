@@ -184,9 +184,15 @@
             <span class="register disabled">${_("The Course Is Not Started Yet")}</span>
             % else:
               % if not user.is_authenticated() or (user.is_authenticated() and user.labster_user.is_teacher):
+                <a href="#register-modal" rel="leanModal" class="new-register register-teacher" data-user-type="1">Teacher</a>
+                <a href="#register-modal" rel="leanModal" class="new-register register-student" data-user-type="2">Student</a>
+
+                <%doc>
                 <a href="#try-course-modal" rel="leanModal" class="try-course">
                   ${_("Try Course for Free")}
                 </a>
+                </%doc>
+
               % endif
             % endif
           % else:
@@ -430,3 +436,5 @@
     </form>
   </div>
 </section>
+
+<%include file="../labster_register_modal.html" />
