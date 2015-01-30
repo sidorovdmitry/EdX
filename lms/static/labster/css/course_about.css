@@ -29,3 +29,20 @@
   border-bottom: 0;
   margin-bottom: 0;
 }
+.course-info header.course-profile .intro-inner-wrapper .intro .main-cta>a.find-courses, .course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.register, .course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.try-course, .course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.add-to-cart {
+   border: 1px solid #30772E;
+   border-bottom: 1px solid #30772E;
+   background-color: #54b551;
+   background-image: -webkit-linear-gradient(top, #54b551 0%,#429b40 100%);
+   background-image: linear-gradient(to bottom,#54b551 0%,#429b40 100%);
+   text-shadow: 0 -1px 1px #184C16;
+}
+.course-info header.course-profile .intro-inner-wrapper .intro .main-cta>a.find-courses:hover:not(:disabled), .course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.register:hover:not(:disabled), .course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.try-course:hover:not(:disabled), .course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.add-to-cart:hover:not(:disabled) {
+   cursor: pointer;
+   background-color: #429b40;
+   background-image: -webkit-linear-gradient(top, #439141 0%,#2F742C 100%);
+   background-image: linear-gradient(to bottom,#439141 0%,#2F742C 100%);
+}
+.course-info header.course-profile .intro-inner-wrapper .intro .main-cta>a.find-courses:active:not(:disabled), .course-info header.course-profile .intro-inner-wrapper .intro .main-cta>a.find-courses:focus:not(:disabled), .course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.register:active:not(:disabled), .course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.register:focus:not(:disabled), .course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.try-course:active:not(:disabled), .course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.try-course:focus:not(:disabled), .course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.add-to-cart:active:not(:disabled), .course-info header.course-profile .intro-inner-wrapper .intro .main-cta a.add-to-cart:focus:not(:disabled) {
+    box-shadow: inset 0 0 5px 0 #000;
+}
