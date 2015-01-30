@@ -104,6 +104,7 @@ class UserViewTest(APITestCase):
             'gender': "m",
             'year_of_birth': 2000,
             'level_of_education': "hs",
+            'organization_name': "Org Name",
         }
         response = self.client.put(self.url, data, format='json')
         self.assertEqual(response.status_code, 200)
@@ -120,6 +121,7 @@ class UserViewTest(APITestCase):
         self.assertEqual(data['user_school_level'], labster_user.user_school_level)
         self.assertEqual(data['unique_id'], labster_user.unique_id)
         self.assertEqual(data['user_type'], labster_user.user_type)
+        self.assertEqual(data['organization_name'], labster_user.organization_name)
         self.assertEqual(data['gender'], profile.gender)
         self.assertEqual(data['year_of_birth'], profile.year_of_birth)
         self.assertEqual(data['level_of_education'], profile.level_of_education)

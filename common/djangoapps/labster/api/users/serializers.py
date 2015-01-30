@@ -61,6 +61,7 @@ class CustomLabsterUser(object):
         labster_user.user_type = self.user_type
         labster_user.phone_number = self.phone_number
         labster_user.user_school_level = self.user_school_level
+        labster_user.organization_name = self.organization_name
         labster_user.save()
 
         profile = UserProfile.objects.get(user=user)
@@ -96,6 +97,7 @@ class LabsterUserSerializer(serializers.Serializer):
     user_type = serializers.IntegerField(required=False)
     user_school_level = serializers.IntegerField(required=False)
     phone_number = serializers.CharField(required=False)
+    organization_name = serializers.CharField(required=False)
 
     def save_object(self, *args, **kwargs):
         self.object.save()
@@ -115,6 +117,7 @@ class LabsterUserSerializer(serializers.Serializer):
                 'gender',
                 'level_of_education',
                 'year_of_birth',
+                'organization_name',
             ]
 
             for field in fields:

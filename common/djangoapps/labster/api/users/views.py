@@ -12,7 +12,7 @@ from labster.api.views import AuthMixin
 
 def get_user_as_custom_labster_user(user, password=None):
     labster_user = user.labster_user
-    profile = UserProfile.objects.get(user=user)
+    profile, _ = UserProfile.objects.get_or_create(user=user)
 
     return CustomLabsterUser(
         id=user.id,
@@ -24,6 +24,7 @@ def get_user_as_custom_labster_user(user, password=None):
         language=labster_user.language,
         phone_number=labster_user.phone_number,
         user_type=labster_user.user_type,
+        organization_name=labster_user.organization_name,
         user_school_level=labster_user.user_school_level,
         date_of_birth=labster_user.date_of_birth,
         name=profile.name,
