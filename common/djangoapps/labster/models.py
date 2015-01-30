@@ -39,6 +39,7 @@ class LabsterUser(models.Model):
     )
     user_type = models.IntegerField(choices=USER_TYPE_CHOICES, blank=True, null=True)
     phone_number = models.CharField(max_length=100, blank=True, default="")
+    organization_name = models.CharField(max_length=255, blank=True, default="")
 
     USER_HIGH_SCHOOL = 1
     USER_UNIVERSITY = 2
