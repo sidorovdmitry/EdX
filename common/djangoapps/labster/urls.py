@@ -5,6 +5,7 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('labster',  # nopep8
     url('^api/', include('labster.api_urls', namespace='labster-api')),
 
+    url('^login-by-token/', 'users.views.login_by_token', name='labster_login_token'),
     url('^enroll-student/', 'lms.views.enroll_student', name='labster_enroll_student'),
 
     url('^lab/{}/(?P<pk>\d+)/result/$'.format(settings.COURSE_ID_PATTERN),

@@ -436,6 +436,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 # use the ratelimit backend to prevent brute force attacks
 AUTHENTICATION_BACKENDS = (
     'ratelimitbackend.backends.RateLimitModelBackend',
+    'labster.authentication.TokenBackend',
 )
 STUDENT_FILEUPLOAD_MAX_SIZE = 4 * 1000 * 1000  # 4 MB
 MAX_FILEUPLOADS_PER_INPUT = 20
