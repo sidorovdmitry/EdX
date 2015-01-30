@@ -3,13 +3,16 @@ from django.http import Http404
 
 from rest_framework import generics
 
+from student.models import UserProfile
+
 from labster.api.users.serializers import UserCreateSerializer, LabsterUserSerializer
 from labster.api.users.serializers import CustomLabsterUser
 from labster.api.views import AuthMixin
 
 
-def get_user_as_custom_labster_user(user):
+def get_user_as_custom_labster_user(user, password=None):
     labster_user = user.labster_user
+    profile = UserProfile.objects.get(user=user)
 
     return CustomLabsterUser(
         id=user.id,
@@ -19,7 +22,15 @@ def get_user_as_custom_labster_user(user):
         nationality_name=labster_user.nationality.name,
         nationality=labster_user.nationality.code,
         language=labster_user.language,
+        phone_number=labster_user.phone_number,
+        user_type=labster_user.user_type,
+        user_school_level=labster_user.user_school_level,
         date_of_birth=labster_user.date_of_birth,
+        name=profile.name,
+        password=password,
+        gender=profile.gender,
+        year_of_birth=profile.year_of_birth,
+        level_of_education=profile.level_of_education,
     )
 
 
@@ -38,7 +49,8 @@ class UserView(AuthMixin, generics.RetrieveUpdateAPIView):
         except User.DoesNotExist:
             raise Http404
 
-        return get_user_as_custom_labster_user(user)
+        password = self.request.DATA.get('password')
+        return get_user_as_custom_labster_user(user, password)
 
     def get_queryset(self):
         return User.objects.all()
