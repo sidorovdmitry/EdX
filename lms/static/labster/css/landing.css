@@ -5,6 +5,7 @@
 .nav-global li {margin-right: 0px !important;}
 .landing-home {
   background: #eee url(../../images/landing/bg-header.jpg) center no-repeat !important;
+  background-size: cover !important;
   border-bottom:none !important;
   -webkit-box-shadow: inset 0px 0px 0px #ffffff !important;
    -moz-box-shadow: inset 0px 0px 0px #ffffff !important;
