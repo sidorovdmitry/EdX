@@ -214,7 +214,7 @@ a.view-all {color: #fff; text-transform: uppercase; margin-left: 20px;}
 .labster-box-content li {
   display: block;
   padding: 10px;
-  font-size: 14px;
+  /*font-size: 14px;*/
   color: #555;
   clear: both;
 }
@@ -256,6 +256,7 @@ a.view-all {color: #fff; text-transform: uppercase; margin-left: 20px;}
 }
 .labster-box-content .lab-price2 {
   color: #4180c1;
+  font-size: 14px;
 }
 .labster-box-green .labster-box-content .lab-price2 {
   color: #87b84d;
