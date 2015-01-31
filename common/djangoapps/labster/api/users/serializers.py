@@ -1,16 +1,14 @@
-import hashlib
-
 from django.contrib.auth.models import User
-from django.utils import timezone
 
 from rest_framework import serializers
 
+from labster.user_utils import generate_unique_username
 from student.models import UserProfile
 
 
 def get_username(email, length=10):
-    string = "{}{}".format(email, timezone.now().isoformat())
-    return hashlib.sha1(string).hexdigest()[:length]
+    username = email.split('@')[0]
+    return generate_unique_username(username, User)
 
 
 class UserCreateSerializer(serializers.Serializer):
@@ -73,6 +71,7 @@ class CustomLabsterUser(object):
 
         password = getattr(self, 'password', None)
         if password:
+            user.username = generate_unique_username(profile.name, User)
             user.set_password(password)
             user.save()
 
