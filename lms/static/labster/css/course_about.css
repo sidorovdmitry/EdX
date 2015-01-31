@@ -100,5 +100,35 @@ button.labster-register {
 }
 
 .register-wizard-1, .register-wizard-2-t, .register-wizard-2-s, .register-wizard-3 {
-  display: none;
+    display: none;
+}
+
+.labster-register-form label span.label {
+    font-style: normal;
+    font-size: 1em;
+    margin-bottom: 2px;
+    display: inline-block;
+}
+
+.labster-register-form .select-container {
+    position: relative;
+}
+
+.labster-register-form .select-container .error-message {
+    position: fixed;
+}
+
+.labster-register-form .button-link-container {
+    color: #333;
+    text-align: center;
+    margin-top: 20px;
+}
+.labster-register-form .button-link-submit {
+}
+
+.labster-register-form .tos-container {
+    font-size: 0.8em;
+    text-align: center;
+    color: #666;
+    margin-top: 20px;
 }

@@ -748,7 +748,7 @@ def registered_for_course(course, user):
 
 
 @ensure_csrf_cookie
-@cache_if_anonymous()
+# @cache_if_anonymous()
 def course_about(request, course_id):
     """
     Display the course's about page.

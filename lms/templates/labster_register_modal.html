@@ -11,12 +11,15 @@
     </header>
     <form id="" action="#" method="post" class="labster-register-form">
       <label>
-        Sign up with your email
-        <input type="email" name="email" placeholder="Email Address">
-        <span class="error-message">Error</span>
+        <span class="label">Sign up with your email</span>
+        <input type="email" name="email" class="required" placeholder="Email Address">
+        <span class="error-message"></span>
       </label>
       <div class="submit">
         <button type="submit" class="labster-register button-labster-blue" data-original-html="Sign Up">${_('Sign up')}</button>
+      </div>
+      <div class="tos-container">
+        By signin up, you agree to our <a href="/tos" target="_blank">Terms of Service</a>
       </div>
     </form>
   </div>
@@ -29,15 +32,20 @@
     </header>
     <form id="" action="#" method="post" class="labster-register-form">
       <label>
-        Name
-        <input type="text" placeholder="Name" name="name">
+        <span class="label">Name</span>
+        <input type="text" placeholder="Name" name="name" class="required">
+        <span class="error-message"></span>
       </label>
       <label>
-        Password
-        <input type="password" name="password">
+        <span class="label">Password</span>
+        <input type="password" name="password" class="required">
+        <span class="error-message"></span>
       </label>
       <div class="submit">
         <button type="submit" class="labster-register button-labster-blue" data-original-html="Sign Up">${_('Sign up')}</button>
+      </div>
+      <div class="tos-container">
+        By signin up, you agree to our <a href="/tos" target="_blank">Terms of Service</a>
       </div>
     </form>
   </div>
@@ -51,18 +59,21 @@
     <form id="" action="#" method="post" class="labster-register-form">
       <label>
         <div class="select-container">
-          <select name="user_school_level">
+          <select name="user_school_level" class="required">
             <option value="">Occupation</option>
             <option value="1">High School</option>
             <option value="2">University/College</option>
           </select>
         </div>
+        <span class="error-message"></span>
       </label>
       <label>
-        <input type="text" placeholder="School/Company Name" name="organization_name">
+        <input type="text" placeholder="School/Company Name" name="organization_name" class="required">
+        <span class="error-message"></span>
       </label>
       <label>
-        <input type="text" placeholder="Phone Number" name="phone_number">
+        <input type="text" placeholder="Phone Number" name="phone_number" class="required">
+        <span class="error-message"></span>
       </label>
       <div class="submit">
         <button type="submit" class="labster-register button-labster-blue" data-original-html="Complete Regisration">Complete Registration</button>
@@ -110,6 +121,7 @@
       <div class="submit">
         <button type="submit" class="labster-register button-labster-blue" data-original-html="Complete Regisration">Complete Registration</button>
       </div>
+      <div class="button-link-container">Or <a href="" class="button-link-submit">Skip questions</a></div>
     </form>
   </div>
 
@@ -120,9 +132,13 @@
       </h2>
       <hr/>
     </header>
-    <form id="" action="#" method="get">
+    <form id="" action="/labster/login-by-token/" method="post">
+      <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
+      <input type="hidden" name="user_id">
+      <input type="hidden" name="course_id" value="${course.id}">
+      <input type="hidden" name="token_key">
       <div class="submit">
-        <input name="submit" type="submit" class="register" value="${_('Continue')}" />
+        <button type="submit" class="labster-register button-labster-blue">Continue</button>
       </div>
     </form>
   </div>
@@ -162,19 +178,23 @@ $.ajaxSetup({
 $(function() {
     var createUrl,
         updateUrl,
+        loginUrl,
         containerFormZero,
         containerFormOne,
         containerFormTwoT,
         containerFormTwoS,
         containerFormThree,
         buttonInSaving,
-        resetButton;
+        resetButton,
+        validateForm,
+        showFormErrors;
 
     $('.new-register').click(function(ev) {
       window.userType = $(this).data('user-type');
     });
 
     createUrl = "/labster/api/users/";
+    loginUrl = "/labster/login-by-token/";
     updateUrl = function(userId) {
       return createUrl + userId + "/";
     };
@@ -185,6 +205,11 @@ $(function() {
     containerFormTwoS = $('.register-wizard-2-s');
     containerFormThree = $('.register-wizard-3');
 
+    $('.button-link-submit').click(function(ev) {
+        ev.preventDefault();
+        $(this).closest('form').submit();
+    });
+
     buttonInSaving = function(button) {
       button.data('original-html', button.html());
       button.html('<i class="icon fa fa-spinner fa-spin"></i> Saving');
@@ -192,6 +217,50 @@ $(function() {
 
     resetButton = function(button) {
       button.html(button.data('original-html'));
+    };
+
+    validateForm = function(form) {
+      var inputs,
+          valid = true;
+
+      form.find('.error-message').empty().hide();
+      inputs = form.find('input.required,select.required');
+      _.each(inputs, function(input) {
+          var el = $(input);
+
+          if (el.val().length == 0) {
+            var errorMessage;
+            if (input.tagName.toLowerCase() === 'select') {
+              errorMessage = el.closest('.select-container').siblings('.error-message');
+            } else {
+              errorMessage = el.next('.error-message');
+            }
+
+            errorMessage.show().html('This field is required');
+            valid = false;
+          }
+      });
+
+      return valid;
+    };
+
+    showFormErrors = function(form, messages) {
+      var getName,
+          inputs;
+
+      console.log(messages);
+      getName = function(name) {
+        return "[name=" + name + "]";
+      };
+
+      _.each(messages, function(messageList, name) {
+        inputs = form.find(getName(name));
+        _.each(inputs, function(input) {
+          _.each(messageList, function(message) {
+            $(input).next('.error-message').append(message).show();
+          });
+        });
+      });
     };
 
     containerFormZero.find('form').submit(function(ev) {
@@ -211,7 +280,7 @@ $(function() {
       buttonInSaving(submit);
       errorMessage.hide().empty();
 
-      if (email.length > 5) {
+      if (validateForm(form)) {
         $.ajax({
           url: createUrl,
           type: "POST",
@@ -220,11 +289,14 @@ $(function() {
             window.user = response;
             containerFormZero.fadeOut(function() {
               containerFormOne.fadeIn();
+              containerFormThree.find('input[name=user_id]').val(window.user.id);
+              containerFormThree.find('input[name=token_key]').val(window.user.token_key);
             });
 
           },
           error: function(obj, msg, status) {
             var response = JSON.parse(obj.responseText);
+            showFormErrors(form, response);
             resetButton(submit);
           }
         });
@@ -254,7 +326,7 @@ $(function() {
       buttonInSaving(submit);
       errorMessage.hide().empty();
 
-      if (name.length > 0 && password.length > 0) {
+      if (validateForm(form)) {
         $.ajax({
           url: updateUrl(window.user.id),
           type: "PUT",
@@ -312,7 +384,7 @@ $(function() {
         phone_number: phoneNumber
       };
 
-      if (userSchoolLevel.length > 0 && organizationName.length > 0 && phoneNumber.length > 0) {
+      if (validateForm(form)) {
         $.ajax({
           url: updateUrl(window.user.id),
           type: "PUT",
@@ -322,7 +394,7 @@ $(function() {
           },
           success: function(response) {
             containerFormTwoT.fadeOut(function() {
-              containerFormThree.fadeIn();
+              containerFormThree.find('form').submit();
             });
           },
           error: function(obj, msg, status) {
@@ -366,7 +438,7 @@ $(function() {
         year_of_birth: yearOfBirth
       };
 
-      if (levelOfEducation.length > 0 || gender.length > 0 || yearOfBirth.length > 0) {
+      if (validateForm(form)) {
         $.ajax({
           url: updateUrl(window.user.id),
           type: "PUT",
@@ -376,7 +448,7 @@ $(function() {
           },
           success: function(response) {
             containerFormTwoS.fadeOut(function() {
-              containerFormThree.fadeIn();
+              containerFormThree.find('form').submit();
             });
           },
           error: function(obj, msg, status) {
