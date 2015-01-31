@@ -5,6 +5,7 @@
 .nav-global li {margin-right: 0px !important;}
 .landing-home {
   background: #eee url(../../images/landing/bg-header.jpg) center no-repeat !important;
+  background-size: cover !important;
   border-bottom:none !important;
   -webkit-box-shadow: inset 0px 0px 0px #ffffff !important;
    -moz-box-shadow: inset 0px 0px 0px #ffffff !important;
@@ -19,6 +20,7 @@
   color: #fff;
   font-size: 1.8em;
   text-transform: none;
+  text-shadow: 0 0 15px black;
   font-weight: 300;
   margin-bottom: 1.4em;
 }
@@ -88,9 +90,22 @@ border-bottom-left-radius: 3px !important;
 .form-labs .button:focus:not(:disabled) {
     box-shadow: inset 0 0 0px 0 #000
 }
-a.view-all {color: #fff; text-transform: uppercase; margin-left: 20px;}
+a.view-all {
+  color: #fff;
+  text-transform: uppercase;
+  text-shadow: 0 0 15px black;
+  margin-left: 20px;
+}
 .clients {padding: 3em 0;}
-.clients ul {list-style: none;margin:0;padding: 0; text-align: center;}
+.clients ul {
+  list-style: none;
+  margin:0;
+  padding: 0;
+  text-align: center;
+  position: relative;
+  width: 100vw;
+  left: calc(-50vw + 50%);
+}
 .clients li {
   display: inline;
 }

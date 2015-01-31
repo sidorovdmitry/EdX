@@ -27,13 +27,5 @@ angular.module('StudentVoucherCode')
         $scope.payment = data.payment;
         $scope.voucher = data.voucher;
         $scope.limit_reached = data.limit_reached;
-
-        console.log(data.payment);
-        console.log(data.voucher);
-        console.log(data.limit_reached);
       });
-
-    // $scope.buyLabs = function() {
-
-    // }
   });

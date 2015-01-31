@@ -26,20 +26,21 @@
         <section class="right-50">
           <p>Incepted with a entrepreneurial spirit, we value strong relationships among partners, investors, teammates, and collaborators. This is evidenced by our numerous awards including a two-time <a href="http://www.venturecup.dk/events/the-end-of-boring-science-classes/" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://www.venturecup.dk']);">Venture Cup win</a>&nbsp;and funding from the Danish Market Development Fund as well&nbsp;as the Danish Ministry of Science. Our products are used by more than 10,000 students globally; a number that’s rapidly increasing every day.</p>
           <p>We believe that a collaborative, motivational working environment is the key to innovation. With a diverse staff throughout our offices in Copenhagen, Denmark and Bali, Indonesia, our company culture is one of leadership, contribution, and integrity.</p>
-          <p style="text-align: right;"><a href="#contactus">Contact us!</a></p>
+          <p style="text-align: right;"><a href="#feedbackForm">Contact us!</a></p>
         </section>
       </section>
       <!-- end section 2-column  -->
 
       <section class="clients">
         <ul>
-          <li><img src="${static.url('images/landing/cust-1.jpg')}" alt="client"></li>
-          <li><img src="${static.url('images/landing/cust-2.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/mit.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/trinity.jpg')}" alt="client"></li>
           <li><img src="${static.url('images/landing/cust-3.jpg')}" alt="client"></li>
           <li><img src="${static.url('images/landing/cust-4.jpg')}" alt="client"></li>
           <li><img src="${static.url('images/landing/cust-5.jpg')}" alt="client"></li>
           <li><img src="${static.url('images/landing/cust-6.jpg')}" alt="client"></li>
-          <li><img src="${static.url('images/landing/cust-7.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/stanford.jpg')}" alt="client"></li>
+          <li><img src="${static.url('images/landing/une.jpg')}" alt="client"></li>
         </ul>
       </section>
       <!-- end section customers/clients  -->
@@ -47,7 +48,7 @@
       <div class="testi-contact">
         <div class="edx-testimonial">
           <div class="photo-testi">
-            <img src="http://www.labster.com/wp-content/uploads/2014/05/mads-bonde-small.jpg" alt="" width="150">
+            <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/mads_bonde_small.jpg" alt="mads bonde" width="150">
           </div>
           <div class="content-testi">
             <div class="txt-testi">
@@ -79,9 +80,13 @@
               <li><a href="#tab2">Our Offices</a></li>
             </ul>
             <div id="tab1">
-              <form role="form" id="feedbackForm">
-                <input type="hidden" name="xmail" id="xmail" value="mikael@labster.com">
-                <input type="hidden" id="url" value="http://www.labster.com/wp-content/themes/StartupTheme/plugins/contact/">
+              % if messages:
+                  % for message in messages:
+                    <span class="help-block">${ message }</span>
+                  % endfor
+              % endif
+              <form role="form" action="/labster/contact-form/" method="post" id="feedbackForm">
+                <input type='hidden' name='csrfmiddlewaretoken' value='${ csrf_token }'/>
                 <div class="form-group">
                   <input type="text" class="form-control" id="name" name="name" placeholder="Name">
                   <span class="help-block" style="display: none;">Please enter your name.</span>
@@ -94,15 +99,6 @@
                   <textarea rows="10" cols="100" class="form-control" id="message" name="message" placeholder="Message"></textarea>
                   <span class="help-block" style="display: none;">Please enter a message.</span>
                 </div>
-                <div class="form-group">
-                  <img id="captcha" src="http://www.labster.com/wp-content/themes/StartupTheme/plugins/contact/library/vender/securimage/securimage_show.php" alt="CAPTCHA Image">
-                </div>
-                <div class="form-group" style="margin-top: 10px;">
-                  <input type="text" class="form-control" name="captcha_code" id="captcha_code" placeholder="For security, please enter the code displayed in the box.">
-                  <span class="help-block" style="display: none;">Please enter the code displayed within the image.</span>
-                </div>
-
-                <span class="help-block" style="display: none;">Please enter a the security code.</span>
                 <div class="form-group">
                   <button type="submit" id="feedbackSubmit" style="display: block; margin-top: 10px;">SEND</button>
                 </div>
@@ -131,7 +127,7 @@
             <div class="c-press-mention">
               <article  class="col post">
                 <header>
-                  <a href="#"><img align="left" src="http://www.labster.com/wp-content/uploads/2014/10/forbes-com-logo.jpg" width="100%"></a>
+                  <a href="#"><img align="left" src="https://labsterim.s3.amazonaws.com/CACHE/images/media/uploads/contact/forbes_com_logo/36570a53a2f09b003be525266c2c9287.jpg" width="100%"></a>
                 </header>
                 <h3 class="title">
                   <a href="#">Labster – Helping Students Learn By Turning Science Class Into A Game</a>
@@ -140,7 +136,7 @@
               </article>
               <article  class="col post">
                 <header>
-                  <a href="#"><img align="left" src="http://www.labster.com/wp-content/uploads/2014/10/forbes-com-logo.jpg" width="100%"></a>
+                  <a href="#"><img align="left" src="https://labsterim.s3.amazonaws.com/CACHE/images/media/uploads/contact/forbes_com_logo/36570a53a2f09b003be525266c2c9287.jpg" width="100%"></a>
                 </header>
                 <h3 class="title">
                   <a href="#">Labster – Helping Students Learn By Turning Science Class Into A Game</a>
@@ -149,7 +145,7 @@
               </article>
               <article  class="col post">
                 <header>
-                  <a href="#"><img align="left" src="http://www.labster.com/wp-content/uploads/2014/10/forbes-com-logo.jpg" width="100%"></a>
+                  <a href="#"><img align="left" src="https://labsterim.s3.amazonaws.com/CACHE/images/media/uploads/contact/forbes_com_logo/36570a53a2f09b003be525266c2c9287.jpg" width="100%"></a>
                 </header>
                 <h3 class="title">
                   <a href="#">Labster – Helping Students Learn By Turning Science Class Into A Game</a>
@@ -158,7 +154,7 @@
               </article>
               <article  class="col post">
                 <header>
-                  <a href="#"><img align="left" src="http://www.labster.com/wp-content/uploads/2014/10/forbes-com-logo.jpg" width="100%"></a>
+                  <a href="#"><img align="left" src="https://labsterim.s3.amazonaws.com/CACHE/images/media/uploads/contact/forbes_com_logo/36570a53a2f09b003be525266c2c9287.jpg" width="100%"></a>
                 </header>
                 <h3 class="title">
                   <a href="#">Labster – Helping Students Learn By Turning Science Class Into A Game</a>
@@ -178,7 +174,7 @@
               <div class="columns columns-4">
                 <div class="col">
                   <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/05/mads-bonde1-250x250.jpg"  alt="mads bonde">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/mads_bonde1_250x250.jpg"  alt="mads bonde">
                   </div>
                   <div class="person-author-wrapper">
                     <h2 class="person-name">Mads Tvillinggaard Bonde</h2>
@@ -187,7 +183,7 @@
                 </div>
                 <div class="col">
                   <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/1385750_10153319955640103_1847558872_n-e1405835859178-251x250.jpg"  alt="1385750_10153319955640103_1847558872_n">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/1385750_10153319955640103_1847558872_n_e1405835859178_251x250.jpg"  alt="Michael">
                   </div>
                   <div class="person-author-wrapper">
                     <h2 class="person-name">Michael Bodekaer</h2>
@@ -196,16 +192,7 @@
                 </div>
                 <div class="col">
                   <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/05/tamara-e1412596008869-251x250.jpg"  alt="tamara">
-                  </div>
-                  <div class="person-author-wrapper">
-                    <h2 class="person-name">Tamara Tjitrowirjo</h2>
-                    <p class="person-title">Project manager and Lead content developer</p>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/05/lasse-berg-251x250.png"  alt="lasse-berg">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/lasse_berg_251x250.png"  alt="Lasse berg">
                   </div>
                   <div class="person-author-wrapper">
                     <h2 class="person-name">Lasse Berg</h2>
@@ -214,16 +201,7 @@
                 </div>
                 <div class="col">
                   <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/ayu4-251x250.jpg"  alt="ayu4">
-                  </div>
-                  <div class="person-author-wrapper">
-                    <h2 class="person-name">Dewi Ayu Kencana Ungu</h2>
-                    <p class="person-title">Content Writer</p>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/max-profileB-590x400-251x250.jpg"  alt="max-profileB-590x400">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/max_profileB_590x400_251x250.jpg"  alt="max">
                   </div>
                   <div class="person-author-wrapper">
                     <h2 class="person-name">Max Bottega</h2>
@@ -232,33 +210,7 @@
                 </div>
                 <div class="col">
                   <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/aslam-251x250.jpg"  alt="aslam">
-                  </div>
-                  <div class="person-author-wrapper">
-                    <h2 class="person-name">Aslam Hadi</h2>
-                    <p class="person-title">Website Developer </p>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/05/matthias-251x250.jpg"  alt="matthias">
-                  </div>
-                  <div class="person-author-wrapper">
-                    <h2 class="person-name">Matthias Heim</h2>
-                    <p class="person-title">Content Developer</p>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="person-img"><img src="http://www.labster.com/wp-content/uploads/2014/04/Hilbert-251x250.jpg"  alt="Hilbert">
-                  </div>
-                  <div class="person-author-wrapper">
-                    <h2 class="person-name">Hilbert Jensen</h2>
-                    <p class="person-title">Content Developer</p>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/leo2-251x250.jpg"  alt="leo2">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/leo2_251x250.jpg"  alt="Leo">
                   </div>
                   <div class="person-author-wrapper">
                     <h2 class="person-name">Arie Leo Kartiko</h2>
@@ -267,43 +219,7 @@
                 </div>
                 <div class="col">
                   <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/05/1497864_10152888119311988_790256650_o-251x250.jpg" alt="1497864_10152888119311988_790256650_o">
-                  </div>
-                  <div class="person-author-wrapper">
-                    <h2 class="person-name">Tomasz Krakowiak</h2>
-                    <p class="person-title">Software Development Manager</p>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/maris-magdalenkos-square.jpg" >
-                  </div>
-                  <div class="person-author-wrapper">
-                    <h2 class="person-name">Maris Magdalenoks</h2>
-                    <p class="person-title">Account Manager</p>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/05/carolina-mera-250x250.jpg" alt="carolina mera">
-                  </div>
-                  <div class="person-author-wrapper">
-                    <h2 class="person-name">Carolina Mera</h2>
-                    <p class="person-title">Project Manager</p>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/marcel-251x250.jpg"  alt="marcel">
-                  </div>
-                  <div class="person-author-wrapper">
-                    <h2 class="person-name">Marcelino Muliawan</h2>
-                    <p class="person-title">Game Developer</p>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/aldi-251x250.jpg"  alt="aldi">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/aldi_251x250.jpg"  alt="Aldi">
                   </div>
                   <div class="person-author-wrapper">
                     <h2 class="person-name">Adiantoro Nugroho</h2>
@@ -312,25 +228,70 @@
                 </div>
                 <div class="col">
                   <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/rudi-251x250.jpg" alt="rudi">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/aslam_251x250.jpg"  alt="Aslam">
                   </div>
                   <div class="person-author-wrapper">
-                    <h2 class="person-name">Rudy Pangestu</h2>
-                    <p class="person-title">Game Programmer</p>
+                    <h2 class="person-name">Aslam Hadi Harsono</h2>
+                    <p class="person-title">Website Developer </p>
                   </div>
                 </div>
                 <div class="col">
                   <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/08/Peter-Perger-251x250.jpg"  alt="Peter Perger">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/ayu4_251x250.jpg"  alt="Ayu">
                   </div>
                   <div class="person-author-wrapper">
-                    <h2 class="person-name">Péter Perger</h2>
-                    <p class="person-title">Marketing Operations</p>
+                    <h2 class="person-name">Dewi Ayu Kencana Ungu</h2>
+                    <p class="person-title">Content Writer</p>
                   </div>
                 </div>
                 <div class="col">
                   <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/boni-251x250.jpg"  alt="boni">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/matthias.jpg"  alt="matthias">
+                  </div>
+                  <div class="person-author-wrapper">
+                    <h2 class="person-name">Matthias Heim</h2>
+                    <p class="person-title">Content Developer</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="person-img">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/dev.jpg" alt="dev">
+                  </div>
+                  <div class="person-author-wrapper">
+                    <h2 class="person-name">Dev Bhargava</h2>
+                    <p class="person-title">Relationships Manager</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="person-img">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/tomasz.jpg" alt="Tomasz">
+                  </div>
+                  <div class="person-author-wrapper">
+                    <h2 class="person-name">Tomasz Krakowiak</h2>
+                    <p class="person-title">Software Development Manager</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="person-img">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/carolina_mera_250x250.jpg" alt="Carolina mera">
+                  </div>
+                  <div class="person-author-wrapper">
+                    <h2 class="person-name">Carolina Mera</h2>
+                    <p class="person-title">Project Manager</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="person-img">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/marcel_251x250.jpg"  alt="marcel">
+                  </div>
+                  <div class="person-author-wrapper">
+                    <h2 class="person-name">Marcelino Muliawan</h2>
+                    <p class="person-title">Content Developer</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="person-img">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/boni_251x250.jpg"  alt="Boni">
                   </div>
                   <div class="person-author-wrapper">
                     <h2 class="person-name">Boni Yustin Prabowo</h2>
@@ -339,7 +300,52 @@
                 </div>
                 <div class="col">
                   <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/camilla-251x250.jpg"  alt="camilla">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/bagus.jpg"  alt="bagus">
+                  </div>
+                  <div class="person-author-wrapper">
+                    <h2 class="person-name">Anak Agung Ngurah Bagus Trihatmaja</h2>
+                    <p class="person-title">Content Developer</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="person-img">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/adit_251x250.jpg"  alt="Adit">
+                  </div>
+                  <div class="person-author-wrapper">
+                    <h2 class="person-name">Aditya Yuwono</h2>
+                    <p class="person-title">Platform Developer</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="person-img">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/denis.jpg"  alt="Denis">
+                  </div>
+                  <div class="person-author-wrapper">
+                    <h2 class="person-name">Denis Markelov</h2>
+                    <p class="person-title">Platform Developer</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="person-img">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/rudi_251x250.jpg" alt="rudy">
+                  </div>
+                  <div class="person-author-wrapper">
+                    <h2 class="person-name">Rudy Pangestu</h2>
+                    <p class="person-title">Platform Developer</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="person-img">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/Peter_Perger_251x250.jpg"  alt="Peter Perger">
+                  </div>
+                  <div class="person-author-wrapper">
+                    <h2 class="person-name">Péter Perger</h2>
+                    <p class="person-title">Marketing Operations</p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="person-img">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/camilla_251x250.jpg"  alt="Camilla">
                   </div>
                   <div class="person-author-wrapper">
                     <h2 class="person-name">Camilla Lundby Thorsen</h2>
@@ -348,20 +354,11 @@
                 </div>
                 <div class="col">
                   <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/Michael-T-413x400-251x250.jpg" alt="Michael-T-413x400">
+                    <img src="https://labsterim.s3.amazonaws.com/media/uploads/contact/Michael_T_413x400_251x250.jpg" alt="Mikael">
                   </div>
                   <div class="person-author-wrapper">
                     <h2 class="person-name">Mikael Thorup</h2>
                     <p class="person-title">Project Manager</p>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="person-img">
-                    <img src="http://www.labster.com/wp-content/uploads/2014/04/adit-251x250.jpg"  alt="adit">
-                  </div>
-                  <div class="person-author-wrapper">
-                    <h2 class="person-name">Aditya Yuwono</h2>
-                    <p class="person-title">Game Programmer</p>
                   </div>
                 </div>
               </div>

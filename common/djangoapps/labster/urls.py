@@ -8,6 +8,8 @@ urlpatterns = patterns('labster',  # nopep8
     url('^login-by-token/', 'users.views.login_by_token', name='labster_login_token'),
     url('^enroll-student/', 'lms.views.enroll_student', name='labster_enroll_student'),
 
+    url('^contact-form/$', 'landing.views.contact_form', name='labster_contact_form'),
+
     url('^lab/{}/(?P<pk>\d+)/result/$'.format(settings.COURSE_ID_PATTERN),
         'lms.views.lab_result', name='labster_lab_result'),
     url('^lab/{}/(?P<pk>\d+)/adaptive-test-result/$'.format(settings.COURSE_ID_PATTERN),

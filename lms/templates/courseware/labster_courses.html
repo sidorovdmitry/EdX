@@ -52,6 +52,26 @@ show_partners = microsite.get_value('show_partners', True)
       <header class="heading-title">
         % if keywords:
         <h3>${len(courses)} Relevant Labs Found</h3>
+
+          /* Google Code for User Searched Conversion Page */
+          <script type="text/javascript">
+          /* <![CDATA[ */
+          var google_conversion_id = 982916362;
+          var google_conversion_language = "en";
+          var google_conversion_format = "3";
+          var google_conversion_color = "ffffff";
+          var google_conversion_label = "mQRSCKKEnVkQirrY1AM";
+          var google_remarketing_only = false;
+          /* ]]> */
+          </script>
+          <script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+          </script>
+          <noscript>
+          <div style="display:inline;">
+          <img height="1" width="1" style="border-style:none;" alt="" src="//www.googleadservices.com/pagead/conversion/982916362/?label=mQRSCKKEnVkQirrY1AM&amp;guid=ON&amp;script=0"/>
+          </div>
+          </noscript>
+
         % else:
         <h3>Browse Our Labs</h3>
         % endif

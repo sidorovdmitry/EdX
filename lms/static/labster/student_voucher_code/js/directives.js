@@ -1,12 +1,21 @@
 angular.module('StudentVoucherCode')
 
-  .directive('stripe', function ($location, $http) {
+  .directive('stripe', function ($location, $http, ngDialog) {
     return {
       restrict: 'E',
       scope: {paymentId: '@', email: '@', amount: '@', description: '@', voucherCode: '@'},
       link: function (scope, element, attr) {
 
+        function showProgress() {
+          // show progress page while sending data to backoffice api
+          ngDialog.open({
+              template: '<h2 class="align-center">Please wait. We are processing your payment.</h2>',
+              plain: true
+          })
+        };
+
         var submitStripe = function (token) {
+          showProgress();
           var url = window.backofficeUrls.payment + scope.paymentId + "/charge_stripe/";
           var post_data = {
             'stripe_token': token.id,
@@ -36,6 +45,7 @@ angular.module('StudentVoucherCode')
                     }
                 })
                 .success(function(data, status, headers, config) {
+                  ngDialog.close();
                   var url = '/student_voucher_code/#/invoice/' + scope.paymentId + '/thank-you';
                   window.location.href = url;
                 });
@@ -60,7 +70,7 @@ angular.module('StudentVoucherCode')
           });
         });
       },
-      template: '<a class="btn-labster-invoice">Credit Card</a>',
+      template: '<a class="btn-labster-regular" id="stripe-button"><i class=\'fa fa-credit-card\'></i> &nbsp;&nbsp;Pay with Credit Card</a>',
       replace: true
     };
   })

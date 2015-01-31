@@ -1,6 +1,10 @@
+import json
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.http import Http404
+from django.core.mail import EmailMessage
+from django.http import Http404, HttpResponseRedirect
+from django.contrib import messages
 from django.shortcuts import redirect
 from django_future.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import AnonymousUser
@@ -92,6 +96,7 @@ def courses(request, user=AnonymousUser()):
     keywords = request.GET.get('q', '').strip()
     if keywords:
         courses = get_courses_from_keywords(keywords)
+        google_adwords = ""
     else:
         courses = get_courses(user, domain=domain)
         courses = sort_by_announcement(courses)
@@ -102,3 +107,26 @@ def courses(request, user=AnonymousUser()):
     }
 
     return render_to_response('courseware/labster_courses.html', context)
+
+
+def contact_form(request):
+    if request.method == 'POST':
+        subject = "Contact Form"
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+        body = "<p>Name: {0}</p><p>Email: {1}</p><p>Message: {2}</p>".format(name, email, message)
+
+        email = EmailMessage(subject, body, email, ['aslamhadi@labster.com'])
+        email.content_subtype = "html"
+        email.send(fail_silently=False)
+
+        messages.success(request, 'Thank you for contacting us. We will contact you as soon as possible.', extra_tags='safe')
+
+        return HttpResponseRedirect('/contact#feedbackForm')
+
+    else:
+        return HttpResponse(
+            json.dumps({"Some error occurred in sending mail."}),
+            content_type="application/json"
+        )
