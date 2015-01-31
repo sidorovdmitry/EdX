@@ -97,7 +97,15 @@ a.view-all {
   margin-left: 20px;
 }
 .clients {padding: 3em 0;}
-.clients ul {list-style: none;margin:0;padding: 0; text-align: center;}
+.clients ul {
+  list-style: none;
+  margin:0;
+  padding: 0;
+  text-align: center;
+  position: relative;
+  width: 100vw;
+  left: calc(-50vw + 50%);
+}
 .clients li {
   display: inline;
 }

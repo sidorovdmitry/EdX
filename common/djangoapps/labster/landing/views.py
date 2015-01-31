@@ -96,6 +96,7 @@ def courses(request, user=AnonymousUser()):
     keywords = request.GET.get('q', '').strip()
     if keywords:
         courses = get_courses_from_keywords(keywords)
+        google_adwords = ""
     else:
         courses = get_courses(user, domain=domain)
         courses = sort_by_announcement(courses)

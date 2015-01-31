@@ -65,6 +65,18 @@ angular.module('LabsterBackOffice')
     }
   })
 
+  .directive('adwordpaid', function () {
+    // add spinning icon when clicked
+    return {
+      restrict: 'E',
+      scope: {total: '@'},
+      template: function(scope, element, attr) {
+        return '<p>total = ' + scope.total + '</p>';
+      },
+      replace: true
+    }
+  })
+
   .directive('numeric', function() {
     return {
       require: 'ngModel',
