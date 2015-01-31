@@ -1,4 +1,4 @@
-angular.module('StudentVoucherCode', ['ngRoute'])
+angular.module('StudentVoucherCode', ['ngRoute', 'ngDialog'])
 
   .config(function ($routeProvider) {
     $routeProvider
