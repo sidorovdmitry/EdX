@@ -1,5 +1,6 @@
 .learning-container .learning-description {
   margin-left: 28px;
+  margin-top: 10px;
 }
 .learning {
   margin-left: 10px;
@@ -149,4 +150,7 @@ button.labster-register {
     text-align: center;
     color: #666;
     margin-top: 20px;
+}
+.course-info .course-sidebar .important-dates li .icon {
+  width: 16px;
 }
