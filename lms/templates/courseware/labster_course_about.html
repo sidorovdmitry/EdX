@@ -127,10 +127,7 @@
       <section class="intro">
         <hgroup>
           <h1>
-            ${get_course_about_section(course, "title")}
-            % if not self.theme_enabled():
-              <a href="#">${get_course_about_section(course, "university")}</a>
-            % endif
+            ${get_course_about_section(course, "title")} Virtual Lab Simulation
           </h1>
         </hgroup>
 
@@ -184,14 +181,26 @@
             <span class="register disabled">${_("The Course Is Not Started Yet")}</span>
             % else:
               % if not user.is_authenticated() or (user.is_authenticated() and user.labster_user.is_teacher):
-                <a href="#register-modal" rel="leanModal" class="new-register register-teacher" data-user-type="2">Teacher</a>
-                <a href="#register-modal" rel="leanModal" class="new-register register-student" data-user-type="1">Student</a>
-
-                <%doc>
-                <a href="#try-course-modal" rel="leanModal" class="try-course">
-                  ${_("Try Course for Free")}
-                </a>
-                </%doc>
+                <div class="labster-register-box-container">
+                  <div class="labster-register-box students">
+                    <h4><a href="#register-modal" rel="leanModal" data-user-type="1">Students</a></h4>
+                    <ul>
+                      <li><a href="#register-modal" rel="leanModal" data-user-type="1"><i class="fa fa-tags"></i>
+                        User Voucher</a></li>
+                      <li><a href="#" onclick="return false"><i class="fa fa-shopping-cart"></i>
+                        Purchase for 20 USD (soon)</a></li>
+                    </ul>
+                  </div>
+                  <div class="labster-register-box teachers">
+                    <h4><a href="#register-modal" rel="leanModal" data-user-type="2">Educators</a></h4>
+                    <ul>
+                      <li><a href="#register-modal" rel="leanModal" data-user-type="2"><i class="fa fa-search-plus"></i>
+                        Free Preview</a></li>
+                      <li><a href="/pricing"><i class="fa fa-users"></i>
+                        See Bulk Pricing</a></li>
+                    </ul>
+                  </div>
+                </div>
 
               % endif
             % endif
@@ -309,7 +318,9 @@
         </header>
 
         <ol class="important-dates">
+          <%doc>
           <li class="important-dates-item"><i class="icon fa fa-info"></i><p class="important-dates-item-title">${_("Course Number")}</p><span class="important-dates-item-text course-number">${course.display_number_with_default | h}</span></li>
+          </%doc>
           % if not course.start_date_is_still_default:
             % if course.start > timezone.now():
             <li class="important-dates-item"><i class="icon fa fa-calendar"></i><p class="important-dates-item-title">${_("Classes Start")}</p><span class="important-dates-item-text start-date">${course.start_datetime_text()}</span></li>
