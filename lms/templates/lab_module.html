@@ -367,17 +367,7 @@ LANGUAGES = [
     }
 
     function nutshellPlayLab() {
-      var csrf_token = "${csrf_token}";
-      $.ajax({
-        url: '${nutshell_play_lab_url}',
-        type: "POST",
-        beforeSend: function(xhr, settings) {
-          xhr.setRequestHeader("X-CSRFToken", csrf_token);
-        },
-      }).success(function(response) {
-      }).error(function(response) {
-      });
-
+      return;
     }
 
     function detectUnityWebPlayer() {
