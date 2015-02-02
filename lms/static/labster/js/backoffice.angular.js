@@ -1,4 +1,4 @@
-angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate', 'LocalStorageModule'])
+angular.module('LabsterBackOffice', ['ngRoute', 'ngDialog', 'ngAnimate', 'ngSanitize', 'LocalStorageModule'])
 
   .config(function ($routeProvider, $locationProvider) {
     $routeProvider
