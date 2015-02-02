@@ -75,7 +75,7 @@ $(function() {
                 identifiers: emails.join(",")
             }
 
-            $.get(url, data, function(response) {
+            $.post(url, data, function(response) {
                 nutshellInviteStudents();
                 show_success();
             });

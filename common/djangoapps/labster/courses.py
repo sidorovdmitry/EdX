@@ -93,4 +93,17 @@ def duplicate_course(source, target, user, fields=None):
     CourseEnrollment.objects.get_or_create(
         user=user, course_id=dest_course_id)
 
+    fields = {
+        'labster_demo': False,
+        'is_browsable': False,
+        'invitation_only': True,
+        'max_student_enrollments_allowed': 3,
+        'labster_license': True,
+    }
+    course = mstore.get_course(dest_course_id)
+    for key, value in fields.items():
+        setattr(course, key, value)
+
+    mstore.update_item(course, user.id)
+
     return course
