@@ -4,8 +4,9 @@
 <%block name="pagetitle">${_("Pricing")}</%block>
 
 <%block name="headextra">
+<link rel="stylesheet" href="${static.url('labster/css/register_modal.css')}">
 <link rel="stylesheet" href="${static.url('labster/css/static_pages.css')}">
-
+<script src="${static.url('js/labster/register_modal.js')}"></script>
 </%block>
 
 <div class="pricing-wrapper" id="content">
@@ -27,7 +28,7 @@
               <li class="header">Contains <b>all</b> current labs +<br>new labs released</li>
               <li class="license">License is valid for a full semester</li>
               <li class="btn-price">
-                <a class="btn-buy" href="#">BUY</a>
+                <a class="btn-buy new-register" href="#register-modal" rel="leanModal" data-user-type="2">BUY</a>
               </li>
             </ul>
           </div>
@@ -43,7 +44,7 @@
               <li class="header">Contains <b>all</b> current labs +<br>new labs released</li>
               <li class="license">License is valid for a full<br>school year (August-July).</li>
               <li class="btn-price">
-                <a class="btn-buy" href="#">BUY</a>
+                <a class="btn-buy new-register" href="#register-modal" rel="leanModal" data-user-type="2">BUY</a>
               </li>
             </ul>
           </div>
@@ -70,3 +71,13 @@
 
 </div>
 <!-- end div content-wrapper -->
+
+<%include file="../labster_register_modal.html" />
+
+<script>
+  window.csrfToken = "${csrf_token}";
+  registerModalInit({
+    nextUrl: "/labs",
+    courseId: ""
+ });
+</script>
