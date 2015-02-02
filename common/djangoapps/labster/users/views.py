@@ -24,8 +24,8 @@ def login_by_token(request):
         if user and user.is_active:
             login(request, user)
 
-    user = User.objects.get(id=user.id)
-    course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
-    CourseEnrollment.enroll(user, course_key)
+        user = User.objects.get(id=user.id)
+        course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+        CourseEnrollment.enroll(user, course_key)
 
     return HttpResponseRedirect(next_url)
