@@ -73,9 +73,7 @@ button.labster-register {
     background-image: url('https://labsterim.s3.amazonaws.com/media/uploads/edx/labster_homepage_bg_pnd.jpg');
     background-position: 0px -150px;
     background-size: 114%;
-    /* background-position: left -100px; */
-    /* background-size: auto; */
-    padding-top: 70px;
+    padding-top: 140px;
     border-bottom: 0;
 }
 .course-info header.course-profile .container {
