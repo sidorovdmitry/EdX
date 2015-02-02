@@ -154,3 +154,116 @@ button.labster-register {
 .course-info .course-sidebar .important-dates li .icon {
   width: 16px;
 }
+
+.course-info header.course-profile {
+    background-image: url('https://labsterim.s3.amazonaws.com/media/uploads/edx/labster_homepage_bg_pnd.jpg');
+    background-position: left -100px;
+    background-size: auto;
+    padding-top: 70px;
+    border-bottom: 0;
+}
+.course-info header.course-profile .container {
+    padding: 0 35px;
+}
+
+.course-info header.course-profile .intro-inner-wrapper {
+    background-color: #fff;
+    padding: 45px;
+}
+
+.course-info header.course-profile .intro-inner-wrapper .intro {
+    width: 50%;
+    padding-top: 0;
+    padding-left: 0;
+}
+
+.course-info header.course-profile .intro-inner-wrapper .media {
+    padding: 0;
+}
+
+.course-info header.course-profile .intro-inner-wrapper .media .hero {
+    border: 1px solid #ccc;
+}
+
+.labster-register-box-container {
+    display: flex;
+}
+
+.labster-register-box {
+    margin-right: 20px;
+    width: 270px;
+    font-size: 0.9em;
+}
+.labster-register-box ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.labster-register-box h4 {
+    text-transform: uppercase;
+}
+.labster-register-box h4 a {
+    display: block;
+    color: #fff;
+    padding: 15px 0 15px 60px;
+    border: 0;
+}
+
+.labster-register-box.students h4 a {
+    background-color: #54b551;
+    background-image: -webkit-linear-gradient(top, #54b551 0%,#429b40 100%);
+    background-image: linear-gradient(to bottom,#54b551 0%,#429b40 100%);
+}
+
+.labster-register-box.teachers h4 a {
+    background-color: #1d354d;
+    background-image: -webkit-linear-gradient(top, #1d354d 0%,#00032c 50%,#00001d 50%,#00001f 100%);
+    background-image: linear-gradient(to bottom,#1d354d 0%,#00032c 50%,#00001d 50%,#00001f 100%);
+}
+
+.labster-register-box li {
+    margin: 0;
+    padding: 0;
+}
+
+.labster-register-box li a {
+    border-top: 0;
+    border: 1px solid #e2e2e2;
+    color: #666;
+    display: block;
+    padding: 12px 12px 12px 25px;
+}
+.labster-register-box li a i {
+    margin-right: 15px;
+    opacity: 0.4;
+}
+.labster-register-box li a:hover { color: #333; }
+.labster-register-box li a:hover i { opacity: 1; }
+
+.labster-register-box.students li a {
+    background-color: #EBF5EB;
+}
+
+.labster-register-box.teachers li a {
+    background-color: #F1F1F3;
+}
+
+.course-info .course-sidebar>section {
+    border: 0;
+    box-shadow: none;
+}
+
+.course-info .course-sidebar > section.course-summary {
+    background-color: #F9F9F9;
+    border: 1px solid #ccc;
+    margin-top: 35px;
+}
+
+.course-info .course-sidebar header::after {
+    display: none;
+}
+
+.course-info .course-sidebar header {
+    margin-bottom: 10px;
+}

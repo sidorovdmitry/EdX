@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from labster.user_utils import generate_unique_username
 from student.models import UserProfile
+import lms.lib.comment_client as cc
 
 
 def get_username(email, length=10):
@@ -74,6 +75,12 @@ class CustomLabsterUser(object):
             user.username = generate_unique_username(profile.name, User)
             user.set_password(password)
             user.save()
+
+            try:
+                cc_user = cc.User.from_django_user(user)
+                cc_user.save()
+            except:
+                pass
 
         return user
 

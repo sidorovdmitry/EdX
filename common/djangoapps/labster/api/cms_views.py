@@ -19,6 +19,12 @@ def get_course_meta(user):
     return org, number, run
 
 
+def get_duplicate_course(source, username):
+    _, rest = source.split('/', 1)
+    result = "{}/{}".format(username, rest)
+    return result
+
+
 class CourseDuplicate(APIView):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
 
@@ -26,15 +32,15 @@ class CourseDuplicate(APIView):
         response_data = {}
 
         source = request.DATA.get('source')
-        target = source
+        target = get_duplicate_course(source, request.user.username)
         extra_fields = {
             'invitation_only': True,
             'max_student_enrollments_allowed': 3,
             'labster_license': True,
         }
-        course = duplicate_course(source, target, request.user, extra_fields)
 
         unregister_course(request.user, source)
+        course = duplicate_course(source, target, request.user, extra_fields)
 
         response_data = {'course_id': str(course.id)}
         return Response(response_data)
