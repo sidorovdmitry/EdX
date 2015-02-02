@@ -157,8 +157,10 @@ button.labster-register {
 
 .course-info header.course-profile {
     background-image: url('https://labsterim.s3.amazonaws.com/media/uploads/edx/labster_homepage_bg_pnd.jpg');
-    background-position: left -100px;
-    background-size: auto;
+    background-position: 0px -150px;
+    background-size: 114%;
+    /* background-position: left -100px; */
+    /* background-size: auto; */
     padding-top: 70px;
     border-bottom: 0;
 }
@@ -228,8 +230,6 @@ button.labster-register {
 }
 
 .labster-register-box li a {
-    border-top: 0;
-    border: 1px solid #e2e2e2;
     color: #666;
     display: block;
     padding: 12px 12px 12px 25px;
@@ -243,10 +243,14 @@ button.labster-register {
 
 .labster-register-box.students li a {
     background-color: #EBF5EB;
+    border: 1px solid #B8D5B8;
+    border-top: 0;
 }
 
 .labster-register-box.teachers li a {
     background-color: #F1F1F3;
+    border: 1px solid #bbb;
+    border-top: 0;
 }
 
 .course-info .course-sidebar>section {
@@ -266,4 +270,8 @@ button.labster-register {
 
 .course-info .course-sidebar header {
     margin-bottom: 10px;
+}
+
+.course-info .course-sidebar .important-dates li .important-dates-item-title {
+    font-weight: bold;
 }
