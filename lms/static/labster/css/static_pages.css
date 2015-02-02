@@ -543,7 +543,7 @@ a.view-all {color: #fff; text-transform: uppercase; margin-left: 20px;}
 .bg-map {
   background: url(../../images/landing/bg-map.jpg) top left no-repeat;
   margin-top: 3em;
-  margin-bottom: 5em;
+  /*margin-bottom: 5em;*/
   clear: both;
 }
 #tabs {
