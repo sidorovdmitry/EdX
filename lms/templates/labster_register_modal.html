@@ -146,12 +146,3 @@
     </form>
   </div>
 </section>
-
-<script src="${static.url('js/labster/register_modal.js')}"></script>
-<script>
-window.csrfToken = "${csrf_token}";
-registerModalInit({
-    nextUrl: "/",
-    courseId: "${course.id}"
-});
-</script>

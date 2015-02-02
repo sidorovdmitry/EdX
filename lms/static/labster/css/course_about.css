@@ -65,67 +65,6 @@ button.labster-register {
     line-height: 40px;
     padding: 0 !important;
 }
-
-.labster-register-form .error-message {
-    color: red;
-    display: none;
-    font-size: smaller;
-    margin: -15px 0 10px 0;
-}
-
-.labster-register-form .select-container {
-    border-radius: 3px;
-    border: 1px solid #376492;
-    overflow: hidden;
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-.labster-register-form select {
-    width: 100%;
-    background: transparent;
-    padding: 5px 12px;
-    line-height: 1;
-    border: 0;
-    border-radius: 0;
-    font: italic 300 1rem/1.6rem "Lato","Crimson Text","Georgia";
-    color: #333;
-    -webkit-appearance: none;
-}
-
-.register-wizard-1, .register-wizard-2-t, .register-wizard-2-s, .register-wizard-3 {
-    display: none;
-}
-
-.labster-register-form label span.label {
-    font-style: normal;
-    font-size: 1em;
-    margin-bottom: 2px;
-    display: inline-block;
-}
-
-.labster-register-form .select-container {
-    position: relative;
-}
-
-.labster-register-form .select-container .error-message {
-    position: fixed;
-}
-
-.labster-register-form .button-link-container {
-    color: #333;
-    text-align: center;
-    margin-top: 20px;
-}
-.labster-register-form .button-link-submit {
-}
-
-.labster-register-form .tos-container {
-    font-size: 0.8em;
-    text-align: center;
-    color: #666;
-    margin-top: 20px;
-}
 .course-info .course-sidebar .important-dates li .icon {
   width: 16px;
 }
