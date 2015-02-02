@@ -76,8 +76,11 @@ class CustomLabsterUser(object):
             user.set_password(password)
             user.save()
 
-            cc_user = cc.User.from_django_user(user)
-            cc_user.save()
+            try:
+                cc_user = cc.User.from_django_user(user)
+                cc_user.save()
+            except:
+                pass
 
         return user
 
