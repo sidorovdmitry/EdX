@@ -25,6 +25,10 @@
     -webkit-appearance: none;
 }
 
+.labster-register-form option {
+    font-style: normal;
+}
+
 .register-wizard-1, .register-wizard-2-t, .register-wizard-2-s, .register-wizard-3 {
     display: none;
 }
