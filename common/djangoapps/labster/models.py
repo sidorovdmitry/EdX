@@ -42,10 +42,18 @@ class LabsterUser(models.Model):
     organization_name = models.CharField(max_length=255, blank=True, default="")
 
     USER_HIGH_SCHOOL = 1
-    USER_UNIVERSITY = 2
+    USER_COLLEGE = 2
+    USER_UNIVERSITY = 3
+    USER_EDUCATION_MANAGER = 4
+    USER_DEAN = 5
+    USER_OTHER = 10
     USER_SCHOOL_LEVEL_CHOICES = (
-        (USER_HIGH_SCHOOL, ugettext_noop('High School')),
-        (USER_UNIVERSITY, ugettext_noop('University / College')),
+        (USER_HIGH_SCHOOL, ugettext_noop('High School Teacher')),
+        (USER_COLLEGE, ugettext_noop('College Teacher')),
+        (USER_UNIVERSITY, ugettext_noop('University Teacher/Professor')),
+        (USER_EDUCATION_MANAGER, ugettext_noop('Education Manager')),
+        (USER_DEAN, ugettext_noop('Dean')),
+        (USER_OTHER, ugettext_noop('Other')),
     )
     user_school_level = models.IntegerField(choices=USER_SCHOOL_LEVEL_CHOICES, blank=True, null=True)
 
