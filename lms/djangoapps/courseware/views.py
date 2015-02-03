@@ -1017,7 +1017,7 @@ def progress_all(request, course_id):
 
 
 def _progress_all(request, course_key):
-    from labster.models import LabProxy, Problem, UserAttempt
+    from labster.models import LabProxy, Problem, UserAttempt, QuizBlock
     from labster.reports import get_attempts_and_answers
 
     """
@@ -1057,6 +1057,9 @@ def _progress_all(request, course_key):
     if lab_proxy.lab_id == 35:
         quiz_ids = ["Cyto-{}-Post".format(i) for i in range(11, 41)]
         problems = list(Problem.objects.filter(is_active=True, element_id__in=quiz_ids))
+    else:
+        quiz_blocks = QuizBlock.objects.filter(lab=lab_proxy.lab)
+        problems = list(Problem.objects.filter(is_active=True, quiz_block__in=quiz_blocks))
 
     for student in student_objects:
         attempts = get_attempts_and_answers(
@@ -1070,7 +1073,10 @@ def _progress_all(request, course_key):
             attempt = None
             score = 0
         else:
-            score = attempt.custom_score
+            if lab_proxy.lab_id == 35:
+                score = attempt.custom_score
+            else:
+                score = attempt.score
 
         context = {
             'user': student.user,
@@ -1081,7 +1087,7 @@ def _progress_all(request, course_key):
 
         students_context.append(context)
 
-    studio_url = get_studio_url(course_key, 'settings/grading')
+    studio_url = get_studio_url(course, 'settings/grading')
     context = {
         'students_context': students_context,
         'course': course,
