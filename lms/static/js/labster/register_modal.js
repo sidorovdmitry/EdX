@@ -111,6 +111,9 @@ function registerModalInit(options) {
             inputs = form.find(getName(name));
             _.each(inputs, function(input) {
                 _.each(messageList, function(message) {
+                    if (message == "Email is used") {
+                        message = 'Email already in use. Please <a href="/login">login here</a>.';
+                    }
                     $(input).next('.error-message').append(message).show();
                 });
             });
