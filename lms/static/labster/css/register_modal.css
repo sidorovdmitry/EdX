@@ -6,6 +6,9 @@
 }
 
 .labster-register-form .select-container {
+    background-image: url('https://labsterim.s3.amazonaws.com/media/uploads/edx/arrow_down.jpg');
+    background-repeat: no-repeat;
+    background-position: right 15px center;
     border-radius: 3px;
     border: 1px solid #376492;
     overflow: hidden;
@@ -23,6 +26,10 @@
     font: italic 300 1rem/1.6rem "Lato","Crimson Text","Georgia";
     color: #333;
     -webkit-appearance: none;
+}
+
+.labster-register-form option {
+    font-style: normal;
 }
 
 .register-wizard-1, .register-wizard-2-t, .register-wizard-2-s, .register-wizard-3 {
