@@ -59,9 +59,9 @@
     % if attempt.answers:
     <h3 class="score">Score
       % if hasattr(attempt, 'custom_score'):
-        <span>${score}%</span></h3>
+        <span>${attempt.custom_score}%</span></h3>
       % else:
-        <span>${score}</span></h3>
+        <span>${attempt.score}</span></h3>
       % endif
     <table>
       <thead>
@@ -70,7 +70,9 @@
           <th>Question</th>
           <th>Answer</th>
           <th>Correct Answer</th>
+          % if hasattr(attempt, 'custom_score'):
           <th>Is Correct?</th>
+          % endif
         </tr>
       </thead>
       <tbody>
@@ -80,7 +82,9 @@
           <td>${answer.question}</td>
           <td>${answer.answer_string}</td>
           <td>${answer.correct_answer}</td>
+          % if hasattr(attempt, 'custom_score'):
           <td>${'yes' if answer.is_correct else 'no'}</td>
+          % endif
         </tr>
         % endfor
       </tbody>
