@@ -1072,16 +1072,19 @@ def _progress_all(request, course_key):
         except IndexError:
             attempt = None
             score = 0
+            progress_in_percent = 0
         else:
+            progress_in_percent = attempt.progress_in_percent
             if lab_proxy.lab_id == 35:
                 score = attempt.custom_score
             else:
-                score = attempt.score
+                score = attempt.get_score()
 
         context = {
             'user': student.user,
             'attempt': attempt,
             'score': score,
+            'progress_in_percent': progress_in_percent,
             'detail_url': reverse('student_progress_detail', args=[course_key, student.user.id]),
         }
 

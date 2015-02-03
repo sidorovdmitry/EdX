@@ -61,7 +61,7 @@
       % if hasattr(attempt, 'custom_score'):
         <span>${attempt.custom_score}%</span></h3>
       % else:
-        <span>${attempt.score}</span></h3>
+        <span>${attempt.get_score()}</span></h3>
       % endif
     <table>
       <thead>

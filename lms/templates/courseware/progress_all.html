@@ -45,6 +45,7 @@ from django.conf import settings
              <th>Name</th>
              <th>Email</th>
              <th>Score</th>
+             <th>Progress</th>
           </tr>
      %for item in students_context:
       <tr>
@@ -53,7 +54,10 @@ from django.conf import settings
           <td>${item['score']}
             (<a href="${item['detail_url']}"><small>detail</small></a>)
           </td>
-
+          <td>
+            <progress max="100" value="${item['progress_in_percent']}" style="width:100%"></progress>
+            ${item['progress_in_percent']}
+          </td>
       </tr>
       %endfor
       </table>
