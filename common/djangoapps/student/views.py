@@ -388,7 +388,7 @@ def signin_user(request):
         ),
     }
 
-    return render_to_response('login.html', context)
+    return render_to_response('labster_login.html', context)
 
 
 @ensure_csrf_cookie
@@ -987,7 +987,7 @@ def accounts_login(request):
         'pipeline_url': auth_pipeline_urls(pipeline.AUTH_ENTRY_LOGIN, redirect_url=redirect_to),
         'platform_name': settings.PLATFORM_NAME,
     }
-    return render_to_response('login.html', context)
+    return render_to_response('labster_login.html', context)
 
 
 # Need different levels of logging
