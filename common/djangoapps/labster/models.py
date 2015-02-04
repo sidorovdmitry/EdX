@@ -876,3 +876,9 @@ def get_user_attempts_from_lab_proxy(lab_proxy):
     user_attempts = user_attempts.exclude(user__email__endswith='liv.it')
     user_attempts = user_attempts.exclude(user__email='mitsurudy@gmail.com')
     return user_attempts
+
+
+# class DemoCourse(models.Model):
+#     course_id = CourseKeyField(max_length=255, db_index=True)
+#     lab = models.ForeignKey(Lab, blank=True, null=True)
+#     start_date = models.DateField(blank=True, null=True)

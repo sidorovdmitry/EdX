@@ -54,6 +54,8 @@ def get_courses_from_keywords(keywords):
 
     labs = get_labs_from_keywords(keywords)
     course_ids = [lab.demo_course_id for lab in labs if lab.demo_course_id]
+
+    course_ids = uniqify(course_ids)
     courses = []
     for course_id in course_ids:
         try:
