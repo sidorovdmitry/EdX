@@ -85,6 +85,21 @@ class LabsterUser(models.Model):
     def is_student(self):
         return self.user_type == self.USER_TYPE_STUDENT
 
+    @property
+    def is_high_school(self):
+        return self.user_school_level == self.USER_HIGH_SCHOOL
+
+    @property
+    def is_university(self):
+        universities = [
+            self.USER_COLLEGE,
+            self.USER_UNIVERSITY,
+            self.USER_EDUCATION_MANAGER,
+            self.USER_DEAN,
+            self.USER_OTHER,
+        ]
+        return self.user_school_level in [universities]
+
 
 def create_labster_user(sender, instance, created, **kwargs):
     if created:
