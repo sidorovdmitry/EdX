@@ -164,7 +164,7 @@ LANGUAGES = [
     <h2>${lab.name}</h2>
     <h3>Use Safari</h3>
     <p>We're sorry to tell you that due to a bug from chrome and unity, please use Safari instead to play our lab.</p>
-      % if user_attempt.is_completed:
+      % if user_attempt and user_attempt.is_completed:
       <p>
       However, if you're here to see the result, you still could to that:<br>
       <a class="button button-labster-blue" href="${result_url}">Result</a>
@@ -226,7 +226,7 @@ LANGUAGES = [
       % else:
       <a class="button button-labster-blue playLabButton" data-url="start_new_lab/?token=${user_token.key}" id="startNewButton" href="#">Enter the Lab</a>
       % endif
-      % if user_attempt.is_completed:
+      % if user_attempt and user_attempt.is_completed:
       <a class="button button-labster-blue" href="${result_url}">Result</a>
       % endif
     </div>
@@ -480,12 +480,7 @@ LANGUAGES = [
 
       jQuery('#unityPlayerContainer .exit-lab').click(function(ev) {
         ev.preventDefault();
-        var sure = confirm("Are you sure you want to close the lab?");
-        if (sure) {
-          location.reload();
-          // jQuery('#unityPlayerContainer').hide();
-          // stopLab();
-        }
+        location.reload();
       });
 
       if (chromeOnMac) {
