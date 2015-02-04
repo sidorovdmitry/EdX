@@ -12,9 +12,9 @@
 }
 
 .labster-register-form .select-container {
-    background-image: url('https://labsterim.s3.amazonaws.com/media/uploads/edx/arrow_down.jpg');
-    background-repeat: no-repeat;
-    background-position: right 15px center;
+    /* background-image: url('https://labsterim.s3.amazonaws.com/media/uploads/edx/arrow_down.jpg'); */
+    /* background-repeat: no-repeat; */
+    /* background-position: right 15px center; */
     border-radius: 3px;
     border: 1px solid #376492;
     overflow: hidden;
