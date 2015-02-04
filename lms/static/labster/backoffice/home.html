@@ -13,7 +13,7 @@
 
 <div class="labster-row">
   <div class="labster-container">
-    <div class="labster-box" ng-hide="user_edu_level == 1">
+    <div class="labster-box" ng-hide="backoffice_user.is_high_school">
       <header><h4><strong>University/College Packages</strong></h4></header>
       <div class="labster-box-content">
         <ul>
@@ -27,7 +27,7 @@
         <a href="license/new/group/univ" class="btn-labster btn-labster-home">Buy Now</a>
       </div>
     </div>
-    <div class="labster-box" ng-hide="user_edu_level == 2">
+    <div class="labster-box" ng-hide="backoffice_user.is_university">
       <header><h4><strong>High School Packages</strong></h4></header>
       <div class="labster-box-content">
         <ul>

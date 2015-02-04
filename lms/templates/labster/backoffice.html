@@ -42,7 +42,9 @@ window.requestUser = {
     user: {
       id: "${backoffice['user_id']}",
       country: "${backoffice['user_country']}",
-      edu_level: "${backoffice['user_edu_level']}"
+      edu_level: "${backoffice['user_edu_level']}",
+      is_high_school: ${"true" if user.labster_user.is_high_school else "false"},
+      is_university: ${"true" if user.labster_user.is_university else "false"}
     },
     token: "${token}"
   }

@@ -92,13 +92,14 @@ class LabsterUser(models.Model):
     @property
     def is_university(self):
         universities = [
+            None,
             self.USER_COLLEGE,
             self.USER_UNIVERSITY,
             self.USER_EDUCATION_MANAGER,
             self.USER_DEAN,
             self.USER_OTHER,
         ]
-        return self.user_school_level in [universities]
+        return self.user_school_level in universities
 
 
 def create_labster_user(sender, instance, created, **kwargs):
