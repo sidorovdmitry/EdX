@@ -578,6 +578,12 @@ if settings.FEATURES.get('LABSTER'):
         url('^labster/', include('labster.urls')),
     )
 
+    for path in settings.LABSTER_OLD_PAGES:
+        url_path = '^(?P<path>{})$'.format(path)
+        urlpatterns += (
+            url(url_path, 'labster.landing.views.redirect_to_old'),
+        )
+
 urlpatterns = patterns(*urlpatterns)
 
 if settings.DEBUG:

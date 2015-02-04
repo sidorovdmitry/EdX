@@ -3,7 +3,8 @@ import json
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.mail import EmailMessage
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
+from django.http import HttpResponse
 from django.contrib import messages
 from django.shortcuts import redirect
 from django_future.csrf import ensure_csrf_cookie
@@ -130,3 +131,8 @@ def contact_form(request):
             json.dumps({"Some error occurred in sending mail."}),
             content_type="application/json"
         )
+
+
+def redirect_to_old(request, path=''):
+    old_site = "http://web.labster.com/{}".format(path)
+    return HttpResponsePermanentRedirect(old_site)

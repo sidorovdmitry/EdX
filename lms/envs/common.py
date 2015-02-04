@@ -1597,7 +1597,7 @@ MKTG_URL_LINK_MAP = {
     'PRIVACY': None,  # 'privacy_edx',
     'JOBS': 'jobs',
     'PRESS': 'press',
-    'BLOG': 'blog',
+    # 'BLOG': 'blog',
     'DONATE': 'donate',
     'CAREER': 'career',
     'PRICING': 'pricing',
@@ -1716,6 +1716,34 @@ if FEATURES.get('LABSTER'):
     PLATFORM_NAME = 'LabsterX'
     THEME_NAME = 'labster'
     FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
+
+    LABSTER_OLD_PAGES = [
+        "features/",
+        "jobs/",
+        "nature-biotech-findings/",
+        "programming-cells-like-computer-code/",
+        "labster-article-nature-biotech-new-grants-labs-website/",
+        "lab-catalog/",
+        "product/gene-regulation-lab/",
+        "blog/",
+        "ambassador-program/",
+        "case-study-stanford-online-high-school/",
+        "about-contact/",
+        "press/",
+        "testimonials/",
+        "product/introductory-lab/",
+        "labster-goes-to-nepal-and-singapore/",
+        "support/",
+        "terms-and-conditions/",
+        "privacy-policy/",
+        "press_releases/labster-2-0-launched/",
+        "employee-spotlight-tamara/",
+        "virtual-reality-labs-new-product-launches-and-two-competition-wins/",
+        "product/csi-lab/",
+        "engineering-organ-regeneration-and-stem-cells/",
+        "team/mads-tvillinggaard-bonde-2/",
+        "developing-labster-on-two-continents/",
+    ]
 
 
 ############################ ORA 2 ############################################
