@@ -116,21 +116,20 @@ def contact_form(request):
         name = request.POST.get('name')
         email = request.POST.get('email')
         message = request.POST.get('message')
-        body = "<p>Name: {0}</p><p>Email: {1}</p><p>Message: {2}</p>".format(name, email, message)
+        body = "<p>Name: {0}</p><p>Email: {1}</p><p>Message: </p><p>{2}</p>".format(name, email, message)
 
-        email = EmailMessage(subject, body, email, ['aslamhadi@labster.com'])
+        email = EmailMessage(subject, body, email, ['please-reply@labster.com'])
         email.content_subtype = "html"
         email.send(fail_silently=False)
 
-        messages.success(request, 'Thank you for contacting us. We will contact you as soon as possible.', extra_tags='safe')
+        messages.success(request, 'Thank you for contacting us. We will get back to you as soon as possible.', extra_tags='safe')
 
         return HttpResponseRedirect('/contact#feedbackForm')
 
     else:
-        return HttpResponse(
-            json.dumps({"Some error occurred in sending mail."}),
-            content_type="application/json"
-        )
+        messages.success(request, 'Some error occurred in sending mail.', extra_tags='safe')
+
+        return HttpResponseRedirect('/contact#feedbackForm')
 
 
 def redirect_to_old(request, path=''):
