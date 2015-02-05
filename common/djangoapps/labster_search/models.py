@@ -61,10 +61,11 @@ def get_keywords_from_lab_problems(lab):
 def update_lab_keywords(lab, keywords, keyword_type, source):
     for keyword in keywords:
         obj, created = LabKeyword.objects.get_or_create(
-            lab=lab,
+            course_id=lab.demo_course_id,
             keyword=keyword,
             keyword_type=keyword_type)
 
+        obj.lab = lab
         obj.frequency += 1
         obj.source = source
         obj.save()
@@ -100,7 +101,8 @@ def update_lab_keyword_content(lab):
 
 def update_all_lab_keywords():
     for lab in Lab.objects.all():
-        update_lab_keyword_content(lab)
+        if lab.demo_course_id:
+            update_lab_keyword_content(lab)
 
 
 def get_keywords_from_course(course):
