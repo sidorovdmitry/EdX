@@ -53,6 +53,9 @@ function registerModalInit(options) {
     updateUrl = function(userId) {
         return createUrl + userId + "/";
     };
+    sendEmailUrl = function(userId) {
+        return createUrl + "send-email/" + userId + "/";
+    }
 
     containerFormZero = $('.register-wizard-0');
     containerFormOne = $('.register-wizard-1');
@@ -64,6 +67,21 @@ function registerModalInit(options) {
         ev.preventDefault();
         $(this).closest('form').submit();
     });
+
+    sendEmailTeacher = function() {
+      $.ajax({
+          url: sendEmailUrl(window.user.id),
+          type: "GET",
+          beforeSend: function(xhr, settings) {
+              xhr.setRequestHeader("Authorization", "Token " + window.user.token_key);
+          },
+          success: function(response) {
+            console.log("success");
+          },
+          error: function(obj, msg, status) {
+          }
+      });
+    }
 
     buttonInSaving = function(button) {
         button.data('original-html', button.html());
@@ -255,6 +273,8 @@ function registerModalInit(options) {
                       containerFormTwoT.fadeOut(function() {
                           containerFormThree.find('form').submit();
                       });
+                      // Send email to sales people
+                      sendEmailTeacher();
                   },
                   error: function(obj, msg, status) {
                       resetButton(submit);
