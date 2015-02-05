@@ -1,7 +1,11 @@
 from django.contrib.auth.models import User
 from django.http import Http404
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from student.models import UserProfile
 
@@ -26,6 +30,7 @@ def get_user_as_custom_labster_user(user, password=None):
         user_type=labster_user.user_type,
         organization_name=labster_user.organization_name,
         user_school_level=labster_user.user_school_level,
+        user_school_level_dispay = labster_user.get_user_school_level_display(),
         date_of_birth=labster_user.date_of_birth,
         name=profile.name,
         password=password,
@@ -38,6 +43,35 @@ def get_user_as_custom_labster_user(user, password=None):
 class UserCreate(generics.CreateAPIView):
     serializer_class = UserCreateSerializer
     model = User
+
+
+class SendEmailUserCreate(APIView):
+
+    def get(self, request, *args, **kwargs):
+        # Send email to Mikael everytime a teacher signs up
+
+        try:
+            user = User.objects.get(id=self.kwargs.get('user_id'))
+        except User.DoesNotExist:
+            raise Http404
+
+        labster_user = get_user_as_custom_labster_user(user)
+
+        context = {
+            'user': user,
+            'labster_user': labster_user,
+            'user_school_level': labster_user.user_school_level_dispay,
+        }
+        email_html = render_to_string('emails/teacher_information.html', context)
+        subject = "New teacher registration"
+
+        email = EmailMessage(subject, email_html, "no-reply@labster.com", ['mikael@labster.com'])
+        email.content_subtype = "html"
+        email.send(fail_silently=False)
+
+        http_status = status.HTTP_200_OK
+
+        return Response(http_status)
 
 
 class UserView(AuthMixin, generics.RetrieveUpdateAPIView):
