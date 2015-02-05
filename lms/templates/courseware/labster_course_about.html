@@ -233,12 +233,14 @@
 
       </section>
       % if get_course_about_section(course, "video"):
-      <a href="#video-modal" class="media" rel="leanModal">
-        <div class="hero">
-          <img src="${course_image_url(course)}" alt="" />
-          <div class="play-intro"></div>
-        </div>
-      </a>
+      <div ng-app="LabsterAnalytics">
+        <a href="#video-modal" class="media" rel="leanModal" analytics-on analytics-event="Play" analytics-category="Videos" analytics-label="${get_course_about_section(course, "title")} Virtual Lab Simulation">
+          <div class="hero">
+            <img src="${course_image_url(course)}" alt="" />
+            <div class="play-intro"></div>
+          </div>
+        </a>
+      </div>
       %else:
       <div class="media">
         <div class="hero">
