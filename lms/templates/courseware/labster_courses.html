@@ -95,10 +95,16 @@ show_partners = microsite.get_value('show_partners', True)
   <%block name="js_extra">
   <script type="text/javascript">
     $(window).load(function() {
-     if(getParameterByName('next')) {
-      $('#login').trigger("click");
-    }
-  })
+      if(getParameterByName('next')) {
+        $('#login').trigger("click");
+      }
+
+      % if keywords:
+      var keywords = "${keywords}";
+      var result_count = ${len(courses)};
+      ga('send', 'event', 'courses', 'search', keywords, result_count);
+      % endif
+    })
   </script>
   </%block>
 
