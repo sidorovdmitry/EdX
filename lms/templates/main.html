@@ -45,7 +45,7 @@
 <%def name="pagetitle()" />
   <%block name="title">
       <title>
-       ${page_title_breadcrumbs(self.pagetitle())}
+       ${"{} | Virtual Lab Simulations for Teaching Life Science".format(self.pagetitle())}
       </title>
   </%block>
 
@@ -160,7 +160,7 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     </div>
 
     <%block name="footer">
-      ## Can be overridden by child templates wanting to hide the footer. 
+      ## Can be overridden by child templates wanting to hide the footer.
       <%
         if theme_enabled() and not is_microsite():
           footer_file = 'theme-footer.html'
