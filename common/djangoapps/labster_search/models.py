@@ -108,7 +108,6 @@ def update_all_lab_keywords():
 def get_keywords_from_course(course):
     sentences = [course.display_name]
     keywords = get_keywords_from_sentences(sentences)
-    print keywords
     return keywords
 
 
@@ -129,7 +128,7 @@ def update_lab_keywords_from_course(course):
     update_course_keywords(
         course,
         keywords,
-        keyword_type=LabKeyword.KEYWORD_SECONDARY,
+        keyword_type=LabKeyword.KEYWORD_PRIMARY,
         source=LabKeyword.SOURCE_COURSE,
     )
 
