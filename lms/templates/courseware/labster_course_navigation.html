@@ -50,11 +50,13 @@ def url_class(is_active):
           </li>
       % endfor
     <%block name="extratabs" />
+        <%doc>
         % if masquerade is not UNDEFINED:
           % if staff_access and masquerade is not None:
             <li style="float:right"><a href="#" id="staffstatus">${_("Staff view")}</a></li>
           % endif
         % endif
+        </%doc>
         <%
         roles = []
         if user.is_authenticated():
@@ -62,9 +64,8 @@ def url_class(is_active):
         %>
         % if 'staff' in roles:
           <li style="float:right"><a href="${invite_students_url}" id="invitestudents" style="color:green">${_("Manage Students")}</a></li>
-          % if course.labster_demo:
+        % elif course.labster_demo:
           <li style="float:right"><a href="#invite-students-modal" rel="leanModal" class="invite-students" style="color:green" data-course-name="${course.display_name_with_default}" data-course-location="${course.location.org}/${course.location.course}/${course.location.run}">${_("Invite Students to Try Course")}</a></li>
-          % endif
         % endif
     </ol>
   </div>

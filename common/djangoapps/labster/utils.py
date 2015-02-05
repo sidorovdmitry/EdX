@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import hashlib
 import re
 
@@ -10,6 +11,10 @@ from django.test.client import RequestFactory
 
 URL_PREFIX = settings.LABSTER_UNITY_URL_PREFIX
 S3_BASE_URL = settings.LABSTER_S3_BASE_URL
+
+
+def uniqify(seq):
+    return list(OrderedDict.fromkeys(seq))
 
 
 def get_request(user=None, data=None):

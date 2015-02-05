@@ -1,13 +1,19 @@
 from django.db import models
 from django.utils import timezone
 
+from xmodule.course_module import CourseDescriptor
+from xmodule.modulestore.django import modulestore
+from xmodule_django.models import CourseKeyField
+
 from labster.models import Lab, Problem
 from labster_search.utils import get_sentences_from_xml, get_keywords_from_sentences
 
 
 class LabKeyword(models.Model):
 
-    lab = models.ForeignKey(Lab)
+    lab = models.ForeignKey(Lab, blank=True, null=True)
+    course_id = CourseKeyField(max_length=255, db_index=True, blank=True, null=True)
+
     keyword = models.CharField(max_length=255, db_index=True)
     display_name = models.CharField(max_length=255, blank=True, default="")
     rank = models.IntegerField(default=0)
@@ -24,18 +30,17 @@ class LabKeyword(models.Model):
     SOURCE_PROBLEM = 1
     SOURCE_ENGINE_XML = 2
     SOURCE_MANUAL = 3
+    SOURCE_COURSE = 4
     SOURCES = (
         (SOURCE_PROBLEM, 'problem'),
         (SOURCE_ENGINE_XML, 'engine XML'),
         (SOURCE_MANUAL, 'manual'),
+        (SOURCE_COURSE, ' course'),
     )
     source = models.IntegerField(choices=SOURCES, blank=True, null=True)
 
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        unique_together = ('lab', 'keyword', 'keyword_type')
 
     def __unicode__(self):
         return "{}".format(self.id)
@@ -56,10 +61,11 @@ def get_keywords_from_lab_problems(lab):
 def update_lab_keywords(lab, keywords, keyword_type, source):
     for keyword in keywords:
         obj, created = LabKeyword.objects.get_or_create(
-            lab=lab,
+            course_id=lab.demo_course_id,
             keyword=keyword,
             keyword_type=keyword_type)
 
+        obj.lab = lab
         obj.frequency += 1
         obj.source = source
         obj.save()
@@ -95,4 +101,41 @@ def update_lab_keyword_content(lab):
 
 def update_all_lab_keywords():
     for lab in Lab.objects.all():
-        update_lab_keyword_content(lab)
+        if lab.demo_course_id:
+            update_lab_keyword_content(lab)
+
+
+def get_keywords_from_course(course):
+    sentences = [course.display_name]
+    keywords = get_keywords_from_sentences(sentences)
+    return keywords
+
+
+def update_course_keywords(course, keywords, keyword_type, source):
+    for keyword in keywords:
+        obj, created = LabKeyword.objects.get_or_create(
+            course_id=course.id,
+            keyword=keyword,
+            keyword_type=keyword_type)
+
+        obj.frequency += 1
+        obj.source = source
+        obj.save()
+
+
+def update_lab_keywords_from_course(course):
+    keywords = get_keywords_from_course(course)
+    update_course_keywords(
+        course,
+        keywords,
+        keyword_type=LabKeyword.KEYWORD_PRIMARY,
+        source=LabKeyword.SOURCE_COURSE,
+    )
+
+
+def update_lab_keywords_from_courses():
+    courses = modulestore().get_courses()
+    courses = [c for c in courses if isinstance(c, CourseDescriptor)]
+    courses = [course for course in courses if course.labster_demo and course.is_browsable]
+    for course in courses:
+        update_lab_keywords_from_course(course)
