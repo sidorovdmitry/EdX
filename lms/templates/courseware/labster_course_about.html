@@ -177,6 +177,7 @@
           <div id="register_error"></div>
         %else:
 
+          <div ng-app="LabsterAnalytics">
           % if course.labster_demo:
             % if course.start > timezone.now():
             <span class="register disabled">${_("The Course Is Not Started Yet")}</span>
@@ -221,12 +222,14 @@
                   </div>
                 </div>
               % endif
+              <!-- endif user is authenticated -->
             % endif
           % else:
           <a href="#" class="register">
             ${_("Register Course")}
           </a>
           % endif
+          </div> <!-- end ng-app -->
           <div id="register_error"></div>
         %endif
         </div>
