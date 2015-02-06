@@ -14,6 +14,7 @@
 .hero {
   width: 583px;
   height: 304px;
+  box-shadow: 0px 0px 155px black;
   background: url(../../images/landing/bg-search-form.jpg) no-repeat;
 }
 .hero h2 {
