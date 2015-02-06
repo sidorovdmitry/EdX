@@ -1,4 +1,8 @@
 .content-wrapper {padding-top: 75px;}
+header.global nav .nav-global a {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
 .nav-global {
   margin-top: 5px !important;
 }
