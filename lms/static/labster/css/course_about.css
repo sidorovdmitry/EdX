@@ -90,7 +90,7 @@ button.labster-register {
 }
 
 .course-info header.course-profile .intro-inner-wrapper .intro {
-    width: 50%;
+    width: 60%;
     padding-top: 0;
     padding-left: 0;
 }
@@ -104,6 +104,7 @@ button.labster-register {
 }
 
 .labster-register-box-container {
+    display: -webkit-flex;
     display: flex;
 }
 
