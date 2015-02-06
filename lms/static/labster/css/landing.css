@@ -4,7 +4,7 @@
 }
 .nav-global li {margin-right: 0px !important;}
 .landing-home {
-  background: #eee url(../../images/landing/bg-header.jpg) center no-repeat !important;
+  background: #eee url('https://s3.amazonaws.com/labsterim/media/uploads/edx/bg_header.jpg') center no-repeat !important;
   background-size: cover !important;
   border-bottom:none !important;
   -webkit-box-shadow: inset 0px 0px 0px #ffffff !important;
