@@ -45,16 +45,16 @@
       </tr>
     </tbody>
     <tfoot>
-      <tr>
+      <tr ng-hide="tax == 0">
         <td>Subtotal</td>
         <td class="align-right">{{ subTotalPrice|currency:"$" }}</td>
       </tr>
-      <tr>
+      <tr ng-hide="tax == 0">
         <td>Tax</td>
         <td class="align-right">{{ tax|currency:"$" }}</td>
       </tr>
       <tr>
-        <td>Total</td>
+        <td>Total Price</td>
         <td class="align-right">{{ totalPrice|currency:"$" }}</td>
       </tr>
     </tfoot>

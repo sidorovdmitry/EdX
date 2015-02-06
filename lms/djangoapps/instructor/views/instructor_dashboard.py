@@ -67,7 +67,7 @@ def instructor_dashboard_2(request, course_id):
     sections = [
         _section_course_info(course, access),
         _section_membership(course, access),
-        _section_student_admin(course, access),
+        # _section_student_admin(course, access), hide student grades link - aslam 6 Feb 2015 -
         _section_data_download(course, access),
         _section_analytics(course, access),
     ]
