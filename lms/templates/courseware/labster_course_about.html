@@ -382,25 +382,29 @@
           % if get_course_about_section(course, "prerequisites"):
             <li class="important-dates-item"><i class="icon fa fa-book"></i><p class="important-dates-item-title">${_("Prerequisites")}</p><span class="important-dates-item-text prerequisites">${get_course_about_section(course, "prerequisites")}</span></li>
           % endif
-          <li class="learning-container important-dates-item">
-            <i class="icon fa fa-graduation-cap"></i><p class="important-dates-item-title">${_("Learning Outcomes and Topics")}</p>
-            <div class="clear"></div>
-            <p class="learning-description">The following list are topics, techniques and terms covered in this lab, in prioritized order, to give you a quick overview of the lab.</p>
-            <div class="clear"></div>
-            <ol class="learning">
-              % for keyword in primary_keywords[:10]:
-              <li>${keyword.display_name}</li>
-              % endfor
-              % for keyword in primary_keywords[10:]:
-                <li class="hide_tags">${keyword.display_name}</li>
-              % endfor
-              % if primary_keywords:
-                <li class="link_tags">
-                  <a onclick="show_all_tags()">Show All</a>
-                </li>
-              % endif
-            </ol>
-          </li>
+
+          % if primary_keywords:
+            <li class="learning-container important-dates-item">
+              <i class="icon fa fa-graduation-cap"></i><p class="important-dates-item-title">${_("Learning Outcomes and Topics")}</p>
+              <div class="clear"></div>
+              <p class="learning-description">The following list are topics, techniques and terms covered in this lab, in prioritized order, to give you a quick overview of the lab.</p>
+              <div class="clear"></div>
+              <ol class="learning">
+                % for keyword in primary_keywords[:10]:
+                <li>${keyword.display_name}</li>
+                % endfor
+                % for keyword in primary_keywords[10:]:
+                  <li class="hide_tags">${keyword.display_name}</li>
+                % endfor
+                % if len(primary_keywords) >= 10:
+                  <li class="link_tags">
+                    <a onclick="show_all_tags()">Show All</a>
+                  </li>
+                % endif
+              </ol>
+            </li>
+          % endif
+
         </ol>
       </section>
 

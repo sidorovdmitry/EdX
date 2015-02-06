@@ -22,6 +22,14 @@
 <%block name="bodyclass">view-dashboard is-authenticated</%block>
 <%block name="nav_skip">#my-courses</%block>
 
+<%block name="headextra">
+  <style>
+    .dashboard .my-courses .course .cover, .dashboard .my-courses .course a.fade-cover {
+      border-bottom: 1px solid #ddd !important;
+    }
+  </style>
+</%block>
+
 <%block name="js_extra">
   <script type="text/javascript">
   (function() {
