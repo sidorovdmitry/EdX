@@ -116,6 +116,7 @@ def contact_form(request):
         name = request.POST.get('name')
         email = request.POST.get('email')
         message = request.POST.get('message')
+        message = message.encode('utf-8')
         body = "<p>Name: {0}</p><p>Email: {1}</p><p>Message: </p><p>{2}</p>".format(name, email, message)
 
         email = EmailMessage(subject, body, email, ['please-reply@labster.com'])
