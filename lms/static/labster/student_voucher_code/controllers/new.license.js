@@ -51,7 +51,9 @@ angular.module('StudentVoucherCode')
       ngDialog.open({
           template: '<h2 class="align-center">Please wait. We are processing your payment.</h2>',
           plain: true,
-          showClose: false
+          showClose: false,
+          closeByDocument: false,
+          closeByEscape : false
       })
 
       $http.post(
