@@ -102,7 +102,7 @@ show_partners = microsite.get_value('show_partners', True)
       % if keywords:
       var keywords = "${keywords}";
       var result_count = ${len(courses)};
-      ga('send', 'event', 'courses', 'search', keywords, result_count);
+      ga('send', 'event', 'Search', 'search', keywords, result_count);
       % endif
     })
   </script>
