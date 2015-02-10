@@ -1,14 +1,20 @@
 <div>
-  <div class="margin-bottom-20">
-    <p>
-      Please insert the voucher system that your teacher has provided you with, into the text field (as seen below in the picture).
-      This is done to ensure that you are linked to the right teacher and your fellow students.
-    </p>
-  </div>
-
+  <header>
+    <h2>Enter Voucher Code</h2>
+  </header>
+  <hr>
+  <p>
+  Please insert the voucher system that your teacher has provided you with,
+  into the text field (as seen below in the picture).
+  This is done to ensure that you are linked to the right teacher and your fellow students.
+  </p>
   <p>The voucher code is consist of 10 characters. It can be lower case, upper case, and numbers.</p>
+  <p>
   <form ng-submit="submit()">
-    <input type="text" ng-model="voucher_code" required placeholder="Enter the voucher code" />
-    <input type="submit" value="Submit">
+    <input type="text" ng-model="voucher_code" required placeholder="Enter the voucher code" style="height:38px;line-height:38px;">
+    <button type="submit" class="button-labster-blue" ng-hide="is_submitting">Submit</button>
+    <button type="button" class="button-labster-blue disabled" disabled ng-show="is_submitting">
+      <i class="fa fa-spin fa-spinner"></i> Validating</button>
   </form>
+  </p>
 </div>

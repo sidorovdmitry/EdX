@@ -45,7 +45,7 @@
           }
 
           $("#lean_overlay").click(function(e) {
-            close_modal(modal_id, e);
+            // close_modal(modal_id, e);
           });
 
           $(o.closeButton).click(function(e) {

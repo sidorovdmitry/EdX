@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import Http404
 from django.core.mail import EmailMessage
@@ -65,7 +66,7 @@ class SendEmailUserCreate(APIView):
         email_html = render_to_string('emails/teacher_information.html', context)
         subject = "New teacher registration"
 
-        email = EmailMessage(subject, email_html, "no-reply@labster.com", ['mikael@labster.com'])
+        email = EmailMessage(subject, email_html, "no-reply@labster.com", settings.SALES_EMAIL)
         email.content_subtype = "html"
         email.send(fail_silently=False)
 

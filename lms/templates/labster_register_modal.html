@@ -4,7 +4,7 @@
 <%! from labster.models import LabsterUser %>
 
 <%namespace name='static' file='/static_content.html'/>
-<section id="register-modal" class="modal register-modal">
+<section id="register-modal" class="modal register-modal" ng-app="LabsterAnalytics">
   <div class="inner-wrapper register-wizard-0" role="alertdialog" aria-labelledy="register-modal-title">
     <header>
       <h2>
@@ -12,14 +12,14 @@
       </h2>
       <hr/>
     </header>
-    <form id="" action="#" method="post" class="labster-register-form">
+    <form id="register-wizard-0-form" action="#" method="post" class="labster-register-form">
       <label>
         <span class="label">Sign up with your email</span>
-        <input type="email" name="email" class="required" placeholder="Email Address">
+        <input id="email-0" type="email" name="email" class="required" placeholder="Email Address" analytics-on="focus" analytics-category="Registration" analytics-event="Input Email">
         <span class="error-message"></span>
       </label>
       <div class="submit">
-        <button type="submit" class="labster-register button-labster-blue" data-original-html="Sign Up">${_('Sign up')}</button>
+        <button type="submit" id="register-wizard-0-btn" class="labster-register button-labster-blue" data-original-html="Sign Up" analytics-on="click" analytics-category="Registration" analytics-event="Submit Email">${_('Sign up')}</button>
       </div>
       <div class="tos-container">
         By signin up, you agree to our <a href="/tos" target="_blank">Terms of Service</a>
@@ -33,19 +33,19 @@
       </h2>
       <hr/>
     </header>
-    <form id="" action="#" method="post" class="labster-register-form">
+    <form id="register-wizard-1-form" action="#" method="post" class="labster-register-form">
       <label>
         <span class="label">Name</span>
-        <input type="text" placeholder="Name" name="name" class="required">
+        <input type="text" id="name-1" placeholder="Name" name="name" class="required" analytics-on="focus" analytics-category="Registration" analytics-event="Input Name">
         <span class="error-message"></span>
       </label>
       <label>
         <span class="label">Password</span>
-        <input type="password" name="password" class="required">
+        <input type="password" id="password-1" name="password" class="required" analytics-on="focus" analytics-category="Registration" analytics-event="Input Password">
         <span class="error-message"></span>
       </label>
       <div class="submit">
-        <button type="submit" class="labster-register button-labster-blue" data-original-html="Sign Up">${_('Sign up')}</button>
+        <button type="submit" id="register-wizard-1-btn" class="labster-register button-labster-blue" data-original-html="Sign Up" analytics-on="click" analytics-category="Registration" analytics-event="Submit Name/Password">${_('Sign up')}</button>
       </div>
       <div class="tos-container">
         By signin up, you agree to our <a href="/tos" target="_blank">Terms of Service</a>
@@ -59,10 +59,10 @@
       </h2>
       <hr/>
     </header>
-    <form id="" action="#" method="post" class="labster-register-form">
+    <form id="register-wizard-2-t-form" action="#" method="post" class="labster-register-form">
       <label>
         <div class="select-container">
-          <select name="user_school_level" class="required">
+          <select id="occupation" name="user_school_level" class="required" analytics-on="click" analytics-category="Registration" analytics-event="Input Occupation">
             <option value="">Occupation</option>
             % for key, value in LabsterUser.USER_SCHOOL_LEVEL_CHOICES:
             <option value="${key}">${value}</option>
@@ -72,15 +72,15 @@
         <span class="error-message"></span>
       </label>
       <label>
-        <input type="text" placeholder="School/Company Name" name="organization_name" class="required">
+        <input type="text" id="school-2" placeholder="School/Company Name" name="organization_name" class="required" analytics-on="focus" analytics-category="School/Company Name" analytics-event="Input School/Company Name">
         <span class="error-message"></span>
       </label>
       <label>
-        <input type="text" placeholder="Phone Number" name="phone_number" class="required">
+        <input type="text" id="phone_number-2" placeholder="Phone Number" name="phone_number"  class="required" analytics-on="focus" analytics-category="Registration" analytics-event="Input Phone Number">
         <span class="error-message"></span>
       </label>
       <div class="submit">
-        <button type="submit" class="labster-register button-labster-blue" data-original-html="Complete Regisration">Complete Registration</button>
+        <button type="submit" id="register-wizard-2-t-btn" class="labster-register button-labster-blue" data-original-html="Complete Regisration" analytics-on="click" analytics-category="Registration" analytics-event="Submit School/Phone Number">Complete Registration</button>
       </div>
     </form>
   </div>
@@ -91,10 +91,10 @@
       </h2>
       <hr/>
     </header>
-    <form id="" action="#" method="post" class="labster-register-form">
+    <form id="register-wizard-2-s-form" action="#" method="post" class="labster-register-form">
       <label>
         <div class="select-container">
-          <select name="level_of_education">
+          <select id="level_of_education" name="level_of_education" analytics-on="click" analytics-category="Registration" analytics-event="Input Education">
             <option value="">Higest Level of Education</option>
             % for key, value in UserProfile.LEVEL_OF_EDUCATION_CHOICES:
             <option value="${key}">${value}</option>
@@ -104,7 +104,7 @@
       </label>
       <label>
         <div class="select-container">
-          <select name="gender">
+          <select id="gender" name="gender" analytics-on="click" analytics-category="Registration" analytics-event="Input Gender">
             <option value="">Gender</option>
             <option value="m">Male</option>
             <option value="f">Female</option>
@@ -114,7 +114,7 @@
       </label>
       <label>
         <div class="select-container">
-          <select name="year_of_birth">
+          <select id="year_of_birth" name="year_of_birth" analytics-on="click" analytics-category="Registration" analytics-event="Input Year of Birth">
             <option value="">Year of Birth</option>
             % for year in range(timezone.now().year - 10, timezone.now().year - 110, -1):
             <option value="${year}">${year}</option>
@@ -123,9 +123,9 @@
         </div>
       </label>
       <div class="submit">
-        <button type="submit" class="labster-register button-labster-blue" data-original-html="Complete Regisration">Complete Registration</button>
+        <button type="submit" id="register-wizard-2-s-btn" class="labster-register button-labster-blue" data-original-html="Complete Registration" analytics-on="click" analytics-category="Registration" analytics-event="Complete Registration">Complete Registration</button>
       </div>
-      <div class="button-link-container">Or <a href="" class="button-link-submit">Skip questions</a></div>
+      <div class="button-link-container">Or <a href="" id="link-skip-question" class="button-link-submit" analytics-on="click" analytics-category="Registration" analytics-event="Skip Questions">Skip questions</a></div>
     </form>
   </div>
 
@@ -136,14 +136,14 @@
       </h2>
       <hr/>
     </header>
-    <form id="" action="/labster/login-by-token/" method="post">
+    <form id="register-wizard-3-form" action="/labster/login-by-token/" method="post">
       <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
       <input type="hidden" name="user_id">
       <input type="hidden" name="course_id">
       <input type="hidden" name="token_key">
       <input type="hidden" name="next">
       <div class="submit">
-        <button type="submit" class="labster-register button-labster-blue">Continue</button>
+        <button type="submit" id="register-wizard-3-btn" class="labster-register button-labster-blue">Continue</button>
       </div>
     </form>
   </div>

@@ -10,7 +10,10 @@ angular.module('LabsterBackOffice')
           // show progress page while sending data to backoffice api
           ngDialog.open({
               template: '<h2 class="align-center">Please wait. We are processing your payment.</h2>',
-              plain: true
+              plain: true,
+              showClose: false,
+              closeByDocument: false,
+              closeByEscape : false
           })
         };
 

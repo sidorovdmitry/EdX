@@ -76,7 +76,7 @@ show_partners = microsite.get_value('show_partners', True)
         % endif
       </header>
 
-      <section class="courses">
+      <section class="courses" ng-app="LabsterAnalytics">
         <ul class="courses-listing">
           <!-- list labs -->
           %for course in courses:

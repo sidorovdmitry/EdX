@@ -1,10 +1,14 @@
 .content-wrapper {padding-top: 75px;}
+header.global nav .nav-global a {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
 .nav-global {
   margin-top: 5px !important;
 }
 .nav-global li {margin-right: 0px !important;}
 .landing-home {
-  background: #eee url(../../images/landing/bg-header.jpg) center no-repeat !important;
+  background: #eee url('https://s3.amazonaws.com/labsterim/media/uploads/edx/bg_header.jpg') center no-repeat !important;
   background-size: cover !important;
   border-bottom:none !important;
   -webkit-box-shadow: inset 0px 0px 0px #ffffff !important;
@@ -14,6 +18,7 @@
 .hero {
   width: 583px;
   height: 304px;
+  box-shadow: 0px 0px 155px black;
   background: url(../../images/landing/bg-search-form.jpg) no-repeat;
 }
 .hero h2 {
@@ -96,7 +101,7 @@ a.view-all {
   text-shadow: 0 0 15px black;
   margin-left: 20px;
 }
-.clients {padding: 3em 0; overflow: hidden;}
+.clients {padding: 4em 0;}
 .clients ul {
   list-style: none;
   margin:0;
