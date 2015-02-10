@@ -51,6 +51,7 @@ def get_courses_from_keywords(keywords):
         return []
 
     course_ids = get_course_ids_from_keywords(keywords)
+    course_ids = filter(None, course_ids)
     courses = []
     for course_id in course_ids:
         course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
