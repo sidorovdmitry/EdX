@@ -15,7 +15,8 @@
         top: 100,
         overlay: 0.5,
         closeButton: null,
-        position: 'fixed'
+        position: 'fixed',
+        closeOnClick: true
       }
 
       if ($("#lean_overlay").length == 0) {
@@ -45,7 +46,9 @@
           }
 
           $("#lean_overlay").click(function(e) {
-            // close_modal(modal_id, e);
+            if (o.closeOnClick) {
+              close_modal(modal_id, e);
+            }
           });
 
           $(o.closeButton).click(function(e) {
