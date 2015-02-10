@@ -101,7 +101,7 @@ a.view-all {
   text-shadow: 0 0 15px black;
   margin-left: 20px;
 }
-.clients {padding: 3em 0; overflow: hidden;}
+.clients {padding: 4em 0;}
 .clients ul {
   list-style: none;
   margin:0;
