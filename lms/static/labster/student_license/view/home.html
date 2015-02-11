@@ -48,6 +48,12 @@
       </tr>
     </tfoot>
   </table>
-  <a type="button"
-     class="btn-labster-checkout pull-right" ng-click="buyLab()">Continue to Payment</a>
+  <p>
+    Please read <a href="/tos" target="_blank">the terms and conditions</a>, and tick off the box if you agree, and press “Continue” in order to proceed to the payment.
+  </p>
+  <p><input type="checkbox" ng-model="agree_tos" ng-change="updateBtnPayment()" /> I have read and agree to the Terms & Conditions.</div></p>
+  <div class="pull-right">
+    <a ng-class="btnPayment" ng-hide="is_submitting" ng-click="buyLab()">Continue &nbsp;&nbsp;<i class="fa fa-arrow-right"></i></a>
+    <a ng-class="btnPayment" ng-show="is_submitting"><i class="fa fa-spin fa-spinner"></i> Processing</a>
+  </div>
 </div>
