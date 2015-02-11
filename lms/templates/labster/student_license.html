@@ -1,0 +1,80 @@
+<%! from django.utils.translation import ugettext as _ %>
+<%! from django.template import RequestContext %>
+<%! from third_party_auth import pipeline %>
+
+<%!
+  from django.core.urlresolvers import reverse
+  import waffle
+%>
+
+<%inherit file="../main.html" />
+
+<%namespace name='static' file='../static_content.html'/>
+
+<%block name="pagetitle">${_("Labs")}</%block>
+<%block name="bodyclass">view-dashboard is-authenticated</%block>
+<%block name="nav_skip">#my-courses</%block>
+
+<%block name="headextra">
+<link rel="stylesheet" href="${static.url('labster/css/backoffice.css')}">
+<link rel="stylesheet" href="${static.url('labster/css/ngDialog.min.css')}">
+<link rel="stylesheet" href="${static.url('labster/css/ngDialog-theme-default.min.css')}">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</%block>
+
+<%block name="js_extra">
+<%
+  user_type = user.labster_user.get_user_type_display() if user.labster_user.user_type else ''
+  user_type_id = user.labster_user.user_type
+%>
+<script>
+window.stripeKey = "${stripe_publishable_key}";  // publishable
+window.requestUser = {
+  id: "${user.id}",
+  email: "${user.email}",
+  name: "${user.profile.name}",
+  token: "${user.profile.token_key}",
+  user_type: {
+    label: "${user_type}",
+    id: "${user_type_id}"
+  },
+  backoffice: {
+    user: {
+      id: "${backoffice['user_id']}",
+      country: "${backoffice['user_country']}",
+      edu_level: "${backoffice['user_edu_level']}",
+      is_high_school: ${"true" if user.labster_user.is_high_school else "false"},
+      is_university: ${"true" if user.labster_user.is_university else "false"}
+    },
+    token: "${token}"
+  }
+};
+window.backofficeUrls = {
+  duplicateLabs: "${backoffice_urls['duplicate_labs']}",
+  buyLab: "${backoffice_urls['buy_lab']}",
+  payment: "${backoffice_urls['payment']}",
+  product_group: "${backoffice_urls['product_group']}",
+  product: "${backoffice_urls['product']}",
+  license: "${backoffice_urls['license']}",
+  country: "${backoffice_urls['country']}",
+  get_renew_license_bill: "${backoffice_urls['renew_license_bill']}"
+};
+
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-route.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-resource.min.js"></script>
+<script src="https://checkout.stripe.com/checkout.js"></script>
+<script src="${static.url('labster/lib/ngDialog.min.js')}"></script>
+<script src="${static.url('labster/lib/jsvat.js')}"></script>
+<script src="${static.url('labster/student_license/js/student_license.angular.js')}"></script>
+<!-- controllers -->
+<script src="${static.url('labster/student_license/controllers/home.controller.js')}"></script>
+<!-- services -->
+</%block>
+
+<section class="container dashboard labster-bo" id="dashboard-main" aria-hidden="false" ng-app="LabsterStudentLicense">
+  <section class="profile-sidebar">
+    <a href="/" class="sidebar-button">Back to Dashboard</a>
+  </section>
+  <section class="my-courses" id="my-courses" ng-view autoscroll=""><i class='fa fa-refresh fa-spin'></i> Loading </section>
+</section>
