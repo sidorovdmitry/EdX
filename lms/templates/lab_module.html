@@ -160,17 +160,6 @@ LANGUAGES = [
   </div>
   % endif
   <div class="loading" style="display:none">Loading &hellip;</div>
-  <div class="browser safari mac" style="display:none">
-    <h2>${lab.name}</h2>
-    <h3>Use Safari</h3>
-    <p>We're sorry to tell you that due to a bug from chrome and unity, please use Safari instead to play our lab.</p>
-      % if user_attempt and user_attempt.is_completed:
-      <p>
-      However, if you're here to see the result, you still could to that:<br>
-      <a class="button button-labster-blue" href="${result_url}">Result</a>
-      </p>
-      % endif
-  </div>
   <div id="missingUnityContainer" style="display:none">
     <h2>${lab.name}</h2>
     <h3>How to Play Our Labs</h3>
@@ -187,13 +176,14 @@ LANGUAGES = [
     <div class="browser chrome firefox safari" style="display:none">
       <h3>Unity3D Player</h3>
       <p>You may also need to install the Unity Player plugin in the browser in order to play Labster. This will only happen the first time you try one of our labs, and to help guide you through the process, please have a quick look at the video below.</p>
-      <h3>How to Install Unity Player</h3>
-      <p><iframe width="560" height="315" src="//www.youtube.com/embed/7iVtAmiqIaE" frameborder="0" allowfullscreen></iframe></p>
       <h3>Install Unity Player Now</h3>
       <p>Please click the button below, to start the Unity player install.</p>
       <div id="unityPlayerTest">
         <div class="missing">
-          <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
+          <a class="unity-download mac" style="display:none" href="http://webplayer.unity3d.com/download_webplayer-3.x/webplayer-mini.dmg" title="Unity Web Player. Install now!">
+            <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
+          </a>
+          <a class="unity-download windows" style="display:none" href="http://webplayer.unity3d.com/download_webplayer-3.x/UnityWebPlayer.exe" title="Unity Web Player. Install now!">
             <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
           </a>
         </div>
@@ -424,12 +414,8 @@ LANGUAGES = [
       var browser = jQuery.browser;
       var platform = navigator.platform.toUpperCase();
       var userAgent = navigator.userAgent.toUpperCase();
-      var chromeOnMac = (platform == 'MACINTEL') && (userAgent.indexOf('CHROME/39') !== -1);
 
-      if (chromeOnMac) {
-        jQuery('.browser.safari.mac').show();
-
-      } else if (browser.webkit || browser.mozilla) {
+      if (browser.mozilla) {
         jQuery('.browser.chrome').show();
         jQuery('#course-content').css(
             'background-position', 'top -50px right -90px');
@@ -475,10 +461,7 @@ LANGUAGES = [
         location.reload();
       });
 
-      if (chromeOnMac) {
-        jQuery('.loading').hide();
-
-      } else if (isVerifiedLab && ! isVerifiedLabster) {
+      if (isVerifiedLab && ! isVerifiedLabster) {
         initVerifiedForm(function() {
           if (hasUnity) {
             jQuery('#labModuleContainer').show();
@@ -495,6 +478,11 @@ LANGUAGES = [
           jQuery('.loading').hide();
         } else {
           jQuery('#missingUnityContainer').show();
+          if (platform == 'MACINTEL') {
+            jQuery('.unity-download.mac').show();
+          } else {
+            jQuery('.unity-download.windows').show();
+          }
           jQuery('.loading').hide();
         }
       }
