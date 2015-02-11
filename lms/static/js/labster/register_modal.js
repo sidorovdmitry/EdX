@@ -156,6 +156,12 @@ function registerModalInit(options) {
         errorMessage.hide().empty();
 
         if (validateForm(form)) {
+            var next = options.nextUrl;
+            if (parseInt(window.userType) === 1 && options.courseId != "") {
+                // if student and it's coming from the about page, redirect to payment page
+                next = "student_license/" + options.courseId;
+            }
+
             $.ajax({
                 url: createUrl,
                 type: "POST",
@@ -166,7 +172,7 @@ function registerModalInit(options) {
                         containerFormOne.fadeIn();
                         containerFormThree.find('input[name=user_id]').val(window.user.id);
                         containerFormThree.find('input[name=token_key]').val(window.user.token_key);
-                        containerFormThree.find('input[name=next]').val(options.nextUrl);
+                        containerFormThree.find('input[name=next]').val(next);
                         containerFormThree.find('input[name=course_id]').val(options.courseId);
                     });
 
