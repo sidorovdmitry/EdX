@@ -7,6 +7,9 @@ angular.module('LabsterStudentLicense')
     $http.get(url_product, {
       headers: {
         'Authorization': "Token " + window.requestUser.backoffice.token
+      },
+      params: {
+        'product_type': window.requestUser.backoffice.user.edu_level,
       }
     })
       .success(function (data, status, headers, config) {

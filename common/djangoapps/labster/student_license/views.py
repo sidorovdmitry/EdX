@@ -34,11 +34,12 @@ def home(request, course_id):
     labster_user = LabsterUser.objects.get(user=request.user)
     bo_user = create_user(request.user, user_profile.name, format='json')
 
+    user_edu_level = "hs" if user_profile.level_of_education == "hs" else "univ"
     token = bo_user['token']
     backoffice = {
         'user_id': bo_user['id'],
         'user_country': user_profile.country,
-        'user_edu_level': labster_user.user_school_level
+        'user_edu_level': user_edu_level
     }
 
     backoffice_urls = get_backoffice_urls()
