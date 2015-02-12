@@ -1,0 +1,46 @@
+<div class="labster-lab-list">
+  <p>Date: {{ payment.created_at | date }}</p>
+  <table>
+    <thead>
+    <tr>
+      <th>Lab</th>
+      <th class="align-right">Licenses</th>
+      <th class="align-right">Subscriptions</th>
+      <th class="align-right">Total Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="product in voucher.products">
+      <td class="lab-description">{{ product.name }}</td>
+      <td class="align-right">1</td>
+      <td class="align-right">{{ voucher.week_subscription }} weeks</td>
+      <td class="align-right">{{ product.total|currency:"USD " }}</td>
+    </tr>
+    </tbody>
+    <tfoot>
+<!--       <tr ng-hide="payment.vat == 0">
+      <td>Subtotal</td>
+      <td></td>
+      <td></td>
+      <td class="align-right">{{ voucher.price|currency:"USD " }}</td>
+    </tr>
+    <tr ng-hide="payment.vat == 0">
+      <td>VAT</td>
+      <td></td>
+      <td></td>
+      <td class="align-right">
+        {{ payment.vat|currency:"USD " }} <br/>
+      </td>
+    </tr> -->
+    <tr>
+      <td>Total Price</td>
+      <td></td>
+      <td></td>
+      <td class="align-right">{{ voucher.price|currency:"USD " }}</td>
+    </tr>
+    </tfoot>
+  </table>
+  <div class="pull-right">
+    <stripe payment-id="{{ payment.id }}" email="{{ user.email }}" amount="{{ voucher.price }}" description="{{ payment_description(voucher.id, voucher.price) }}" voucher-code="{{ voucher.id }}"></stripe>
+  </div>
+</div>
