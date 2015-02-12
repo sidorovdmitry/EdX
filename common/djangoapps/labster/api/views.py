@@ -9,10 +9,12 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.files.uploadhandler import StopFutureHandlers
+from django.core.mail import EmailMessage
 from django.http import Http404, HttpResponse
 from django.http import QueryDict
 from django.http.multipartparser import parse_header, ChunkIter
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.utils import timezone
 
 from rest_framework import status
@@ -386,6 +388,29 @@ class CustomFileUploadParser(BaseParser):
             return disposition[1]['filename']
         except (AttributeError, KeyError):
             pass
+
+
+class SendDataGraph(AuthMixin, APIView):
+    parser_classes = (MultiPartParser, FormParser,)
+
+    def post(self, request, format=None):
+        csv_file = request.FILES
+        user = request.user
+
+        context = {
+            'user': user,
+        }
+        email_html = render_to_string('emails/graph_data.html', context)
+        subject = "Graph Data"
+
+        email = EmailMessage(subject, email_html, "no-reply@labster.com", user.email)
+        email.content_subtype = "html"
+        email.attach('data.csv', csv_file, 'text/csv')
+        email.send(fail_silently=False)
+
+        http_status = status.HTTP_200_OK
+
+        return Response(http_status)
 
 
 class CreateSave(AuthMixin, APIView):
