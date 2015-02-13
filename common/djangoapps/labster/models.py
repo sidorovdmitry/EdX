@@ -365,21 +365,27 @@ class Problem(models.Model):
 class Mission(models.Model):
     lab = models.ForeignKey(Lab)
     element_id = models.CharField(max_length=100, db_index=True)
-    title = models.CharField(max_length=150, blank=True, default='')
+    title = models.TextField(blank=True, default='')
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
+
+    def __unicode__(self):
+        return "{}: {}".format(self.lab, self.element_id)
 
 
 class Task(models.Model):
     mission = models.ForeignKey(Mission)
     element_id = models.CharField(max_length=100, db_index=True)
-    title = models.CharField(max_length=150, blank=True, default='')
+    title = models.TextField(blank=True, default='')
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
+
+    def __unicode__(self):
+        return "{}: {}".format(self.mission, self.element_id)
 
 
 class AdaptiveProblemManager(models.Manager):

@@ -13,7 +13,7 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('lab', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['labster.Lab'])),
             ('element_id', self.gf('django.db.models.fields.CharField')(max_length=100, db_index=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(default='', max_length=150, blank=True)),
+            ('title', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
             ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
             ('modified_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
@@ -25,7 +25,7 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('mission', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['labster.Mission'])),
             ('element_id', self.gf('django.db.models.fields.CharField')(max_length=100, db_index=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(default='', max_length=150, blank=True)),
+            ('title', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
             ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
             ('modified_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
@@ -211,7 +211,7 @@ class Migration(SchemaMigration):
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'lab': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.Lab']"}),
             'modified_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'title': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '150', 'blank': 'True'})
+            'title': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'})
         },
         'labster.nutshelluser': {
             'Meta': {'object_name': 'NutshellUser'},
@@ -294,7 +294,7 @@ class Migration(SchemaMigration):
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'mission': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.Mission']"}),
             'modified_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'title': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '150', 'blank': 'True'})
+            'title': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'})
         },
         'labster.token': {
             'Meta': {'object_name': 'Token'},
