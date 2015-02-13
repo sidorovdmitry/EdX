@@ -391,12 +391,12 @@ class CustomFileUploadParser(BaseParser):
             pass
 
 
-class SendGraphData(APIView):
+class SendGraphData(AuthMixin, APIView):
     parser_classes = (MultiPartParser, FormParser,)
 
-    def post(self, request, format=None):
+    def post(self, request, *args, **kwargs):
         user = request.user
-        csv_file = request.FILES['file']
+        file = request.FILES['file']
 
         context = {
             'user': user,
@@ -406,7 +406,7 @@ class SendGraphData(APIView):
 
         email = EmailMessage(subject, email_html, "no-reply@labster.com", [user.email,])
         email.content_subtype = "html"
-        email.attach(csv_file.name, csv_file, csv_file.content_type)
+        email.attach(file.name, file.read(), file.content_type)
         email.send(fail_silently=False)
 
         http_status = status.HTTP_200_OK
