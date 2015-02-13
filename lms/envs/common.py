@@ -24,6 +24,11 @@ Longer TODO:
 # want to import all variables from base settings files
 # pylint: disable=wildcard-import, unused-import, unused-wildcard-import, invalid-name
 
+# Pylint gets confused by path.py instances, which report themselves as class
+# objects. As a result, pylint applies the wrong regex in validating names,
+# and throws spurious errors. Therefore, we disable invalid-name checking.
+# pylint: disable=invalid-name
+
 import sys
 import os
 import imp
@@ -214,6 +219,9 @@ FEATURES = {
     # Enable flow for payments for course registration (DIFFERENT from verified student flow)
     'ENABLE_PAID_COURSE_REGISTRATION': False,
 
+    # Enable the display of cosmetic course price display (set in course advanced settings)
+    'ENABLE_COSMETIC_DISPLAY_PRICE': False,
+
     # Automatically approve student identity verification attempts
     'AUTOMATIC_VERIFY_STUDENT_IDENTITY_FOR_TESTING': False,
 
@@ -226,7 +234,7 @@ FEATURES = {
     'ENABLE_S3_GRADE_DOWNLOADS': False,
 
     # whether to use password policy enforcement or not
-    'ENFORCE_PASSWORD_POLICY': False,
+    'ENFORCE_PASSWORD_POLICY': True,
 
     # Give course staff unrestricted access to grade downloads (if set to False,
     # only edX superusers can perform the downloads)
@@ -235,16 +243,20 @@ FEATURES = {
     'ENABLED_PAYMENT_REPORTS': ["refund_report", "itemized_purchase_report", "university_revenue_share", "certificate_status"],
 
     # Turn off account locking if failed login attempts exceeds a limit
-    'ENABLE_MAX_FAILED_LOGIN_ATTEMPTS': False,
+    'ENABLE_MAX_FAILED_LOGIN_ATTEMPTS': True,
 
     # Hide any Personally Identifiable Information from application logs
-    'SQUELCH_PII_IN_LOGS': False,
+    'SQUELCH_PII_IN_LOGS': True,
 
     # Toggles the embargo functionality, which enable embargoing for particular courses
     'EMBARGO': False,
 
     # Toggles the embargo site functionality, which enable embargoing for the whole site
     'SITE_EMBARGOED': False,
+
+    # Toggle whether to replace the current embargo implementation with
+    # the more flexible "country access" feature.
+    'ENABLE_COUNTRY_ACCESS': False,
 
     # Whether the Wiki subsystem should be accessible via the direct /wiki/ paths. Setting this to True means
     # that people can submit content and modify the Wiki in any arbitrary manner. We're leaving this as True in the
@@ -264,8 +276,8 @@ FEATURES = {
     # Prevent concurrent logins per user
     'PREVENT_CONCURRENT_LOGINS': True,
 
-    # Turn off Advanced Security by default
-    'ADVANCED_SECURITY': False,
+    # Turn on Advanced Security by default
+    'ADVANCED_SECURITY': True,
 
     # Show a "Download your certificate" on the Progress page if the lowest
     # nonzero grade cutoff is met
@@ -305,11 +317,23 @@ FEATURES = {
     # Enable display of enrollment counts in instructor and legacy analytics dashboard
     'DISPLAY_ANALYTICS_ENROLLMENTS': True,
 
-    # Separate the verification flow from the payment flow
-    'SEPARATE_VERIFICATION_FROM_PAYMENT': False,
-
     # Show the mobile app links in the footer
     'ENABLE_FOOTER_MOBILE_APP_LINKS': False,
+
+    # Let students save and manage their annotations
+    'ENABLE_EDXNOTES': False,
+
+    # Milestones application flag
+    'MILESTONES_APP': False,
+
+    # Prerequisite courses feature flag
+    'ENABLE_PREREQUISITE_COURSES': False,
+
+    # For easily adding modes to courses during acceptance testing
+    'MODE_CREATION_FOR_TESTING': False,
+
+    # Courseware search feature
+    'ENABLE_COURSEWARE_SEARCH': False,
 
     # labster app
     'LABSTER': True,
@@ -606,6 +630,16 @@ MODULESTORE = {
             'mappings': {},
             'stores': [
                 {
+                    'NAME': 'split',
+                    'ENGINE': 'xmodule.modulestore.split_mongo.split_draft.DraftVersioningModuleStore',
+                    'DOC_STORE_CONFIG': DOC_STORE_CONFIG,
+                    'OPTIONS': {
+                        'default_class': 'xmodule.hidden_module.HiddenDescriptor',
+                        'fs_root': DATA_DIR,
+                        'render_template': 'edxmako.shortcuts.render_to_string',
+                    }
+                },
+                {
                     'NAME': 'draft',
                     'ENGINE': 'xmodule.modulestore.mongo.DraftMongoModuleStore',
                     'DOC_STORE_CONFIG': DOC_STORE_CONFIG,
@@ -622,17 +656,7 @@ MODULESTORE = {
                         'data_dir': DATA_DIR,
                         'default_class': 'xmodule.hidden_module.HiddenDescriptor',
                     }
-                },
-                {
-                    'NAME': 'split',
-                    'ENGINE': 'xmodule.modulestore.split_mongo.split_draft.DraftVersioningModuleStore',
-                    'DOC_STORE_CONFIG': DOC_STORE_CONFIG,
-                    'OPTIONS': {
-                        'default_class': 'xmodule.hidden_module.HiddenDescriptor',
-                        'fs_root': DATA_DIR,
-                        'render_template': 'edxmako.shortcuts.render_to_string',
-                    }
-                },
+                }
             ]
         }
     }
@@ -917,6 +941,14 @@ MOCK_PEER_GRADING = False
 # Used for testing, debugging staff grading
 MOCK_STAFF_GRADING = False
 
+
+################################# EdxNotes config  #########################
+
+# Configure the LMS to use our stub EdxNotes implementation
+EDXNOTES_INTERFACE = {
+    'url': 'http://localhost:8120/api/v1',
+}
+
 ################################# Jasmine ##################################
 JASMINE_TEST_DIRECTORY = PROJECT_ROOT + '/static/coffee'
 
@@ -1020,6 +1052,7 @@ courseware_js = (
         for pth in ['courseware', 'histogram', 'navigation', 'time']
     ] +
     ['js/' + pth + '.js' for pth in ['ajax-error']] +
+    ['js/search/main.js'] +
     sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/modules/**/*.js'))
 )
 
@@ -1184,6 +1217,12 @@ PIPELINE_CSS = {
         ],
         'output_filename': 'css/lms-style-course-vendor.css',
     },
+    'style-student-notes': {
+        'source_filenames': [
+            'css/vendor/edxnotes/annotator.min.css',
+        ],
+        'output_filename': 'css/lms-style-student-notes.css',
+    },
     'style-course': {
         'source_filenames': [
             'sass/course.css',
@@ -1236,6 +1275,7 @@ PIPELINE_JS = {
             'js/src/accessibility_tools.js',
             'js/src/ie_shim.js',
             'js/src/string_utils.js',
+            'js/src/logger.js',
         ],
         'output_filename': 'js/lms-application.js',
     },
@@ -1493,6 +1533,7 @@ INSTALLED_APPS = (
     'licenses',
     'openedx.core.djangoapps.course_groups',
     'bulk_email',
+    'branding',
 
     # External auth (OpenID, shib)
     'external_auth',
@@ -1527,6 +1568,8 @@ INSTALLED_APPS = (
     'django_comment_common',
     'notes',
 
+    'edxnotes',
+
     # Splash screen
     'splash',
 
@@ -1547,6 +1590,9 @@ INSTALLED_APPS = (
 
     # Different Course Modes
     'course_modes',
+
+    # Enrollment API
+    'enrollment',
 
     # Student Identity Verification
     'verify_student',
@@ -1636,6 +1682,7 @@ if FEATURES.get('AUTH_USE_CAS'):
     INSTALLED_APPS += ('django_cas',)
     MIDDLEWARE_CLASSES += ('django_cas.middleware.CASMiddleware',)
 
+
 ###################### Registration ##################################
 
 # For each of the fields, give one of the following values:
@@ -1677,10 +1724,9 @@ PROGRESS_SUCCESS_BUTTON_URL = 'http://<domain>/<path>/{course_id}'
 PROGRESS_SUCCESS_BUTTON_TEXT_OVERRIDE = None
 
 #### PASSWORD POLICY SETTINGS #####
-
-PASSWORD_MIN_LENGTH = None
+PASSWORD_MIN_LENGTH = 8
 PASSWORD_MAX_LENGTH = None
-PASSWORD_COMPLEXITY = {}
+PASSWORD_COMPLEXITY = {"UPPER": 1, "LOWER": 1, "DIGITS": 1}
 PASSWORD_DICTIONARY_EDIT_DISTANCE_THRESHOLD = None
 PASSWORD_DICTIONARY = []
 
@@ -1967,7 +2013,10 @@ OPTIONAL_APPS = (
     'openassessment.xblock',
 
     # edxval
-    'edxval'
+    'edxval',
+
+    # milestones
+    'milestones',
 )
 
 for app_name in OPTIONAL_APPS:
@@ -2021,3 +2070,29 @@ COURSE_ABOUT_VISIBILITY_PERMISSION = 'see_exists'
 
 #date format the api will be formatting the datetime values
 API_DATE_FORMAT = '%Y-%m-%d'
+
+# Enrollment API Cache Timeout
+ENROLLMENT_COURSE_DETAILS_CACHE_TIMEOUT = 60
+
+# for Student Notes we would like to avoid too frequent token refreshes (default is 30 seconds)
+if FEATURES['ENABLE_EDXNOTES']:
+    OAUTH_ID_TOKEN_EXPIRATION = 60 * 60
+
+# Configuration used for generating PDF Receipts/Invoices
+PDF_RECEIPT_TAX_ID = 'add here'
+PDF_RECEIPT_FOOTER_TEXT = 'add your own specific footer text here'
+PDF_RECEIPT_DISCLAIMER_TEXT = 'add your own specific disclaimer text here'
+PDF_RECEIPT_BILLING_ADDRESS = 'add your own billing address here with appropriate line feed characters'
+PDF_RECEIPT_TERMS_AND_CONDITIONS = 'add your own terms and conditions'
+PDF_RECEIPT_TAX_ID_LABEL = 'Tax ID'
+PDF_RECEIPT_LOGO_PATH = PROJECT_ROOT + '/static/images/openedx-logo-tag.png'
+# Height of the Logo in mm
+PDF_RECEIPT_LOGO_HEIGHT_MM = 12
+PDF_RECEIPT_COBRAND_LOGO_PATH = PROJECT_ROOT + '/static/images/default-theme/logo.png'
+# Height of the Co-brand Logo in mm
+PDF_RECEIPT_COBRAND_LOGO_HEIGHT_MM = 12
+
+# Use None for the default search engine
+SEARCH_ENGINE = None
+# Use the LMS specific result processor
+SEARCH_RESULT_PROCESSOR = "lms.lib.courseware_search.lms_result_processor.LmsSearchResultProcessor"

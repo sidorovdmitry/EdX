@@ -3,6 +3,7 @@ import os
 import sys
 import yaml
 
+from contracts import contract, new_contract
 from functools import partial
 from lxml import etree
 from collections import namedtuple
@@ -405,7 +406,7 @@ class XModuleMixin(XBlockMixin):
         else:
             return [self.display_name_with_default]
 
-    def get_children(self):
+    def get_children(self, usage_key_filter=lambda location: True):
         """Returns a list of XBlock instances for the children of
         this module"""
 
@@ -415,6 +416,9 @@ class XModuleMixin(XBlockMixin):
         if getattr(self, '_child_instances', None) is None:
             self._child_instances = []  # pylint: disable=attribute-defined-outside-init
             for child_loc in self.children:
+                # Skip if it doesn't satisfy the filter function
+                if not usage_key_filter(child_loc):
+                    continue
                 try:
                     child = self.runtime.get_block(child_loc)
                     if child is None:
@@ -921,7 +925,8 @@ class XModuleDescriptor(XModuleMixin, HTMLSnippet, ResourceTemplates, XBlock):
 
     # =============================== BUILTIN METHODS ==========================
     def __eq__(self, other):
-        return (self.scope_ids == other.scope_ids and
+        return (hasattr(other, 'scope_ids') and
+                self.scope_ids == other.scope_ids and
                 self.fields.keys() == other.fields.keys() and
                 all(getattr(self, field.name) == getattr(other, field.name)
                     for field in self.fields.values()))
@@ -1253,6 +1258,7 @@ class DescriptorSystem(MetricsMixin, ConfigurableFragmentWrapper, Runtime):  # p
         :param xblock:
         :param field:
         """
+        # pylint: disable=protected-access
         # in runtime b/c runtime contains app-specific xblock behavior. Studio's the only app
         # which needs this level of introspection right now. runtime also is 'allowed' to know
         # about the kvs, dbmodel, etc.
@@ -1260,12 +1266,8 @@ class DescriptorSystem(MetricsMixin, ConfigurableFragmentWrapper, Runtime):  # p
         result = {}
         result['explicitly_set'] = xblock._field_data.has(xblock, field.name)
         try:
-            block_inherited = xblock.xblock_kvs.inherited_settings
-        except AttributeError:  # if inherited_settings doesn't exist on kvs
-            block_inherited = {}
-        if field.name in block_inherited:
-            result['default_value'] = block_inherited[field.name]
-        else:
+            result['default_value'] = xblock._field_data.default(xblock, field.name)
+        except KeyError:
             result['default_value'] = field.to_json(field.default)
         return result
 
@@ -1310,6 +1312,9 @@ class DescriptorSystem(MetricsMixin, ConfigurableFragmentWrapper, Runtime):  # p
     def publish(self, block, event_type, event):
         # A stub publish method that doesn't emit any events from XModuleDescriptors.
         pass
+
+
+new_contract('DescriptorSystem', DescriptorSystem)
 
 
 class XMLParsingSystem(DescriptorSystem):
@@ -1432,6 +1437,8 @@ class ModuleSystem(MetricsMixin, ConfigurableFragmentWrapper, Runtime):  # pylin
     Note that these functions can be closures over e.g. a django request
     and user, or other environment-specific info.
     """
+
+    @contract(descriptor_runtime='DescriptorSystem')
     def __init__(
             self, static_url, track_function, get_module, render_template,
             replace_urls, descriptor_runtime, user=None, filestore=None,

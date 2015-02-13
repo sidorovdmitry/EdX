@@ -41,7 +41,7 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     })(window,document,'script','dataLayer','GTM-N2Q7SK');</script>
 <!-- End Google Tag Manager -->
 
-  <a class="nav-skip" href="{% block nav_skip %}#content{% endblock %}">{% trans "Skip to this view's content" %}</a>
+  <a class="nav-skip" href="{% block nav_skip %}#content{% endblock %}">{% trans "Skip to main content" %}</a>
   {% with course=request.course %}
     {% if IS_EDX_DOMAIN %}
       {% include "navigation-edx.html" %}

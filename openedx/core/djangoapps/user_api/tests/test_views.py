@@ -15,6 +15,7 @@ import ddt
 from pytz import UTC
 import mock
 from xmodule.modulestore.tests.factories import CourseFactory
+from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 
 from student.tests.factories import UserFactory
 from unittest import SkipTest
@@ -1466,7 +1467,7 @@ class RegistrationViewTest(ApiTestCase):
 
 
 @ddt.ddt
-class UpdateEmailOptInTestCase(ApiTestCase):
+class UpdateEmailOptInTestCase(ApiTestCase, ModuleStoreTestCase):
     """Tests the UpdateEmailOptInPreference view. """
 
     USERNAME = "steve"
@@ -1534,3 +1535,17 @@ class UpdateEmailOptInTestCase(ApiTestCase):
             user=self.user, org=self.course.id.org, key="email-optin"
         )
         self.assertEquals(preference.value, u"True")
+
+    def test_update_email_opt_with_invalid_course_key(self):
+        """
+        Test that with invalid key it returns bad request
+        and not update their email optin preference.
+        """
+        response = self.client.post(self.url, {
+            "course_id": 'invalid',
+            "email_opt_in": u"True"
+        })
+        self.assertHttpBadRequest(response)
+        with self.assertRaises(UserOrgTag.DoesNotExist):
+            UserOrgTag.objects.get(user=self.user, org=self.course.id.org, key="email-optin")
+

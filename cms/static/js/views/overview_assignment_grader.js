@@ -150,7 +150,7 @@ define(["js/views/baseview", "jquery", "underscore", "gettext",
               this.removeMenu(e);
 
                   var saving = new NotificationView.Mini({
-                      title: gettext('Saving') + '&hellip;'
+                      title: gettext('Saving')
                   });
                   saving.show();
 

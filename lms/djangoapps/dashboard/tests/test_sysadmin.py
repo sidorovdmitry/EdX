@@ -115,7 +115,6 @@ class SysadminBaseTestCase(ModuleStoreTestCase):
         self.addCleanup(shutil.rmtree, path)
 
 
-# @override_settings(MODULESTORE=TEST_DATA_XML_MODULESTORE)
 # @unittest.skipUnless(settings.FEATURES.get('ENABLE_SYSADMIN_DASHBOARD'),
 #                      "ENABLE_SYSADMIN_DASHBOARD not set")
 # @override_settings(GIT_IMPORT_WITH_XMLMODULESTORE=True)
@@ -124,6 +123,7 @@ class TestSysadmin(SysadminBaseTestCase):
     """
     Test sysadmin dashboard features using XMLModuleStore
     """
+    MODULESTORE = TEST_DATA_XML_MODULESTORE
 
     def test_staff_access(self):
         """Test access controls."""
@@ -406,7 +406,6 @@ class TestSysadmin(SysadminBaseTestCase):
 
 
 # @override_settings(MONGODB_LOG=TEST_MONGODB_LOG)
-# @override_settings(MODULESTORE=TEST_DATA_MOCK_MODULESTORE)
 # @unittest.skipUnless(settings.FEATURES.get('ENABLE_SYSADMIN_DASHBOARD'),
 #                      "ENABLE_SYSADMIN_DASHBOARD not set")
 @unittest.skip('skip')

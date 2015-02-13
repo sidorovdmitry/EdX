@@ -4,12 +4,13 @@ Common utility methods and decorators for Mobile APIs.
 
 
 import functools
-from django.http import Http404
 
-from opaque_keys.edx.keys import CourseKey
-from courseware.courses import get_course_with_access
 from rest_framework import permissions
 from rest_framework.authentication import OAuth2Authentication, SessionAuthentication
+
+from opaque_keys.edx.keys import CourseKey
+from xmodule.modulestore.django import modulestore
+from courseware.courses import get_course_with_access
 
 
 def mobile_course_access(depth=0, verify_enrolled=True):
@@ -26,31 +27,16 @@ def mobile_course_access(depth=0, verify_enrolled=True):
             Raises 404 if access to course is disallowed.
             """
             course_id = CourseKey.from_string(kwargs.pop('course_id'))
-            course = get_course_with_access(
-                request.user,
-                'load_mobile' if verify_enrolled else 'load_mobile_no_enrollment_check',
-                course_id,
-                depth=depth
-            )
-            return func(self, request, course=course, *args, **kwargs)
+            with modulestore().bulk_operations(course_id):
+                course = get_course_with_access(
+                    request.user,
+                    'load_mobile' if verify_enrolled else 'load_mobile_no_enrollment_check',
+                    course_id,
+                    depth=depth
+                )
+                return func(self, request, course=course, *args, **kwargs)
         return _wrapper
     return _decorator
-
-
-def mobile_access_when_enrolled(course, user):
-    """
-    Determines whether a user has access to a course in a mobile context.
-    Checks the mobile_available flag and the start_date.
-    Note: Does not check if the user is actually enrolled in the course.
-    """
-    # The course doesn't always really exist -- we can have bad data in the enrollments
-    # pointing to non-existent (or removed) courses, in which case `course` is None.
-    if not course:
-        return False
-    try:
-        return get_course_with_access(user, 'load_mobile_no_enrollment_check', course.id) is not None
-    except Http404:
-        return False
 
 
 def mobile_view(is_user=False):

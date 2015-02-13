@@ -152,7 +152,7 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 <!-- End Google Tag Manager -->
 
   <div class="window-wrap" dir="${dir_rtl}">
-    <a class="nav-skip" href="<%block name="nav_skip">#content</%block>">${_("Skip to this view's content")}</a>
+    <a class="nav-skip" href="<%block name="nav_skip">#content</%block>">${_("Skip to main content")}</a>
 
     <%include file="mathjax_accessible.html" />
 
@@ -178,7 +178,6 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 
   </div>
 
-  <script>window.baseUrl = "${settings.STATIC_URL}";</script>
   % if not disable_courseware_js:
     <%static:js group='application'/>
     <%static:js group='module-js'/>

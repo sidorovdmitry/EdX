@@ -67,7 +67,6 @@ class AjaxEnabledTestClient(Client):
         return self.get(path, data or {}, follow, HTTP_ACCEPT="application/json", **extra)
 
 
-@override_settings(MODULESTORE=TEST_DATA_MOCK_MODULESTORE)
 class CourseTestCase(ModuleStoreTestCase):
     """
     Base class for Studio tests that require a logged in user and a course.
@@ -81,6 +80,7 @@ class CourseTestCase(ModuleStoreTestCase):
         will be cleared out before each test case execution and deleted
         afterwards.
         """
+
         self.user_password = super(CourseTestCase, self).setUp()
 
         self.client = AjaxEnabledTestClient()
@@ -316,7 +316,7 @@ class CourseTestCase(ModuleStoreTestCase):
             course2_item_loc = course2_id.make_usage_key(course1_item_loc.block_type, course1_item_loc.block_id)
             if course1_item_loc.block_type == 'course':
                 # mongo uses the run as the name, split uses 'course'
-                store = self.store._get_modulestore_for_courseid(course2_id)  # pylint: disable=protected-access
+                store = self.store._get_modulestore_for_courselike(course2_id)  # pylint: disable=protected-access
                 new_name = 'course' if isinstance(store, SplitMongoModuleStore) else course2_item_loc.run
                 course2_item_loc = course2_item_loc.replace(name=new_name)
             course2_item = self.store.get_item(course2_item_loc)
