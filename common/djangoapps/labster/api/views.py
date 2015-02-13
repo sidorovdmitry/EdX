@@ -1,4 +1,3 @@
-import json
 from lxml import etree
 
 from dateutil import parser
@@ -11,7 +10,6 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.files.uploadhandler import StopFutureHandlers
 from django.core.mail import EmailMessage
 from django.http import Http404, HttpResponse
-from django.http import QueryDict
 from django.http.multipartparser import parse_header, ChunkIter
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
@@ -41,6 +39,7 @@ from labster.parsers.problem_parsers import MultipleChoiceProblemParser
 from labster.renderers import LabsterXMLRenderer, LabsterDirectXMLRenderer
 from labster.masters import get_problem
 from labster.proxies import get_lab_proxy_as_platform_xml
+from labster.wiki_utils import get_all_links
 
 
 def invoke_xblock_handler(*args, **kwargs):
@@ -673,6 +672,22 @@ class WikiMixin(object):
             'root_attributes': self.get_root_attributes(),
         }
 
+    def get_wiki_links(self):
+        links = get_all_links(self.article)
+        wiki_links = [
+            {
+                'name': "Link",
+                'attrib': {
+                    'url': link[0],
+                    'title': link[1],
+                },
+                'children': [],
+            } for link in links
+        ]
+
+        return wiki_links
+
+
     def get_response_data(self):
         # ref:
         # https://github.com/Bodekaer/Labster.EdX.django-wiki/blob/66f357e4f6db1b96006ed8e75cd867f7541bb812/wiki/models/article.py#L178
@@ -693,6 +708,11 @@ class WikiMixin(object):
                     'attrib': {},
                     'children': [],
                     'text': content_markdown,
+                },
+                {
+                    'name': "Links",
+                    'attrib': {},
+                    'children': self.get_wiki_links(),
                 }
             ]
         }
@@ -767,6 +787,63 @@ class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
         return self._request(request, article_slug, *args, **kwargs)
 
     def get(self, request, article_slug, *args, **kwargs):
+        return self._request(request, article_slug, *args, **kwargs)
+
+
+class ArticleLinks(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
+
+    def _request(self, request, article_slug, *args, **kwargs):
+        self.get_article(article_slug)
+        response_data = self.get_response_data()
+        return Response(response_data)
+
+    def get_article(self, article_slug):
+        from wiki.core.exceptions import NoRootURL
+        from wiki.models import URLPath, Article
+
+        # since we already have article slug we don't need to search the course
+        # article slug is unique
+        try:
+            url_path = URLPath.get_by_path(article_slug, select_related=True)
+        except (NoRootURL, ObjectDoesNotExist):
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            article = Article.objects.get(id=url_path.article.id)
+        except Article.DoesNotExist:
+            article = None
+
+        self.article_id = str(url_path.article.id)
+        self.slug = article_slug
+        self.title = unicode(article)
+        self.article = article
+
+        return article
+
+    def links_xml_format(self, links):
+        return [
+            {
+                'name': "Link",
+                'attrib': {
+                    'url': link[0],
+                    'title': link[1],
+                },
+                'children': [],
+            } for link in links
+        ]
+
+    def get_response_data(self):
+        links = get_all_links(self.article)
+        return {
+            'name': "Links",
+            'attrib': {},
+            'children': self.links_xml_format(links),
+        }
+
+    def get(self, request, article_slug, *args, **kwargs):
+        return self._request(request, article_slug, *args, **kwargs)
+
+    def post(self, request, article_slug, *args, **kwargs):
         return self._request(request, article_slug, *args, **kwargs)
 
 
