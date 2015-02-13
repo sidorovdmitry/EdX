@@ -362,6 +362,26 @@ class Problem(models.Model):
         return ""
 
 
+class Mission(models.Model):
+    lab = models.ForeignKey(Lab)
+    element_id = models.CharField(max_length=100, db_index=True)
+    title = models.CharField(max_length=150, blank=True, default='')
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
+
+
+class Task(models.Model):
+    mission = models.ForeignKey(Mission)
+    element_id = models.CharField(max_length=100, db_index=True)
+    title = models.CharField(max_length=150, blank=True, default='')
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
+
+
 class AdaptiveProblemManager(models.Manager):
     def get_query_set(self):
         qs = super(AdaptiveProblemManager, self).get_query_set()
