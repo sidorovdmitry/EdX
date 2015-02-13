@@ -456,7 +456,10 @@ class CreateSave(AuthMixin, APIView):
         lab_id = kwargs.get('lab_id')
 
         lab_proxy = get_object_or_404(LabProxy, id=lab_id)
-        self.user_save = UserSave.objects.create(user=user, lab_proxy=lab_proxy)
+        is_checkpoint = request.POST.get('checkpoint') == '1'
+
+        self.user_save = UserSave.objects.create(
+            user=user, lab_proxy=lab_proxy, is_checkpoint=is_checkpoint)
 
         http_status = status.HTTP_200_OK
 
@@ -467,16 +470,6 @@ class CreateSave(AuthMixin, APIView):
             file_name,
             SimpleUploadedFile(file_name, data_file.read().strip()[152:]),
             save=True)
-
-        # data_file = request.FILES.get('file')
-        # self.user_save.save_file.save(SimpleUploadedFile(file_name, data_file.read().strip()))
-        # try:
-        #     self.user_save.save_file.save(
-        #         file_name,
-        #         SimpleUploadedFile(file_name, request.body.strip()),
-        #         save=True)
-        # except:
-        #     pass
 
         file_url = ''
         if self.user_save.save_file:
