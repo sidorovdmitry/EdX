@@ -11,7 +11,7 @@ def remove_prefix(text):
 
 
 def get_all_links(article):
-    rendered = "<html>{}</html>".format(article.render())
+    rendered = "<html>{}</html>".format(article.render().encode('utf-8'))
     root = etree.fromstring(rendered)
     hrefs = []
     for element in root.iterfind(".//a"):

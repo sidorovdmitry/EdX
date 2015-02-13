@@ -23,8 +23,9 @@ from courseware.courses import get_course_by_id
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from student.models import CourseEnrollment
 
-from labster.models import LabProxy, UserSave, UserAttempt, Problem, UserAnswer, QuizBlock
+from labster.models import LabProxy, UserAttempt, Problem, UserAnswer, QuizBlock
 from labster.models import LabsterCourseLicense, LabsterUserLicense
+from labster.model_utils import get_latest_user_save
 from labster.reports import get_attempts_and_answers
 from labster.tasks import send_play_lab, send_invite_students
 
@@ -115,13 +116,9 @@ class SettingsXml(LabProxyXMLView):
             return ''
 
         # check for save game
-        try:
-            user_save = UserSave.objects.get(lab_proxy=lab_proxy, user=user)
-        except UserSave.DoesNotExist:
-            pass
-        else:
-            if user_save.save_file:
-                engine_xml = user_save.save_file.url
+        user_save = get_latest_user_save(lab_proxy=lab_proxy, user_id=user.id)
+        if user_save and user_save.save_file:
+            engine_xml = user_save.save_file.url
 
         return engine_xml
 

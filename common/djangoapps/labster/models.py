@@ -469,9 +469,6 @@ class UserSave(models.Model):
     play_count = models.IntegerField(default=0)
     is_finished = models.BooleanField(default=False)
 
-    class Meta:
-        unique_together = ('lab_proxy', 'user')
-
     def get_new_save_file_name(self):
         timestamp = calendar.timegm(datetime.utcnow().utctimetuple())
         file_name = "{}_{}_{}.zip".format(timestamp, self.lab_proxy_id, self.user_id)

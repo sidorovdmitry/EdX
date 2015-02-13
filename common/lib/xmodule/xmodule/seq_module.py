@@ -200,7 +200,8 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
             params['errors'] = "Lab doesn't no exist"
         else:
             from rest_framework.authtoken.models import Token
-            from labster.models import LabProxy, UserSave, UserAttempt
+            from labster.models import LabProxy, UserAttempt
+            from labster.model_utils import get_latest_user_save
 
             user_id = self.scope_ids.user_id
             token, _ = Token.objects.get_or_create(user_id=user_id)
@@ -211,11 +212,7 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
             user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user_id=user_id)
             user_save = None
             if user_attempt:
-                try:
-                    user_save = UserSave.objects.get(lab_proxy=lab_proxy,
-                                                     user_id=user_id)
-                except UserSave.DoesNotExist:
-                    pass
+                user_save = get_latest_user_save(lab_proxy=lab_proxy, user_id=user_id)
 
             user_profile = UserProfile.objects.get(user_id=user_id)
             labster_user = LabsterUser.objects.get(user_id=user_id)
@@ -225,10 +222,10 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
 
             if lab.id in [43, 44]:
                 result_url = reverse('labster_adaptive_test_result',
-                                    args=[self.course_id.to_deprecated_string(), lab_proxy.id])
+                                     args=[self.course_id.to_deprecated_string(), lab_proxy.id])
             else:
                 result_url = reverse('labster_lab_result',
-                                    args=[self.course_id.to_deprecated_string(), lab_proxy.id])
+                                     args=[self.course_id.to_deprecated_string(), lab_proxy.id])
 
             params.update({
                 'lab': lab,
