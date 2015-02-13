@@ -11,7 +11,8 @@ from labster.models import (
     LanguageLab, Lab, ErrorInfo, DeviceInfo, UserSave, Token, LabProxy,
     UnityLog, UserAnswer, LabsterUserLicense, ProblemProxy,
     UnityPlatformLog, QuizBlock, Problem, Answer, AdaptiveProblem,
-    LabProxyData, UserAttempt, LabsterUser, LabsterCourseLicense)
+    LabProxyData, UserAttempt, LabsterUser, LabsterCourseLicense,
+    Mission, Task)
 from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_block_file_url
 
 
@@ -303,6 +304,8 @@ admin.site.register(QuizBlock, QuizBlockAdmin)
 admin.site.register(Problem, ProblemAdmin)
 admin.site.register(AdaptiveProblem, AdaptiveProblemAdmin)
 admin.site.register(Answer, AnswerAdmin)
+admin.site.register(Mission)
+admin.site.register(Task)
 
 admin.site.register(LabProxy, LabProxyAdmin)
 admin.site.register(ProblemProxy, ProblemProxyAdmin)

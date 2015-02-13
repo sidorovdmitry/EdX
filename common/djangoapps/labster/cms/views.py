@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import FormView, TemplateView, View
 
 from labster.edx_bridge import duplicate_lab_content, duplicate_course
-from labster.masters import fetch_quizblocks
+from labster.masters import fetch_quizblocks, fetch_missions
 from labster.models import Lab
 
 
@@ -103,6 +103,7 @@ class UpdateQuizBlock(AdminOnlyMixin, View):
             raise Http404
 
         fetch_quizblocks(lab)
+        fetch_missions(lab)
         lab = Lab.objects.get(id=lab_id)
 
         response = {
