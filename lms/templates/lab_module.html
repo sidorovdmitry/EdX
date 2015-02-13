@@ -169,9 +169,16 @@ LANGUAGES = [
       <p>It appears that you are currently using another browser, so we recommend that you launch e.g. Firefox to start using Labster.</p>
       <p>If you do not have Firefox installed, you can easily download and install it using the button below.</p>
       <p><em>Please notice, that this is only temporary, and Labster will be supported on all browsers within a few months.</em></p>
-      <p><a target="_blank" href="https://www.mozilla.org/en-US/firefox/new/" class="button-labster-blue download-chrome">
+      <p style="display:none" class="firefox-download fx-windows">
+      <a target="_blank" href="https://download.mozilla.org/?product=firefox-stub&os=win&lang=en-US" class="button-labster-blue download-chrome">
         <span><img src="https://labsterim.s3.amazonaws.com/media/uploads/edx/firefox.png"></span>
-        Download Mozilla Firefox</a></p>
+        Download Mozilla Firefox</a>
+      </p>
+      <p style="display:none" class="firefox-download fx-mac">
+      <a target="_blank" href="https://www.mozilla.org/en-US/firefox/new/" class="button-labster-blue download-chrome">
+        <span><img src="https://labsterim.s3.amazonaws.com/media/uploads/edx/firefox.png"></span>
+        Download Mozilla Firefox</a>
+      </p>
     </div>
     <div class="browser chrome firefox safari" style="display:none">
       <h3>Using Labster For the First Time</h3>
@@ -415,6 +422,12 @@ LANGUAGES = [
       var browser = jQuery.browser;
       var platform = navigator.platform.toUpperCase();
       var userAgent = navigator.userAgent.toUpperCase();
+      var isWindows = function(ua) {
+        return ua.toUpperCase().indexOf('WINDOWS NT') > -1;
+      };
+      var isMac = function(ua) {
+        return ua.toUpperCase().indexOf('MACINTOSH') > -1;
+      };
 
       if (browser.mozilla) {
         jQuery('.browser.chrome').show();
@@ -422,6 +435,11 @@ LANGUAGES = [
             'background-position', 'top -50px right -90px');
       } else {
         jQuery('.browser.ie').show();
+        if (isMac(userAgent)) {
+          jQuery('.firefox-download.fx-mac').show();
+        } else {
+          jQuery('.firefox-download.fx-windows').show();
+        }
       }
 
       var resizeProc = undefined;
