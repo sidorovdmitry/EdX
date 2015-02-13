@@ -62,7 +62,7 @@ class SendEmailUserCreate(APIView):
         context = {
             'user': user,
             'labster_user': labster_user,
-            'user_school_level': labster_user.user_school_level_dispay,
+            'user_school_level': labster_user.user_school_level_display,
         }
         email_html = render_to_string('emails/teacher_information.html', context)
         subject = "New teacher registration"
