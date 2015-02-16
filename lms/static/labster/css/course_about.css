@@ -188,3 +188,12 @@ button.labster-register {
 .course-info .course-sidebar .important-dates li .important-dates-item-title {
     font-weight: bold;
 }
+
+.modal.video-modal, .video-modal.leanModal_box {
+    width: 900px;
+}
+
+.modal.video-modal .inner-wrapper, .video-modal.leanModal_box .inner-wrapper {
+  width: 882px;
+  height: 500px;
+}
