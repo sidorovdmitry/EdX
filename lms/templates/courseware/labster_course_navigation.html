@@ -28,7 +28,7 @@ def url_class(is_active):
   user_is_enrolled = user.is_authenticated() and CourseEnrollment.is_enrolled(user, course.id)
 %>
 
-% if show_preview_menu:
+% if show_preview_menu and False:
     <nav class="wrapper-preview-menu">
         <div class="preview-menu">
             <ol class="preview-actions">
