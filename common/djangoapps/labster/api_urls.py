@@ -7,6 +7,7 @@ from labster.api.views import CreateSave, CreateError, CreateDevice
 from labster.api.views import LabProxyView, AnswerProblem, Wiki, ArticleSlug
 from labster.api.views import UserAuth, PlayLab, FinishLab, LabSettings
 from labster.api.views import UnityPlayLab, CreateLog, CreateUnityLog
+from labster.api.views import ArticleLinks, SendGraphData
 
 from labster_search.api_views import Search
 
@@ -27,11 +28,14 @@ urlpatterns = patterns('',  # nopep8
     url('^labs/(?P<lab_id>\d+)/log/(?P<log_type>\w+)/$', CreateLog.as_view(), name='create-log'),
     url('^labs/(?P<lab_id>\d+)/log-unity/$', CreateUnityLog.as_view(), name='create-unity-log'),
 
-    url('^wiki/(?P<course_id>[^/]+/[^/]+/[^/]+)/?$', Wiki.as_view(), name='wiki'),
     # since article can have children it might conflict with course-wiki, so I add keyword article in the end
     url('^wiki/article/(?P<article_slug>.+/|)$', ArticleSlug.as_view(), name='wiki-article'),
+    url('^wiki/article-links/(?P<article_slug>.+)/$', ArticleLinks.as_view(), name='wiki-article-links'),
+    url('^wiki/(?P<course_id>[^/]+/[^/]+/[^/]+)/?$', Wiki.as_view(), name='wiki'),
 
     url('^search/$', Search.as_view(), name='search'),
+
+    url('^send_graph_data/$', SendGraphData.as_view(), name='graph_data'),
 
     # unused
     url('^labs/(?P<lab_id>\d+)/log/error/$', CreateError.as_view(), name='log-error'),

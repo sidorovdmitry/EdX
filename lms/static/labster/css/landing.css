@@ -101,7 +101,7 @@ a.view-all {
   text-shadow: 0 0 15px black;
   margin-left: 20px;
 }
-.clients {padding: 4em 0;}
+.clients {padding: 4em 0; overflow: hidden; }
 .clients ul {
   list-style: none;
   margin:0;
@@ -114,7 +114,7 @@ a.view-all {
 .clients li {
   display: inline;
 }
-.clients li img {max-width: 150px;}
+.clients li img {max-width: 140px;}
 .heading-title {
   text-align: center;
   font-size: 2em;

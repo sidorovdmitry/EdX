@@ -94,10 +94,11 @@ def courses(request, user=AnonymousUser()):
     if domain is False:
         domain = request.META.get('HTTP_HOST')
 
+    referer = request.META.get('HTTP_REFERER', request.build_absolute_uri())
+
     keywords = request.GET.get('q', '').strip()
     if keywords:
         courses = get_courses_from_keywords(keywords)
-        google_adwords = ""
     else:
         courses = get_courses(user, domain=domain)
         courses = sort_by_announcement(courses)
@@ -105,6 +106,7 @@ def courses(request, user=AnonymousUser()):
     context = {
         'courses': courses,
         'keywords': keywords,
+        'referer': referer,
     }
 
     return render_to_response('courseware/labster_courses.html', context)

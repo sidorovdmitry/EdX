@@ -7,7 +7,7 @@ from lxml import etree
 
 from django.core.urlresolvers import reverse
 
-from xblock.fields import Integer, Scope
+from xblock.fields import Integer, Scope, Boolean
 from xblock.fragment import Fragment
 from pkg_resources import resource_string
 
@@ -48,6 +48,15 @@ class SequenceFields(object):
         scope=Scope.user_state,
     )
 
+    # Entrance Exam flag -- see cms/contentstore/views/entrance_exam.py for usage
+    is_entrance_exam = Boolean(
+        display_name=_("Is Entrance Exam"),
+        help=_(
+            "Tag this course module as an Entrance Exam. "
+            "Note, you must enable Entrance Exams for this course setting to take effect."
+        ),
+        scope=Scope.content,
+    )
     lab_id = Integer(help="Lab ID if the gradeType is Lab", scope=Scope.settings)
 
 
@@ -246,3 +255,22 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
         fragment.add_content(self.system.render_template('lab_module.html', params))
 
         return fragment
+
+    def index_dictionary(self):
+        """
+        Return dictionary prepared with module content and type for indexing.
+        """
+        # return key/value fields in a Python dict object
+        # values may be numeric / string or dict
+        # default implementation is an empty dict
+        xblock_body = super(SequenceDescriptor, self).index_dictionary()
+        html_body = {
+            "display_name": self.display_name,
+        }
+        if "content" in xblock_body:
+            xblock_body["content"].update(html_body)
+        else:
+            xblock_body["content"] = html_body
+        xblock_body["content_type"] = self.category.title()
+
+        return xblock_body

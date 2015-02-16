@@ -23,6 +23,23 @@ group_prefix_re = [
     re.compile( ".*" ),           # catch strange entries
 ]
 
+
+def test_ie(user_agent):
+    pattern = "msie [1-10]\."
+    prog = re.compile(pattern, re.IGNORECASE)
+    match = prog.search(user_agent)
+    if match:
+        return True
+
+    pattern = "trident"
+    prog = re.compile(pattern, re.IGNORECASE)
+    match = prog.search(user_agent)
+    if match:
+        return True
+
+    return False
+
+
 class ProfileMiddleware(object):
     """
     Displays hotshot profiling for any view.
@@ -127,14 +144,7 @@ class IEDetectionMiddleware(object):
 
         if 'HTTP_USER_AGENT' in request.META:
             user_agent = request.META['HTTP_USER_AGENT']
-
-            # Test IE 1-7
-            pattern = "msie [1-12]\."
-            prog = re.compile(pattern, re.IGNORECASE)
-            match = prog.search(user_agent)
-
-            if match:
-                is_ie = True  # NOOOOOO
+            is_ie = test_ie(user_agent)
 
         if is_ie:
             # url = reverse('invalid_browser')

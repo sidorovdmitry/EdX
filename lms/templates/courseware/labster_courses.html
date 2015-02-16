@@ -99,10 +99,11 @@ show_partners = microsite.get_value('show_partners', True)
         $('#login').trigger("click");
       }
 
+      var referer = "${referer}";
       % if keywords:
       var keywords = "${keywords}";
       var result_count = ${len(courses)};
-      ga('send', 'event', 'Search', 'search', keywords, result_count);
+      ga('send', 'event', 'Search', referer, keywords, result_count);
       % endif
     })
   </script>

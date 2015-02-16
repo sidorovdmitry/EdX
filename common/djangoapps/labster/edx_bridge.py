@@ -104,6 +104,7 @@ def get_or_create_course(source, target, user):
     return course
 
 
+# FIXME: deprecated
 def force_create_course(source, target, user, extra_fields=None):
     from student.roles import CourseRole
     from labster.models import LabsterUser
@@ -166,6 +167,7 @@ def force_create_course(source, target, user, extra_fields=None):
     return course
 
 
+# FIXME: deprecated
 def copy_about_fields(user, source_course_key, target_course_key, target_course):
     about_fields = ['syllabus', 'overview', 'effort', 'short_description']
     for about in about_fields:
@@ -183,6 +185,7 @@ def copy_about_fields(user, source_course_key, target_course_key, target_course)
         store.update_item(target_about, user.id)
 
 
+# FIXME: deprecated
 def duplicate_course(source, target, user, extra_fields=None, http_protocol='https'):
     source_course = get_course_by_id(SlashSeparatedCourseKey.from_deprecated_string(source))
     target_course = force_create_course(source, target, user, extra_fields)

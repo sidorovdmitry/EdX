@@ -7,14 +7,24 @@ from django.http import (
     HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 )
 from django.shortcuts import redirect
-from django.core.urlresolvers import reverse
+from django.http import HttpRequest
+from django.core.urlresolvers import reverse, resolve
 from django.core.mail import send_mail
+from django.utils.translation import ugettext as _
 from django_future.csrf import ensure_csrf_cookie
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from edxmako.shortcuts import render_to_response, render_to_string
 from microsite_configuration import microsite
 import third_party_auth
+from external_auth.login_and_register import (
+    login as external_auth_login,
+    register as external_auth_register
+)
+from student.views import (
+    signin_user as old_login_view,
+    register_user as old_register_view
+)
 
 from openedx.core.djangoapps.user_api.api import account as account_api
 from openedx.core.djangoapps.user_api.api import profile as profile_api
@@ -60,12 +70,28 @@ def login_and_registration_form(request, initial_mode="login"):
     the user_api.
 
     Keyword Args:
-        initial_mode (string): Either "login" or "registration".
+        initial_mode (string): Either "login" or "register".
 
     """
     # If we're already logged in, redirect to the dashboard
     if request.user.is_authenticated():
         return redirect(reverse('dashboard'))
+
+    # Retrieve the form descriptions from the user API
+    form_descriptions = _get_form_descriptions(request)
+
+    # If this is a microsite, revert to the old login/registration pages.
+    # We need to do this for now to support existing themes.
+    if microsite.is_request_in_microsite():
+        if initial_mode == "login":
+            return old_login_view(request)
+        elif initial_mode == "register":
+            return old_register_view(request)
+
+    # Allow external auth to intercept and handle the request
+    ext_auth_response = _external_auth_intercept(request, initial_mode)
+    if ext_auth_response is not None:
+        return ext_auth_response
 
     # Otherwise, render the combined login/registration page
     context = {
@@ -73,7 +99,15 @@ def login_and_registration_form(request, initial_mode="login"):
         'initial_mode': initial_mode,
         'third_party_auth': json.dumps(_third_party_auth_context(request)),
         'platform_name': settings.PLATFORM_NAME,
-        'responsive': True
+        'responsive': True,
+
+        # Include form descriptions retrieved from the user API.
+        # We could have the JS client make these requests directly,
+        # but we include them in the initial page load to avoid
+        # the additional round-trip to the server.
+        'login_form_desc': form_descriptions['login'],
+        'registration_form_desc': form_descriptions['registration'],
+        'password_reset_form_desc': form_descriptions['password_reset'],
     }
 
     return render_to_response('student_account/login_and_register.html', context)
@@ -261,11 +295,11 @@ def password_change_request_handler(request):
             # Increment the rate limit counter
             limiter.tick_bad_request_counter(request)
 
-            return HttpResponseBadRequest("No active user with the provided email address exists.")
+            return HttpResponseBadRequest(_("No user with the provided email address exists."))
 
         return HttpResponse(status=200)
     else:
-        return HttpResponseBadRequest("No email address provided.")
+        return HttpResponseBadRequest(_("No email address provided."))
 
 
 def _third_party_auth_context(request):
@@ -286,13 +320,15 @@ def _third_party_auth_context(request):
 
     course_id = request.GET.get("course_id")
     email_opt_in = request.GET.get('email_opt_in')
+    redirect_to = request.GET.get("next")
     login_urls = auth_pipeline_urls(
-        third_party_auth.pipeline.AUTH_ENTRY_LOGIN_2,
+        third_party_auth.pipeline.AUTH_ENTRY_LOGIN,
         course_id=course_id,
-        email_opt_in=email_opt_in
+        email_opt_in=email_opt_in,
+        redirect_url=redirect_to
     )
     register_urls = auth_pipeline_urls(
-        third_party_auth.pipeline.AUTH_ENTRY_REGISTER_2,
+        third_party_auth.pipeline.AUTH_ENTRY_REGISTER,
         course_id=course_id,
         email_opt_in=email_opt_in
     )
@@ -316,3 +352,68 @@ def _third_party_auth_context(request):
             context["currentProvider"] = current_provider.NAME
 
     return context
+
+
+def _get_form_descriptions(request):
+    """Retrieve form descriptions from the user API.
+
+    Arguments:
+        request (HttpRequest): The original request, used to retrieve session info.
+
+    Returns:
+        dict: Keys are 'login', 'registration', and 'password_reset';
+            values are the JSON-serialized form descriptions.
+
+    """
+    return {
+        'login': _local_server_get('/user_api/v1/account/login_session/', request.session),
+        'registration': _local_server_get('/user_api/v1/account/registration/', request.session),
+        'password_reset': _local_server_get('/user_api/v1/account/password_reset/', request.session)
+    }
+
+
+def _local_server_get(url, session):
+    """Simulate a server-server GET request for an in-process API.
+
+    Arguments:
+        url (str): The URL of the request (excluding the protocol and domain)
+        session (SessionStore): The session of the original request,
+            used to get past the CSRF checks.
+
+    Returns:
+        str: The content of the response
+
+    """
+    # Since the user API is currently run in-process,
+    # we simulate the server-server API call by constructing
+    # our own request object.  We don't need to include much
+    # information in the request except for the session
+    # (to get past through CSRF validation)
+    request = HttpRequest()
+    request.method = "GET"
+    request.session = session
+
+    # Call the Django view function, simulating
+    # the server-server API call
+    view, args, kwargs = resolve(url)
+    response = view(request, *args, **kwargs)
+
+    # Return the content of the response
+    return response.content
+
+
+def _external_auth_intercept(request, mode):
+    """Allow external auth to intercept a login/registration request.
+
+    Arguments:
+        request (Request): The original request.
+        mode (str): Either "login" or "register"
+
+    Returns:
+        Response or None
+
+    """
+    if mode == "login":
+        return external_auth_login(request)
+    elif mode == "register":
+        return external_auth_register(request)

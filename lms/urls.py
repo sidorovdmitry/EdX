@@ -10,6 +10,8 @@ from microsite_configuration import microsite
 if settings.DEBUG or settings.FEATURES.get('ENABLE_DJANGO_ADMIN_SITE'):
     admin.autodiscover()
 
+# Use urlpatterns formatted as within the Django docs with first parameter "stuck" to the open parenthesis
+# pylint: disable=bad-continuation
 urlpatterns = ('',  # nopep8
     url(r'robots\.txt$', 'labster.static_views.lms_robots', name="robots.txt"),
 
@@ -24,8 +26,6 @@ urlpatterns = ('',  # nopep8
     url(r'^resend_activation_email$', 'student.views.resend_activation_email', name='resend_activation_email'),
     url(r'^login_ajax$', 'student.views.login_user', name="login"),
     url(r'^login_ajax/(?P<error>[^/]*)$', 'student.views.login_user'),
-    url(r'^login$', 'student.views.signin_user', name="signin_user"),
-    url(r'^register$', 'student.views.register_user', name="register_user"),
 
     url(r'^admin_dashboard$', 'dashboard.views.dashboard'),
 
@@ -39,7 +39,6 @@ urlpatterns = ('',  # nopep8
     url(r'^segmentio/event$', 'track.views.segmentio.segmentio_event'),
     url(r'^t/(?P<template>[^/]*)$', 'static_template_view.views.index'),   # TODO: Is this used anymore? What is STATIC_GRAB?
 
-    url(r'^accounts/login$', 'student.views.accounts_login', name="accounts_login"),
     url(r'^accounts/manage_user_standing', 'student.views.manage_user_standing',
         name='manage_user_standing'),
     url(r'^accounts/disable_account_ajax$', 'student.views.disable_account_ajax',
@@ -85,7 +84,28 @@ urlpatterns = ('',  # nopep8
     # CourseInfo API RESTful endpoints
     url(r'^api/course/details/v0/', include('course_about.urls')),
 
+    # Courseware search endpoints
+    url(r'^search/', include('search.urls')),
+
 )
+
+if settings.FEATURES["ENABLE_COMBINED_LOGIN_REGISTRATION"]:
+    # Backwards compatibility with old URL structure, but serve the new views
+    urlpatterns += (
+        url(r'^login$', 'student_account.views.login_and_registration_form',
+            {'initial_mode': 'login'}, name="signin_user"),
+        url(r'^register$', 'student_account.views.login_and_registration_form',
+            {'initial_mode': 'register'}, name="register_user"),
+        url(r'^accounts/login$', 'student_account.views.login_and_registration_form',
+            {'initial_mode': 'login'}, name="accounts_login"),
+    )
+else:
+    # Serve the old views
+    urlpatterns += (
+        url(r'^login$', 'student.views.signin_user', name="signin_user"),
+        url(r'^register$', 'student.views.register_user', name="register_user"),
+        url(r'^accounts/login$', 'student.views.accounts_login', name="accounts_login"),
+    )
 
 if settings.FEATURES["ENABLE_MOBILE_REST_API"]:
     urlpatterns += (
@@ -368,11 +388,8 @@ if settings.COURSEWARE_ENABLED:
             'open_ended_grading.views.take_action_on_flags', name='open_ended_flagged_problems_take_action'),
 
         # Cohorts management
-        url(r'^courses/{}/cohorts$'.format(settings.COURSE_KEY_PATTERN),
-            'openedx.core.djangoapps.course_groups.views.list_cohorts', name="cohorts"),
-        url(r'^courses/{}/cohorts/add$'.format(settings.COURSE_KEY_PATTERN),
-            'openedx.core.djangoapps.course_groups.views.add_cohort',
-            name="add_cohort"),
+        url(r'^courses/{}/cohorts/(?P<cohort_id>[0-9]+)?$'.format(settings.COURSE_KEY_PATTERN),
+            'openedx.core.djangoapps.course_groups.views.cohort_handler', name="cohorts"),
         url(r'^courses/{}/cohorts/(?P<cohort_id>[0-9]+)$'.format(settings.COURSE_KEY_PATTERN),
             'openedx.core.djangoapps.course_groups.views.users_in_cohort',
             name="list_cohort"),
@@ -402,13 +419,17 @@ if settings.COURSEWARE_ENABLED:
 
         # Student account and profile
         url(r'^account/', include('student_account.urls')),
-        url(r'^profile/', include('student_profile.urls')),
+
+        # Student Notes
+        url(r'^courses/{}/edxnotes'.format(settings.COURSE_ID_PATTERN),
+            include('edxnotes.urls'), name="edxnotes_endpoints"),
     )
 
     # allow course staff to change to student view of courseware
     if settings.FEATURES.get('ENABLE_MASQUERADE'):
         urlpatterns += (
-            url(r'^masquerade/(?P<marg>.*)$', 'courseware.masquerade.handle_ajax', name="masquerade-switch"),
+            url(r'^courses/{}/masquerade$'.format(settings.COURSE_KEY_PATTERN),
+                'courseware.masquerade.handle_ajax', name="masquerade_update"),
         )
 
     # discussion forums live within courseware, so courseware must be enabled first
@@ -484,6 +505,12 @@ if settings.FEATURES.get('RESTRICT_ENROLL_BY_REG_METHOD'):
 urlpatterns += (
     url(r'^shoppingcart/', include('shoppingcart.urls')),
 )
+
+# Country access (embargo)
+if settings.FEATURES.get('ENABLE_COUNTRY_ACCESS'):
+    urlpatterns += (
+        url(r'^embargo/', include('embargo.urls')),
+    )
 
 # Survey Djangoapp
 urlpatterns += (

@@ -96,6 +96,28 @@ CC_PROCESSOR = {
 FEATURES['ENABLE_MOBILE_REST_API'] = True
 FEATURES['ENABLE_VIDEO_ABSTRACTION_LAYER_API'] = True
 
+########################## SECURITY #######################
+FEATURES['ENFORCE_PASSWORD_POLICY'] = False
+FEATURES['ENABLE_MAX_FAILED_LOGIN_ATTEMPTS'] = False
+FEATURES['SQUELCH_PII_IN_LOGS'] = False
+FEATURES['PREVENT_CONCURRENT_LOGINS'] = False
+FEATURES['ADVANCED_SECURITY'] = False
+PASSWORD_MIN_LENGTH = None
+PASSWORD_COMPLEXITY = {}
+
+
+########################### Milestones #################################
+FEATURES['MILESTONES_APP'] = True
+
+
+########################### Entrance Exams #################################
+FEATURES['ENTRANCE_EXAMS'] = True
+
+
+########################## Courseware Search #######################
+FEATURES['ENABLE_COURSEWARE_SEARCH'] = False
+SEARCH_ENGINE = "search.elastic.ElasticSearchEngine"
+
 ########################### LABSTER ###########################################
 
 LABSTER_UNITY_URL_PREFIX = "https://labster.s3.amazonaws.com/unity/"
@@ -104,6 +126,7 @@ LABSTER_UNITY_API_PREFIX = "http://localhost:8000"
 PLATFORM_NAME = 'LabsterX'
 THEME_NAME = 'labster'
 FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
+
 
 #####################################################################
 # See if the developer has any local overrides.

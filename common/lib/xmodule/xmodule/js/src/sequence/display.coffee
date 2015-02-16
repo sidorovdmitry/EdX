@@ -4,6 +4,7 @@ class @Sequence
     @el = $(element).find('.sequence')
     @contents = @$('.seq_contents')
     @content_container = @$('#seq_content')
+    @sr_container = @$('#sr-is-focusable')
     @num_contents = @contents.length
     @id = @el.data('id')
     @ajaxUrl = @el.data('ajax-url')
@@ -85,36 +86,22 @@ class @Sequence
         when 'done' then element.addClass('progress-done')
 
   toggleArrows: =>
-    @$('.sequence-nav-buttons a').unbind('click')
+    @$('.sequence-nav-button').unbind('click')
 
     if @contents.length == 0
-      @$('.sequence-nav-buttons .prev a').addClass('disabled').attr('aria-hidden', 'true')
-      @$('.sequence-nav-buttons .next a').addClass('disabled').attr('aria-hidden', 'true')
-
-      @$('.sequence-nav-buttons .prev').hide()
-      @$('.sequence-nav-buttons .next').hide()
-
-      @$('.sequence-nav-buttons .prev-section').show()
-      @$('.sequence-nav-buttons .next-section').show()
+      @$('.sequence-nav-button.button-previous').addClass('disabled').attr('disabled', true)
+      @$('.sequence-nav-button.button-next').addClass('disabled').attr('disabled', true)
       return
 
     if @position == 1
-      @$('.sequence-nav-buttons .prev a').addClass('disabled').attr('aria-hidden', 'true')
-      @$('.sequence-nav-buttons .prev').hide()
-      @$('.sequence-nav-buttons .prev-section').show()
+      @$('.sequence-nav-button.button-previous').addClass('disabled').attr('disabled', true)
     else
-      @$('.sequence-nav-buttons .prev a').removeClass('disabled').attr('aria-hidden', 'false').click(@previous)
-      @$('.sequence-nav-buttons .prev').show()
-      @$('.sequence-nav-buttons .prev-section').hide()
+      @$('.sequence-nav-button.button-previous').removeClass('disabled').removeAttr('disabled').click(@previous)
 
     if @position == @contents.length
-      @$('.sequence-nav-buttons .next a').addClass('disabled').attr('aria-hidden', 'true')
-      @$('.sequence-nav-buttons .next').hide()
-      @$('.sequence-nav-buttons .next-section').show()
+      @$('.sequence-nav-button.button-next').addClass('disabled').attr('disabled', true)
     else
-      @$('.sequence-nav-buttons .next a').removeClass('disabled').attr('aria-hidden', 'false').click(@next)
-      @$('.sequence-nav-buttons .next').show()
-      @$('.sequence-nav-buttons .next-section').hide()
+      @$('.sequence-nav-button.button-next').removeClass('disabled').removeAttr('disabled').click(@next)
 
   render: (new_position) ->
 
@@ -148,6 +135,8 @@ class @Sequence
 
       sequence_links = @content_container.find('a.seqnav')
       sequence_links.click @goto
+
+      @sr_container.focus();
     @$("a.active").blur()
 
   goto: (event) =>

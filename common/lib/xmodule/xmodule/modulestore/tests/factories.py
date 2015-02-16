@@ -22,6 +22,44 @@ class Dummy(object):
     pass
 
 
+class XModuleFactoryLock(threading.local):
+    """
+    This class exists to store whether XModuleFactory can be accessed in a safe
+    way (meaning, in a context where the data it creates will be cleaned up).
+
+    Users of XModuleFactory (or its subclasses) should only call XModuleFactoryLock.enable
+    after ensuring that a) the modulestore will be cleaned up, and b) that XModuleFactoryLock.disable
+    will be called.
+    """
+    def __init__(self):
+        super(XModuleFactoryLock, self).__init__()
+        self._enabled = False
+
+    def enable(self):
+        """
+        Enable XModuleFactories. This should only be turned in a context
+        where the modulestore will be reset at the end of the test (such
+        as inside ModuleStoreTestCase).
+        """
+        self._enabled = True
+
+    def disable(self):
+        """
+        Disable XModuleFactories. This should be called once the data
+        from the factory has been cleaned up.
+        """
+        self._enabled = False
+
+    def is_enabled(self):
+        """
+        Return whether XModuleFactories are enabled.
+        """
+        return self._enabled
+
+
+XMODULE_FACTORY_LOCK = XModuleFactoryLock()
+
+
 class XModuleFactory(Factory):
     """
     Factory for XModules
@@ -34,6 +72,9 @@ class XModuleFactory(Factory):
 
     @lazy_attribute
     def modulestore(self):
+        msg = "XMODULE_FACTORY_LOCK not enabled. Please use ModuleStoreTestCase as your test baseclass."
+        assert XMODULE_FACTORY_LOCK.is_enabled(), msg
+
         from xmodule.modulestore.django import modulestore
         return modulestore()
 
@@ -61,7 +102,7 @@ class CourseFactory(XModuleFactory):
         number = kwargs.pop('course', kwargs.pop('number', None))
         store = kwargs.pop('modulestore')
         name = kwargs.get('name', kwargs.get('run', Location.clean(kwargs.get('display_name'))))
-        run = kwargs.get('run', name)
+        run = kwargs.pop('run', name)
         user_id = kwargs.pop('user_id', ModuleStoreEnum.UserID.test)
 
         # Pass the metadata just as field=value pairs
@@ -210,25 +251,17 @@ class ItemFactory(XModuleFactory):
             # replace the display name with an optional parameter passed in from the caller
             if display_name is not None:
                 metadata['display_name'] = display_name
-            runtime = parent.runtime if parent else None
-            store.create_item(
+
+            module = store.create_child(
                 user_id,
-                location.course_key,
+                parent.location,
                 location.block_type,
                 block_id=location.block_id,
                 metadata=metadata,
                 definition_data=data,
-                runtime=runtime
+                runtime=parent.runtime,
+                fields=kwargs,
             )
-
-            module = store.get_item(location)
-
-            for attr, val in kwargs.items():
-                setattr(module, attr, val)
-            # Save the attributes we just set
-            module.save()
-
-            store.update_item(module, user_id)
 
             # VS[compat] cdodge: This is a hack because static_tabs also have references from the course module, so
             # if we add one then we need to also add it to the policy information (i.e. metadata)
@@ -248,12 +281,15 @@ class ItemFactory(XModuleFactory):
                 parent.children.append(location)
                 store.update_item(parent, user_id)
                 if publish_item:
-                    store.publish(parent.location, user_id)
+                    published_parent = store.publish(parent.location, user_id)
+                    # module is last child of parent
+                    return published_parent.get_children()[-1]
+                else:
+                    return store.get_item(location)
             elif publish_item:
-                store.publish(location, user_id)
-
-        # return the published item
-        return store.get_item(location)
+                return store.publish(location, user_id)
+            else:
+                return module
 
 
 @contextmanager

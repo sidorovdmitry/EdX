@@ -28,7 +28,7 @@ import json
 import re
 from lxml import etree
 
-from .xml import XMLModuleStore, ImportSystem, ParentTracker
+from .xml import XMLModuleStore, ImportSystem
 from xblock.runtime import KvsFieldData, DictKeyValueStore
 from xmodule.x_module import XModuleDescriptor
 from opaque_keys.edx.keys import UsageKey
@@ -195,11 +195,18 @@ def import_from_xml(
         if target_course_id is not None:
             dest_course_id = target_course_id
         else:
+            # Note that dest_course_id will be in the format for the default modulestore.
             dest_course_id = store.make_course_key(course_key.org, course_key.course, course_key.run)
+
+        existing_course_id = store.has_course(dest_course_id, ignore_case=True)
+        # store.has_course will return the course_key in the format for the modulestore in which it was found.
+        # This may be different from dest_course_id, so correct to the format found.
+        if existing_course_id:
+            dest_course_id = existing_course_id
 
         runtime = None
         # Creates a new course if it doesn't already exist
-        if create_course_if_not_present and not store.has_course(dest_course_id, ignore_case=True):
+        if create_course_if_not_present and not existing_course_id:
             try:
                 new_course = store.create_course(dest_course_id.org, dest_course_id.course, dest_course_id.run, user_id)
                 runtime = new_course.runtime
@@ -479,11 +486,13 @@ def _import_module_and_update_references(
 
     fields = {}
     for field_name, field in module.fields.iteritems():
-        if field.is_set_on(module):
-            if field.scope == Scope.parent:
-                continue
+        if field.scope != Scope.parent and field.is_set_on(module):
             if isinstance(field, Reference):
-                fields[field_name] = _convert_reference_fields_to_new_namespace(field.read_from(module))
+                value = field.read_from(module)
+                if value is None:
+                    fields[field_name] = None
+                else:
+                    fields[field_name] = _convert_reference_fields_to_new_namespace(field.read_from(module))
             elif isinstance(field, ReferenceList):
                 references = field.read_from(module)
                 fields[field_name] = [_convert_reference_fields_to_new_namespace(reference) for reference in references]
@@ -548,7 +557,6 @@ def _import_course_draft(
         course_id=source_course_id,
         course_dir=draft_course_dir,
         error_tracker=errorlog.tracker,
-        parent_tracker=ParentTracker(),
         load_error_modules=False,
         mixins=xml_module_store.xblock_mixins,
         field_data=KvsFieldData(kvs=DictKeyValueStore()),

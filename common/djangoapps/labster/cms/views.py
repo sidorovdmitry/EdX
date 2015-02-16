@@ -6,7 +6,8 @@ from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import FormView, TemplateView, View
 
-from labster.edx_bridge import duplicate_lab_content, duplicate_course
+from labster.courses import duplicate_course
+from labster.edx_bridge import duplicate_lab_content
 from labster.masters import fetch_quizblocks
 from labster.models import Lab
 
@@ -35,7 +36,7 @@ class CourseDuplicateForm(forms.Form):
         source = self.cleaned_data.get('source')
         target = self.cleaned_data.get('target')
 
-        course = duplicate_course(source, target, user, http_protocol=http_protocol)
+        course = duplicate_course(source, target, user)
 
         return course
 
@@ -62,7 +63,6 @@ class CourseDuplicate(FormView):
     def get_success_url(self):
         url = '/course/{}'.format(self.course.id)
         return url
-
 
 
 class AdminOnlyMixin(object):

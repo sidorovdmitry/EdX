@@ -70,7 +70,9 @@ class CombinedLoginAndRegisterPage(PageObject):
     in the bok choy settings.
 
     When enabled, the new page is available from either
-    `/account/login` or `/account/register`.
+    `/login` or `/register`; the new page is also served at
+    `/account/login/` or `/account/register/`, where it was
+    available for a time during an A/B test.
 
     Users can reach this page while attempting to enroll
     in a course, in which case users will be auto-enrolled
@@ -246,6 +248,7 @@ class CombinedLoginAndRegisterPage(PageObject):
     def wait_for_errors(self):
         """Wait for errors to be visible, then return them. """
         def _check_func():
+            """Return success status and any errors that occurred."""
             errors = self.errors
             return (bool(errors), errors)
         return Promise(_check_func, "Errors are visible").fulfill()
@@ -259,6 +262,7 @@ class CombinedLoginAndRegisterPage(PageObject):
     def wait_for_success(self):
         """Wait for a success message to be visible, then return it."""
         def _check_func():
+            """Return success status and any errors that occurred."""
             success = self.success
             return (bool(success), success)
         return Promise(_check_func, "Success message is visible").fulfill()

@@ -1,6 +1,7 @@
 import unittest
 import decimal
 import ddt
+from mock import patch
 from django.conf import settings
 from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
@@ -9,24 +10,20 @@ from xmodule.modulestore.tests.django_utils import (
     ModuleStoreTestCase, mixed_store_config
 )
 
+from util.testing import UrlResetMixin
 from xmodule.modulestore.tests.factories import CourseFactory
 from course_modes.tests.factories import CourseModeFactory
 from student.tests.factories import CourseEnrollmentFactory, UserFactory
 from student.models import CourseEnrollment
-
-
-# Since we don't need any XML course fixtures, use a modulestore configuration
-# that disables the XML modulestore.
-MODULESTORE_CONFIG = mixed_store_config(settings.COMMON_TEST_DATA_ROOT, {}, include_xml=False)
+from course_modes.models import CourseMode, Mode
 
 
 @ddt.ddt
-@override_settings(MODULESTORE=MODULESTORE_CONFIG)
 @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
-class CourseModeViewTest(ModuleStoreTestCase):
-
+class CourseModeViewTest(UrlResetMixin, ModuleStoreTestCase):
+    @patch.dict(settings.FEATURES, {'MODE_CREATION_FOR_TESTING': True})
     def setUp(self):
-        super(CourseModeViewTest, self).setUp()
+        super(CourseModeViewTest, self).setUp('course_modes.urls')
         self.course = CourseFactory.create()
         self.user = UserFactory.create(username="Bob", email="bob@example.com", password="edx")
         self.client.login(username=self.user.username, password="edx")
@@ -66,18 +63,6 @@ class CourseModeViewTest(ModuleStoreTestCase):
             self.assertRedirects(response, reverse('dashboard'))
         else:
             self.assertEquals(response.status_code, 200)
-
-    def test_upgrade_copy(self):
-        # Create the course modes
-        for mode in ('audit', 'honor', 'verified'):
-            CourseModeFactory(mode_slug=mode, course_id=self.course.id)
-
-        url = reverse('course_modes_choose', args=[unicode(self.course.id)])
-        response = self.client.get(url, {"upgrade": True})
-
-        # Verify that the upgrade copy is displayed instead
-        # of the usual text.
-        self.assertContains(response, "Upgrade Your Enrollment")
 
     def test_no_enrollment(self):
         # Create the course modes
@@ -134,10 +119,10 @@ class CourseModeViewTest(ModuleStoreTestCase):
         choose_track_url = reverse('course_modes_choose', args=[unicode(self.course.id)])
         response = self.client.get(choose_track_url)
 
-        # Expect that we're redirected immediately to the "show requirements" page
-        # (since the only available track is professional ed)
-        show_reqs_url = reverse('verify_student_show_requirements', args=[unicode(self.course.id)])
-        self.assertRedirects(response, show_reqs_url)
+        # Since the only available track is professional ed, expect that
+        # we're redirected immediately to the start of the payment flow.
+        start_flow_url = reverse('verify_student_start_flow', args=[unicode(self.course.id)])
+        self.assertRedirects(response, start_flow_url)
 
         # Now enroll in the course
         CourseEnrollmentFactory(
@@ -161,7 +146,7 @@ class CourseModeViewTest(ModuleStoreTestCase):
 
     @ddt.data(
         ('honor', 'dashboard'),
-        ('verified', 'show_requirements'),
+        ('verified', 'start-flow'),
     )
     @ddt.unpack
     def test_choose_mode_redirect(self, course_mode, expected_redirect):
@@ -176,11 +161,11 @@ class CourseModeViewTest(ModuleStoreTestCase):
         # Verify the redirect
         if expected_redirect == 'dashboard':
             redirect_url = reverse('dashboard')
-        elif expected_redirect == 'show_requirements':
+        elif expected_redirect == 'start-flow':
             redirect_url = reverse(
-                'verify_student_show_requirements',
+                'verify_student_start_flow',
                 kwargs={'course_id': unicode(self.course.id)}
-            ) + "?upgrade=False"
+            )
         else:
             self.fail("Must provide a valid redirect URL name")
 
@@ -235,3 +220,65 @@ class CourseModeViewTest(ModuleStoreTestCase):
         response = self.client.post(choose_track_url, self.POST_PARAMS_FOR_COURSE_MODE['unsupported'])
 
         self.assertEqual(400, response.status_code)
+
+    @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
+    def test_default_mode_creation(self):
+        # Hit the mode creation endpoint with no querystring params, to create an honor mode
+        url = reverse('create_mode', args=[unicode(self.course.id)])
+        response = self.client.get(url)
+
+        self.assertEquals(response.status_code, 200)
+
+        expected_mode = [Mode(u'honor', u'Honor Code Certificate', 0, '', 'usd', None, None)]
+        course_mode = CourseMode.modes_for_course(self.course.id)
+
+        self.assertEquals(course_mode, expected_mode)
+
+    @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
+    @ddt.data(
+        (u'verified', u'Verified Certificate', 10, '10,20,30', 'usd'),
+        (u'professional', u'Professional Education', 100, '100,200', 'usd'),
+    )
+    @ddt.unpack
+    def test_verified_mode_creation(self, mode_slug, mode_display_name, min_price, suggested_prices, currency):
+        parameters = {}
+        parameters['mode_slug'] = mode_slug
+        parameters['mode_display_name'] = mode_display_name
+        parameters['min_price'] = min_price
+        parameters['suggested_prices'] = suggested_prices
+        parameters['currency'] = currency
+
+        url = reverse('create_mode', args=[unicode(self.course.id)])
+        response = self.client.get(url, parameters)
+
+        self.assertEquals(response.status_code, 200)
+
+        expected_mode = [Mode(mode_slug, mode_display_name, min_price, suggested_prices, currency, None, None)]
+        course_mode = CourseMode.modes_for_course(self.course.id)
+
+        self.assertEquals(course_mode, expected_mode)
+
+    @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
+    def test_multiple_mode_creation(self):
+        # Create an honor mode
+        base_url = reverse('create_mode', args=[unicode(self.course.id)])
+        self.client.get(base_url)
+
+        # Excluding the currency parameter implicitly tests the mode creation endpoint's ability to
+        # use default values when parameters are partially missing.
+        parameters = {}
+        parameters['mode_slug'] = u'verified'
+        parameters['mode_display_name'] = u'Verified Certificate'
+        parameters['min_price'] = 10
+        parameters['suggested_prices'] = '10,20'
+
+        # Create a verified mode
+        url = reverse('create_mode', args=[unicode(self.course.id)])
+        response = self.client.get(url, parameters)
+
+        honor_mode = Mode(u'honor', u'Honor Code Certificate', 0, '', 'usd', None, None)
+        verified_mode = Mode(u'verified', u'Verified Certificate', 10, '10,20', 'usd', None, None)
+        expected_modes = [honor_mode, verified_mode]
+        course_modes = CourseMode.modes_for_course(self.course.id)
+
+        self.assertEquals(course_modes, expected_modes)
