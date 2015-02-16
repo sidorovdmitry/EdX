@@ -411,7 +411,7 @@ class NutshellInviteStudents(View):
         return HttpResponse(1)
 
 
-class EnrollStudent(View):
+class EnrollStudentVoucher(View):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
         email = data.get('email')
@@ -435,6 +435,28 @@ class EnrollStudent(View):
         return HttpResponse(json.dumps({'success': True}))
 
 
+class EnrollStudentCourse(View):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        email = data.get('email')
+        course_id = data.get('course_id')
+        try:
+            user = User.objects.get(email=email)
+        except:
+            return HttpResponseBadRequest('invalid email or course id')
+
+        # enroll student to the course
+        record, _ = CourseEnrollment.objects.get_or_create(
+            user=user, course_id=course_id)
+        record.is_active = True
+        record.save()
+
+        user_license, _ = LabsterUserLicense.objects.get_or_create(
+            email=email, course_id=course_id)
+
+        return HttpResponse(json.dumps({'success': True}))
+
+
 settings_xml = SettingsXml.as_view()
 server_xml = ServerXml.as_view()
 platform_xml = PlatformXml.as_view()
@@ -444,4 +466,5 @@ lab_result = login_required(LabResult.as_view())
 adaptive_test_result = login_required(AdaptiveTestResult.as_view())
 nutshell_play_lab = login_required(NutshellPlayLab.as_view())
 nutshell_invite_students = login_required(NutshellInviteStudents.as_view())
-enroll_student = login_required(EnrollStudent.as_view())
+enroll_student_voucher = login_required(EnrollStudentVoucher.as_view())
+enroll_student_course = login_required(EnrollStudentCourse.as_view())
