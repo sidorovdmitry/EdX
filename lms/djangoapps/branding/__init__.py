@@ -54,6 +54,9 @@ def get_logo_url():
     Return the url for the branded logo image to be used
     """
 
+    if settings.FEATURES.get('LABSTER', False):
+        return 'https://labsterim.s3.amazonaws.com/media/uploads/labster/labster_logo_30.png'
+
     # if the MicrositeConfiguration has a value for the logo_image_url
     # let's use that
     image_url = microsite.get_value('logo_image_url')

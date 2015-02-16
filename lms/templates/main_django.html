@@ -27,6 +27,8 @@
   <![endif]-->
 
   <meta name="path_prefix" content="{{EDX_ROOT_URL}}">
+  <link rel="stylesheet" id="options-google-fonts"  href="//fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic&amp;subset=latin&amp;v=1410882627" type="text/css" media="all" />
+
 </head>
 
 <body class="{% block bodyclass %}{% endblock %} lang_{{LANGUAGE_CODE}}">
@@ -46,7 +48,7 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     {% if IS_EDX_DOMAIN %}
       {% include "navigation-edx.html" %}
     {% else %}
-      {% include "navigation.html" %}
+      {% include "labster_navigation.html" %}
     {% endif %}
   {% endwith %}
   <div class="content-wrapper" id="content">
@@ -58,7 +60,7 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
   {% elif IS_EDX_DOMAIN %}
     {% include "footer-edx-new.html" %}
   {% else %}
-    {% include "footer.html" %}
+    {% include "theme-footer.html" %}
   {% endif %}
 
   {% compressed_js 'application' %}
