@@ -115,7 +115,7 @@ FEATURES['ENTRANCE_EXAMS'] = True
 
 
 ########################## Courseware Search #######################
-FEATURES['ENABLE_COURSEWARE_SEARCH'] = True
+FEATURES['ENABLE_COURSEWARE_SEARCH'] = False
 SEARCH_ENGINE = "search.elastic.ElasticSearchEngine"
 
 ########################### LABSTER ###########################################
