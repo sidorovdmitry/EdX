@@ -181,6 +181,7 @@ class ServerXml(LabProxyXMLView):
         save_game = reverse('labster-api:save', args=[lab_proxy.id])
         player_start_end = reverse('labster-api:play', args=[lab_proxy.id])
         quiz_block = reverse('labster-api:questions', args=[lab_proxy.id])
+        graph_data = reverse('labster-api:graph_data')
 
         if lab_proxy.lab.use_quiz_blocks:
             quiz_statistic = reverse('labster-api:answer', args=[lab_proxy.id])
@@ -203,6 +204,7 @@ class ServerXml(LabProxyXMLView):
             {'Id': "PlayerStartEnd", 'Path': player_start_end},
             {'Id': "Wiki", 'Path': wiki, 'CatchError': "false", 'AllowCache': "true"},
             {'Id': "QuizBlock", 'Path': quiz_block},
+            {'Id': "GraphData", 'Path': graph_data},
         ]
 
         for child in children:
