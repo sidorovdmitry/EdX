@@ -57,7 +57,7 @@ angular.module('StudentVoucherCode')
       })
 
       $http.post(
-        '/labster/enroll-student/',
+        '/labster/enroll-student-voucher/',
         {
           'license_id': license_id,
           'email': $scope.user.email

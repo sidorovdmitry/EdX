@@ -3,7 +3,7 @@ angular.module('LabsterStudentLicense')
   .directive('stripe', function ($location, $http, ngDialog) {
     return {
       restrict: 'E',
-      scope: {paymentId: '@', email: '@', amount: '@', description: '@', voucherCode: '@'},
+      scope: {paymentId: '@', email: '@', amount: '@', description: '@', courseId: '@'},
       link: function (scope, element, attr) {
 
         function showProgress() {
@@ -21,8 +21,7 @@ angular.module('LabsterStudentLicense')
           showProgress();
           var url = window.backofficeUrls.payment + scope.paymentId + "/charge_stripe/";
           var post_data = {
-            'stripe_token': token.id,
-            'voucher_code': scope.voucherCode
+            'stripe_token': token.id
           };
 
           $http.post(url, post_data, {
@@ -34,12 +33,10 @@ angular.module('LabsterStudentLicense')
             .success(function (data, status, headers, config) {
 
               // register the student to the course
-              // using the license id given
-              var license_id = data.license_id;
               $http.post(
-                '/labster/enroll-student/',
+                '/labster/enroll-student-course/',
                 {
-                  'license_id': license_id,
+                  'course_id': scope.courseId,
                   'email': scope.email
                 },
                 {

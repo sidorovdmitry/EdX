@@ -2,9 +2,11 @@ angular.module('LabsterStudentLicense')
 
   .controller('NewLicenseController', function ($scope, $routeParams, $http, $timeout) {
     $scope.payment_description = "";
+    $scope.user = window.requestUser;
+    $scope.courseId = window.courseId;
 
     // get the payment
-    var paymentId = $routeParams.paymentId;
+    var paymentId = $routeParams.payment_id;
     var url = window.backofficeUrls.payment + paymentId + "/";
     $http.get(url, {
       headers: {
@@ -15,7 +17,9 @@ angular.module('LabsterStudentLicense')
       data.total = parseFloat(data.total).toFixed(2);
       data.created_date = moment(data.created_at).format('ll');
       $scope.payment = data;
-      checkStripe();
+      setDescription();
+      console.log(data);
+      // checkStripe();
     });
 
     function setDescription() {

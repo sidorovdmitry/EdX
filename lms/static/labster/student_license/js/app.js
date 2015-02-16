@@ -4,7 +4,7 @@ angular.module('LabsterStudentLicense', ['ngRoute', 'ngDialog'])
     $routeProvider
       .when('/', {
         controller: 'HomeController',
-        templateUrl: window.baseUrl + 'labster/student_license/view/home.html'
+        templateUrl: window.baseUrl + 'labster/student_license/views/home.html'
       })
       .when('/license/new/:payment_id', {
         controller: 'NewLicenseController',

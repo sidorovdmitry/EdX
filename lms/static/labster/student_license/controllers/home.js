@@ -49,7 +49,7 @@ angular.module('LabsterStudentLicense')
           item_count: 1,
           month_subscription: $scope.lab_info.month_subscription
         };
-        list_product.push(bought_lab);
+        data.list_product.push(bought_lab);
 
         $http.post(url, data, {
           headers: {
@@ -57,13 +57,12 @@ angular.module('LabsterStudentLicense')
           }
         })
           .success(function (data, status, headers, config) {
-              var url = '/license/new/' + data.id;
-              $location.url(url);
-            });
+            var url = '/license/new/' + data.id;
+            $location.url(url);
           })
 
           .error(function (data, status, headers, config) {
           });
       }
-    }
+    };
   });

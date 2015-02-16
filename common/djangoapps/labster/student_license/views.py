@@ -52,5 +52,6 @@ def home(request, course_id):
         'stripe_publishable_key': stripe_publishable_key,
         'lab_id': lab_id,
         'course' : course,
+        'course_id': course_id,
     }
     return render_to_response(template_name, context)
