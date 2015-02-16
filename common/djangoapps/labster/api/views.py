@@ -391,11 +391,12 @@ class CustomFileUploadParser(BaseParser):
             pass
 
 
-class SendGraphData(APIView):
+class SendGraphData(AuthMixin, APIView):
     parser_classes = (MultiPartParser, FormParser,)
 
-    def post(self, request, format=None):
+    def post(self, request, *args, **kwargs):
         user = request.user
+        file = request.FILES['file']
 
         context = {
             'user': user,
@@ -403,9 +404,9 @@ class SendGraphData(APIView):
         email_html = render_to_string('emails/graph_data.html', context)
         subject = "Graph Data"
 
-        email = EmailMessage(subject, email_html, "no-reply@labster.com", ['aslamhadi@labster.com',])
+        email = EmailMessage(subject, email_html, "no-reply@labster.com", [user.email,])
         email.content_subtype = "html"
-        email.attach(csv_file.name, csv_file, csv_file.content_type)
+        email.attach(file.name, file.read(), file.content_type)
         email.send(fail_silently=False)
 
         http_status = status.HTTP_200_OK
@@ -413,10 +414,13 @@ class SendGraphData(APIView):
         return Response(http_status)
 
     def get(self, request, *args, **kwargs):
-        csv_url = self.request.QUERY_PARAMS.get('url')
-        response = urllib2.urlopen(csv_url)
+        file_url = self.request.QUERY_PARAMS.get('url')
 
-        # return _request(self, request, response.read(), format)
+        if not file_url:
+            http_status = status.HTTP_204_NO_CONTENT
+            return Response(status=http_status)
+
+        response = urllib2.urlopen(file_url)
         user = request.user
 
         context = {
@@ -425,15 +429,14 @@ class SendGraphData(APIView):
         email_html = render_to_string('emails/graph_data.html', context)
         subject = "Graph Data"
 
-        email = EmailMessage(subject, email_html, "no-reply@labster.com", ['aslamhadi@labster.com',])
+        email = EmailMessage(subject, email_html, "no-reply@labster.com", [user.email,])
         email.content_subtype = "html"
-        email.attach(csv_url.split('/'[-1]), response.read(), response.headers["content-type"])
+        email.attach(file_url.split('/')[-1], response.read(), 'application/octet-stream')
         email.send(fail_silently=False)
 
         http_status = status.HTTP_200_OK
 
-        response_data = {}
-        return Response(response_data, status=http_status)
+        return Response(status=http_status)
 
 
 class CreateSave(AuthMixin, APIView):
