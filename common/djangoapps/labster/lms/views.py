@@ -204,7 +204,7 @@ class ServerXml(LabProxyXMLView):
             {'Id': "PlayerStartEnd", 'Path': player_start_end},
             {'Id': "Wiki", 'Path': wiki, 'CatchError': "false", 'AllowCache': "true"},
             {'Id': "QuizBlock", 'Path': quiz_block},
-            {'Id': "GraphData", 'Path': graph_data},
+            # {'Id': "GraphData", 'Path': graph_data},
         ]
 
         for child in children:
