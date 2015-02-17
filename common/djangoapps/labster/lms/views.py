@@ -445,14 +445,16 @@ class EnrollStudentCourse(View):
         except:
             return HttpResponseBadRequest('invalid email or course id')
 
+        course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+
         # enroll student to the course
         record, _ = CourseEnrollment.objects.get_or_create(
-            user=user, course_id=course_id)
+            user=user, course_id=course_key)
         record.is_active = True
         record.save()
 
         user_license, _ = LabsterUserLicense.objects.get_or_create(
-            email=email, course_id=course_id)
+            email=email, course_id=course_key)
 
         return HttpResponse(json.dumps({'success': True}))
 
