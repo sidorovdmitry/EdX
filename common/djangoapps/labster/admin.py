@@ -5,14 +5,14 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from django.utils.safestring import mark_safe
 
 from labster.models import (
-    LanguageLab, Lab, ErrorInfo, DeviceInfo, UserSave, Token, LabProxy,
+    LanguageLab, Lab, UserSave, Token, LabProxy,
     UnityLog, UserAnswer, LabsterUserLicense, ProblemProxy,
     UnityPlatformLog, QuizBlock, Problem, Answer, AdaptiveProblem,
     LabProxyData, UserAttempt, LabsterUser, LabsterCourseLicense)
-from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_block_file_url
+from labster.users.admin import LabsterUserAdmin
+from labster.utils import get_engine_xml_url, get_quiz_block_file_url
 
 
 S3_BASE_URL = settings.LABSTER_S3_BASE_URL
@@ -260,25 +260,6 @@ class UserAttemptAdmin(admin.ModelAdmin):
     def queryset(self, request):
         return UserAttempt.objects.all().select_related(
             'lab_proxy', 'lab_proxy__lab', 'user')
-
-
-class LabsterUserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'user_id', 'username', 'user_type_display')
-    search_fields = ('user__email', 'user__first_name', 'user__last_name',)
-    list_filter = ('user__is_active', 'user_type',)
-    raw_id_fields = ('user',)
-
-    def email(self, obj):
-        return obj.user.email
-
-    def user_id(self, obj):
-        return obj.user.id
-
-    def username(self, obj):
-        return obj.user.username
-
-    def user_type_display(self, obj):
-        return obj.get_user_type_display()
 
 
 class LabsterCourseLicenseAdmin(admin.ModelAdmin):
