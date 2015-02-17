@@ -62,6 +62,7 @@
 @import "course/wiki/create";
 @import "course/wiki/wiki";
 @import "course/wiki/table";
+@import "course/wiki/labster";
 
 // course - views
 @import "course/info";
