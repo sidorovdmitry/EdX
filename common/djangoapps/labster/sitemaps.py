@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.contrib.sitemaps import Sitemap
 
+from labster.courses import get_demo_courses
+
 
 class Page(object):
 
@@ -11,7 +13,7 @@ class Page(object):
         return self.url
 
 
-def all_pages():
+def get_static_pages():
     pages = []
     for key, value in settings.MKTG_URL_LINK_MAP.items():
         if value is None:
@@ -21,10 +23,18 @@ def all_pages():
             continue
 
         pages.append(Page(url="/{}".format(value)))
-
     return pages
+
+
+def get_courses():
+    courses = get_demo_courses()
+
+    def get_url(course):
+        return "/courses/{}".format(course.id.to_deprecated_string())
+
+    return [Page(url=get_url(course)) for course in courses]
 
 
 class PageSitemap(Sitemap):
     def items(self):
-        return all_pages()
+        return get_static_pages() + get_courses()

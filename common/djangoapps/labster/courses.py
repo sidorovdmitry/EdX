@@ -3,6 +3,7 @@ from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from student.models import CourseAccessRole, CourseEnrollment
 from student.roles import CourseInstructorRole, CourseStaffRole
+from xmodule.course_module import CourseDescriptor
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
 
@@ -107,3 +108,11 @@ def duplicate_course(source, target, user, fields=None):
     mstore.update_item(course, user.id)
 
     return course
+
+
+def get_demo_courses():
+    courses = modulestore().get_courses()
+    courses = [c for c in courses if isinstance(c, CourseDescriptor)]
+    courses = [course for course in courses if course.labster_demo and course.is_browsable]
+
+    return courses
