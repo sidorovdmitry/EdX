@@ -1499,6 +1499,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.sitemaps',
     'djcelery',
     'south',
 
@@ -1633,7 +1634,7 @@ INSTALLED_APPS = (
 EDXMKTG_COOKIE_NAME = 'edxloggedin'
 MKTG_URLS = {}
 MKTG_URL_LINK_MAP = {
-    'ABOUT': 'about_edx',
+    'ABOUT': None,
     'CONTACT': 'contact',  # 'contact',
     'FAQ': None,  # 'help_edx',
     'COURSES': 'courses',
@@ -1641,16 +1642,16 @@ MKTG_URL_LINK_MAP = {
     'TOS': 'tos',
     'HONOR': None,  # 'honor',
     'PRIVACY': None,  # 'privacy_edx',
-    'JOBS': 'jobs',
-    'PRESS': 'press',
+    'JOBS': None,
+    'PRESS': None,
     # 'BLOG': 'blog',
-    'DONATE': 'donate',
+    'DONATE': None,
     'CAREER': 'career',
     'PRICING': 'pricing',
     'TESTIMONIAL': 'testimonial',
 
     # Verified Certificates
-    'WHAT_IS_VERIFIED_CERT': 'verified-certificate',
+    'WHAT_IS_VERIFIED_CERT': None,
 }
 
 ################# Mobile URLS ##########################

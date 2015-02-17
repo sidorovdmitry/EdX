@@ -5,15 +5,21 @@ from django.conf.urls.static import static
 
 import django.contrib.auth.views
 from microsite_configuration import microsite
+from labster.sitemaps import PageSitemap
 
 # Uncomment the next two lines to enable the admin:
 if settings.DEBUG or settings.FEATURES.get('ENABLE_DJANGO_ADMIN_SITE'):
     admin.autodiscover()
 
+sitemaps = {
+    'pages': PageSitemap(),
+}
+
 # Use urlpatterns formatted as within the Django docs with first parameter "stuck" to the open parenthesis
 # pylint: disable=bad-continuation
 urlpatterns = ('',  # nopep8
     url(r'robots\.txt$', 'labster.static_views.lms_robots', name="robots.txt"),
+    url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
 
     url(r'^invalid-browser/$', 'labster.lms.views.invalid_browser', name='invalid_browser'),
 
