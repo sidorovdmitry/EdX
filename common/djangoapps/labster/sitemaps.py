@@ -30,7 +30,7 @@ def get_courses():
     courses = get_demo_courses()
 
     def get_url(course):
-        return "/courses/{}".format(course.id.to_deprecated_string())
+        return "/courses/{}/about".format(course.id.to_deprecated_string())
 
     return [Page(url=get_url(course)) for course in courses]
 
