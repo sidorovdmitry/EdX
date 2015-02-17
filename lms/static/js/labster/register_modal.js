@@ -171,6 +171,7 @@ function registerModalInit(options) {
                     containerFormZero.fadeOut(function() {
                         containerFormOne.fadeIn();
                         containerFormThree.find('input[name=user_id]').val(window.user.id);
+                        containerFormThree.find('input[name=user_type]').val(window.userType);
                         containerFormThree.find('input[name=token_key]').val(window.user.token_key);
                         containerFormThree.find('input[name=next]').val(next);
                         containerFormThree.find('input[name=course_id]').val(options.courseId);
