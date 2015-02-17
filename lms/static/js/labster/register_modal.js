@@ -159,7 +159,7 @@ function registerModalInit(options) {
             var next = options.nextUrl;
             if (parseInt(window.userType) === 1 && options.courseId != "") {
                 // if student and it's coming from the about page, redirect to payment page
-                next = "student_license/" + options.courseId;
+                next = "/student_license/" + options.courseId;
             }
 
             $.ajax({
