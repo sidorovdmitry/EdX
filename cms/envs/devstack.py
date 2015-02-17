@@ -84,7 +84,7 @@ FEATURES['MILESTONES_APP'] = True
 FEATURES['ENTRANCE_EXAMS'] = True
 
 ################################ SEARCH INDEX ################################
-FEATURES['ENABLE_COURSEWARE_INDEX'] = True
+FEATURES['ENABLE_COURSEWARE_INDEX'] = False
 SEARCH_ENGINE = "search.elastic.ElasticSearchEngine"
 
 ###############################################################################
