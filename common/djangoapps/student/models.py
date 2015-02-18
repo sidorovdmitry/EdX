@@ -1248,6 +1248,7 @@ class CourseEnrollment(models.Model):
 
 class CourseEnrollmentAdmin(admin.ModelAdmin):
     list_display = ('user', 'course_id', 'mode', 'created', 'is_active')
+    search_fields = ('user__email', 'course_id')
 
 
 class CourseEnrollmentAllowed(models.Model):
