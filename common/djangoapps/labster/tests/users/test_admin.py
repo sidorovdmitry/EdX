@@ -169,7 +169,8 @@ class LabsterUserFormTest(TestCase):
 
         self.assertEqual(user.email, data['email'])
         self.assertTrue(user.is_active)
-        self.assertTrue(user.check_password(data['password']))
+        self.assertFalse(user.check_password(data['password']))
+        self.assertTrue(user.check_password('user'))
 
         self.assertEqual(user_profile.name, data['name'])
         self.assertEqual(user_profile.gender, data['gender'])
@@ -227,5 +228,4 @@ class LabsterUserFormTest(TestCase):
         labster_user = form.save()
         user = User.objects.get(id=labster_user.user.id)
 
-        self.assertFalse(user.has_usable_password())
-
+        self.assertTrue(user.check_password('user'))

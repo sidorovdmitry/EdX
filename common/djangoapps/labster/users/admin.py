@@ -48,10 +48,11 @@ class LabsterUserForm(forms.ModelForm):
         user.is_active = data.get('is_active', False)
 
         password = data.get('password')
-        if password:
-            user.set_password(password)
-        else:
-            user.set_unusable_password()
+        if not user.id:
+            if password:
+                user.set_password(password)
+            else:
+                user.set_unusable_password()
         user.save()
 
         self.get_or_create_user_profile(user=user, data=data)
