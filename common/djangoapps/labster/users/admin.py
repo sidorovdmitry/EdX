@@ -36,15 +36,15 @@ class LabsterUserForm(forms.ModelForm):
         return email
 
     def get_or_create_user(self, data):
+        name = data.get('name')
+
         if self.instance.id:
             user = self.instance.user
         else:
             user = User()
+            user.username = generate_unique_username(name, User)
 
         user.email = data.get('email')
-
-        name = data.get('name')
-        user.username = generate_unique_username(name, User)
         user.is_active = data.get('is_active', False)
 
         password = data.get('password')
