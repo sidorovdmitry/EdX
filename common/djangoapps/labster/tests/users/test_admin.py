@@ -140,6 +140,7 @@ class LabsterUserFormTest(TestCase):
 
     def test_update_valid(self):
         user = User.objects.create_user('new@user.com', 'new@user.com', 'user')
+        UserProfile.objects.get_or_create(user=user)
         labster_user = user.labster_user
 
         data = {
@@ -152,6 +153,7 @@ class LabsterUserFormTest(TestCase):
 
     def test_update_save(self):
         user = User.objects.create_user('new@user.com', 'new@user.com', 'user')
+        UserProfile.objects.get_or_create(user=user)
         old_user_id = user.id
         labster_user = user.labster_user
 
@@ -188,6 +190,7 @@ class LabsterUserFormTest(TestCase):
     def test_update_email_is_used(self):
         User.objects.create_user('other@user.com', 'other@user.com', 'user')
         user = User.objects.create_user('new@user.com', 'new@user.com', 'user')
+        UserProfile.objects.get_or_create(user=user)
         labster_user = user.labster_user
 
         data = {
@@ -200,6 +203,7 @@ class LabsterUserFormTest(TestCase):
 
     def test_update_inactive(self):
         user = User.objects.create_user('new@user.com', 'new@user.com', 'user')
+        UserProfile.objects.get_or_create(user=user)
         labster_user = LabsterUser.objects.get(user=user)
 
         data = {
@@ -216,6 +220,7 @@ class LabsterUserFormTest(TestCase):
 
     def test_update_no_password(self):
         user = User.objects.create_user('new@user.com', 'new@user.com', 'user')
+        UserProfile.objects.get_or_create(user=user)
         labster_user = user.labster_user
 
         data = {

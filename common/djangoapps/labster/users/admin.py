@@ -22,6 +22,27 @@ class LabsterUserForm(forms.ModelForm):
         model = LabsterUser
         exclude = ('user',)
 
+    def __init__(self, *args, **kwargs):
+        super(LabsterUserForm, self).__init__(*args, **kwargs)
+        if self.instance.id:
+            user = self.instance.user
+            user_profile = UserProfile.objects.get(user=user)
+            self.fields['email'].initial = user.email
+            self.fields['is_active'].initial = user.is_active
+            self.fields['name'].initial = user_profile.name
+            self.fields['gender'].initial = user_profile.gender
+            self.fields['level_of_education'].initial = user_profile.level_of_education
+            self.fields['user_type'].initial = self.instance.user_type
+            self.fields['user_school_level'].initial = self.instance.user_school_level
+            self.fields['phone_number'].initial = self.instance.phone_number
+            self.fields['organization_name'].initial = self.instance.organization_name
+            self.fields['nationality'].initial = self.instance.nationality
+            self.fields['unique_id'].initial = self.instance.unique_id
+            self.fields['language'].initial = self.instance.language
+            self.fields['date_of_birth'].initial = self.instance.date_of_birth
+
+            self.fields['password'].widget.attrs['disabled'] = True
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
 
@@ -95,6 +116,7 @@ class LabsterUserAdmin(admin.ModelAdmin):
         (None, {'fields': (
             # 'user',
             'email',
+            'password',
             'is_active',
         )}),
         (None, {
