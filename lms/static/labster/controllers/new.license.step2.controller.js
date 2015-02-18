@@ -1,6 +1,6 @@
 angular.module('LabsterBackOffice')
 
-  .controller('NewLicenseStep2Controller', function ($scope, $routeParams, $location, $http, LicenseService, localStorageService) {
+  .controller('NewLicenseStep2Controller', function ($scope, $routeParams, $location, $http, localStorageService) {
 
     $scope.institution_vat_number = "";
     $scope.institution_name = "";
@@ -31,7 +31,7 @@ angular.module('LabsterBackOffice')
       .success(function (data, status, headers, config) {
         $scope.countries = data;
         $scope.country = $scope.countries[0];
-        var idx_country = LicenseService.getIndexCountryByCode($scope.default_country, $scope.countries);
+        var idx_country = getIndexCountryByCode($scope.default_country, $scope.countries);
         if (idx_country != 0) {
           $scope.country = $scope.countries[idx_country];
         }
@@ -73,7 +73,7 @@ angular.module('LabsterBackOffice')
       $scope.totalPrice = 0;
       $scope.tax = 0;
       $scope.is_denmark = false;
-      $scope.is_eu_country = LicenseService.checkEuCountry($scope.country);
+      $scope.is_eu_country = checkEuCountry($scope.country);
 
       if ($scope.country.name == "Denmark") {
         $scope.is_denmark = true;
@@ -92,8 +92,8 @@ angular.module('LabsterBackOffice')
 
       $scope.isProcessing = true;
       if ($scope.institution_type != 1) {
-        $scope.vat_error = LicenseService.checkVatFormat($scope.institution_vat_number);
-        $scope.institution_error = LicenseService.checkInstitution($scope.institution_name);
+        $scope.vat_error = checkVatFormat($scope.institution_vat_number);
+        $scope.institution_error = checkInstitution($scope.institution_name);
       } else {
         $scope.vat_error = "";
         $scope.institution_error = "";
