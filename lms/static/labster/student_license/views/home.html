@@ -2,6 +2,16 @@
   <h2>BUY NEW LICENSES</h2>
 </header>
 
+<table class="table-no-border">
+  <tr>
+      <td class="vertical-align-middle">Please select country:</td>
+      <td class="align-right">
+        <select class="form-control" ng-change="checkVat()" ng-model="country"
+        ng-options="country.name for country in countries"></select>
+      </td>
+    </tr>
+</table>
+
 <div class="labster-lab-list">
   <table>
     <thead>

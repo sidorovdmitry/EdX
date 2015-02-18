@@ -20,6 +20,14 @@ angular.module('LabsterStudentLicense')
         console.log(data);
       });
 
+    // get list of country
+    var url_country = window.backofficeUrls.country;
+    $http.get(url_country)
+      .success(function (data, status, headers, config) {
+        $scope.countries = data;
+        $scope.country = $scope.countries[0];
+      });
+
     $scope.updateBtnPayment = function() {
       if($scope.agree_tos) {
         $scope.btnPayment = "btn-labster-invoice";
