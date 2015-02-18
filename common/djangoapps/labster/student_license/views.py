@@ -15,6 +15,7 @@ from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from courseware.courses import get_course_by_id
 
 from labster.backoffice.views import create_user, get_backoffice_urls
+from labster.utils import country_code_from_ip
 
 
 def get_lab_id(course_id):
@@ -33,6 +34,11 @@ def home(request, course_id):
     user_profile = UserProfile.objects.get(user=request.user)
     labster_user = LabsterUser.objects.get(user=request.user)
     bo_user = create_user(request.user, user_profile.name, format='json')
+    ip = request.META.get('REMOTE_ADDR', None)
+    if ip:
+        country = country_code_from_ip(ip)
+    else:
+        country = ""
 
     user_edu_level = "hs" if user_profile.level_of_education == "hs" else "univ"
     token = bo_user['token']
@@ -53,5 +59,6 @@ def home(request, course_id):
         'lab_id': lab_id,
         'course' : course,
         'course_id': course_id,
+        'country': country,
     }
     return render_to_response(template_name, context)
