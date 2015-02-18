@@ -28,6 +28,42 @@ class LabsterUserFormTest(TestCase):
             'date_of_birth': str(date.today()),
         }
 
+    def test_initial(self):
+        user = User.objects.create_user('UserName', 'user@name.com', 'password')
+        user_profile, _ = UserProfile.objects.get_or_create(user=user)
+        user_profile.name = "User Name"
+        user_profile.gender = "m"
+        user_profile.level_of_education = "hs"
+        user_profile.save()
+
+        labster_user = LabsterUser.objects.get(user=user)
+        labster_user.user_type = 2
+        labster_user.user_school_level = 5
+        labster_user.phone_number = "12345"
+        labster_user.organization_name = "The Cool People"
+        labster_user.nationality = "ID"
+        labster_user.language = "en"
+        labster_user.unique_id = "123123"
+        labster_user.date_of_birth = date.today()
+        labster_user.save()
+
+        form = LabsterUserForm(instance=labster_user)
+        self.assertEqual(form.fields['is_active'].initial, user.is_active)
+        self.assertEqual(form.fields['email'].initial, user.email)
+
+        self.assertEqual(form.fields['name'].initial, user_profile.name)
+        self.assertEqual(form.fields['gender'].initial, user_profile.gender)
+        self.assertEqual(form.fields['level_of_education'].initial, user_profile.level_of_education)
+
+        self.assertEqual(form.fields['user_type'].initial, labster_user.user_type)
+        self.assertEqual(form.fields['user_school_level'].initial, labster_user.user_school_level)
+        self.assertEqual(form.fields['phone_number'].initial, labster_user.phone_number)
+        self.assertEqual(form.fields['organization_name'].initial, labster_user.organization_name)
+        self.assertEqual(form.fields['nationality'].initial, labster_user.nationality)
+        self.assertEqual(form.fields['unique_id'].initial, labster_user.unique_id)
+        self.assertEqual(form.fields['language'].initial, labster_user.language)
+        self.assertEqual(form.fields['date_of_birth'].initial, labster_user.date_of_birth)
+
     def test_create_valid(self):
         data = {
             'name': "First Last",
