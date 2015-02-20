@@ -29,6 +29,7 @@
 %>
 <script>
 window.courseId = "${course_id}";
+window.country_code = "${country}"
 window.csrfToken = "${csrf_token}";
 window.stripeKey = "${stripe_publishable_key}";  // publishable
 window.requestUser = {
@@ -75,6 +76,7 @@ window.backofficeUrls = {
 <script src="${static.url('labster/student_license/controllers/new.license.js')}"></script>
 <script src="${static.url('labster/student_license/controllers/payment.paid.js')}"></script>
 <!-- services -->
+<script src="${static.url('labster/js/vat.js')}"></script>
 </%block>
 <section class="container dashboard labster-bo" id="dashboard-main" aria-hidden="false" ng-app="LabsterStudentLicense">
   <section class="profile-sidebar">

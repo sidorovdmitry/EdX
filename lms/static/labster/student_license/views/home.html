@@ -38,7 +38,7 @@
         <td></td>
         <td></td>
         <td></td>
-        <td class="align-right">{{ lab_info.price|currency:"USD " }}</td>
+        <td class="align-right">{{ subTotalPrice|currency:"USD " }}</td>
       </tr>
       <tr>
         <td>VAT</td>
@@ -46,7 +46,7 @@
         <td></td>
         <td></td>
         <td class="align-right">
-          {{ 0 | currency:"USD " }} <br/>
+          {{ vat | currency:"USD " }} <br/>
         </td>
       </tr>
       <tr>
@@ -54,7 +54,7 @@
         <td></td>
         <td></td>
         <td></td>
-        <td class="align-right">{{ lab_info.price|currency:"USD " }}</td>
+        <td class="align-right">{{ totalPrice|currency:"USD " }}</td>
       </tr>
     </tfoot>
   </table>
