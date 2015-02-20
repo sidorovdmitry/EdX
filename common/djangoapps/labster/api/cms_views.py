@@ -46,6 +46,18 @@ class CourseDuplicate(APIView):
         return Response(response_data)
 
 
+def get_all_lab_ids():
+    def has_demo(lab):
+        if lab.demo_course_id:
+            return True
+        return False
+
+    labs = Lab.objects.all()
+    lab_ids = [lab.id for lab in labs if has_demo(lab)]
+
+    return lab_ids
+
+
 class CourseDuplicateFromLabs(APIView):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
 
@@ -57,12 +69,20 @@ class CourseDuplicateFromLabs(APIView):
         payment = get_payment(payment_id, token)
         labs_by_id = {}
         for payment_product in payment['payment_products']:
-            lab_id = payment_product['product_external_id']
-            license_id = payment_product['license_id']
-            if not lab_id or not license_id:
-                continue
 
-            labs_by_id[lab_id] = payment_product
+            # handle all labs
+            if payment_product.get('product_name', '').upper() == 'ALL LABS':
+                lab_ids = get_all_lab_ids()
+                for lab_id in lab_ids:
+                    labs_by_id[str(lab_id)] = payment_product
+
+            else:
+                lab_id = payment_product['product_external_id']
+                license_id = payment_product['license_id']
+                if not lab_id or not license_id:
+                    continue
+
+                labs_by_id[lab_id] = payment_product
 
         lab_ids = labs_by_id.keys()
 
