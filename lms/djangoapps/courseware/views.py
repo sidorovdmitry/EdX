@@ -1078,12 +1078,18 @@ def _progress_all(request, course_key):
         raise Http404
 
     location = None
+    lab_id = None
     for section in course.get_children():
         for sub_section in section.get_children():
             if not location and sub_section.lab_id:
                 location = sub_section.location
+                lab_id = sub_section.lab_id
 
-    lab_proxy = LabProxy.objects.get(location=location)
+    try:
+        lab_proxy = LabProxy.objects.get(location=location)
+    except LabProxy.DoesNotExist:
+        lab_proxy = LabProxy.objects.create(location=location, lab_id=lab_id)
+
     attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy)\
         .exclude(useranswer=None).order_by('-created_at')\
         .select_related('user')
