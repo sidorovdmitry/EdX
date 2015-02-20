@@ -10,6 +10,7 @@ from rest_framework.authtoken.models import Token
 
 def login_by_token(request):
     user_id = request.POST.get('user_id')
+    user_type = request.POST.get('user_type')
     course_id = request.POST.get('course_id')
     token_key = request.POST.get('token_key')
     next_url = request.POST.get('next', '/')
@@ -27,7 +28,8 @@ def login_by_token(request):
         if user and user.is_active:
             login(request, user)
 
-        if course_id:
+        # only enroll the teacher
+        if course_id and int(user_type) == 2:
             user = User.objects.get(id=user.id)
             course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
             CourseEnrollment.enroll(user, course_key)

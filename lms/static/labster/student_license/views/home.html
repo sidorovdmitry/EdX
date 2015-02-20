@@ -1,0 +1,69 @@
+<header>
+  <h2>BUY NEW LICENSES</h2>
+</header>
+
+<table class="table-no-border">
+  <tr>
+      <td class="vertical-align-middle">Please select country:</td>
+      <td class="align-right">
+        <select class="form-control" ng-change="checkVat()" ng-model="country"
+        ng-options="country.name for country in countries"></select>
+      </td>
+    </tr>
+</table>
+
+<div class="labster-lab-list">
+  <table>
+    <thead>
+      <tr>
+        <th>Lab</th>
+        <th class="align-right">Price</th>
+        <th class="align-right">Licenses</th>
+        <th class="align-right">Subscriptions</th>
+        <th class="align-right">Total Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="lab-description">{{ lab_info.name }}</td>
+        <td class="align-right">{{ lab_info.price|currency:"USD " }}</td>
+        <td class="align-right">{{ lab_info.item_count }}</td>
+        <td class="align-right">{{ lab_info.month_subscription }} months</td>
+        <td class="align-right">{{ lab_info.price|currency:"USD " }}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td>Subtotal</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="align-right">{{ subTotalPrice|currency:"USD " }}</td>
+      </tr>
+      <tr>
+        <td>VAT</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="align-right">
+          {{ vat | currency:"USD " }} <br/>
+        </td>
+      </tr>
+      <tr>
+        <td>Total</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="align-right">{{ totalPrice|currency:"USD " }}</td>
+      </tr>
+    </tfoot>
+  </table>
+  <p>
+    Please read <a href="/tos" target="_blank">the terms and conditions</a>, and tick off the box if you agree, and press “Continue” in order to proceed to the payment.
+  </p>
+  <p><input type="checkbox" ng-model="agree_tos" ng-change="updateBtnPayment()" /> I have read and agree to the Terms & Conditions.</div></p>
+  <div class="pull-right">
+    <a ng-class="btnPayment" ng-hide="is_submitting" ng-click="buyLab()">Continue &nbsp;&nbsp;<i class="fa fa-arrow-right"></i></a>
+    <a ng-class="btnPayment" ng-show="is_submitting"><i class="fa fa-spin fa-spinner"></i> Processing</a>
+  </div>
+</div>

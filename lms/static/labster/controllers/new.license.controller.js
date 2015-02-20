@@ -1,6 +1,6 @@
 angular.module('LabsterBackOffice')
 
-  .controller('NewLicenseController', function ($scope, $routeParams, $location, $http, LicenseService, localStorageService) {
+  .controller('NewLicenseController', function ($scope, $routeParams, $location, $http, localStorageService) {
     /*
     $scope.institution_type
     personal = 1

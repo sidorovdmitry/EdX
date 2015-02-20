@@ -1,9 +1,9 @@
-angular.module('StudentVoucherCode')
+angular.module('LabsterStudentLicense')
 
   .directive('stripe', function ($location, $http, ngDialog) {
     return {
       restrict: 'E',
-      scope: {paymentId: '@', email: '@', amount: '@', description: '@', voucherCode: '@'},
+      scope: {paymentId: '@', email: '@', amount: '@', description: '@', courseId: '@'},
       link: function (scope, element, attr) {
 
         function showProgress() {
@@ -21,8 +21,7 @@ angular.module('StudentVoucherCode')
           showProgress();
           var url = window.backofficeUrls.payment + scope.paymentId + "/charge_stripe/";
           var post_data = {
-            'stripe_token': token.id,
-            'voucher_code': scope.voucherCode
+            'stripe_token': token.id
           };
 
           $http.post(url, post_data, {
@@ -34,12 +33,10 @@ angular.module('StudentVoucherCode')
             .success(function (data, status, headers, config) {
 
               // register the student to the course
-              // using the license id given
-              var license_id = data.license_id;
               $http.post(
-                '/labster/enroll-student-voucher/',
+                '/labster/enroll-student-course/',
                 {
-                  'license_id': license_id,
+                  'course_id': scope.courseId,
                   'email': scope.email
                 },
                 {
@@ -48,8 +45,9 @@ angular.module('StudentVoucherCode')
                     }
                 })
                 .success(function(data, status, headers, config) {
+                  var courseId = window.courseId;
                   ngDialog.close();
-                  var url = '/student_voucher_code/#/invoice/' + scope.paymentId + '/thank-you';
+                  var url = '/student_license/' + courseId + '/#/invoice/' + scope.paymentId + '/thank-you';
                   window.location.href = url;
                 });
             })
@@ -76,41 +74,4 @@ angular.module('StudentVoucherCode')
       template: '<a class="btn-labster-regular" id="stripe-button"><i class=\'fa fa-credit-card\'></i> &nbsp;&nbsp;Pay with Credit Card</a>',
       replace: true
     };
-  })
-
-  .directive('numeric', function() {
-    return {
-      require: 'ngModel',
-      link: function (scope, element, attr, ngModelCtrl) {
-        function fromUser(text) {
-          var transformedInput = text.replace(/[^0-9]/g, '');
-          if(transformedInput !== text) {
-              ngModelCtrl.$setViewValue(transformedInput);
-              ngModelCtrl.$render();
-          }
-          return transformedInput;  // or return Number(transformedInput)
-        }
-        ngModelCtrl.$parsers.push(fromUser);
-      }
-    }
-
-  })
-
-  .directive('selectAll', function() {
-    return function(scope, element, attr) {
-      element.on('focus', function(ev) {
-        $(this)
-          .one('mouseup', function () {
-            $(this).select();
-            return false;
-          })
-        .select();
-      });
-
-      element.on('keyup', function(ev) {
-        if ($(this).val() == '0') {
-          $(this).select();
-        }
-      });
-    }
   });
