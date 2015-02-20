@@ -14,6 +14,9 @@ def login_by_token(request):
     token_key = request.POST.get('token_key')
     next_url = request.POST.get('next', '/')
 
+    if not token_key or not user_id:
+        return HttpResponseRedirect(next_url)
+
     try:
         token = Token.objects.get(key=token_key, user_id=user_id)
     except Token.DoesNotExist:
