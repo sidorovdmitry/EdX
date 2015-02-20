@@ -27,7 +27,7 @@ def get_attempts_and_answers(
     answers_by_attempt = defaultdict(list)
     answers_by_attempt_check = defaultdict(list)
     for answer in answers:
-        if answer.quiz_id in answers_by_attempt_check[answer.quiz_id]:
+        if answer.quiz_id in answers_by_attempt_check[answer.attempt_id]:
             continue
 
         answers_by_attempt_check[answer.attempt_id].append(answer.quiz_id)
