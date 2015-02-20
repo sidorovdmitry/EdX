@@ -1,0 +1,11 @@
+user:
+  email: "sararodriguezgate@hotmail.com"
+  password: "sararodriguezgate@hotmail.com"
+  name: "Sara Rodríguez Gate"
+  username: "SaraRodríguezGate"
+  user_type: 1
+  user_school_level: 1
+
+course:
+  org: "InstitutoSaudideMadrid"
+  license_count: 4
