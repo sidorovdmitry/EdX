@@ -2,28 +2,43 @@
   <p>Date: {{ payment.created_at | date }}</p>
   <table>
     <thead>
-    <tr>
-      <th>Lab</th>
-      <th class="align-right">Licenses</th>
-      <th class="align-right">Subscriptions</th>
-      <th class="align-right">Total Price</th>
-    </tr>
+      <tr>
+        <th>Lab</th>
+        <th class="align-right">Licenses</th>
+        <th class="align-right">Subscriptions</th>
+        <th class="align-right">Total Price</th>
+      </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="product in payment.payment_products">
-      <td class="lab-description">{{ product.product_name }}</td>
-      <td class="align-right">1</td>
-      <td class="align-right">{{ product.week_subscription }} weeks</td>
-      <td class="align-right">{{ product.price|currency:"USD " }}</td>
-    </tr>
+      <tr ng-repeat="product in payment.payment_products">
+        <td class="lab-description">{{ product.product_name }}</td>
+        <td class="align-right">1</td>
+        <td class="align-right">{{ product.week_subscription }} weeks</td>
+        <td class="align-right">{{ product.price|currency:"USD " }}</td>
+      </tr>
     </tbody>
     <tfoot>
-    <tr>
-      <td>Total Price</td>
-      <td></td>
-      <td></td>
-      <td class="align-right">{{ payment.total|currency:"USD " }}</td>
-    </tr>
+      <tr>
+        <td>Subtotal</td>
+        <td></td>
+        <td></td>
+        <td class="align-right">{{ payment.total_before_tax|currency:"USD " }}</td>
+      </tr>
+      <tr>
+        <td>VAT</td>
+        <td></td>
+        <td></td>
+        <td class="align-right">
+          {{ payment.total_tax|currency:"USD " }} <br/>
+          <i ng-show="payment.is_reverse_charges">Reverse charges is applied on this payment</i>
+        </td>
+      </tr>
+      <tr>
+        <td>Total</td>
+        <td></td>
+        <td></td>
+        <td class="align-right">{{ payment.total|currency:"USD " }}</td>
+      </tr>
     </tfoot>
   </table>
   <div class="pull-right">

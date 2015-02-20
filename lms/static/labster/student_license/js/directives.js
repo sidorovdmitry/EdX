@@ -45,8 +45,9 @@ angular.module('LabsterStudentLicense')
                     }
                 })
                 .success(function(data, status, headers, config) {
+                  var courseId = window.courseId;
                   ngDialog.close();
-                  var url = '/labs/invoice/' + scope.paymentId + '/thank-you';
+                  var url = '/student_license/' + courseId + '/#/invoice/' + scope.paymentId + '/thank-you';
                   window.location.href = url;
                 });
             })

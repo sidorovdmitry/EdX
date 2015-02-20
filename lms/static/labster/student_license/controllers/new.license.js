@@ -18,8 +18,8 @@ angular.module('LabsterStudentLicense')
       data.created_date = moment(data.created_at).format('ll');
       $scope.payment = data;
       setDescription();
-      console.log(data);
-      // checkStripe();
+      // console.log(data);
+      checkStripe();
     });
 
     function setDescription() {

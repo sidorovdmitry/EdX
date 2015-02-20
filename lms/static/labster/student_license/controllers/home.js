@@ -22,8 +22,8 @@ angular.module('LabsterStudentLicense')
       .success(function (data, status, headers, config) {
         $scope.lab_info = data;
         $scope.lab_info.item_count = 1;
-        $scope.totalPrice = $scope.lab_info.price;
-        $scope.subTotalPrice = $scope.lab_info.price;
+        $scope.totalPrice = parseFloat($scope.lab_info.price);
+        $scope.subTotalPrice = parseFloat($scope.lab_info.price);
       });
 
     // get list of country
@@ -76,7 +76,7 @@ angular.module('LabsterStudentLicense')
           payment_type: "stripe",
           institution_type : 1,
           institution_name : "",
-          country : "",
+          country : $scope.country.id,
           total_before_tax : $scope.lab_info.price,
           vat_number: 0,
           list_product: []

@@ -109,6 +109,7 @@ angular.module('LabsterBackOffice')
         var url = window.backofficeUrls.buyLab;
         data = {
           user: window.requestUser.backoffice.user.id,
+          is_teacher: true,
           payment_type: payment_method,
           institution_type : $scope.institution_type,
           institution_name : $scope.institution_name,
