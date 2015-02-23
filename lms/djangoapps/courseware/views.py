@@ -835,6 +835,7 @@ def course_about(request, course_id):
                 reg_url=reverse('register_user'), course_id=course.id.to_deprecated_string())
 
         course_price = get_cosmetic_display_price(course, registration_price)
+        can_add_course_to_cart = _is_shopping_cart_enabled and registration_price
 
         # Used to provide context to message to student if enrollment not allowed
         can_enroll = has_access(request.user, 'enroll', course)
@@ -871,7 +872,7 @@ def course_about(request, course_id):
             # We do not want to display the internal courseware header, which is used when the course is found in the
             # context. This value is therefor explicitly set to render the appropriate header.
             'disable_courseware_header': True,
-            'is_shopping_cart_enabled': _is_shopping_cart_enabled,
+            'can_add_course_to_cart': can_add_course_to_cart,
             'cart_link': reverse('shoppingcart.views.show_cart'),
             'pre_requisite_courses': pre_requisite_courses
         })
@@ -918,6 +919,15 @@ def mktg_course_about(request, course_id):
         'course_modes': course_modes,
     }
 
+    # The edx.org marketing site currently displays only in English.
+    # To avoid displaying a different language in the register / access button,
+    # we force the language to English.
+    # However, OpenEdX installations with a different marketing front-end
+    # may want to respect the language specified by the user or the site settings.
+    force_english = settings.FEATURES.get('IS_EDX_DOMAIN', False)
+    if force_english:
+        translation.activate('en-us')
+
     if settings.FEATURES.get('ENABLE_MKTG_EMAIL_OPT_IN'):
         # Drupal will pass organization names using a GET parameter, as follows:
         #     ?org=Harvard
@@ -950,15 +960,6 @@ def mktg_course_about(request, course_id):
                 "I would like to receive email from {institution_series} and learn about their other programs.",
                 len(org_list)
             ).format(institution_series=org_name_string)
-
-    # The edx.org marketing site currently displays only in English.
-    # To avoid displaying a different language in the register / access button,
-    # we force the language to English.
-    # However, OpenEdX installations with a different marketing front-end
-    # may want to respect the language specified by the user or the site settings.
-    force_english = settings.FEATURES.get('IS_EDX_DOMAIN', False)
-    if force_english:
-        translation.activate('en-us')
 
     try:
         return render_to_response('courseware/mktg_course_about.html', context)

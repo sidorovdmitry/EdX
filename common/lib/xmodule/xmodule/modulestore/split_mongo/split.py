@@ -229,12 +229,17 @@ class SplitBulkWriteMixin(BulkOperationsMixin):
         # Ensure that any edits to the index don't pollute the initial_index
         bulk_write_record.index = copy.deepcopy(bulk_write_record.initial_index)
 
-    def _end_outermost_bulk_operation(self, bulk_write_record, course_key):
+    def _end_outermost_bulk_operation(self, bulk_write_record, course_key, emit_signals=True):
         """
         End the active bulk write operation on course_key.
         """
+
+        dirty = False
+
         # If the content is dirty, then update the database
         for _id in bulk_write_record.structures.viewkeys() - bulk_write_record.structures_in_db:
+            dirty = True
+
             try:
                 self.db_connection.insert_structure(bulk_write_record.structures[_id])
             except DuplicateKeyError:
@@ -244,6 +249,8 @@ class SplitBulkWriteMixin(BulkOperationsMixin):
                 log.debug("Attempted to insert duplicate structure %s", _id)
 
         for _id in bulk_write_record.definitions.viewkeys() - bulk_write_record.definitions_in_db:
+            dirty = True
+
             try:
                 self.db_connection.insert_definition(bulk_write_record.definitions[_id])
             except DuplicateKeyError:
@@ -253,10 +260,17 @@ class SplitBulkWriteMixin(BulkOperationsMixin):
                 log.debug("Attempted to insert duplicate definition %s", _id)
 
         if bulk_write_record.index is not None and bulk_write_record.index != bulk_write_record.initial_index:
+            dirty = True
+
             if bulk_write_record.initial_index is None:
                 self.db_connection.insert_course_index(bulk_write_record.index)
             else:
                 self.db_connection.update_course_index(bulk_write_record.index, from_index=bulk_write_record.initial_index)
+
+        if dirty and emit_signals:
+            signal_handler = getattr(self, 'signal_handler', None)
+            if signal_handler:
+                signal_handler.send("course_published", course_key=course_key)
 
     def get_course_index(self, course_key, ignore_case=False):
         """
@@ -402,13 +416,18 @@ class SplitBulkWriteMixin(BulkOperationsMixin):
 
         bulk_write_record = self._get_bulk_ops_record(course_key)
         if bulk_write_record.active:
+            # Only query for the definitions that aren't already cached.
             for definition in bulk_write_record.definitions.values():
                 definition_id = definition.get('_id')
                 if definition_id in ids:
                     ids.remove(definition_id)
                     definitions.append(definition)
 
-        definitions.extend(self.db_connection.get_definitions(list(ids)))
+        # Query the db for the definitions.
+        defs_from_db = self.db_connection.get_definitions(list(ids))
+        # Add the retrieved definitions to the cache.
+        bulk_write_record.definitions.update({d.get('_id'): d for d in defs_from_db})
+        definitions.extend(defs_from_db)
         return definitions
 
     def update_definition(self, course_key, definition):
@@ -608,7 +627,7 @@ class SplitMongoModuleStore(SplitBulkWriteMixin, ModuleStoreWriteBase):
                  default_class=None,
                  error_tracker=null_error_tracker,
                  i18n_service=None, fs_service=None, user_service=None,
-                 services=None, **kwargs):
+                 services=None, signal_handler=None, **kwargs):
         """
         :param doc_store_config: must have a host, db, and collection entries. Other common entries: port, tz_aware.
         """
@@ -636,6 +655,8 @@ class SplitMongoModuleStore(SplitBulkWriteMixin, ModuleStoreWriteBase):
 
         if user_service is not None:
             self.services["user"] = user_service
+
+        self.signal_handler = signal_handler
 
     def close_connections(self):
         """
@@ -673,7 +694,7 @@ class SplitMongoModuleStore(SplitBulkWriteMixin, ModuleStoreWriteBase):
             depth: how deep below these to prefetch
             lazy: whether to fetch definitions or use placeholders
         '''
-        with self.bulk_operations(course_key):
+        with self.bulk_operations(course_key, emit_signals=False):
             new_module_data = {}
             for block_id in base_block_ids:
                 new_module_data = self.descendants(
@@ -683,23 +704,29 @@ class SplitMongoModuleStore(SplitBulkWriteMixin, ModuleStoreWriteBase):
                     new_module_data
                 )
 
-            if not lazy:
-                # Load all descendants by id
+            # This code supports lazy loading, where the descendent definitions aren't loaded
+            # until they're actually needed.
+            # However, assume that depth == 0 means no depth is specified and depth != 0 means
+            # a depth *is* specified. If a non-zero depth is specified, force non-lazy definition
+            # loading in order to populate the definition cache for later access.
+            load_definitions_now = depth != 0 or not lazy
+            if load_definitions_now:
+                # Non-lazy loading: Load all descendants by id.
                 descendent_definitions = self.get_definitions(
                     course_key,
                     [
-                        block['definition']
+                        block.definition
                         for block in new_module_data.itervalues()
                     ]
                 )
-                # turn into a map
+                # Turn definitions into a map.
                 definitions = {definition['_id']: definition
                                for definition in descendent_definitions}
 
                 for block in new_module_data.itervalues():
                     if block.definition in definitions:
                         definition = definitions[block.definition]
-                        # convert_fields was being done here, but it gets done later in the runtime's xblock_from_json
+                        # convert_fields gets done later in the runtime's xblock_from_json
                         block.fields.update(definition.get('fields'))
                         block.definition_loaded = True
 
@@ -1561,18 +1588,20 @@ class SplitMongoModuleStore(SplitBulkWriteMixin, ModuleStoreWriteBase):
         source_index = self.get_course_index_info(source_course_id)
         if source_index is None:
             raise ItemNotFoundError("Cannot find a course at {0}. Aborting".format(source_course_id))
-        new_course = self.create_course(
-            dest_course_id.org, dest_course_id.course, dest_course_id.run,
-            user_id,
-            fields=fields,
-            versions_dict=source_index['versions'],
-            search_targets=source_index['search_targets'],
-            skip_auto_publish=True,
-            **kwargs
-        )
-        # don't copy assets until we create the course in case something's awry
-        super(SplitMongoModuleStore, self).clone_course(source_course_id, dest_course_id, user_id, fields, **kwargs)
-        return new_course
+
+        with self.bulk_operations(dest_course_id):
+            new_course = self.create_course(
+                dest_course_id.org, dest_course_id.course, dest_course_id.run,
+                user_id,
+                fields=fields,
+                versions_dict=source_index['versions'],
+                search_targets=source_index['search_targets'],
+                skip_auto_publish=True,
+                **kwargs
+            )
+            # don't copy assets until we create the course in case something's awry
+            super(SplitMongoModuleStore, self).clone_course(source_course_id, dest_course_id, user_id, fields, **kwargs)
+            return new_course
 
     DEFAULT_ROOT_BLOCK_ID = 'course'
 

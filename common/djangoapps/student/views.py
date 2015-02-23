@@ -9,6 +9,7 @@ import time
 import json
 from collections import defaultdict
 from pytz import UTC
+from ipware.ip import get_ip
 
 from django.conf import settings
 from django.contrib.auth import logout, authenticate, login
@@ -113,6 +114,8 @@ from student.helpers import (
 from xmodule.error_module import ErrorDescriptor
 from shoppingcart.models import DonationConfiguration, CourseRegistrationCode
 from openedx.core.djangoapps.user_api.api import profile as profile_api
+
+from embargo import api as embargo_api
 
 import analytics
 from eventtracking import tracker
@@ -355,30 +358,16 @@ def _cert_info(user, course, cert_status, course_mode):
         else:
             status_dict['download_url'] = cert_status['download_url']
 
-            # getting linkedin URL and then pass the params which appears
-            # on user profile. if linkedin config is empty don't show the button.
-
-            modes_dict = {
-                "honor": "Honor Code Certificate",
-                "verified": "Verified Certificate",
-                "professional": "Professional Certificate",
-            }
-
-            certification_name = u'{type} for {course_name}'.format(
-                type=modes_dict.get(course_mode, "Certificate"), course_name=course.display_name
-            ).encode('utf-8')
-
-            params_dict = {
-                'pfCertificationName': certification_name,
-                'pfCertificationUrl': cert_status['download_url'],
-            }
-
-            # following method will construct and return url if current enabled config exists otherwise return None
-            # In case of None linked-in-button will not appear on dashboard.
-
-            status_dict['linked_in_url'] = LinkedInAddToProfileConfiguration.linked_in_dashboard_tracking_code_url(
-                params_dict
-            )
+            # If enabled, show the LinkedIn "add to profile" button
+            # Clicking this button sends the user to LinkedIn where they
+            # can add the certificate information to their profile.
+            linkedin_config = LinkedInAddToProfileConfiguration.current()
+            if linkedin_config.enabled:
+                status_dict['linked_in_url'] = linkedin_config.add_to_profile_url(
+                    course.display_name,
+                    cert_status.get('mode'),
+                    cert_status['download_url']
+                )
 
     if status in ('generating', 'ready', 'notpassing', 'restricted'):
         if 'grade' not in cert_status:
@@ -914,6 +903,17 @@ def change_enrollment(request, check_access=True):
             _update_email_opt_in(request, user.username, course_id.org)
 
         available_modes = CourseMode.modes_for_course_dict(course_id)
+
+        # Check whether the user is blocked from enrolling in this course
+        # This can occur if the user's IP is on a global blacklist
+        # or if the user is enrolling in a country in which the course
+        # is not available.
+        redirect_url = embargo_api.redirect_if_blocked(
+            course_id, user=user, ip_address=get_ip(request),
+            url=request.path
+        )
+        if redirect_url:
+            return HttpResponse(redirect_url)
 
         # Check that auto enrollment is allowed for this course
         # (= the course is NOT behind a paywall)

@@ -145,6 +145,8 @@ FEATURES = {
     # Enable the courseware search functionality
     'ENABLE_COURSEWARE_INDEX': False,
 
+    'ALLOW_COURSE_RERUNS': True,
+
     'LABSTER': True,
 }
 
@@ -721,6 +723,8 @@ INSTALLED_APPS = (
 
     # Additional problem types
     'edx_jsme',    # Molecular Structure
+
+    'openedx.core.djangoapps.content.course_structures',
 )
 
 

@@ -459,7 +459,7 @@ def course_listing(request):
         'course_creator_status': _get_course_creator_status(request.user),
         'rerun_creator_status': GlobalStaff().has_user(request.user),
         'allow_unicode_course_id': settings.FEATURES.get('ALLOW_UNICODE_COURSE_ID', False),
-        'allow_course_reruns': settings.FEATURES.get('ALLOW_COURSE_RERUNS', False)
+        'allow_course_reruns': settings.FEATURES.get('ALLOW_COURSE_RERUNS', True)
     })
 
 
@@ -1460,7 +1460,7 @@ class GroupConfiguration(object):
 
             validation_summary = split_test.general_validation_message()
             usage_info[split_test.user_partition_id].append({
-                'label': '{} / {}'.format(unit.display_name, split_test.display_name),
+                'label': u"{} / {}".format(unit.display_name, split_test.display_name),
                 'url': unit_url,
                 'validation': validation_summary.to_json() if validation_summary else None,
             })
