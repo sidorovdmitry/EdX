@@ -129,7 +129,12 @@
       <section class="intro">
         <hgroup>
           <h1>
-            ${get_course_about_section(course, "title")} Virtual Lab Simulation
+            <%
+               lab_title = "{} Virtual Lab Simulation".format(get_course_about_section(course, "title"))
+               if len(lab_title) > 42:
+                  lab_title = " ".join(lab_title.split(" ")[:-1])
+            %>
+            ${lab_title}
           </h1>
         </hgroup>
 

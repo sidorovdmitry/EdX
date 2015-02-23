@@ -21,7 +21,7 @@ from labster.parsers.problem_parsers import QuizParser
 from labster.quiz_blocks import create_xblock, update_problem, validate_lab_proxy
 
 
-USER_ID = 19  # kriwil@gmail.com
+USER_ID = 31 # aldi@labster.com
 
 
 def prepare_lab(lab, location):
