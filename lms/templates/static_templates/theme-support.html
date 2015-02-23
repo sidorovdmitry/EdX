@@ -1,0 +1,32 @@
+<%! from django.core.urlresolvers import reverse %>
+<%! from django.utils.translation import ugettext as _ %>
+<%inherit file="../main.html" />
+<%namespace name='static' file='../static_content.html'/>
+
+<%block name="pagetitle">${_("Contact")}</%block>
+
+<%block name="headextra">
+<link rel="stylesheet" href="${static.url('labster/css/static_pages.css')}">
+</%block>
+
+<div class="contact-wrapper">
+  <section class="container">
+    <section class="support">
+      <header class="heading-title">
+        <h3>Support</h3>
+      </header>
+
+      <p>With Labster, you are always less than a phone call away if you have a question or need help. As we are based in Bali (GMT+7) and Copenhagen (GMT+1), we respond swiftly to any queries you might have, around the clock.</p>
+
+      <div class="support-faq">
+        <p>To save you time, we have created a section of Frequently Asked Questions (FAQ) that you can find here:</p>
+        <p> <a href="${reverse('faq')}" class="btn-faq">FAQ Page</a></p>
+      </div>
+
+      <p>For other enquiries, call us at our Copenhagen office at phone number +45 61437244,  or simply use the bottom right tab on this site for a swift response.</p>
+
+    </section>
+  </section>
+
+</div>
+<!-- end div content-wrapper -->

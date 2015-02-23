@@ -1644,7 +1644,7 @@ MKTG_URLS = {}
 MKTG_URL_LINK_MAP = {
     'ABOUT': None,
     'CONTACT': 'contact',  # 'contact',
-    'FAQ': None,  # 'help_edx',
+    'FAQ': 'faq',  # 'help_edx',
     'COURSES': 'courses',
     'ROOT': 'root',
     'TOS': 'tos',
@@ -1657,6 +1657,8 @@ MKTG_URL_LINK_MAP = {
     'CAREER': 'career',
     'PRICING': 'pricing',
     'TESTIMONIAL': 'testimonial',
+    'SUPPORT': 'support',
+    'CURRICULUM-COVERAGE': 'curriculum-coverage',
 
     # Verified Certificates
     'WHAT_IS_VERIFIED_CERT': None,

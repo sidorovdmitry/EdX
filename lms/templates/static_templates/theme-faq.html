@@ -1,0 +1,225 @@
+<%! from django.core.urlresolvers import reverse %>
+<%! from django.utils.translation import ugettext as _ %>
+<%inherit file="../main.html" />
+<%namespace name='static' file='../static_content.html'/>
+
+<%block name="pagetitle">${_("FAQ")}</%block>
+
+<%block name="headextra">
+<link rel="stylesheet" href="${static.url('labster/css/static_pages.css')}">
+
+<script>
+  $(document).ready(function () {
+    $('#toggle-view .list-toggle').click(function () {
+      var text = $(this).children('div.panel');
+      if (text.is(':hidden')) {
+        text.slideDown('200');
+        $(this).children('span').html('-');
+      } else {
+        text.slideUp('200');
+        $(this).children('span').html('+');
+      }
+    });
+  });
+</script>
+
+
+</%block>
+
+<div class="contact-wrapper">
+  <section class="container">
+    <section class="faq">
+          <header class="heading-title">
+            <h3>Frequently Asked Question (FAQ)</h3>
+          </header>
+
+          <div id="toggle-view">
+            <div class="list-toggle">
+              <h3>Unity Player installation fails</h3>
+              <span>+</span>
+              <div class="panel">
+                <p>Please follow these steps to resolve the issue:</p>
+                <ul>
+                  <li>Windows:
+                    <ol>
+                      <li>Close all web browser windows.</li>
+                      <li>Open Control Panel.</li>
+                      <li>Click on Add or Remove Programs</li>
+                      <li>Right click on Unity Web Player</li>
+                      <li>Click Uninstall.</li>
+                      <li>Reboot your machine.</li>
+                      <li>Download the latest version of the Unity Web Player plugin from: <a href="http://unity3d.com/webplayer/" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://unity3d.com']);">http://unity3d.com/webplayer/</a></li>
+                      <li>Close all browser windows.</li>
+                      <li>Run the Unity Web Player installer.</li>
+                    </ol>
+                  </li>
+                </ul>
+
+                <ul>
+                  <li>MacOS
+                    <ol>
+                      <li>Log onto MacOS with a user account that has admin privileges.</li>
+                      <li>Close all web browser windows.</li>
+                      <li>Delete the file: /Library/Internet Plug-Ins/Unity Web Player.plugin</li>
+                      <li>Empty the trash.</li>
+                      <li>Reboot and log in with an admin account.</li>
+                      <li>Download a new copy of the latest web player plugin from: <a href="http://unity3d.com/webplayer/" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://unity3d.com']);">http://unity3d.com/webplayer/</a></li>
+                      <li>Close all browsers.</li>
+                      <li>Run the web player installer.</li>
+                    </ol>
+                  </li>
+                </ul>
+
+                <p>If this does not resolve the issue, make sure Unity is not installed as&nbsp;a plugin in your web browser, by following the instructions below:</p>
+                <p><strong>Firefox:</strong>
+                <p>Open the browser and click the Tools button -&gt; Extensions -&gt; Plugins Tab (In the newest Firefox you can choose “Extensions” directly).</p>
+
+                <p>If the Unity Web Player is listed, please deactivate it, and repeat the steps provided in the top of this&nbsp;guide.</p>
+              </div>
+            </div>
+            <div class="list-toggle">
+              <h3>I have installed Unity but can only see a black screen</h3>
+              <span>+</span>
+              <div class="panel">
+                <p>This issue is usually caused by an unsupported browser. Please use a modern browser, such as Firefox.&nbsp;To test if your system is capable of running Unity 3D, please run the following demo.</p>
+                <p><a href="http://unity3d.com/gallery/demos/live-demos" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://unity3d.com']);">http://unity3d.com/gallery/demos/live-demos</a></p>
+                <p>If you can play the demo but still cannot play Labster, please contact our support through the feedback button located at the bottom of the Labster website (Contact Us page). We will then contact you ASAP to help fix the issue.</p>
+              </div>
+            </div>
+            <div class="list-toggle">
+              <h3>Unity Player fails to update</h3>
+              <span>+</span>
+              <div class="panel">
+                <p>There exist multiple solutions to this problem – see below.</p>
+                <p><strong>A) Try installing the full installer</strong></p>
+                <p>Sometimes the Unity web player update fails with the lite version, which is offered by Unity as the default install option. Resolve this by downloading the full installer on <a href="http://unity3d.com/webplayer" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://unity3d.com']);">http://unity3d.com/webplayer</a>.</p>
+                <p>Note: Be sure to run the installer as an administrator (Right click the downloaded file, and select OK&nbsp;when prompted)</p>
+                <p><strong>B) Disable all browser addons :</strong></p>
+                <p>Some browser addons, download managers in particular, have been reported to cause problems with updating unity web player. To avoid this, please disable the addons for the time of the update. Follow the links below to find out how to do this.</p>
+                <ul>
+                <li>Firefox:&nbsp;https://support.mozilla.org/fi/kb/disable-or-remove-add-ons</li>
+                <li>Chrome:&nbsp;https://support.google.com/chrome/answer/187443?hl=en&nbsp;)</li>
+                </ul>
+                <p><strong>C) Disable encryption and other factors that limit access to the unity folders:</strong></p>
+                <p>If you’re using encryption on your drives or other things that could prevent unity installer from accessing the installation directories, please disable them.</p>
+                <p>To make sure you have necessary access privileges, run the installer as an administrator.</p>
+                <p><strong>D) Clear Unity cache:</strong></p>
+                <p>Unity cache does not get emptied when updating, and old cache files can interfere with a newer game version.</p>
+                <p>Go here and click “remove all” :&nbsp;http://webplayer.unity3d.com/setup/</p>
+                <p><strong>E) Clear Browser cache</strong></p>
+                <p>Clear your browser cache in order to update Unity web player, as per the guide below:</p>
+                <p><a href="http://www.wikihow.com/Clear-Your-Browser%27s-Cache" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://www.wikihow.com']);">http://www.wikihow.com/Clear-Your-Browser%27s-Cache</a></p>
+                <p><strong>F) Uninstall and Re-install the Unity web player manually</strong></p>
+                <p>It’s crucial that these steps are followed – the update corruption has been reported to cause the unity update failures due to multiple reasons.</p>
+                <p>Follow the below steps closely:</p>
+                <ul>
+                  <li>Windows:
+                    <ol>
+                      <li>Close all browsers.</li>
+                      <li>Use Control Panel to uninstall the Unity Web Player.</li>
+                      <li>Reboot your machine.</li>
+                      <li>Make sure the following temp folders are deleted : <strong>Win7 and WinXP:</strong> %TEMP%\UnityWebPlayer<br>
+                      <strong>Win7:</strong> %TEMP%\..\..\LocalLow\unity<br>
+                      <strong>WinXP:</strong> %temp%\..\Application Data\Unity</li>
+                      <li>Make sure Unity web player is not enabled as a plugin in your browser (disable or remove if it is)</li>
+                      <li>Download a new copy of the latest web player plugin from:&nbsp;<a href="http://unity3d.com/webplayer/" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://unity3d.com']);">http://unity3d.com/webplayer/</a></li>
+                      <li>Again close all browsers.</li>
+                      <li>Run the web player installer.</li>
+                    </ol>
+                  </li>
+                </ul>
+                <ul>
+                  <li>MacOS
+                    <ol>
+                      <li>Log onto MacOS with a user account that has admin privileges.</li>
+                      <li>Close all web browsers.</li>
+                      <li>Delete the file: /Library/Internet Plug-Ins/Unity Web Player.plugin</li>
+                      <li>Empty the trash.</li>
+                      <li>Reboot and log in with an admin account.</li>
+                      <li>Make sure Unity is not enabled as a plugin in your browser – if is, disable / remove</li>
+                      <li>Download a new copy of the latest web player plugin from:&nbsp;<a href="http://unity3d.com/webplayer/" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://unity3d.com']);">http://unity3d.com/webplayer/</a></li>
+                      <li>Again close all browsers.</li>
+                      <li>Run the web player installer.</li>
+                    </ol>
+                  </li>
+                </ul>
+                <p><strong>G) Enable read and write for admin in Mac</strong></p>
+                <ol>
+                  <li>Open Finder &gt; (your hard drive) &gt; Library &gt; Internet Plug-Ins &gt; see Unity Web Player.plugin</li>
+                  <li>Right click and “Show Package Contents”</li>
+                  <li>Browse to Contents &gt; Frameworks</li>
+                  <li>Right click Frameworks and Get Info</li>
+                  <li>Click “Sharing &amp; Permissions” at bottom of the info box, you should see system, staff, everyone.</li>
+                  <li>Unlock with lock icon in bottom right, enter your password</li>
+                  <li>Hit + button bottom left, and highlight Users &amp; Groups &gt; Administrator – and hit “Select” bottom right</li>
+                  <li>You should see this new line item in the custom access list. Might take a few tries to make it appear</li>
+                  <li>When it shows up, change the admin permission to “Read &amp; Write”. (You can also remove Staff if you like with the “-” button)</li>
+                  <li>Close the info box</li>
+                  <li>Run Labster</li>
+                </ol>
+
+              </div>
+            </div>
+            <div class="list-toggle">
+              <h3>My browser keeps telling me to install unity web player.</h3>
+              <span>+</span>
+              <div class="panel">
+                <p>Please make sure you have Java and Cookies enabled in your web browser, and that your web browser security level is set to normal or low. After that, go to your control panel and see your installed programs, if you can see Unity web player there, please remove it, then try installing Unity again.</p>
+              </div>
+            </div>
+            <div class="list-toggle">
+              <h3>I am shown an “Asset not found” warning message</h3>
+              <span>+</span>
+              <div class="panel">
+                <p>This usually happens when Labster is missing some element that is necessary to load the game. Please refresh your web browser and to reload Labster. If you still encounter the same message, try to clear your web browser cache and check your internet connections.</p>
+              </div>
+            </div>
+            <div class="list-toggle">
+              <h3>A button, image, or other element in the game is missing</h3>
+              <span>+</span>
+              <div class="panel">
+                <p>We continually improve&nbsp;our virtual labs, which in odd instances may prevent loading of elements. Try to clear your cache and restart the lab. If the issue persist, please contact our support team.</p>
+              </div>
+            </div>
+            <div class="list-toggle">
+              <h3>I am stuck at a certain part of the lab</h3>
+              <span>+</span>
+              <div class="panel">
+                <p>If you are not sure what to do in certain part of the lab, try to click the lab assistant, and she will then give you some hint on what to do next, in order to progress. If you still can not continue, please contact our support and tell us on which part of the lab you are stuck in.</p>
+              </div>
+            </div>
+            <div class="list-toggle">
+              <h3>The "View theory" button only shows a black screen</h3>
+              <span>+</span>
+              <div class="panel">
+                <p>To resolve this issue, deactivate any pop up blocker, firewall, and anti virus. After that, reload the virtual lab, and test that the “View theory” button works. Contact support if the issue persists.</p>
+              </div>
+            </div>
+            <div class="list-toggle">
+              <h3>The Continue button on my personal Labster dashboard is not working</h3>
+              <span>+</span>
+              <div class="panel">
+                <p>Labster uses a saving system that is based on checkpoints, that autosaves your progress once every few questions you answer. Once you reach a certain checkpoint, you can always continue&nbsp;from that point onwards, by clicking continue on the Labster Dashboard.</p>
+                <p>If you have not reached a new checkpoint, you will always start from the most recent one (or&nbsp;from the beginning if you have not reached any checkpoint).</p>
+                <p>Always make&nbsp;sure you have reached a new checkpoint before quitting the lab. A checkpoint is indicated by a green “saving game” text element that is flashing on the lower left of the Labster game window.</p>
+              </div>
+            </div>
+            <div class="list-toggle">
+              <h3>Minimum System Requirements</h3>
+              <span>+</span>
+              <div class="panel">
+                <p>The following are the minimum specifications for running Labster:</p>
+                <p>Processor: Dual Core 2Ghz</p>
+                <p>Memory: 2GB</p>
+                <p>Graphic card: 128MB memory, DirectX 9 and pixel shader 2.0 capable</p>
+                <p>OS: Windows and Mac OS.</p>
+                <p>Supported browsers: Mozilla Firefox</p>
+              </div>
+            </div>
+          </div>
+
+      </section>
+  </section>
+
+</div>
+<!-- end div content-wrapper -->
