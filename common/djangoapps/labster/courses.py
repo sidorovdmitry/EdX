@@ -85,17 +85,8 @@ def duplicate_course(source, target, user, fields=None):
 
         mstore.update_item(course, user.id)
 
-    CourseAccessRole.objects.get_or_create(
-        user=user,
-        org=org,
-        course_id=dest_course_id,
-        role='staff')
-
-    CourseAccessRole.objects.get_or_create(
-        user=user,
-        org=org,
-        course_id=dest_course_id,
-        role='instructor')
+    CourseInstructorRole(dest_course_id).add_users(user)
+    CourseStaffRole(dest_course_id).add_users(user)
 
     CourseEnrollment.objects.get_or_create(
         user=user, course_id=dest_course_id)
