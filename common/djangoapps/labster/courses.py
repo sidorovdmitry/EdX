@@ -1,13 +1,15 @@
+import re
+
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from student.models import CourseAccessRole, CourseEnrollment
+from student.models import CourseEnrollment
 from student.roles import CourseInstructorRole, CourseStaffRole
 from xmodule.course_module import CourseDescriptor
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
 
-from labster.models import Lab
+from labster.models import Lab, LabsterUser
 from labster_search.models import LabKeyword
 
 
@@ -46,13 +48,25 @@ def course_key_from_str(arg):
         return SlashSeparatedCourseKey.from_deprecated_string(arg)
 
 
+def get_org(user):
+    labster_user = LabsterUser.objects.get(user=user)
+    if labster_user.organization_name:
+        org = labster_user.organization_name
+    else:
+        org = user.username
+
+    pattern = re.compile('[\W_]+', re.UNICODE)
+    org = pattern.sub('', org)
+    return org
+
+
 def duplicate_course(source, target, user, fields=None):
     org = target.split('/')[0]
     source_org = source.split('/')[0]
     target_org = org
 
     if source_org == target_org:
-        target = target.replace(org, user.username)
+        target = target.replace(org, get_org(user))
 
     source_course_id = course_key_from_str(source)
     dest_course_id = course_key_from_str(target)
