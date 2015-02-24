@@ -70,19 +70,20 @@ class CourseDuplicateFromLabs(APIView):
         labs_by_id = {}
         for payment_product in payment['payment_products']:
 
-            # handle all labs
-            if payment_product.get('product_name', '').upper() == 'ALL LABS':
-                lab_ids = get_all_lab_ids()
-                for lab_id in lab_ids:
-                    labs_by_id[str(lab_id)] = payment_product
-
-            else:
+            if payment_product['product_external_id']:
                 lab_id = payment_product['product_external_id']
                 license_id = payment_product['license_id']
                 if not lab_id or not license_id:
                     continue
 
                 labs_by_id[lab_id] = payment_product
+            else:
+                # handle all labs and package labs
+                lab_ids = payment_product['list_products_id']
+                if not lab_ids:
+                    continue
+                for lab_id in lab_ids:
+                    labs_by_id[str(lab_id)] = payment_product
 
         lab_ids = labs_by_id.keys()
 
