@@ -29,6 +29,7 @@ class CourseDuplicate(APIView):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
 
     def post(self, request, *args, **kwargs):
+        # This is for teacher in trial mode. The teacher can only invite 3 student
         response_data = {}
 
         source = request.DATA.get('source')
@@ -70,10 +71,13 @@ class CourseDuplicateFromLabs(APIView):
         labs_by_id = {}
         for payment_product in payment['payment_products']:
 
+            license_id = payment_product['license_id']
+            if not license_id:
+                continue
+
             if payment_product['product_external_id']:
                 lab_id = payment_product['product_external_id']
-                license_id = payment_product['license_id']
-                if not lab_id or not license_id:
+                if not lab_id:
                     continue
 
                 labs_by_id[lab_id] = payment_product
