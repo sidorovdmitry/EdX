@@ -67,13 +67,14 @@ def duplicate_course(source, target, user, fields=None):
     try:
         with mstore.bulk_operations(dest_course_id):
             if mstore.clone_course(source_course_id, dest_course_id, ModuleStoreEnum.UserID.mgmt_command):
-                # purposely avoids auth.add_user b/c it doesn't have a caller to authorize
-                CourseInstructorRole(dest_course_id).add_users(
-                    *CourseInstructorRole(source_course_id).users_with_role()
-                )
-                CourseStaffRole(dest_course_id).add_users(
-                    *CourseStaffRole(source_course_id).users_with_role()
-                )
+                # # purposely avoids auth.add_user b/c it doesn't have a caller to authorize
+                # CourseInstructorRole(dest_course_id).add_users(
+                #     *CourseInstructorRole(source_course_id).users_with_role()
+                # )
+                # CourseStaffRole(dest_course_id).add_users(
+                #     *CourseStaffRole(source_course_id).users_with_role()
+                # )
+                pass
     except:
         return None
 
