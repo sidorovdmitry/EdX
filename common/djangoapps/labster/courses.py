@@ -1,13 +1,15 @@
+import re
+
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from student.models import CourseAccessRole, CourseEnrollment
+from student.models import CourseEnrollment
 from student.roles import CourseInstructorRole, CourseStaffRole
 from xmodule.course_module import CourseDescriptor
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
 
-from labster.models import Lab
+from labster.models import Lab, LabsterUser
 from labster_search.models import LabKeyword
 
 
@@ -46,13 +48,25 @@ def course_key_from_str(arg):
         return SlashSeparatedCourseKey.from_deprecated_string(arg)
 
 
+def get_org(user):
+    labster_user = LabsterUser.objects.get(user=user)
+    if labster_user.organization_name:
+        org = labster_user.organization_name
+    else:
+        org = user.username
+
+    pattern = re.compile('[\W_]+', re.UNICODE)
+    org = pattern.sub('', org)
+    return org
+
+
 def duplicate_course(source, target, user, fields=None):
     org = target.split('/')[0]
     source_org = source.split('/')[0]
     target_org = org
 
     if source_org == target_org:
-        target = target.replace(org, user.username)
+        target = target.replace(org, get_org(user))
 
     source_course_id = course_key_from_str(source)
     dest_course_id = course_key_from_str(target)
@@ -67,13 +81,14 @@ def duplicate_course(source, target, user, fields=None):
     try:
         with mstore.bulk_operations(dest_course_id):
             if mstore.clone_course(source_course_id, dest_course_id, ModuleStoreEnum.UserID.mgmt_command):
-                # purposely avoids auth.add_user b/c it doesn't have a caller to authorize
-                CourseInstructorRole(dest_course_id).add_users(
-                    *CourseInstructorRole(source_course_id).users_with_role()
-                )
-                CourseStaffRole(dest_course_id).add_users(
-                    *CourseStaffRole(source_course_id).users_with_role()
-                )
+                # # purposely avoids auth.add_user b/c it doesn't have a caller to authorize
+                # CourseInstructorRole(dest_course_id).add_users(
+                #     *CourseInstructorRole(source_course_id).users_with_role()
+                # )
+                # CourseStaffRole(dest_course_id).add_users(
+                #     *CourseStaffRole(source_course_id).users_with_role()
+                # )
+                pass
     except:
         return None
 
@@ -85,17 +100,8 @@ def duplicate_course(source, target, user, fields=None):
 
         mstore.update_item(course, user.id)
 
-    CourseAccessRole.objects.get_or_create(
-        user=user,
-        org=org,
-        course_id=dest_course_id,
-        role='staff')
-
-    CourseAccessRole.objects.get_or_create(
-        user=user,
-        org=org,
-        course_id=dest_course_id,
-        role='instructor')
+    CourseInstructorRole(dest_course_id).add_users(user)
+    CourseStaffRole(dest_course_id).add_users(user)
 
     CourseEnrollment.objects.get_or_create(
         user=user, course_id=dest_course_id)
