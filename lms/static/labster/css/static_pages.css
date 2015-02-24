@@ -698,7 +698,7 @@ textarea, input[type="text"], input[type="email"], input[type="password"], input
 
 /* faq */
 .faq-wrapper {
-  background: url(images/bg-pages.jpg) top center no-repeat;
+  background: url(../../images/landing/bg-pages.jpg) top center no-repeat;
 }
 .faq {
   margin: 0 9em;
