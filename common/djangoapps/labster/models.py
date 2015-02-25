@@ -20,6 +20,7 @@ from django_countries.fields import CountryField
 
 from xmodule_django.models import CourseKeyField, LocationKeyField
 
+from labster_accounts.models import Organization
 from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_block_file_url
 
 
@@ -40,6 +41,7 @@ class LabsterUser(models.Model):
     user_type = models.IntegerField(choices=USER_TYPE_CHOICES, blank=True, null=True)
     phone_number = models.CharField(max_length=100, blank=True, default="")
     organization_name = models.CharField(max_length=255, blank=True, default="")
+    organization = models.ForeignKey(Organization, blank=True, null=True)
 
     USER_HIGH_SCHOOL = 1
     USER_COLLEGE = 2
@@ -106,6 +108,7 @@ def create_labster_user(sender, instance, created, **kwargs):
     if created:
         LabsterUser.objects.get_or_create(user=instance)
 post_save.connect(create_labster_user, sender=User)
+
 
 class NutshellUser(models.Model):
     user = models.OneToOneField(User)
