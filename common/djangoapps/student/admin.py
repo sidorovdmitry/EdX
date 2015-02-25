@@ -31,13 +31,20 @@ class CourseAccessRoleAdmin(admin.ModelAdmin):
     )
 
 
+class CourseEnrollmentAllowedAdmin(admin.ModelAdmin):
+    search_fields = ('email', 'course_id')
+    list_display = (
+        'email', 'course_id', 'auto_enroll', 'created',
+    )
+
+
 admin.site.register(UserProfile)
 
 admin.site.register(UserTestGroup)
 
 admin.site.register(CourseEnrollment, CourseEnrollmentAdmin)
 
-admin.site.register(CourseEnrollmentAllowed)
+admin.site.register(CourseEnrollmentAllowed, CourseEnrollmentAllowedAdmin)
 
 admin.site.register(Registration)
 

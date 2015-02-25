@@ -40,7 +40,8 @@ def course_wiki_redirect(request, course_id):  # pylint: disable=unused-argument
     if course.main_wiki_page:
         course_slug = course.main_wiki_page
     else:
-        course_slug = course_wiki_slug(course)
+        course_slug = course.location.course
+        # course_slug = course_wiki_slug(course)
 
     valid_slug = True
     if not course_slug:
