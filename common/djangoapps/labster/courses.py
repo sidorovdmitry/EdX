@@ -106,11 +106,15 @@ def duplicate_course(source, target, user, fields=None):
     CourseEnrollment.objects.get_or_create(
         user=user, course_id=dest_course_id)
 
+    max_student = fields['max_student_enrollments_allowed']
+    if not max_student:
+        max_student = 3
+
     fields = {
         'labster_demo': False,
         'is_browsable': False,
         'invitation_only': True,
-        'max_student_enrollments_allowed': 3,
+        'max_student_enrollments_allowed': max_student,
         'labster_license': True,
     }
     course = mstore.get_course(dest_course_id)
