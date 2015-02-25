@@ -1250,6 +1250,7 @@ class CourseEnrollmentAdmin(admin.ModelAdmin):
     list_display = ('user', 'course_id', 'mode', 'created', 'is_active')
     list_filter = ('is_active', 'mode')
     search_fields = ('user__email', 'course_id')
+    raw_id_fields = ('user',)
 
 
 class CourseEnrollmentAllowed(models.Model):
