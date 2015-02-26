@@ -1752,6 +1752,7 @@ if FEATURES.get('LABSTER'):
         'labster_adaptive',
         'labster_search',
         'labster_accounts',
+        'labster_salesforce',
         'corsheaders',
         'rest_framework.authtoken',
     )
