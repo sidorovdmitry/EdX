@@ -265,6 +265,7 @@ class UserAttemptAdmin(admin.ModelAdmin):
 class LabsterCourseLicenseAdmin(admin.ModelAdmin):
     list_display = ('user', 'user_id', 'course_id', 'license_id')
     search_fields = ('user__id', 'user__email', 'user__username', 'course_id')
+    raw_id_fields = ('user',)
 
     def user_id(self, obj):
         return obj.user.id
