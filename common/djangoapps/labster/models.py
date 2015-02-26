@@ -65,6 +65,8 @@ class LabsterUser(models.Model):
     nationality = CountryField(blank=True, null=True)
     unique_id = models.CharField(max_length=100, blank=True, db_index=True)
 
+    is_new = models.BooleanField(default=True)
+
     def __unicode__(self):
         return unicode(self.user)
 
