@@ -65,7 +65,7 @@ class SendEmailUserCreate(APIView):
             'user_school_level': labster_user.user_school_level_display,
         }
         email_html = render_to_string('emails/teacher_information.html', context)
-        subject = "New teacher registration"
+        subject = "New teacher registration: {}".format(user.email)
 
         email = EmailMessage(subject, email_html, "no-reply@labster.com", settings.SALES_EMAIL)
         email.content_subtype = "html"
