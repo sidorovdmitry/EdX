@@ -56,3 +56,20 @@ def list_accounts():
         results.append((record['Id'], record['Name']))
 
     return results
+
+
+def create_account(name):
+    headers = {
+        'Authorization': "Bearer {}".format(login()),
+        'Content-Type': "application/json",
+    }
+    url = OBJECT_URL.format(
+        instance_url=INSTANCE_URL, api_version=API_VERSION,
+        object_name='Account')
+
+    payload = {
+        'Name': name,
+    }
+    response = requests.post(url, data=json.dumps(payload), headers=headers)
+    assert response.status_code == 200, response.content
+    return json.loads(response.content)
