@@ -3,7 +3,7 @@ angular.module('LabsterBackOffice')
   .controller('NewLicenseStep2Controller', function ($scope, $routeParams, $location, $http, localStorageService) {
 
     $scope.institution_vat_number = "";
-    $scope.institution_name = "";
+    $scope.institution_name = window.requestUser.organization_name;
     $scope.tax = 0;
     $scope.subTotalPrice = 0;
     $scope.totalPrice = 0;
