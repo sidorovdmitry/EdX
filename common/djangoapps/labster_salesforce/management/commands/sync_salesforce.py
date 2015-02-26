@@ -1,8 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from labster_accounts.organizations import get_organization
-from labster_salesforce.models import Account
 from labster_salesforce.salesforce import list_accounts
+from labster_salesforce.accounts import get_or_create_account
 
 
 class Command(BaseCommand):
@@ -13,14 +12,7 @@ class Command(BaseCommand):
         """
         accounts = list_accounts()
         for account_id, name in accounts:
-            # check for row in Account model
-            try:
-                account = Account.objects.get(account_id=account_id)
-            except Account.DoesNotExist:
-                account = Account()
-                account.account_id = account_id
-                account.organization = get_organization(name)
-                account.save()
+            get_or_create_account(account_id, name)
 
     def handle(self, *args, **options):
         self.sync_accounts()

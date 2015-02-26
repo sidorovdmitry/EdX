@@ -1,7 +1,7 @@
 from labster_accounts.models import Organization
 
 
-def get_organization(name):
+def get_or_create_organization(name):
     label = name
     name = name.strip().lower()
     try:
