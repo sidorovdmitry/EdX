@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Q
 from django.db.models.signals import pre_save, post_save
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -22,6 +22,7 @@ from xmodule_django.models import CourseKeyField, LocationKeyField
 
 from labster_accounts.models import Organization
 from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_block_file_url
+from labster_salesforce.models import Lead
 
 
 PLATFORM_NAME = 'platform'
@@ -104,6 +105,16 @@ class LabsterUser(models.Model):
             self.USER_OTHER,
         ]
         return self.user_school_level in universities
+
+    @property
+    def is_lead_synced(self):
+        """
+        default to True
+        if it's False, it'll create Lead object in labster_salesforce
+        """
+        if self.is_teacher:
+            return Lead.objects.filter(user=self.user).exists()
+        return True
 
 
 def create_labster_user(sender, instance, created, **kwargs):
