@@ -87,6 +87,7 @@ class ManageLab(AdminOnlyMixin, TemplateView):
         labs = Lab.fetch_with_lab_proxies()
         context.update({
             'labs': labs,
+            'is_update_quizblocks': True,
         })
 
         return context

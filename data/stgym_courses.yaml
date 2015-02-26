@@ -1,0 +1,11 @@
+user:
+  email: "jbn@stgym.dk"
+  password: "jbn@stgym.dk"
+  name: "Jorn"
+  username: "Jorn"
+  user_type: 1
+  user_school_level: 1
+
+course:
+  org: "StruerStatsgymnasium"
+  license_count: 22
