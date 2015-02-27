@@ -88,6 +88,8 @@ def create_lead(name, email, company, phone, occupation):
         object_name='Lead')
 
     first_name, last_name = get_names(name)
+    if not last_name:
+        last_name = first_name
 
     payload = {
         'FirstName': first_name,
