@@ -15,7 +15,7 @@ def home(request):
     template_name = 'labster/student_voucher_code.html'
     user_profile = UserProfile.objects.get(user=request.user)
     labster_user = LabsterUser.objects.get(user=request.user)
-    bo_user = create_user(request.user, user_profile.name, format='json')
+    bo_user = create_user(request.user, user_profile.name, labster_user, format='json')
 
     token = bo_user['token']
     backoffice = {
