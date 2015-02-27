@@ -13,6 +13,7 @@ from student.models import UserProfile
 from labster.api.users.serializers import UserCreateSerializer, LabsterUserSerializer
 from labster.api.users.serializers import CustomLabsterUser
 from labster.api.views import AuthMixin
+from labster.models import LabsterUser
 
 
 def get_user_as_custom_labster_user(user, password=None):
@@ -65,13 +66,19 @@ class SendEmailUserCreate(APIView):
             'user_school_level': labster_user.user_school_level_display,
         }
         email_html = render_to_string('emails/teacher_information.html', context)
-        subject = "New teacher registration"
+        subject = "New teacher registration: {}".format(user.email)
 
         email = EmailMessage(subject, email_html, "no-reply@labster.com", settings.SALES_EMAIL)
         email.content_subtype = "html"
         email.send(fail_silently=False)
 
         http_status = status.HTTP_200_OK
+
+        labster_user = LabsterUser.objects.get(user=user)
+        if labster_user.is_new:
+            from labster_salesforce.tasks import labster_create_salesforce_lead
+            # labster_create_salesforce_lead.delay(instance.id)
+            labster_create_salesforce_lead(user.id)
 
         return Response(http_status)
 

@@ -791,6 +791,8 @@ if FEATURES.get('LABSTER'):
         'labster_adaptive',
         'labster_search',
         'labster_admin',
+        'labster_accounts',
+        'labster_salesforce',
         'corsheaders',
         'rest_framework',
         'rest_framework.authtoken',
@@ -804,6 +806,7 @@ if FEATURES.get('LABSTER'):
 
     CORS_ORIGIN_ALLOW_ALL = True
     LABSTER_ENABLE_NUTSHELL = False
+    LABSTER_ENABLE_SALESFORCE = False
     LABSTER_BACKOFFICE_BASE_URL = "https://internal.labster.com"
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
 

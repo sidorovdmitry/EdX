@@ -110,7 +110,7 @@ class LabsterUserForm(forms.ModelForm):
 class LabsterUserAdmin(admin.ModelAdmin):
     list_display = ('email', 'user_id', 'username', 'user_type_display')
     search_fields = ('user__email', 'user__username',)
-    list_filter = ('user__is_active', 'user_type',)
+    list_filter = ('user__is_active', 'user_type', 'is_new')
     raw_id_fields = ('user',)
     fieldsets = (
         (None, {'fields': (

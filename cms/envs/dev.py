@@ -177,6 +177,15 @@ if SEGMENT_IO_KEY:
 
 NUTSHELL_USERNAME = 'aldi@labster.com'
 
+SF_CONSUMER_KEY = ''
+SF_CONSUMER_SECRET = ''
+SF_CALLBACK_URL = ''
+SF_SECURITY_TOKEN = ''
+SF_USERNAME = ''
+SF_PASSWORD = ''
+SF_INSTANCE_URL = ''
+SF_API_VERSION = ''
+
 #####################################################################
 # Lastly, see if the developer has any local overrides.
 try:
