@@ -465,3 +465,12 @@ SEARCH_ENGINE = "search.tests.mock_search_engine.MockSearchEngine"
 REGISTRATION_EXTRA_FIELDS['user_type'] = 'optional'
 REGISTRATION_EXTRA_FIELDS['user_school_level'] = 'optional'
 REGISTRATION_EXTRA_FIELDS['country'] = 'optional'
+
+SF_CONSUMER_KEY = ''
+SF_CONSUMER_SECRET = ''
+SF_CALLBACK_URL = ''
+SF_SECURITY_TOKEN = ''
+SF_USERNAME = ''
+SF_PASSWORD = ''
+SF_INSTANCE_URL = ''
+SF_API_VERSION = ''

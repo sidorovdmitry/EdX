@@ -262,3 +262,12 @@ SEARCH_ENGINE = "search.tests.mock_search_engine.MockSearchEngine"
 MOCK_SEARCH_BACKING_FILE = (
     TEST_ROOT / "index_file.dat"  # pylint: disable=no-value-for-parameter
 ).abspath()
+
+SF_CONSUMER_KEY = ''
+SF_CONSUMER_SECRET = ''
+SF_CALLBACK_URL = ''
+SF_SECURITY_TOKEN = ''
+SF_USERNAME = ''
+SF_PASSWORD = ''
+SF_INSTANCE_URL = ''
+SF_API_VERSION = ''
