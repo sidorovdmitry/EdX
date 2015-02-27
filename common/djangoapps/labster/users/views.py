@@ -3,10 +3,20 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from student.models import CourseEnrollment
+from student.models import CourseEnrollment, UserProfile
 
 from rest_framework.authtoken.models import Token
 
+from labster.backoffice.views import create_user
+from labster.models import LabsterUser
+
+def sync_user(user):
+    try:
+        labster_user = LabsterUser.objects.get(user=user)
+        user_profile = UserProfile.objects.get(user=user)
+        create_user(user, user_profile.name, labster_user, format='json')
+    except LabsterUser.DoesNotExist:
+        pass
 
 def login_by_token(request):
     user_id = request.POST.get('user_id')
@@ -27,9 +37,11 @@ def login_by_token(request):
         user = authenticate(key=token.key)
         if user and user.is_active:
             login(request, user)
+            # sync data to Backoffice
+            sync_user(user)
 
-        # only enroll the teacher
         if course_id and int(user_type) == 2:
+            # only enroll the teacher
             user = User.objects.get(id=user.id)
             course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
             CourseEnrollment.enroll(user, course_key)
