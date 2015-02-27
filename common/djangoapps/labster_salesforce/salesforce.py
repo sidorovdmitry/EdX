@@ -4,6 +4,8 @@ import requests
 
 from django.conf import settings
 
+from labster.user_utils import get_names
+
 
 CONSUMER_KEY = settings.SF_CONSUMER_KEY
 CONSUMER_SECRET = settings.SF_CONSUMER_SECRET
@@ -71,5 +73,32 @@ def create_account(name):
         'Name': name,
     }
     response = requests.post(url, data=json.dumps(payload), headers=headers)
-    assert response.status_code == 200, response.content
-    return json.loads(response.content)
+    assert response.status_code == 201, response.content
+    content = json.loads(response.content)
+    return content['id']
+
+
+def create_lead(name, email, company, phone, occupation):
+    headers = {
+        'Authorization': "Bearer {}".format(login()),
+        'Content-Type': "application/json",
+    }
+    url = OBJECT_URL.format(
+        instance_url=INSTANCE_URL, api_version=API_VERSION,
+        object_name='Lead')
+
+    first_name, last_name = get_names(name)
+
+    payload = {
+        'FirstName': first_name,
+        'LastName': last_name,
+        'Email': email,
+        'Company': company,
+        'Title': occupation,
+        'Phone': phone,
+        'LeadSource': 'Web',
+    }
+    response = requests.post(url, data=json.dumps(payload), headers=headers)
+    assert response.status_code == 201, response.content
+    content = json.loads(response.content)
+    return content['id']
