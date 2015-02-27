@@ -24,3 +24,15 @@ def generate_username(name, index):
         name = "{}{}".format(name, index)
 
     return name
+
+
+def get_names(name):
+    """
+    Extract first_name and last_name from name
+    """
+    first_name = last_name = ''
+    try:
+        first_name, last_name = name.rsplit(' ', 1)
+    except ValueError:
+        first_name = name
+    return first_name, last_name
