@@ -15,7 +15,6 @@ ENABLE_SALESFORCE = settings.LABSTER_ENABLE_SALESFORCE
 
 @task()
 def labster_create_salesforce_lead(user_id):
-    print 'labster_create_salesforce_lead'
     if not ENABLE_SALESFORCE:
         return
 
