@@ -8,7 +8,7 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from student.models import UserProfile
+from student.models import UserProfile, CourseEnrollment
 
 from labster.api.users.serializers import UserCreateSerializer, LabsterUserSerializer
 from labster.api.users.serializers import CustomLabsterUser
@@ -98,3 +98,41 @@ class UserView(AuthMixin, generics.RetrieveUpdateAPIView):
 
     def get_queryset(self):
         return User.objects.all()
+
+
+class DeactivateUser(APIView):
+
+    def post(self, request, *args, **kwargs):
+        # this api will unenroll the users from their courses
+        data = request.DATA
+
+        try:
+            user = User.objects.get(id=data['user_id'])
+        except User.DoesNotExist:
+            raise Http404
+
+        # unenroll the user
+        CourseEnrollment.objects.filter(user=user).update(is_active=False)
+
+        http_status = status.HTTP_200_OK
+
+        return Response(http_status)
+
+
+class ActivateUser(APIView):
+
+    def post(self, request, *args, **kwargs):
+        # this api will enroll back the users from their courses
+        data = request.DATA
+
+        try:
+            user = User.objects.get(id=data['user_id'])
+        except User.DoesNotExist:
+            raise Http404
+
+        # enroll the user
+        CourseEnrollment.objects.filter(user=user).update(is_active=True)
+
+        http_status = status.HTTP_200_OK
+
+        return Response(http_status)
