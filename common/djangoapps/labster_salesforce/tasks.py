@@ -28,11 +28,14 @@ def labster_create_salesforce_lead(user_id):
         return
 
     user_profile = UserProfile.objects.get(user=user)
+    occupation = ''
+    if labster_user.user_school_level:
+        occupation = labster_user.get_user_school_level_display()
     lead_id = create_lead(
         name=user_profile.name,
         email=user.email,
         company=labster_user.organization_name,
-        occupation=labster_user.user_school_level,
+        occupation=occupation,
         phone=labster_user.phone_number,
     )
     if lead_id:
