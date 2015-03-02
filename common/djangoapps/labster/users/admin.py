@@ -12,7 +12,6 @@ class LabsterUserForm(forms.ModelForm):
 
     name = forms.CharField()
     email = forms.EmailField()
-    is_active = forms.BooleanField(required=False)
     password = forms.CharField(required=False, widget=forms.PasswordInput)
 
     gender = forms.ChoiceField(choices=UserProfile.GENDER_CHOICES, required=False)
@@ -28,7 +27,7 @@ class LabsterUserForm(forms.ModelForm):
             user = self.instance.user
             user_profile = UserProfile.objects.get(user=user)
             self.fields['email'].initial = user.email
-            self.fields['is_active'].initial = user.is_active
+            self.fields['is_active'].initial = self.instance.is_active
             self.fields['name'].initial = user_profile.name
             self.fields['gender'].initial = user_profile.gender
             self.fields['level_of_education'].initial = user_profile.level_of_education
@@ -64,9 +63,9 @@ class LabsterUserForm(forms.ModelForm):
         else:
             user = User()
             user.username = generate_unique_username(name, User)
+            user.is_active = data.get('is_active', False)
 
         user.email = data.get('email')
-        user.is_active = data.get('is_active', False)
 
         password = data.get('password')
         if not user.id:
