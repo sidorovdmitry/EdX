@@ -103,36 +103,32 @@ class UserView(AuthMixin, generics.RetrieveUpdateAPIView):
 class DeactivateUser(APIView):
 
     def post(self, request, *args, **kwargs):
-        # this api will unenroll the users from their courses
         data = request.DATA
 
         try:
-            user = User.objects.get(id=data['user_id'])
-        except User.DoesNotExist:
-            raise Http404
+            labster_user = LabsterUser.objects.get(user__id=data['user_id'])
+        except LabsterUser.DoesNotExist:
+            http_status = status.HTTP_404_NOT_FOUND
+            return Response(http_status)
 
-        # unenroll the user
-        CourseEnrollment.objects.filter(user=user).update(is_active=False)
+        labster_user.is_active = False
 
         http_status = status.HTTP_200_OK
-
         return Response(http_status)
 
 
 class ActivateUser(APIView):
 
     def post(self, request, *args, **kwargs):
-        # this api will enroll back the users from their courses
         data = request.DATA
 
         try:
-            user = User.objects.get(id=data['user_id'])
-        except User.DoesNotExist:
-            raise Http404
+            labster_user = LabsterUser.objects.get(user__id=data['user_id'])
+        except LabsterUser.DoesNotExist:
+            http_status = status.HTTP_404_NOT_FOUND
+            return Response(http_status)
 
-        # enroll the user
-        CourseEnrollment.objects.filter(user=user).update(is_active=True)
+        labster_user.is_active = True
 
         http_status = status.HTTP_200_OK
-
         return Response(http_status)
