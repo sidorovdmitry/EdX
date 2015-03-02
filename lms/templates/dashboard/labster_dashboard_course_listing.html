@@ -37,7 +37,7 @@
       membership_url = "{}#view-membership".format(reverse('instructor_dashboard', args=[course.id.to_deprecated_string()]))
     %>
 
-    % if show_courseware_link:
+    % if show_courseware_link and user.labster_user.is_active:
       <a href="${course_target}" class="cover">
         <img src="${course_image_url(course)}" alt="${_('{course_number} {course_name} Cover Image').format(course_number=course.number, course_name=course.display_name_with_default) |h}" />
       </a>
@@ -98,7 +98,7 @@
       <hgroup>
         <h2 class="university">${get_course_about_section(course, 'university')}</h2>
         <h3>
-          % if show_courseware_link:
+          % if show_courseware_link and user.labster_user.is_active :
             <a href="${course_target}">${course.display_name_with_default}</a>
           % else:
             <span>${course.display_number_with_default | h} ${course.display_name_with_default}</span>
@@ -143,7 +143,7 @@
       %endif
 
 
-      % if show_courseware_link:
+      % if show_courseware_link and user.labster_user.is_active:
         % if course.has_ended():
           <a href="${course_target}" class="enter-course archived">${_('View Archived Course')}</a>
         % else:
