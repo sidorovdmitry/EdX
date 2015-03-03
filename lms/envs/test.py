@@ -302,13 +302,13 @@ BROKER_TRANSPORT = 'memory'
 
 MKTG_URL_LINK_MAP = {
     'ABOUT': 'about_edx',
-    'CONTACT': 'contact',  # 'contact',
-    'FAQ': None,  # 'help_edx',
+    'CONTACT': 'contact',
+    'FAQ': 'help_edx',
     'COURSES': 'courses',
     'ROOT': 'root',
     'TOS': 'tos',
-    'HONOR': None,  # 'honor',
-    'PRIVACY': None,  # 'privacy_edx',
+    'HONOR': 'honor',
+    'PRIVACY': 'privacy_edx',
     'JOBS': 'jobs',
     'PRESS': 'press',
     'BLOG': 'blog',
@@ -316,6 +316,7 @@ MKTG_URL_LINK_MAP = {
     'CAREER': 'career',
     'PRICING': 'pricing',
     'TESTIMONIAL': 'testimonial',
+    'SUPPORT': 'support',
 
     # Verified Certificates
     'WHAT_IS_VERIFIED_CERT': 'verified-certificate',
