@@ -29,6 +29,7 @@
     }
     .dashboard-banner { margin-bottom: 50px; }
     .wrapper-msg.urgency-high { background: #16283A !important; }
+    a.link-white { color: #ffffff !important; text-decoration: underline !important; }
   </style>
 </%block>
 
@@ -252,7 +253,7 @@
               <div class="msg-content">
                   <h2 class="title">Dear ${ user.profile.name },</h2>
                   <div class="copy">
-                      <p class="activation-message">${_("Your trial account is expired. To activate the account you could buy our license from <a href='/labs'>here</a>. Feel free to contact <a href='mailto:supporters@labster.com'>supporters@labster.com</a> if you have any questions.")}
+                      <p class="activation-message">${_("Your trial account has expired. To activate your account again, please <a href='/labs' class='link-white'>purchase your license here</a>. If you have any questions, feel free to contact our support at <a href='mailto:support@labster.com' class='link-white'>support@labster.com</a>.")}
                       </p>
                   </div>
               </div>
