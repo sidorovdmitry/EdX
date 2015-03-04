@@ -43,12 +43,15 @@ def get_payment(payment_id, token, format='json'):
     return resp.json()
 
 
-def create_user(user, name, format='json'):
+def create_user(user, name, labster_user, format='json'):
     post_data = {
         'email': user.email,
         'username': user.username,
         'first_name': name,
         'external_id': user.id,
+        'phone_number': labster_user.phone_number,
+        'institution_name': labster_user.organization_name,
+        'occupation': labster_user.get_user_school_level_display(),
     }
     create_user_url = '{}/api/users/create/'.format(get_base_url())
 
@@ -85,7 +88,7 @@ def home(request, *args, **kwargs):
     template_name = 'labster/backoffice.html'
     user_profile = UserProfile.objects.get(user=request.user)
     labster_user = LabsterUser.objects.get(user=request.user)
-    bo_user = create_user(request.user, user_profile.name, format='json')
+    bo_user = create_user(request.user, user_profile.name, labster_user, format='json')
 
     token = bo_user['token']
     lab_list = get_labs(token=token, format='string')

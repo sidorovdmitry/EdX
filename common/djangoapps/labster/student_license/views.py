@@ -33,7 +33,7 @@ def home(request, course_id):
     template_name = 'labster/student_license.html'
     user_profile = UserProfile.objects.get(user=request.user)
     labster_user = LabsterUser.objects.get(user=request.user)
-    bo_user = create_user(request.user, user_profile.name, format='json')
+    bo_user = create_user(request.user, user_profile.name, labster_user, format='json')
     ip = request.META.get('REMOTE_ADDR', None)
     if ip:
         country = country_code_from_ip(ip)

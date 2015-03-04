@@ -12,7 +12,6 @@ class LabsterUserForm(forms.ModelForm):
 
     name = forms.CharField()
     email = forms.EmailField()
-    is_active = forms.BooleanField(required=False)
     password = forms.CharField(required=False, widget=forms.PasswordInput)
 
     gender = forms.ChoiceField(choices=UserProfile.GENDER_CHOICES, required=False)
@@ -28,7 +27,7 @@ class LabsterUserForm(forms.ModelForm):
             user = self.instance.user
             user_profile = UserProfile.objects.get(user=user)
             self.fields['email'].initial = user.email
-            self.fields['is_active'].initial = user.is_active
+            self.fields['is_active'].initial = self.instance.is_active
             self.fields['name'].initial = user_profile.name
             self.fields['gender'].initial = user_profile.gender
             self.fields['level_of_education'].initial = user_profile.level_of_education
@@ -64,9 +63,9 @@ class LabsterUserForm(forms.ModelForm):
         else:
             user = User()
             user.username = generate_unique_username(name, User)
+            user.is_active = data.get('is_active', False)
 
         user.email = data.get('email')
-        user.is_active = data.get('is_active', False)
 
         password = data.get('password')
         if not user.id:
@@ -107,11 +106,21 @@ class LabsterUserForm(forms.ModelForm):
         return labster_user
 
 
+def make_active(modeladmin, request, queryset):
+    queryset.update(is_active= True)
+make_active.short_description = "Set active"
+
+def make_inactive(modeladmin, request, queryset):
+    queryset.update(is_active= False)
+make_inactive.short_description = "Set inactive"
+
+
 class LabsterUserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'user_id', 'username', 'user_type_display')
+    list_display = ('email', 'user_id', 'username', 'user_type_display', 'is_active')
     search_fields = ('user__email', 'user__username',)
     list_filter = ('user__is_active', 'user_type', 'is_new')
     raw_id_fields = ('user',)
+    actions = (make_active, make_inactive)
     fieldsets = (
         (None, {'fields': (
             # 'user',

@@ -8,7 +8,7 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from student.models import UserProfile
+from student.models import UserProfile, CourseEnrollment
 
 from labster.api.users.serializers import UserCreateSerializer, LabsterUserSerializer
 from labster.api.users.serializers import CustomLabsterUser
@@ -98,3 +98,39 @@ class UserView(AuthMixin, generics.RetrieveUpdateAPIView):
 
     def get_queryset(self):
         return User.objects.all()
+
+
+class DeactivateUser(APIView):
+
+    def post(self, request, *args, **kwargs):
+        data = request.DATA
+
+        try:
+            labster_user = LabsterUser.objects.get(user__id=data['user_id'])
+        except LabsterUser.DoesNotExist:
+            http_status = status.HTTP_404_NOT_FOUND
+            return Response(http_status)
+
+        labster_user.is_active = False
+        labster_user.save()
+
+        http_status = status.HTTP_200_OK
+        return Response(http_status)
+
+
+class ActivateUser(APIView):
+
+    def post(self, request, *args, **kwargs):
+        data = request.DATA
+
+        try:
+            labster_user = LabsterUser.objects.get(user__id=data['user_id'])
+        except LabsterUser.DoesNotExist:
+            http_status = status.HTTP_404_NOT_FOUND
+            return Response(http_status)
+
+        labster_user.is_active = True
+        labster_user.save()
+
+        http_status = status.HTTP_200_OK
+        return Response(http_status)
