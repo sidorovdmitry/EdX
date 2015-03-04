@@ -106,11 +106,21 @@ class LabsterUserForm(forms.ModelForm):
         return labster_user
 
 
+def make_active(modeladmin, request, queryset):
+    queryset.update(is_active= True)
+make_active.short_description = "Set active"
+
+def make_inactive(modeladmin, request, queryset):
+    queryset.update(is_active= False)
+make_inactive.short_description = "Set inactive"
+
+
 class LabsterUserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'user_id', 'username', 'user_type_display')
+    list_display = ('email', 'user_id', 'username', 'user_type_display', 'is_active')
     search_fields = ('user__email', 'user__username',)
     list_filter = ('user__is_active', 'user_type', 'is_new')
     raw_id_fields = ('user',)
+    actions = (make_active, make_inactive)
     fieldsets = (
         (None, {'fields': (
             # 'user',

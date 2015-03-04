@@ -112,6 +112,7 @@ class DeactivateUser(APIView):
             return Response(http_status)
 
         labster_user.is_active = False
+        labster_user.save()
 
         http_status = status.HTTP_200_OK
         return Response(http_status)
@@ -129,6 +130,7 @@ class ActivateUser(APIView):
             return Response(http_status)
 
         labster_user.is_active = True
+        labster_user.save()
 
         http_status = status.HTTP_200_OK
         return Response(http_status)
