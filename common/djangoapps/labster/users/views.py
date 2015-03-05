@@ -37,13 +37,14 @@ def login_by_token(request):
         user = authenticate(key=token.key)
         if user and user.is_active:
             login(request, user)
+
+        if int(user_type) == 2:
             # sync data to Backoffice
             sync_user(user)
-
-        if course_id and int(user_type) == 2:
-            # only enroll the teacher
-            user = User.objects.get(id=user.id)
-            course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
-            CourseEnrollment.enroll(user, course_key)
+            if course_id:
+                # only enroll the teacher
+                user = User.objects.get(id=user.id)
+                course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+                CourseEnrollment.enroll(user, course_key)
 
     return HttpResponseRedirect(next_url)
