@@ -1773,6 +1773,8 @@ if FEATURES.get('LABSTER'):
     LABSTER_ENABLE_NUTSHELL = False
     LABSTER_ENABLE_SALESFORCE = False
 
+    HIJACK_EMAILS = ['edx+staging-lms@labster.com']
+
     PLATFORM_NAME = 'LabsterX'
     THEME_NAME = 'labster'
     FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)

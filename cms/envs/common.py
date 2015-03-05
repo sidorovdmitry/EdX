@@ -813,6 +813,8 @@ if FEATURES.get('LABSTER'):
     LABSTER_S3_BASE_URL = "https://labster.s3.amazonaws.com/"
     LABSTER_UNITY_URL_PREFIX = "{}unity/".format(LABSTER_S3_BASE_URL)
 
+    HIJACK_EMAILS = ['edx+staging-cms@labster.com']
+
     # MIDDLEWARE_CLASSES += (
     #     'labster.middleware.ProfileMiddleware',
     #     'profiler.middleware.ProfilerMiddleware',
