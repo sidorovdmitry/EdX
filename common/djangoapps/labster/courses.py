@@ -131,3 +131,18 @@ def get_demo_courses():
     courses = [course for course in courses if course.labster_demo and course.is_browsable]
 
     return courses
+
+
+def course_key_str(course_key):
+    return course_key.to_deprecated_string()
+
+
+def get_demo_course_ids():
+    return [lab.demo_course_id for lab in Lab.objects.all() if lab.demo_course_id]
+
+
+def course_key_from_str(arg):
+    try:
+        return CourseKey.from_string(arg)
+    except InvalidKeyError:
+        return SlashSeparatedCourseKey.from_deprecated_string(arg)
