@@ -14,9 +14,10 @@ class LabsterUserFormTest(TestCase):
         self.data = {
             'name': "First Last",
             'email': "new@user.com",
-            'is_active': "1",
+            'user_is_active': "1",
             'password': "password",
             'gender': "m",
+            'is_active': "1",
             'level_of_education': "hs",
             'user_type': "2",
             'user_school_level': "5",
@@ -37,6 +38,7 @@ class LabsterUserFormTest(TestCase):
         user_profile.save()
 
         labster_user = LabsterUser.objects.get(user=user)
+        labster_user.is_active = True
         labster_user.user_type = 2
         labster_user.user_school_level = 5
         labster_user.phone_number = "12345"
@@ -48,13 +50,14 @@ class LabsterUserFormTest(TestCase):
         labster_user.save()
 
         form = LabsterUserForm(instance=labster_user)
-        self.assertEqual(form.fields['is_active'].initial, user.is_active)
+        self.assertEqual(form.fields['user_is_active'].initial, user.is_active)
         self.assertEqual(form.fields['email'].initial, user.email)
 
         self.assertEqual(form.fields['name'].initial, user_profile.name)
         self.assertEqual(form.fields['gender'].initial, user_profile.gender)
         self.assertEqual(form.fields['level_of_education'].initial, user_profile.level_of_education)
 
+        self.assertEqual(form.fields['is_active'].initial, labster_user.is_active)
         self.assertEqual(form.fields['user_type'].initial, labster_user.user_type)
         self.assertEqual(form.fields['user_school_level'].initial, labster_user.user_school_level)
         self.assertEqual(form.fields['phone_number'].initial, labster_user.phone_number)
@@ -103,6 +106,7 @@ class LabsterUserFormTest(TestCase):
         self.assertEqual(user_profile.gender, data['gender'])
         self.assertEqual(user_profile.level_of_education, data['level_of_education'])
 
+        self.assertTrue(labster_user.is_active)
         self.assertEqual(labster_user.user_type, int(data['user_type']))
         self.assertEqual(labster_user.user_school_level, int(data['user_school_level']))
         self.assertEqual(labster_user.phone_number, data['phone_number'])
@@ -124,6 +128,7 @@ class LabsterUserFormTest(TestCase):
         user = User.objects.get(id=labster_user.user.id)
 
         self.assertFalse(user.is_active)
+        self.assertFalse(labster_user.is_active)
 
     def test_create_no_password(self):
         data = {
@@ -153,9 +158,15 @@ class LabsterUserFormTest(TestCase):
 
     def test_update_save(self):
         user = User.objects.create_user('new@user.com', 'new@user.com', 'user')
+        user.is_active = False
+        user.save()
+
         UserProfile.objects.get_or_create(user=user)
         old_user_id = user.id
+
         labster_user = user.labster_user
+        labster_user.is_active = False
+        labster_user.save()
 
         data = self.data.copy()
 
@@ -178,6 +189,7 @@ class LabsterUserFormTest(TestCase):
         self.assertEqual(user_profile.gender, data['gender'])
         self.assertEqual(user_profile.level_of_education, data['level_of_education'])
 
+        self.assertTrue(labster_user.is_active)
         self.assertEqual(labster_user.user_type, int(data['user_type']))
         self.assertEqual(labster_user.user_school_level, int(data['user_school_level']))
         self.assertEqual(labster_user.phone_number, data['phone_number'])

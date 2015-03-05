@@ -13,6 +13,9 @@ class LabsterUserForm(forms.ModelForm):
     name = forms.CharField()
     email = forms.EmailField()
     password = forms.CharField(required=False, widget=forms.PasswordInput)
+    user_is_active = forms.BooleanField(
+        required=False,
+        help_text="False means user can't login")
 
     gender = forms.ChoiceField(choices=UserProfile.GENDER_CHOICES, required=False)
     level_of_education = forms.ChoiceField(choices=UserProfile.LEVEL_OF_EDUCATION_CHOICES, required=False)
@@ -23,14 +26,17 @@ class LabsterUserForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(LabsterUserForm, self).__init__(*args, **kwargs)
+        self.fields['is_active'].help_text = "False means user can't play lab"
+
         if self.instance.id:
             user = self.instance.user
             user_profile = UserProfile.objects.get(user=user)
             self.fields['email'].initial = user.email
-            self.fields['is_active'].initial = self.instance.is_active
+            self.fields['user_is_active'].initial = user.is_active
             self.fields['name'].initial = user_profile.name
             self.fields['gender'].initial = user_profile.gender
             self.fields['level_of_education'].initial = user_profile.level_of_education
+            self.fields['is_active'].initial = self.instance.is_active
             self.fields['user_type'].initial = self.instance.user_type
             self.fields['user_school_level'].initial = self.instance.user_school_level
             self.fields['phone_number'].initial = self.instance.phone_number
@@ -63,10 +69,9 @@ class LabsterUserForm(forms.ModelForm):
         else:
             user = User()
             user.username = generate_unique_username(name, User)
-            user.is_active = data.get('is_active', False)
 
         user.email = data.get('email')
-
+        user.is_active = data.get('user_is_active', False)
         password = data.get('password')
         if not user.id:
             if password:
@@ -126,11 +131,12 @@ class LabsterUserAdmin(admin.ModelAdmin):
             # 'user',
             'email',
             'password',
-            'is_active',
+            'user_is_active',
         )}),
         (None, {
             'fields': (
                 'name',
+                'is_active',
                 'gender',
                 'level_of_education',
             )
