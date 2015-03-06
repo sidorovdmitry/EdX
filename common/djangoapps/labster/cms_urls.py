@@ -4,6 +4,7 @@ from django.conf.urls import patterns, include, url  # noqa
 urlpatterns = patterns('labster_admin.views',  # nopep8
     url('^$', 'home', name='labster_admin_home'),
     url('^add-teacher-to-license/$', 'add_teacher_to_license', name='labster_add_teacher_to_license'),
+    url('^duplicate-multiple-courses/$', 'duplicate_multiple_courses', name='labster_duplicate_multiple_courses'),
 )
 
 urlpatterns += patterns('labster.cms.views',  # nopep8

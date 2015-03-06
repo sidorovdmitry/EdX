@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, FormView
 
-from labster_admin.forms import TeacherToLicenseForm
+from labster_admin.forms import TeacherToLicenseForm, DuplicateMultipleCourseForm
 
 
 def is_staff(user):
@@ -43,5 +43,22 @@ class AddTeacherToLicense(StaffMixin, FormView):
         return super(AddTeacherToLicense, self).form_valid(form)
 
 
+class DuplicateMultipleCourse(StaffMixin, FormView):
+    template_name = "labster_admin/duplicate_multiple_courses.html"
+    form_class = DuplicateMultipleCourseForm
+
+    def get_success_url(self):
+        return reverse('duplicate_multiple_courses')
+
+    def form_valid(self, form):
+        user = form.save()
+        messages.success(
+            self.request,
+            "<strong>{}</strong> banana".format(user))
+
+        return super(DuplicateMultipleCourse, self).form_valid(form)
+
+
 home = Home.as_view()
 add_teacher_to_license = AddTeacherToLicense.as_view()
+duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
