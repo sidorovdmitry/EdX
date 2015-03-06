@@ -1,0 +1,11 @@
+user:
+  email: "m.kent.first@gmail.com"
+  password: "m.kent.first@gmail.com"
+  name: "Marijo Kent-First"
+  username: "MarijoKent-First"
+  user_type: 1
+  user_school_level: 1
+
+course:
+  org: "JacksonStateUniversity"
+  license_count: 25
