@@ -1,6 +1,5 @@
 import re
 
-from contentstore.utils import delete_course_and_groups
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
@@ -127,6 +126,7 @@ def duplicate_course(source, target, user, fields=None):
 
 
 def duplicate_multiple_courses(user, license_count, org):
+    from contentstore.utils import delete_course_and_groups
     # license_count = fields['license_count']
     # all_labs = fields['all_labs'] # if true then all labs selected
     # labs = fields['labs'] # list of demo course id
