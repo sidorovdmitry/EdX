@@ -48,7 +48,7 @@ class DuplicateMultipleCourse(StaffMixin, FormView):
     form_class = DuplicateMultipleCourseForm
 
     def get_success_url(self):
-        return reverse('duplicate_multiple_courses')
+        return reverse('labster_duplicate_multiple_courses')
 
     def form_valid(self, form):
         user = form.save()

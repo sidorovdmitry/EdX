@@ -1,9 +1,10 @@
 import re
 
+from contentstore.utils import delete_course_and_groups
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from student.models import CourseEnrollment
+from student.models import UserProfile, CourseAccessRole, CourseEnrollment
 from student.roles import CourseInstructorRole, CourseStaffRole
 from xmodule.course_module import CourseDescriptor
 from xmodule.modulestore import ModuleStoreEnum
@@ -125,20 +126,21 @@ def duplicate_course(source, target, user, fields=None):
     return course
 
 
-def duplicate_multiple_courses(user, license_count, all_labs, labs, org):
+def duplicate_multiple_courses(user, license_count, org):
     # license_count = fields['license_count']
     # all_labs = fields['all_labs'] # if true then all labs selected
     # labs = fields['labs'] # list of demo course id
     # org = fields['organization_name']
 
-    if all_labs:
-        demo_course_ids = map(course_key_str, get_demo_course_ids())
-    else:
-        demo_course_ids = map(course_key_str, get_demo_course_ids_list(labs))
+    # if all_labs:
+    #     demo_course_ids = map(course_key_str, get_demo_course_ids())
+    # else:
+    #     demo_course_ids = map(course_key_str, get_demo_course_ids_list(labs))
 
+    demo_course_ids = map(course_key_str, get_demo_course_ids())
     new_course_ids = []
     for course_id in demo_course_ids:
-        new_course_ids.append(org, course_id)
+        new_course_ids.append(create_course_id(org, course_id))
 
     for source, target in zip(demo_course_ids, new_course_ids):
         source_course_id = course_key_from_str(source)
