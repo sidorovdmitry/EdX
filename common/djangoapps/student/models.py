@@ -319,59 +319,6 @@ class UserProfile(models.Model):
         reqs = [self.language, self.date_of_birth, self.nationality, self.unique_id]
         return all(reqs)
 
-    @transaction.commit_on_success
-    def update_name(self, new_name):
-        """Update the user's name, storing the old name in the history.
-
-        Implicitly saves the model.
-        If the new name is not the same as the old name, do nothing.
-
-        Arguments:
-            new_name (unicode): The new full name for the user.
-
-        Returns:
-            None
-
-        """
-        if self.name == new_name:
-            return
-
-        if self.name:
-            meta = self.get_meta()
-            if 'old_names' not in meta:
-                meta['old_names'] = []
-            meta['old_names'].append([self.name, u"", datetime.now(UTC).isoformat()])
-            self.set_meta(meta)
-
-        self.name = new_name
-        self.save()
-
-    @transaction.commit_on_success
-    def update_email(self, new_email):
-        """Update the user's email and save the change in the history.
-
-        Implicitly saves the model.
-        If the new email is the same as the old email, do not update the history.
-
-        Arguments:
-            new_email (unicode): The new email for the user.
-
-        Returns:
-            None
-        """
-        if self.user.email == new_email:
-            return
-
-        meta = self.get_meta()
-        if 'old_emails' not in meta:
-            meta['old_emails'] = []
-        meta['old_emails'].append([self.user.email, datetime.now(UTC).isoformat()])
-        self.set_meta(meta)
-        self.save()
-
-        self.user.email = new_email
-        self.user.save()
-
 
 class UserSignupSource(models.Model):
     """
@@ -1470,18 +1417,8 @@ def enforce_single_login(sender, request, user, signal, **kwargs):    # pylint: 
         else:
             key = None
 
-        if not user:
-            return
-
-        try:
-            profile = user.profile
-        except UserProfile.DoesNotExist:
-            name = user.get_full_name()
-            if not name:
-                name = user.username
-            profile = UserProfile.objects.create(user=user, name=name)
-
-        profile.set_login_session(key)
+        if user:
+            user.profile.set_login_session(key)
 
 
 class DashboardConfiguration(ConfigurationModel):
@@ -1529,34 +1466,88 @@ class LinkedInAddToProfileConfiguration(ConfigurationModel):
     # Deprecated
     dashboard_tracking_code = models.TextField(default="", blank=True)
 
-    def add_to_profile_url(self, course_name, enrollment_mode, cert_url, source="o"):
+    trk_partner_name = models.CharField(
+        max_length=10,
+        default="",
+        blank=True,
+        help_text=ugettext_lazy(
+            u"Short identifier for the LinkedIn partner used in the tracking code.  "
+            u"(Example: 'edx')  "
+            u"If no value is provided, tracking codes will not be sent to LinkedIn."
+        )
+    )
+
+    def add_to_profile_url(self, course_key, course_name, cert_mode, cert_url, source="o", target="dashboard"):
         """Construct the URL for the "add to profile" button.
 
         Arguments:
+            course_key (CourseKey): The identifier for the course.
             course_name (unicode): The display name of the course.
-            enrollment_mode (str): The enrollment mode of the user (e.g. "verified", "honor", "professional")
+            cert_mode (str): The course mode of the user's certificate (e.g. "verified", "honor", "professional")
             cert_url (str): The download URL for the certificate.
 
         Keyword Arguments:
             source (str): Either "o" (for onsite/UI), "e" (for emails), or "m" (for mobile)
+            target (str): An identifier for the occurrance of the button.
 
         """
         params = OrderedDict([
             ('_ed', self.company_identifier),
-            ('pfCertificationName', self._cert_name(course_name, enrollment_mode).encode('utf-8')),
+            ('pfCertificationName', self._cert_name(course_name, cert_mode).encode('utf-8')),
             ('pfCertificationUrl', cert_url),
             ('source', source)
         ])
+
+        tracking_code = self._tracking_code(course_key, cert_mode, target)
+        if tracking_code is not None:
+            params['trk'] = tracking_code
+
         return u'http://www.linkedin.com/profile/add?{params}'.format(
             params=urlencode(params)
         )
 
-    def _cert_name(self, course_name, enrollment_mode):
+    def _cert_name(self, course_name, cert_mode):
         """Name of the certification, for display on LinkedIn. """
         return self.MODE_TO_CERT_NAME.get(
-            enrollment_mode,
+            cert_mode,
             _(u"{platform_name} Certificate for {course_name}")
         ).format(
             platform_name=settings.PLATFORM_NAME,
             course_name=course_name
+        )
+
+    def _tracking_code(self, course_key, cert_mode, target):
+        """Create a tracking code for the button.
+
+        Tracking codes are used by LinkedIn to collect
+        analytics about certifications users are adding
+        to their profiles.
+
+        The tracking code format is:
+            &trk=[partner name]-[certificate type]-[date]-[target field]
+
+        In our case, we're sending:
+            &trk=edx-{COURSE ID}_{COURSE MODE}-{TARGET}
+
+        If no partner code is configured, then this will
+        return None, indicating that tracking codes are disabled.
+
+        Arguments:
+
+            course_key (CourseKey): The identifier for the course.
+            cert_mode (str): The enrollment mode for the course.
+            target (str): Identifier for where the button is located.
+
+        Returns:
+            unicode or None
+
+        """
+        return (
+            u"{partner}-{course_key}_{cert_mode}-{target}".format(
+                partner=self.trk_partner_name,
+                course_key=unicode(course_key),
+                cert_mode=cert_mode,
+                target=target
+            )
+            if self.trk_partner_name else None
         )

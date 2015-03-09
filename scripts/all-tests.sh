@@ -61,8 +61,7 @@ git clean -qxfd
 source scripts/jenkins-common.sh
 
 # Violations thresholds for failing the build
-PYLINT_THRESHOLD=6300
-PEP8_THRESHOLD=0
+PYLINT_THRESHOLD=6000
 
 # If the environment variable 'SHARD' is not set, default to 'all'.
 # This could happen if you are trying to use this script from
@@ -75,7 +74,7 @@ case "$TEST_SUITE" in
 
     "quality")
         paver find_fixme > fixme.log || { cat fixme.log; EXIT=1; }
-        paver run_pep8 -l $PEP8_THRESHOLD > pep8.log || { cat pep8.log; EXIT=1; }
+        paver run_pep8 > pep8.log || { cat pep8.log; EXIT=1; }
         paver run_pylint -l $PYLINT_THRESHOLD > pylint.log || { cat pylint.log; EXIT=1; }
         # Run quality task. Pass in the 'fail-under' percentage to diff-quality
         paver run_quality -p 100
@@ -93,19 +92,19 @@ END
         ;;
 
     "unit")
-        case "$SHARD" in        
+        case "$SHARD" in
             "lms")
-                paver test_system -s lms
+                paver test_system -s lms --extra_args="--with-flaky"
                 paver coverage
                 ;;
             "cms-js-commonlib")
-                paver test_system -s cms
+                paver test_system -s cms --extra_args="--with-flaky"
                 paver test_js --coverage --skip_clean
-                paver test_lib --skip_clean
+                paver test_lib --skip_clean --extra_args="--with-flaky"
                 paver coverage
                 ;;
             *)
-                paver test
+                paver test --extra_args="--with-flaky"
                 paver coverage
                 ;;
         esac
@@ -159,27 +158,22 @@ END
 
             "all")
                 paver test_bokchoy
-                paver bokchoy_coverage
                 ;;
 
             "1")
-                paver test_bokchoy --extra_args="-a shard_1"
-                paver bokchoy_coverage
+                paver test_bokchoy --extra_args="-a shard_1 --with-flaky"
                 ;;
 
             "2")
-                paver test_bokchoy --extra_args="-a 'shard_2'"
-                paver bokchoy_coverage
+                paver test_bokchoy --extra_args="-a 'shard_2' --with-flaky"
                 ;;
 
             "3")
-                paver test_bokchoy --extra_args="-a 'shard_3'"
-                paver bokchoy_coverage
+                paver test_bokchoy --extra_args="-a 'shard_3' --with-flaky"
                 ;;
 
             "4")
-                paver test_bokchoy --extra_args="-a shard_1=False,shard_2=False,shard_3=False"
-                paver bokchoy_coverage
+                paver test_bokchoy --extra_args="-a shard_1=False,shard_2=False,shard_3=False --with-flaky"
                 ;;
 
             # Default case because if we later define another bok-choy shard on Jenkins

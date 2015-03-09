@@ -7,12 +7,18 @@ from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
+from mock import patch, Mock
 from oauth2_provider.tests.factories import AccessTokenFactory, ClientFactory
-from openedx.core.djangoapps.content.course_structures.models import CourseStructure, update_course_structure
+from opaque_keys.edx.locator import CourseLocator
+from xmodule.error_module import ErrorDescriptor
+from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory, ItemFactory
+from xmodule.modulestore.xml import CourseLocationManager
+from xmodule.tests import get_test_system
 
 from courseware.tests.factories import GlobalStaffFactory, StaffFactory
+from openedx.core.djangoapps.content.course_structures.models import CourseStructure, update_course_structure
 
 
 TEST_SERVER_HOST = 'http://testserver'
@@ -72,7 +78,9 @@ class CourseViewTestsMixin(object):
         self.empty_course = CourseFactory.create(
             start=datetime(2014, 6, 16, 14, 30),
             end=datetime(2015, 1, 16),
-            org="MTD"
+            org="MTD",
+            # Use mongo so that we can get a test with a SlashSeparatedCourseKey
+            default_store=ModuleStoreEnum.Type.mongo
         )
 
     def build_absolute_url(self, path=None):
@@ -260,6 +268,24 @@ class CourseListTests(CourseViewTestsMixin, ModuleStoreTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertDictContainsSubset({'count': 0, u'results': []}, response.data)
 
+    def test_course_error(self):
+        """
+        Ensure the view still returns results even if get_courses() returns an ErrorDescriptor. The ErrorDescriptor
+        should be filtered out.
+        """
+
+        error_descriptor = ErrorDescriptor.from_xml(
+            '<course></course>',
+            get_test_system(),
+            CourseLocationManager(CourseLocator(org='org', course='course', run='run')),
+            None
+        )
+
+        descriptors = [error_descriptor, self.empty_course, self.course]
+
+        with patch('xmodule.modulestore.mixed.MixedModuleStore.get_courses', Mock(return_value=descriptors)):
+            self.test_get()
+
 
 class CourseDetailTests(CourseDetailMixin, CourseViewTestsMixin, ModuleStoreTestCase):
     view = 'course_structure_api:v0:detail'
@@ -276,7 +302,7 @@ class CourseStructureTests(CourseDetailMixin, CourseViewTestsMixin, ModuleStoreT
         super(CourseStructureTests, self).setUp()
 
         # Ensure course structure exists for the course
-        update_course_structure(self.course.id)
+        update_course_structure(unicode(self.course.id))
 
     def test_get(self):
         """

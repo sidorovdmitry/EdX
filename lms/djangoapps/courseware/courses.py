@@ -10,7 +10,7 @@ from django.utils import timezone
 
 from edxmako.shortcuts import render_to_string
 from xmodule.modulestore import ModuleStoreEnum
-from opaque_keys.edx.keys import CourseKey
+from opaque_keys.edx.keys import CourseKey, UsageKey
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from xmodule.modulestore.django import modulestore
 from xmodule.contentstore.content import StaticContent
@@ -431,3 +431,29 @@ def get_studio_url(course, page):
     if is_studio_course and is_mongo_course:
         studio_link = get_cms_course_link(course, page)
     return studio_link
+
+
+def get_problems_in_section(section):
+    """
+    This returns a dict having problems in a section.
+    Returning dict has problem location as keys and problem
+    descriptor as values.
+    """
+
+    problem_descriptors = defaultdict()
+    if not isinstance(section, UsageKey):
+        section_key = UsageKey.from_string(section)
+    else:
+        section_key = section
+    # it will be a Mongo performance boost, if you pass in a depth=3 argument here
+    # as it will optimize round trips to the database to fetch all children for the current node
+    section_descriptor = modulestore().get_item(section_key, depth=3)
+
+    # iterate over section, sub-section, vertical
+    for subsection in section_descriptor.get_children():
+        for vertical in subsection.get_children():
+            for component in vertical.get_children():
+                if component.location.category == 'problem' and getattr(component, 'has_score', False):
+                    problem_descriptors[unicode(component.location)] = component
+
+    return problem_descriptors

@@ -2,7 +2,9 @@
 Acceptance tests for Library Content in LMS
 """
 import ddt
+from flaky import flaky
 import textwrap
+from unittest import skip
 
 from .base_studio_test import StudioLibraryTest
 from ...fixtures.course import CourseFixture
@@ -148,6 +150,7 @@ class StudioLibraryContainerTest(StudioLibraryTest, UniqueCourseTest):
         self.assertTrue(library_container.has_validation_error)
         self.assertIn(expected_text, library_container.validation_error_text)
 
+    @flaky  # TODO fix this, see TE-745
     def test_out_of_date_message(self):
         """
         Scenario: Given I have a library, a course and library content xblock in a course
