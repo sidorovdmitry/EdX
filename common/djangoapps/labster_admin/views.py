@@ -50,11 +50,16 @@ class DuplicateMultipleCourse(StaffMixin, FormView):
     def get_success_url(self):
         return reverse('labster_duplicate_multiple_courses')
 
+    def get_context_data(self, **kwargs):
+        context = super(DuplicateMultipleCourse, self).get_context_data(**kwargs)
+        context['is_duplicate_multiple_courses'] = True
+        return context
+
     def form_valid(self, form):
         user = form.save()
         messages.success(
             self.request,
-            "<strong>{}</strong> banana".format(user))
+            "You have successfully duplicate course for <strong>{}</strong>".format(user))
 
         return super(DuplicateMultipleCourse, self).form_valid(form)
 
