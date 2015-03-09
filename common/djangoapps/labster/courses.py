@@ -41,13 +41,6 @@ def get_primary_keywords(course_id):
     return lab_keywords
 
 
-def course_key_from_str(arg):
-    try:
-        return CourseKey.from_string(arg)
-    except InvalidKeyError:
-        return SlashSeparatedCourseKey.from_deprecated_string(arg)
-
-
 def get_org(user):
     labster_user = LabsterUser.objects.get(user=user)
     if labster_user.organization_name:
@@ -125,19 +118,14 @@ def duplicate_course(source, target, user, fields=None):
     return course
 
 
-def duplicate_multiple_courses(user, license_count, org):
+def duplicate_multiple_courses(user, license_count, all_labs, labs,  org):
     from contentstore.utils import delete_course_and_groups
-    # license_count = fields['license_count']
-    # all_labs = fields['all_labs'] # if true then all labs selected
-    # labs = fields['labs'] # list of demo course id
-    # org = fields['organization_name']
 
-    # if all_labs:
-    #     demo_course_ids = map(course_key_str, get_demo_course_ids())
-    # else:
-    #     demo_course_ids = map(course_key_str, get_demo_course_ids_list(labs))
+    if all_labs:
+        demo_course_ids = map(course_key_str, get_demo_course_ids())
+    else:
+        demo_course_ids = unicode_to_str(labs)
 
-    demo_course_ids = map(course_key_str, get_demo_course_ids())
     new_course_ids = []
     for course_id in demo_course_ids:
         new_course_ids.append(create_course_id(org, course_id))
@@ -223,3 +211,7 @@ def course_key_from_str(arg):
 
 def course_key_str(course_key):
     return course_key.to_deprecated_string()
+
+
+def unicode_to_str(labs):
+    return [lab.encode("utf-8") for lab in labs]

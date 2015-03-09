@@ -20,6 +20,11 @@
           <label class="control-label col-sm-2" for="{{ field.id_for_label }}">{{ field.label }}</label>
           <div class="col-sm-9">
             {{ field }}
+            {% if field.help_text %}
+            <div class="help-block">
+              {{ field.help_text }}
+            </div>
+            {% endif %}
             {% if field.errors %}
             <div class="help-block">
               {% for error in field.errors %}
