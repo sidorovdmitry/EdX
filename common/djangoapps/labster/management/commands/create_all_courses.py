@@ -13,25 +13,11 @@ from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
 
 from labster.models import Lab, LabsterUser
+from labster.courses import course_key_str, get_demo_course_ids, course_key_from_str
 
 
 ORG = "VUCVestegnen"
 UNIVERSITY = "VUC Vestegnen"
-
-
-def course_key_str(course_key):
-    return course_key.to_deprecated_string()
-
-
-def get_demo_course_ids():
-    return [lab.demo_course_id for lab in Lab.objects.all() if lab.demo_course_id]
-
-
-def course_key_from_str(arg):
-    try:
-        return CourseKey.from_string(arg)
-    except InvalidKeyError:
-        return SlashSeparatedCourseKey.from_deprecated_string(arg)
 
 
 class Command(BaseCommand):

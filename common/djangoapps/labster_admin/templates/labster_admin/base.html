@@ -40,9 +40,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            {% comment %}
-            <li><a href="#">Duplicate Course</a></li>
-            {% endcomment %}
+            <li class="{% if is_duplicate_multiple_courses %}active{% endif %}"><a href="{% url 'labster_duplicate_multiple_courses' %}">Duplicate courses</a></li>
             <li class="{% if is_update_quizblocks %}active{% endif %}"><a href="{% url 'labster_manage_lab' %}">Update QuizBlocks</a></li>
             <li class="{% if is_add_teacher_to_license %}active{% endif %}"><a href="{% url 'labster_add_teacher_to_license' %}">Add Teacher to License</a></li>
 

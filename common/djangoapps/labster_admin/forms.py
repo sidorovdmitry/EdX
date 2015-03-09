@@ -1,10 +1,12 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.forms.widgets import CheckboxSelectMultiple
 
-from student.models import CourseEnrollment
+from student.models import CourseEnrollment, UserProfile, CourseAccessRole
 from student.roles import CourseStaffRole, CourseInstructorRole
 
-from labster.models import LabsterCourseLicense
+from labster.models import LabsterCourseLicense, LabsterUser, Lab
+from labster.courses import duplicate_multiple_courses
 
 
 class TeacherToLicenseForm(forms.Form):
@@ -50,3 +52,48 @@ class TeacherToLicenseForm(forms.Form):
             course_ids.append(license.course_id)
 
         return user, course_ids
+
+
+class DuplicateMultipleCourseForm(forms.Form):
+
+    email = forms.EmailField()
+    license_count = forms.IntegerField(required=True)
+    org = forms.CharField(required=True, label='University Name')
+    all_labs = forms.BooleanField(required=False, help_text='Choose this to duplicate all courses')
+    labs = forms.MultipleChoiceField(required=False, widget=CheckboxSelectMultiple, choices=[])
+
+    def __init__(self, *args, **kwargs):
+        super(DuplicateMultipleCourseForm, self).__init__(*args, **kwargs)
+        labs_choices = tuple([(lab.demo_course_id, lab.name) for lab in Lab.objects.all() if lab.demo_course_id])
+        self.fields['labs'].choices = labs_choices
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email:
+            try:
+                LabsterUser.objects.get(user__email=email)
+            except User.DoesNotExist:
+                raise forms.ValidationError('Invalid User Email')
+        return email
+
+    def clean_labs(self):
+        labs = self.cleaned_data.get('labs')
+        all_labs = self.cleaned_data.get('all_labs')
+
+        if not labs and not all_labs:
+            raise forms.ValidationError('Please select minimum one lab')
+
+        return labs
+
+    def save(self, *args, **kwargs):
+        email = self.cleaned_data.get('email')
+        labs = self.cleaned_data.get('labs')
+        all_labs = self.cleaned_data.get('all_labs')
+        license_count = self.cleaned_data.get('license_count')
+        org = self.cleaned_data.get('org')
+
+        user = User.objects.get(email=email)
+
+        duplicate_multiple_courses(user, license_count, all_labs, labs, org)
+
+        return user
