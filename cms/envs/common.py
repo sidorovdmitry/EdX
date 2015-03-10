@@ -793,6 +793,7 @@ if FEATURES.get('LABSTER'):
         'labster_admin',
         'labster_accounts',
         'labster_salesforce',
+        'labster_backoffice',
         'corsheaders',
         'rest_framework',
         'rest_framework.authtoken',

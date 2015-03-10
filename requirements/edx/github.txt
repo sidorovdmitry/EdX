@@ -28,6 +28,8 @@ git+https://github.com/mitocw/django-cas.git@60a5b8e5a62e63e0d5d224a87f0b489201a
 -e git+https://github.com/jambonrose/markdown_subscript_extension.git@609d8bd797ab451cb1510e9b252c87b9194bda14#egg=MarkdownSubscript
 -e git+https://github.com/kriwil/markdown-newtab.git@59d00f0b4b4479ed06fa6bebc68311be892a33ae#egg=markdown-newtab
 -e git+https://github.com/Bodekaer/Labster.EdX.django-wiki.git@6b79eaaeb0efd8e7b8a68008d0a4745d8b1737ba#egg=django-wiki
+-e git+https://github.com/Bodekaer/Labster.BackOffice@integrate_edx#egg=labster_backoffice
+-e git+https://github.com/kriwil/django-hijack-email.git@f9c70f4584cae5446c91e1d31ad698fa642ca794#egg=hijack_email
 
 # Our libraries:
 -e git+https://github.com/edx/XBlock.git@0b865f62f2deaa81b77f819b9b7df0303cb0f70c#egg=XBlock
@@ -50,4 +52,3 @@ git+https://github.com/mitocw/django-cas.git@60a5b8e5a62e63e0d5d224a87f0b489201a
 git+https://github.com/edx/edx-lint.git@e0e73bcc7b3b7ed632a1db6e3b32b0a249721261#egg=edx_lint
 -e git+https://github.com/edx/xblock-utils.git@17e247d66fabb53f0453515b093a030ee345a1b0#egg=xblock-utils
 -e git+https://github.com/edx-solutions/xblock-google-drive.git@138e6fa0bf3a2013e904a085b9fed77dab7f3f21#egg=xblock-google-drive
-
