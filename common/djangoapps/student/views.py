@@ -1506,6 +1506,7 @@ def create_account_with_params(request, params):
 
     if 'name' in params:
         params['username'] = generate_unique_username(params['name'], User)
+
     form = AccountCreationForm(
         data=params,
         extra_fields=extra_fields,
@@ -1777,7 +1778,7 @@ def auto_auth(request):
 
 
 @ensure_csrf_cookie
-def activate_account(request, key):
+def labster_activate_account(request, key):
     """When link in activation e-mail is clicked"""
     regs = Registration.objects.filter(activation_key=key)
     if len(regs) == 1:
@@ -1801,6 +1802,46 @@ def activate_account(request, key):
 
         resp = render_to_response(
             "registration/labster_activation_complete.html",
+            {
+                'user_logged_in': user_logged_in,
+                'already_active': already_active,
+                'profile': profile,
+            }
+        )
+        return resp
+    if len(regs) == 0:
+        return render_to_response(
+            "registration/activation_invalid.html",
+            {'csrf': csrf(request)['csrf_token']}
+        )
+    return HttpResponse(_("Unknown error. Please e-mail us to let us know how it happened."))
+
+
+@ensure_csrf_cookie
+def activate_account(request, key):
+    """When link in activation e-mail is clicked"""
+    regs = Registration.objects.filter(activation_key=key)
+    if len(regs) == 1:
+        user_logged_in = request.user.is_authenticated()
+        already_active = True
+        if not regs[0].user.is_active:
+            regs[0].activate()
+            already_active = False
+
+        # Enroll student in any pending courses he/she may have if auto_enroll flag is set
+        student = User.objects.filter(id=regs[0].user_id)
+        user = profile = None
+        if student:
+            ceas = CourseEnrollmentAllowed.objects.filter(email=student[0].email)
+            for cea in ceas:
+                if cea.auto_enroll:
+                    CourseEnrollment.enroll(student[0], cea.course_id)
+
+            user = student[0]
+            profile = user.profile
+
+        resp = render_to_response(
+            "registration/activation_complete.html",
             {
                 'user_logged_in': user_logged_in,
                 'already_active': already_active,

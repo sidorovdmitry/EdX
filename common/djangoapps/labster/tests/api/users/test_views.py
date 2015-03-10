@@ -1,7 +1,9 @@
 import json
+import unittest
 from datetime import date
 
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from rest_framework.test import APITestCase
 
@@ -9,6 +11,7 @@ from labster.models import LabsterUser
 from student.models import UserProfile
 
 
+@unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
 class UserCreateTest(APITestCase):
 
     def setUp(self):
@@ -44,6 +47,7 @@ class UserCreateTest(APITestCase):
         self.assertEqual(content['token_key'], user.labster_user.token_key)
 
 
+@unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
 class UserViewTest(APITestCase):
 
     def setUp(self):

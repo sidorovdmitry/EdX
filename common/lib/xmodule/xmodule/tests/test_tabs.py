@@ -33,7 +33,7 @@ class TabTestCase(unittest.TestCase):
             dict_tab,
             expected_link,
             expected_tab_id,
-            expected_name='same',
+            expected_name='Theory',
             invalid_dict_tab=None,
     ):
         """

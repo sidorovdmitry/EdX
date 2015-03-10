@@ -1729,7 +1729,6 @@ if FEATURES.get('ENABLE_CORS_HEADERS'):
 
 REGISTRATION_EXTRA_FIELDS = {
     'level_of_education': 'optional',
-    'user_type': 'required',
     'phone_number': 'optional',
     'gender': 'optional',
     'year_of_birth': 'optional',
@@ -1739,7 +1738,8 @@ REGISTRATION_EXTRA_FIELDS = {
     'terms_of_service': 'hidden',
     'city': 'optional',
     'country': 'required',
-    'user_school_level': 'required',
+    'user_type': 'optional',
+    'user_school_level': 'optional',
 }
 
 ########################## CERTIFICATE NAME ########################

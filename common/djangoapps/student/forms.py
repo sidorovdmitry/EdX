@@ -164,7 +164,9 @@ class AccountCreationForm(forms.Form):
             "mailing_address": _("Your mailing address is required"),
             "goals": _("A description of your goals is required"),
             "city": _("A city is required"),
-            "country": _("A country is required")
+            "country": _("A country is required"),
+            "user_type": _("Occupation is required"),
+            "user_school_level": _("Teacher Type is required"),
         }
         for field_name, field_value in extra_fields.items():
             if field_name not in self.fields:
@@ -182,6 +184,7 @@ class AccountCreationForm(forms.Form):
                         field_name,
                         _("You are missing one or more required fields")
                     )
+                    print field_name, required
                     self.fields[field_name] = forms.CharField(
                         required=required,
                         min_length=min_length,

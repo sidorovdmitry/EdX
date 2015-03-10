@@ -92,7 +92,7 @@
         $submitButton.
           addClass('is-disabled').
           prop('disabled', true).
-          text("${_(u'Processing your account information…')}");
+          text("${_('Processing your account information')}");
       }
     }
   </script>
@@ -269,7 +269,7 @@
           % if settings.REGISTRATION_EXTRA_FIELDS['user_school_level'] != 'hidden':
           <li class="field-group">
             <div class="field ${settings.REGISTRATION_EXTRA_FIELDS['user_school_level']} select" id="field-user_school_level">
-              <label for="user_school_level">${_("Education")}</label>
+              <label for="user_school_level">${_("Teacher Type")}</label>
               <select id="user_school_level" name="user_school_level">
                 <option value="">--</option>
                 %for key, value in LabsterUser.USER_SCHOOL_LEVEL_CHOICES:
