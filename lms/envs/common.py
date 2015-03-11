@@ -144,7 +144,7 @@ FEATURES = {
     'ENABLE_XBLOCK_VIEW_ENDPOINT': False,
 
     # Allows to configure the LMS to provide CORS headers to serve requests from other domains
-    'ENABLE_CORS_HEADERS': False,
+    'ENABLE_CORS_HEADERS': True,
 
     # Can be turned off if course lists need to be hidden. Effects views and templates.
     'COURSES_ARE_BROWSABLE': True,
@@ -1775,7 +1775,7 @@ if FEATURES.get('LABSTER'):
         'labster_search',
         'labster_accounts',
         'labster_salesforce',
-        'corsheaders',
+        # 'corsheaders',
         'rest_framework.authtoken',
     )
 
