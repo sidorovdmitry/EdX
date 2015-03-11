@@ -1,0 +1,11 @@
+user:
+  email: "gbuck@amersol.edu.pe"
+  password: "gbuck@amersol.edu.pe"
+  name: "Mr Gilles Buck"
+  username: "MrGillesBuck"
+  user_type: 1
+  user_school_level: 1
+
+course:
+  org: "ColegioFranklinDRoosevelt"
+  license_count: 9
