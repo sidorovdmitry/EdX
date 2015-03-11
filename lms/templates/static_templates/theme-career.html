@@ -3,9 +3,12 @@
 <%namespace name='static' file='../static_content.html'/>
 <%block name="pagetitle">${_("Career")}</%block>
 
-<%block name="headextra">
-<link rel="stylesheet" href="${static.url('labster/css/landing.css')}">
+<%block name="js_extra">
+  <script type="text/javascript" src="${static.url('js/labster/career_page.js')}"></script>
+</%block>
 
+<%block name="headextra">
+  <link rel="stylesheet" href="${static.url('labster/css/landing.css')}">
 </%block>
 
 <%
