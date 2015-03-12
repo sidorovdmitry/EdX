@@ -1809,11 +1809,6 @@ if FEATURES.get('LABSTER'):
     THEME_NAME = 'labster'
     FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
 
-    try:
-        from labster_backoffice.settings import *
-    except ImportError:
-        pass
-
     LABSTER_OLD_PAGES = [
         "features/",
         "jobs/",

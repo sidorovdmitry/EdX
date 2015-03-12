@@ -823,11 +823,6 @@ if FEATURES.get('LABSTER'):
 
     HIJACK_EMAILS = ['edx+staging-cms@labster.com']
 
-    try:
-        from labster_backoffice.settings import *
-    except ImportError:
-        pass
-
     # MIDDLEWARE_CLASSES += (
     #     'labster.middleware.ProfileMiddleware',
     #     'profiler.middleware.ProfilerMiddleware',
