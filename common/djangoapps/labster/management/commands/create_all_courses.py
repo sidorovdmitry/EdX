@@ -4,20 +4,13 @@ from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 
 from contentstore.utils import delete_course_and_groups
-from opaque_keys import InvalidKeyError
-from opaque_keys.edx.keys import CourseKey
-from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from student.roles import CourseInstructorRole, CourseStaffRole
 from student.models import UserProfile, CourseAccessRole, CourseEnrollment
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
 
-from labster.models import Lab, LabsterUser
+from labster.models import LabsterUser
 from labster.courses import course_key_str, get_demo_course_ids, course_key_from_str
-
-
-ORG = "VUCVestegnen"
-UNIVERSITY = "VUC Vestegnen"
 
 
 class Command(BaseCommand):
