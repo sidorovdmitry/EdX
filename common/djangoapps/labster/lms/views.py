@@ -26,7 +26,6 @@ from student.models import CourseEnrollment
 from labster.models import LabProxy, UserSave, UserAttempt, Problem, UserAnswer, QuizBlock
 from labster.models import LabsterCourseLicense, LabsterUserLicense
 from labster.reports import get_attempts_and_answers
-from labster.tasks import send_play_lab, send_invite_students
 
 
 API_PREFIX = getattr(settings, 'LABSTER_UNITY_API_PREFIX', '')
@@ -393,24 +392,6 @@ class AdaptiveTestResult(DetailView):
         return context
 
 
-class NutshellPlayLab(View):
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        lab_id = kwargs.get('lab_id')
-
-        send_play_lab.delay(user.id, lab_id)
-        return HttpResponse(1)
-
-
-class NutshellInviteStudents(View):
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        course_id = kwargs.get('course_id')
-
-        send_invite_students.delay(user.id, course_id)
-        return HttpResponse(1)
-
-
 class EnrollStudentVoucher(View):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
@@ -466,7 +447,5 @@ start_new_lab = StartNewLab.as_view()
 continue_lab = ContinueLab.as_view()
 lab_result = login_required(LabResult.as_view())
 adaptive_test_result = login_required(AdaptiveTestResult.as_view())
-nutshell_play_lab = login_required(NutshellPlayLab.as_view())
-nutshell_invite_students = login_required(NutshellInviteStudents.as_view())
 enroll_student_voucher = login_required(EnrollStudentVoucher.as_view())
 enroll_student_course = login_required(EnrollStudentCourse.as_view())

@@ -1792,7 +1792,6 @@ if FEATURES.get('LABSTER'):
     LABSTER_UNITY_API_PREFIX = "https://www.labster.com"
     LABSTER_BACKOFFICE_BASE_URL = "https://internal.labster.com"
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
-    LABSTER_ENABLE_NUTSHELL = False
     LABSTER_ENABLE_SALESFORCE = False
 
     HIJACK_EMAILS = ['edx+staging-lms@labster.com']
