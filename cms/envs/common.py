@@ -795,7 +795,6 @@ if FEATURES.get('LABSTER'):
         'labster_salesforce',
         'labster_backoffice.api',
         'labster_backoffice.front_end',
-        'labster_backoffice.licenses',
         'labster_backoffice.payments',
         'labster_backoffice.products',
         'labster_backoffice.vouchers',
