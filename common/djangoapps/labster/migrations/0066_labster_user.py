@@ -10,23 +10,23 @@ class Migration(DataMigration):
         "Write your forwards methods here."
         # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
 
-        UserProfile = orm['student.UserProfile']
-        LabsterUser = orm.LabsterUser
+        # UserProfile = orm['student.UserProfile']
+        # LabsterUser = orm.LabsterUser
 
-        for up in UserProfile.objects.all():
-            try:
-                lu = LabsterUser.objects.get(user=up.user)
-            except LabsterUser.DoesNotExist:
-                lu = LabsterUser(user=up.user)
+        # for up in UserProfile.objects.all():
+        #     try:
+        #         lu = LabsterUser.objects.get(user=up.user)
+        #     except LabsterUser.DoesNotExist:
+        #         lu = LabsterUser(user=up.user)
 
-            lu.user_type = up.user_type
-            lu.phone_number = up.phone_number
-            lu.user_school_level = up.user_school_level
-            lu.language = up.language
-            lu.date_of_birth = up.date_of_birth
-            lu.nationality = up.nationality
-            lu.unique_id = up.unique_id
-            lu.save()
+        #     lu.user_type = up.user_type
+        #     lu.phone_number = up.phone_number
+        #     lu.user_school_level = up.user_school_level
+        #     lu.language = up.language
+        #     lu.date_of_birth = up.date_of_birth
+        #     lu.nationality = up.nationality
+        #     lu.unique_id = up.unique_id
+        #     lu.save()
 
     def backwards(self, orm):
         "Write your backwards methods here."

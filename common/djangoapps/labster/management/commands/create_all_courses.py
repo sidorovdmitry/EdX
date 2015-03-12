@@ -58,6 +58,7 @@ class Command(BaseCommand):
 
     def create_courses(self):
         user = self.prepare()
+        org = self.config['course']['org']
         license_count = self.config['course']['license_count']
         license_count = self.config['course']['license_count']
 
@@ -89,13 +90,13 @@ class Command(BaseCommand):
 
             CourseAccessRole.objects.get_or_create(
                 user=user,
-                org=ORG,
+                org=org,
                 course_id=dest_course_id,
                 role='staff')
 
             CourseAccessRole.objects.get_or_create(
                 user=user,
-                org=ORG,
+                org=org,
                 course_id=dest_course_id,
                 role='instructor')
 

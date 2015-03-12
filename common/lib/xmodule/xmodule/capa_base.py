@@ -225,8 +225,8 @@ class CapaFields(object):
                             default=-1,
                             scope=Scope.settings)
     correct_answer = String(help=_("The answer for comparison"), scope=Scope.settings, default="")
-    platform_score = Integer(help=_(""), default=0, scope=Scope.user_state)
-    platform_attempt = Integer(help=_(""), default=0, scope=Scope.user_state)
+    platform_score = Integer(help=_("Platform score"), default=0, scope=Scope.user_state)
+    platform_attempt = Integer(help=_("Platform attempt"), default=0, scope=Scope.user_state)
 
     quiz_id = String(help=_("Quiz ID"), scope=Scope.settings, default="")
     read_more_url = String(help=_("Read more url"), scope=Scope.settings, default="")
