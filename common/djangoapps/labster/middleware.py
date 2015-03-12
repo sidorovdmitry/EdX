@@ -25,17 +25,17 @@ group_prefix_re = [
 
 
 def test_ie(user_agent):
-    pattern = "msie [1-10]\."
+    pattern = "msie [1-7]\."
     prog = re.compile(pattern, re.IGNORECASE)
     match = prog.search(user_agent)
     if match:
         return True
 
-    pattern = "trident"
-    prog = re.compile(pattern, re.IGNORECASE)
-    match = prog.search(user_agent)
-    if match:
-        return True
+    # pattern = "trident"
+    # prog = re.compile(pattern, re.IGNORECASE)
+    # match = prog.search(user_agent)
+    # if match:
+    #     return True
 
     return False
 
