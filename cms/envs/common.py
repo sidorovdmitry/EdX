@@ -793,6 +793,7 @@ if FEATURES.get('LABSTER'):
         'labster_admin',
         'labster_accounts',
         'labster_salesforce',
+        'labster_backoffice',
         'labster_backoffice.api',
         'labster_backoffice.front_end',
         'labster_backoffice.payments',

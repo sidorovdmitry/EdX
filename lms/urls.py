@@ -627,6 +627,7 @@ if settings.FEATURES.get('LABSTER'):
         url(r'^student_license/(?P<course_id>[^/]+/[^/]+/[^/]+)/$', 'labster.student_license.views.home', name="labster_student_license"),
         url('^labs/', include('labster.backoffice_urls')),
         url('^labster/', include('labster.urls')),
+        url('^labster_backoffice/', include('labster.urls')),
     )
 
     for path in settings.LABSTER_OLD_PAGES:
