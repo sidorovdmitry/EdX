@@ -130,6 +130,7 @@ def duplicate_multiple_courses(user, license_count, all_labs, labs,  org):
     for course_id in demo_course_ids:
         new_course_ids.append(create_course_id(org, course_id))
 
+    results = []
     for source, target in zip(demo_course_ids, new_course_ids):
         source_course_id = course_key_from_str(source)
         dest_course_id = course_key_from_str(target)
@@ -180,6 +181,9 @@ def duplicate_multiple_courses(user, license_count, all_labs, labs,  org):
                 setattr(course, key, value)
 
             mstore.update_item(course, user.id)
+
+        results.append(dest_course_id)
+        return results
 
 
 def get_demo_courses():

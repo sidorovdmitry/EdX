@@ -821,7 +821,7 @@ if FEATURES.get('LABSTER'):
             'PORT': 6379,
             'DB': 0,
             'PASSWORD': '',
-            'DEFAULT_TIMEOUT': 360,
+            'DEFAULT_TIMEOUT': 600,
         },
     }
 
