@@ -132,6 +132,8 @@ PLATFORM_NAME = 'LabsterX'
 THEME_NAME = 'labster'
 FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
 
+for queueConfig in RQ_QUEUES.itervalues():
+    queueConfig['ASYNC'] = False
 
 #####################################################################
 # See if the developer has any local overrides.

@@ -167,6 +167,7 @@ if settings.FEATURES.get('LABSTER'):
     urlpatterns += (
         url('^labster/', include('labster.cms_urls')),
         url(r'^profiler/', include('profiler.urls')),
+        url(r'^django-rq/', include('django_rq.urls')),
     )
 
 # enable automatic login

@@ -1777,6 +1777,7 @@ if FEATURES.get('LABSTER'):
         'labster_salesforce',
         # 'corsheaders',
         'rest_framework.authtoken',
+        'django_rq',
     )
 
     MIDDLEWARE_CLASSES = (
@@ -1799,6 +1800,16 @@ if FEATURES.get('LABSTER'):
     PLATFORM_NAME = 'LabsterX'
     THEME_NAME = 'labster'
     FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
+
+    RQ_QUEUES = {
+        'default': {
+            'HOST': 'localhost',
+            'PORT': 6379,
+            'DB': 0,
+            'PASSWORD': '',
+            'DEFAULT_TIMEOUT': 360,
+        },
+    }
 
     LABSTER_OLD_PAGES = [
         "features/",

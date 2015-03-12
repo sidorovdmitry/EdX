@@ -82,6 +82,10 @@ FEATURES['ENTRANCE_EXAMS'] = True
 FEATURES['ENABLE_COURSEWARE_INDEX'] = False
 SEARCH_ENGINE = "search.elastic.ElasticSearchEngine"
 
+# rq
+for queueConfig in RQ_QUEUES.itervalues():
+    queueConfig['ASYNC'] = False
+
 ###############################################################################
 # See if the developer has any local overrides.
 try:
