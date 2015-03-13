@@ -87,6 +87,11 @@ for queueConfig in RQ_QUEUES.itervalues():
     queueConfig['ASYNC'] = False
 
 ###############################################################################
+
+STRIPE_API_KEY = ''
+STRIPE_PUBLISHABLE_KEY = ''
+
+###############################################################################
 # See if the developer has any local overrides.
 try:
     from .private import *  # pylint: disable=import-error
