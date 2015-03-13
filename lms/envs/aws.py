@@ -548,6 +548,16 @@ STRIPE_PUBLISHABLE_KEY = AUTH_TOKENS.get('STRIPE_PUBLISHABLE_KEY', '')
 ### raven
 RAVEN_CONFIG = AUTH_TOKENS.get('RAVEN_CONFIG', {})
 
+RQ_QUEUES = {
+    'default': {
+        'HOST': ENV_TOKENS.get('RQ_REDIS_HOST', 'localhost'),
+        'PORT': 6379,
+        'DB': 0,
+        'PASSWORD': '',
+        'DEFAULT_TIMEOUT': 600,
+    },
+}
+
 INSTALLED_APPS = INSTALLED_APPS + (
     'raven.contrib.django.raven_compat',
 )
