@@ -29,7 +29,11 @@ def send_completed_email(user, course_ids):
 
 
 @job
-def duplicate_courses(user_id, license_count, all_labs, labs, org):
+def duplicate_courses(user_id, license_count, all_labs, labs, org, request_user_id=None):
     user = User.objects.get(id=user_id)
     course_ids = duplicate_multiple_courses(user, license_count, all_labs, labs, org)
-    send_completed_email(user, course_ids)
+    if request_user_id:
+        request_user = User.objects.get(id=request_user_id)
+    else:
+        request_user = user
+    send_completed_email(request_user, course_ids)
