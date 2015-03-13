@@ -83,6 +83,11 @@ FEATURES['ENABLE_COURSEWARE_INDEX'] = False
 SEARCH_ENGINE = "search.elastic.ElasticSearchEngine"
 
 ###############################################################################
+
+STRIPE_API_KEY = ''
+STRIPE_PUBLISHABLE_KEY = ''
+
+###############################################################################
 # See if the developer has any local overrides.
 try:
     from .private import *  # pylint: disable=import-error

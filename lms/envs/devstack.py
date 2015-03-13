@@ -132,6 +132,8 @@ PLATFORM_NAME = 'LabsterX'
 THEME_NAME = 'labster'
 FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
 
+STRIPE_API_KEY = ''
+STRIPE_PUBLISHABLE_KEY = ''
 
 #####################################################################
 # See if the developer has any local overrides.
