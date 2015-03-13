@@ -22,7 +22,3 @@ urlpatterns = patterns('labster',  # nopep8
         'lms.views.nutshell_invite_students', name='labster_nutshell_invite_students'),
     url('^demo-lab/$', 'lms.views.demo_lab', name='labster_demo_lab'),
 )
-
-urlpatterns = patterns('labster_backoffice',  # nopep8
-    url('^$', include('labster_backoffice.urls', namespace='labster_backoffice')),
-)
