@@ -135,6 +135,15 @@ def contact_form(request):
         return HttpResponseRedirect('/contact#feedbackForm')
 
 
+def fetch_career_data(request):
+    headers = {}
+    url = 'http://web.labster.com/rbcount.php'
+    resp = requests.get(url, headers=headers)
+    assert resp.status_code == 200, resp.status_code
+
+    return resp.json()
+
+
 def redirect_to_old(request, path=''):
     old_site = "http://web.labster.com/{}".format(path)
     return HttpResponsePermanentRedirect(old_site)

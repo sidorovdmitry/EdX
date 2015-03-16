@@ -1,15 +1,21 @@
 // vacancy script
 jQuery(document).ready(function(e){
+  console.log("jquery function called");
   var i=1;
   var xcount=true;
   var counter;
   $.ajax({
     async: false,
     type: "GET",
-    url: "https://web.labster.com/rbcount.php",
+    url: "/labster/contact-form/",
     dataType: "json",
     success : function(data) {
       counter = data;
+    },
+    error: function(obj, msg, status) {
+      console.log(obj);
+      console.log(msg);
+      console.log(status);
     }
   });
   jQuery('body').on('DOMNodeInserted', ".rbox-opening-list", function(e){
