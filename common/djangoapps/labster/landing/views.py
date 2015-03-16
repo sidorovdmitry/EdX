@@ -141,11 +141,7 @@ def fetch_career_data(request):
     url = 'http://web.labster.com/rbcount.php'
     resp = requests.get(url, headers=headers)
 
-    if format == 'string':
-        data = resp.content
-    else:
-        data = resp.json()
-    return HttpResponse(json.dumps(data), mimetype='application/json')
+    return HttpResponse(resp.content)
 
 
 def redirect_to_old(request, path=''):

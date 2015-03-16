@@ -6,7 +6,7 @@ jQuery(document).ready(function(e){
   $.ajax({
     async: false,
     type: "GET",
-    url: "/labster/fetch_career_data/",
+    url: "/labster/fetch-career-data/",
     dataType: "json",
     success : function(data) {
       counter = data;
