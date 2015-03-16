@@ -1751,8 +1751,8 @@ REGISTRATION_EXTRA_FIELDS = {
     'terms_of_service': 'hidden',
     'city': 'optional',
     'country': 'required',
-    'user_type': 'optional',
-    'user_school_level': 'optional',
+    'user_type': 'required',
+    'user_school_level': 'required',
 }
 
 ########################## CERTIFICATE NAME ########################
