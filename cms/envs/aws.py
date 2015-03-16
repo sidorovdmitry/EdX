@@ -333,6 +333,8 @@ if FEATURES['ENABLE_COURSEWARE_INDEX']:
     # Use ElasticSearch for the search engine
     SEARCH_ENGINE = "search.elastic.ElasticSearchEngine"
 
+XBLOCK_SETTINGS = ENV_TOKENS.get('XBLOCK_SETTINGS', {})
+
 ### aws s3 bucket name
 AWS_STORAGE_BUCKET_NAME = 'labster'
 AWS_QUERYSTRING_AUTH = False

@@ -267,15 +267,9 @@ FEATURES = {
     # Hide any Personally Identifiable Information from application logs
     'SQUELCH_PII_IN_LOGS': True,
 
-    # Toggles the embargo functionality, which enable embargoing for particular courses
+    # Toggles the embargo functionality, which blocks users from
+    # the site or courses based on their location.
     'EMBARGO': False,
-
-    # Toggles the embargo site functionality, which enable embargoing for the whole site
-    'SITE_EMBARGOED': False,
-
-    # Toggle whether to replace the current embargo implementation with
-    # the more flexible "country access" feature.
-    'ENABLE_COUNTRY_ACCESS': False,
 
     # Whether the Wiki subsystem should be accessible via the direct /wiki/ paths. Setting this to True means
     # that people can submit content and modify the Wiki in any arbitrary manner. We're leaving this as True in the
@@ -353,6 +347,9 @@ FEATURES = {
 
     # log all information from cybersource callbacks
     'LOG_POSTPAY_CALLBACKS': True,
+
+    # enable beacons for video timing statistics
+    'ENABLE_VIDEO_BEACON': False,
 
     # labster app
     'LABSTER': True,
@@ -1015,7 +1012,13 @@ MIDDLEWARE_CLASSES = (
 
     'django.contrib.messages.middleware.MessageMiddleware',
     'track.middleware.TrackMiddleware',
+
+    # CORS and CSRF
+    'corsheaders.middleware.CorsMiddleware',
+    'cors_csrf.middleware.CorsCSRFMiddleware',
+    'cors_csrf.middleware.CsrfCrossDomainCookieMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+
     'splash.middleware.SplashMiddleware',
 
     # Allows us to dark-launch particular languages
@@ -1109,7 +1112,10 @@ rwd_header_footer_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'js/common_he
 staff_grading_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/staff_grading/**/*.js'))
 open_ended_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/open_ended/**/*.js'))
 notes_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/notes/**/*.js'))
-instructor_dash_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/instructor_dashboard/**/*.js'))
+instructor_dash_js = (
+    sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/instructor_dashboard/**/*.js')) +
+    sorted(rooted_glob(PROJECT_ROOT / 'static', 'js/instructor_dashboard/**/*.js'))
+)
 
 # JavaScript used by the student account and profile pages
 # These are not courseware, so they do not need many of the courseware-specific
@@ -1565,6 +1571,8 @@ INSTALLED_APPS = (
     'provider.oauth2',
     'oauth2_provider',
 
+    'oauth_exchange',
+
     # For the wiki
     'wiki',  # The new django-wiki from benjaoming
     'django_notify',
@@ -1651,7 +1659,17 @@ INSTALLED_APPS = (
 
     'openedx.core.djangoapps.content.course_structures',
     'course_structure_api',
+
+    # CORS and cross-domain CSRF
+    'corsheaders',
+    'cors_csrf'
 )
+
+######################### CSRF #########################################
+
+# Forwards-compatibility with Django 1.7
+CSRF_COOKIE_AGE = 60 * 60 * 24 * 7 * 52
+
 
 ######################### MARKETING SITE ###############################
 EDXMKTG_COOKIE_NAME = 'edxloggedin'
@@ -1711,11 +1729,6 @@ if FEATURES.get('AUTH_USE_CAS'):
 ############# CORS headers for cross-domain requests #################
 
 if FEATURES.get('ENABLE_CORS_HEADERS'):
-    INSTALLED_APPS += ('corsheaders', 'cors_csrf')
-    MIDDLEWARE_CLASSES = (
-        'corsheaders.middleware.CorsMiddleware',
-        'cors_csrf.middleware.CorsCSRFMiddleware',
-    ) + MIDDLEWARE_CLASSES
     CORS_ALLOW_CREDENTIALS = True
     CORS_ORIGIN_WHITELIST = ()
     CORS_ORIGIN_ALLOW_ALL = False
@@ -1738,8 +1751,8 @@ REGISTRATION_EXTRA_FIELDS = {
     'terms_of_service': 'hidden',
     'city': 'optional',
     'country': 'required',
-    'user_type': 'optional',
-    'user_school_level': 'optional',
+    'user_type': 'required',
+    'user_school_level': 'required',
 }
 
 ########################## CERTIFICATE NAME ########################
@@ -2051,6 +2064,7 @@ ALL_LANGUAGES = (
 ### Apps only installed in some instances
 OPTIONAL_APPS = (
     'mentoring',
+    'edx_sga',
 
     # edx-ora2
     'submissions',
@@ -2144,6 +2158,10 @@ PDF_RECEIPT_COBRAND_LOGO_HEIGHT_MM = 12
 SEARCH_ENGINE = None
 # Use the LMS specific result processor
 SEARCH_RESULT_PROCESSOR = "lms.lib.courseware_search.lms_result_processor.LmsSearchResultProcessor"
+
+##### CDN EXPERIMENT/MONITORING FLAGS #####
+PERFORMANCE_GRAPHITE_URL = ''
+CDN_VIDEO_URLS = {}
 
 # The configuration for learner profiles
 PROFILE_CONFIGURATION = {

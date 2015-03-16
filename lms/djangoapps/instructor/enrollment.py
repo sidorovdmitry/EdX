@@ -269,6 +269,11 @@ def get_email_params(course, auto_enroll, secure=True):
         site=stripped_site_name,
         path=reverse('register_user')
     )
+    login_url = u'{proto}://{site}{path}'.format(
+        proto=protocol,
+        site=stripped_site_name,
+        path=reverse('signin_user')
+    )
     course_url = u'{proto}://{site}{path}'.format(
         proto=protocol,
         site=stripped_site_name,
@@ -290,6 +295,7 @@ def get_email_params(course, auto_enroll, secure=True):
     email_params = {
         'site_name': stripped_site_name,
         'registration_url': registration_url,
+        'login_url': login_url,
         'course': course,
         'auto_enroll': auto_enroll,
         'course_url': course_url,

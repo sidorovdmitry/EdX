@@ -5,6 +5,8 @@ from django.conf.urls.static import static
 
 import django.contrib.auth.views
 from microsite_configuration import microsite
+import oauth_exchange.views
+
 from labster.sitemaps import PageSitemap
 
 # Uncomment the next two lines to enable the admin:
@@ -79,8 +81,6 @@ urlpatterns = (
     url(r'^lang_pref/', include('lang_pref.urls')),
 
     url(r'^i18n/', include('django.conf.urls.i18n')),
-
-    url(r'^embargo$', 'student.views.embargo', name="embargo"),
 
     # Feedback Form endpoint
     url(r'^submit_feedback$', 'util.views.submit_feedback'),
@@ -529,8 +529,8 @@ urlpatterns += (
     url(r'^shoppingcart/', include('shoppingcart.urls')),
 )
 
-# Country access (embargo)
-if settings.FEATURES.get('ENABLE_COUNTRY_ACCESS'):
+# Embargo
+if settings.FEATURES.get('EMBARGO'):
     urlpatterns += (
         url(r'^embargo/', include('embargo.urls')),
     )
@@ -617,6 +617,11 @@ if settings.FEATURES.get('AUTOMATIC_AUTH_FOR_TESTING'):
 if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
     urlpatterns += (
         url(r'', include('third_party_auth.urls')),
+        url(
+            r'^oauth2/exchange_access_token/(?P<backend>[^/]+)/$',
+            oauth_exchange.views.AccessTokenExchangeView.as_view(),
+            name="exchange_access_token"
+        ),
         url(r'^login_oauth_token/(?P<backend>[^/]+)/$', 'student.views.login_oauth_token'),
     )
 
