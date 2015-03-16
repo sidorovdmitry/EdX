@@ -10,7 +10,7 @@ urlpatterns = patterns('labster',  # nopep8
     url('^enroll-student-course/', 'lms.views.enroll_student_course', name='labster_enroll_student_course'),
 
     url('^contact-form/$', 'landing.views.contact_form', name='labster_contact_form'),
-    url('^fetch_career_data/$', 'landing.views.fetch_career_data', name='labster_contact_form'),
+    url('^fetch_career_data/$', 'landing.views.fetch_career_data', name='labster_fetch_career_data'),
 
     url('^lab/{}/(?P<pk>\d+)/result/$'.format(settings.COURSE_ID_PATTERN),
         'lms.views.lab_result', name='labster_lab_result'),

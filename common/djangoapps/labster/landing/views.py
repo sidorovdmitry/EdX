@@ -1,4 +1,5 @@
 import json
+import requests
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -139,9 +140,12 @@ def fetch_career_data(request):
     headers = {}
     url = 'http://web.labster.com/rbcount.php'
     resp = requests.get(url, headers=headers)
-    assert resp.status_code == 200, resp.status_code
 
-    return resp.json()
+    if format == 'string':
+        data = resp.content
+    else:
+        data = resp.json()
+    return HttpResponse(json.dumps(data), mimetype='application/json')
 
 
 def redirect_to_old(request, path=''):
