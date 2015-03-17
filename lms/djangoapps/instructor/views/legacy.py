@@ -829,6 +829,11 @@ def _do_enroll_students(course, course_key, students, secure=False, overload=Fal
             site=stripped_site_name,
             path=reverse('register_user')
         )
+        login_url = '{proto}://{site}{path}'.format(
+            proto=protocol,
+            site=stripped_site_name,
+            path=reverse('signin_user')
+        )
         course_url = '{proto}://{site}{path}'.format(
             proto=protocol,
             site=stripped_site_name,
@@ -847,6 +852,7 @@ def _do_enroll_students(course, course_key, students, secure=False, overload=Fal
         email_data = {
             'site_name': stripped_site_name,
             'registration_url': registration_url,
+            'login_url': login_url,
             'course': course,
             'auto_enroll': auto_enroll,
             'course_url': course_url,

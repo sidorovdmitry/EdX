@@ -242,7 +242,7 @@ class TestInstructorEnrollsStudent(ModuleStoreTestCase, LoginEnrollmentTestCase)
             "{display_name} at edx.org by a member of the "
             "course staff.\n\n"
             "To finish your registration, please visit "
-            "{}://edx.org/register and fill out the registration form "
+            "{}://edx.org/login and fill out the registration form "
             "making sure to use student3_1@test.com in the E-mail field.\n"
             "Once you have registered and activated your account, you will "
             "see {display_name} listed on your dashboard.\n\n"
