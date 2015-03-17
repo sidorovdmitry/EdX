@@ -801,7 +801,6 @@ if FEATURES.get('LABSTER'):
         'widget_tweaks',
         'corsheaders',
         'diplomat',
-        'post_office',
         'form_utils',
         'rest_framework',
         'rest_framework.authtoken',
