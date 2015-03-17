@@ -807,7 +807,7 @@ class TestInstructorAPIEnrollment(ModuleStoreTestCase, LoginEnrollmentTestCase):
         self.assertEqual(
             mail.outbox[0].body,
             "Dear student,\n\nYou have been invited to join {} at edx.org by a member of the course staff.\n\n"
-            "To finish your registration, please visit {proto}://{site}/register and fill out the "
+            "To finish your registration, please visit {proto}://{site}/login and fill out the "
             "registration form making sure to use robot-not-an-email-yet@robot.org in the E-mail field.\n"
             "Once you have registered and activated your account, "
             "visit {proto}://{site}{about_path} to join the course.\n\n----\n"
@@ -828,7 +828,7 @@ class TestInstructorAPIEnrollment(ModuleStoreTestCase, LoginEnrollmentTestCase):
         self.assertEqual(
             mail.outbox[0].body,
             "Dear student,\n\nYou have been invited to join {display_name} at edx.org by a member of the course staff.\n\n"
-            "To finish your registration, please visit {proto}://{site}/register and fill out the registration form "
+            "To finish your registration, please visit {proto}://{site}/login and fill out the registration form "
             "making sure to use robot-not-an-email-yet@robot.org in the E-mail field.\n"
             "You can then enroll in {display_name}.\n\n----\n"
             "This email was automatically sent from edx.org to robot-not-an-email-yet@robot.org".format(
@@ -855,7 +855,7 @@ class TestInstructorAPIEnrollment(ModuleStoreTestCase, LoginEnrollmentTestCase):
         self.assertEqual(
             mail.outbox[0].body,
             "Dear student,\n\nYou have been invited to join {display_name} at edx.org by a member of the course staff.\n\n"
-            "To finish your registration, please visit {proto}://{site}/register and fill out the registration form "
+            "To finish your registration, please visit {proto}://{site}/login and fill out the registration form "
             "making sure to use robot-not-an-email-yet@robot.org in the E-mail field.\n"
             "Once you have registered and activated your account, you will see {display_name} listed on your dashboard.\n\n----\n"
             "This email was automatically sent from edx.org to robot-not-an-email-yet@robot.org".format(
