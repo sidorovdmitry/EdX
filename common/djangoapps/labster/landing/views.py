@@ -1,4 +1,5 @@
 import json
+import requests
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -133,6 +134,14 @@ def contact_form(request):
         messages.success(request, 'Some error occurred in sending mail.', extra_tags='safe')
 
         return HttpResponseRedirect('/contact#feedbackForm')
+
+
+def fetch_career_data(request):
+    headers = {}
+    url = 'http://web.labster.com/rbcount.php'
+    resp = requests.get(url, headers=headers)
+
+    return HttpResponse(resp.content)
 
 
 def redirect_to_old(request, path=''):

@@ -6,10 +6,12 @@ jQuery(document).ready(function(e){
   $.ajax({
     async: false,
     type: "GET",
-    url: "https://web.labster.com/rbcount.php",
+    url: "/labster/fetch-career-data/",
     dataType: "json",
     success : function(data) {
       counter = data;
+    },
+    error: function(obj, msg, status) {
     }
   });
   jQuery('body').on('DOMNodeInserted', ".rbox-opening-list", function(e){
@@ -32,7 +34,7 @@ jQuery(document).ready(function(e){
     jQuery.each(listitems, function(idx, itm) { mylist.append(itm); });
     jQuery.each(mylist.children('.rbox-opening-li').get(),function(index){
       var desc=jQuery(this).find(".rbox-job-shortdesc");
-      console.log(desc.text());
+      // console.log(desc.text());
       if (desc.text().indexOf("Labster") == -1){
         jQuery(this).hide();
       }
