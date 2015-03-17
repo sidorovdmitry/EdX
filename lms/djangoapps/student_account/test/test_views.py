@@ -242,6 +242,7 @@ class StudentAccountLoginAndRegistrationTest(UrlResetMixin, ModuleStoreTestCase)
         (True, "account_register"),
     )
     @ddt.unpack
+    @skip('LABSTER')
     def test_login_and_registration_form_signin_preserves_params(self, is_edx_domain, url_name):
         params = {
             'enrollment_action': 'enroll',

@@ -18,6 +18,7 @@ from cors_csrf.middleware import CorsCSRFMiddleware, CsrfCrossDomainCookieMiddle
 SENTINEL = object()
 
 
+@unittest.skip('LABSTER')
 class TestCorsMiddlewareProcessRequest(TestCase):
     """
     Test processing a request through the middleware
