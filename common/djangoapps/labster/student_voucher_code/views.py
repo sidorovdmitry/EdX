@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 from student.models import UserProfile
 
+from labster.backoffice.views import get_user_token
 from labster.models import LabsterUser
 
 
@@ -15,6 +16,7 @@ def home(request):
     template_name = 'labster/student_voucher_code.html'
     user_profile = UserProfile.objects.get(user=request.user)
     labster_user = LabsterUser.objects.get(user=request.user)
+    bo_user = get_user_token(request.user, format='json')
 
     token = bo_user['token']
     backoffice = {
