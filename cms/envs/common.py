@@ -821,7 +821,7 @@ if FEATURES.get('LABSTER'):
     HIJACK_EMAILS = ['edx+staging-cms@labster.com']
 
     RQ_QUEUES = {
-        'default': {
+        'cms_default': {
             'HOST': 'localhost',
             'PORT': 6379,
             'DB': 0,

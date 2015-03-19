@@ -28,7 +28,7 @@ def send_completed_email(user, course_ids):
     send_mail(subject, body, from_email, to_emails)
 
 
-@job
+@job('cms_default')
 def duplicate_courses(user_id, license_count, all_labs, labs, org, request_user_id=None):
     user = User.objects.get(id=user_id)
     course_ids = duplicate_multiple_courses(user, license_count, all_labs, labs, org)
