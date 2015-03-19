@@ -118,7 +118,7 @@ def duplicate_course(source, target, user, fields=None):
     return course
 
 
-def duplicate_multiple_courses(user, license_count, all_labs, labs,  org):
+def duplicate_multiple_courses(user, license_count, all_labs, labs, org):
     from contentstore.utils import delete_course_and_groups
 
     if all_labs:
@@ -138,18 +138,17 @@ def duplicate_multiple_courses(user, license_count, all_labs, labs,  org):
         mstore = modulestore()
         delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
 
-        print("Cloning course {0} to {1}".format(source_course_id, dest_course_id))
-
         try:
             with mstore.bulk_operations(dest_course_id):
                 if mstore.clone_course(source_course_id, dest_course_id, ModuleStoreEnum.UserID.mgmt_command):
-                    # purposely avoids auth.add_user b/c it doesn't have a caller to authorize
-                    CourseInstructorRole(dest_course_id).add_users(
-                        *CourseInstructorRole(source_course_id).users_with_role()
-                    )
-                    CourseStaffRole(dest_course_id).add_users(
-                        *CourseStaffRole(source_course_id).users_with_role()
-                    )
+                    pass
+                    # no need to add other users
+                    # CourseInstructorRole(dest_course_id).add_users(
+                    #     *CourseInstructorRole(source_course_id).users_with_role()
+                    # )
+                    # CourseStaffRole(dest_course_id).add_users(
+                    #     *CourseStaffRole(source_course_id).users_with_role()
+                    # )
         except:
             continue
 
@@ -183,7 +182,7 @@ def duplicate_multiple_courses(user, license_count, all_labs, labs,  org):
             mstore.update_item(course, user.id)
 
         results.append(dest_course_id)
-        return results
+    return results
 
 
 def get_demo_courses():
