@@ -54,6 +54,8 @@ def get_org(user):
 
 
 def duplicate_course(source, target, user, fields=None):
+    from contentstore.utils import delete_course_and_groups
+
     org = target.split('/')[0]
     source_org = source.split('/')[0]
     target_org = org
@@ -65,22 +67,12 @@ def duplicate_course(source, target, user, fields=None):
     dest_course_id = course_key_from_str(target)
 
     mstore = modulestore()
-    # delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
-
-    # 'invitation_only': True,
-    # 'max_student_enrollments_allowed': license_count,
-    # 'labster_license': True,
+    delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
 
     try:
         with mstore.bulk_operations(dest_course_id):
-            if mstore.clone_course(source_course_id, dest_course_id, ModuleStoreEnum.UserID.mgmt_command):
-                # # purposely avoids auth.add_user b/c it doesn't have a caller to authorize
-                # CourseInstructorRole(dest_course_id).add_users(
-                #     *CourseInstructorRole(source_course_id).users_with_role()
-                # )
-                # CourseStaffRole(dest_course_id).add_users(
-                #     *CourseStaffRole(source_course_id).users_with_role()
-                # )
+            if mstore.clone_course(source_course_id, dest_course_id,
+                                   ModuleStoreEnum.UserID.mgmt_command):
                 pass
     except:
         return None
@@ -119,7 +111,6 @@ def duplicate_course(source, target, user, fields=None):
 
 
 def duplicate_multiple_courses(user, license_count, all_labs, labs, org):
-    from contentstore.utils import delete_course_and_groups
 
     if all_labs:
         demo_course_ids = map(course_key_str, get_demo_course_ids())
@@ -132,56 +123,14 @@ def duplicate_multiple_courses(user, license_count, all_labs, labs, org):
 
     results = []
     for source, target in zip(demo_course_ids, new_course_ids):
-        source_course_id = course_key_from_str(source)
-        dest_course_id = course_key_from_str(target)
+        dest_course = duplicate_course(
+            source,
+            target,
+            user,
+            fields={'max_student_enrollments_allowed': license_count},
+        )
 
-        mstore = modulestore()
-        delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
-
-        try:
-            with mstore.bulk_operations(dest_course_id):
-                if mstore.clone_course(source_course_id, dest_course_id, ModuleStoreEnum.UserID.mgmt_command):
-                    pass
-                    # no need to add other users
-                    # CourseInstructorRole(dest_course_id).add_users(
-                    #     *CourseInstructorRole(source_course_id).users_with_role()
-                    # )
-                    # CourseStaffRole(dest_course_id).add_users(
-                    #     *CourseStaffRole(source_course_id).users_with_role()
-                    # )
-        except:
-            continue
-
-        CourseAccessRole.objects.get_or_create(
-            user=user,
-            org=org,
-            course_id=dest_course_id,
-            role='staff')
-
-        CourseAccessRole.objects.get_or_create(
-            user=user,
-            org=org,
-            course_id=dest_course_id,
-            role='instructor')
-
-        CourseEnrollment.objects.get_or_create(
-            user=user, course_id=dest_course_id)
-
-        fields = {
-            'labster_demo': False,
-            'is_browsable': False,
-            'invitation_only': True,
-            'max_student_enrollments_allowed': license_count,
-            'labster_license': True,
-        }
-        if fields:
-            course = mstore.get_course(dest_course_id)
-            for key, value in fields.items():
-                setattr(course, key, value)
-
-            mstore.update_item(course, user.id)
-
-        results.append(dest_course_id)
+        results.append(dest_course.id.to_deprecated_string())
     return results
 
 
