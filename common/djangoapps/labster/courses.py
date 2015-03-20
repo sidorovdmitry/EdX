@@ -3,7 +3,7 @@ import re
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from student.models import UserProfile, CourseAccessRole, CourseEnrollment
+from student.models import CourseEnrollment
 from student.roles import CourseInstructorRole, CourseStaffRole
 from xmodule.course_module import CourseDescriptor
 from xmodule.modulestore import ModuleStoreEnum
