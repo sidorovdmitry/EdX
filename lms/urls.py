@@ -43,6 +43,7 @@ urlpatterns = (
     url(r'^email_confirm/(?P<key>[^/]*)$', 'student.views.confirm_email_change'),
     url(r'^change_name$', 'student.views.change_name_request', name="change_name"),
     url(r'^event$', 'track.views.user_track'),
+    url(r'^performance$', 'performance.views.performance_log'),
     url(r'^segmentio/event$', 'track.views.segmentio.segmentio_event'),
     url(r'^t/(?P<template>[^/]*)$', 'static_template_view.views.index'),   # TODO: Is this used anymore? What is STATIC_GRAB?
 
@@ -527,6 +528,7 @@ if settings.FEATURES.get('RESTRICT_ENROLL_BY_REG_METHOD'):
 # Shopping cart
 urlpatterns += (
     url(r'^shoppingcart/', include('shoppingcart.urls')),
+    url(r'^commerce/', include('commerce.urls', namespace='commerce')),
 )
 
 # Embargo
@@ -623,6 +625,12 @@ if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
             name="exchange_access_token"
         ),
         url(r'^login_oauth_token/(?P<backend>[^/]+)/$', 'student.views.login_oauth_token'),
+    )
+
+# Certificates Web/HTML View
+if settings.FEATURES.get('CERTIFICATES_HTML_VIEW', False):
+    urlpatterns += (
+        url(r'^certificates/html', 'certificates.views.render_html_view', name='cert_html_view'),
     )
 
 # Labster

@@ -470,6 +470,9 @@ FACEBOOK_APP_SECRET = "Test"
 FACEBOOK_APP_ID = "Test"
 FACEBOOK_API_VERSION = "v2.2"
 
+# Certificates Views
+FEATURES['CERTIFICATES_HTML_VIEW'] = True
+
 REGISTRATION_EXTRA_FIELDS['user_type'] = 'optional'
 REGISTRATION_EXTRA_FIELDS['user_school_level'] = 'optional'
 REGISTRATION_EXTRA_FIELDS['country'] = 'optional'

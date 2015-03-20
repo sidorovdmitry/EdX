@@ -351,6 +351,9 @@ FEATURES = {
     # enable beacons for video timing statistics
     'ENABLE_VIDEO_BEACON': False,
 
+    # Certificates Web/HTML Views
+    'CERTIFICATES_HTML_VIEW': False,
+
     # labster app
     'LABSTER': True,
 }
@@ -558,7 +561,7 @@ TRACKING_BACKENDS = {
 
 # We're already logging events, and we don't want to capture user
 # names/passwords.  Heartbeat events are likely not interesting.
-TRACKING_IGNORE_URL_PATTERNS = [r'^/event', r'^/login', r'^/heartbeat', r'^/segmentio/event']
+TRACKING_IGNORE_URL_PATTERNS = [r'^/event', r'^/login', r'^/heartbeat', r'^/segmentio/event', r'^/performance']
 
 EVENT_TRACKING_ENABLED = True
 EVENT_TRACKING_BACKENDS = {
@@ -1662,7 +1665,9 @@ INSTALLED_APPS = (
 
     # CORS and cross-domain CSRF
     'corsheaders',
-    'cors_csrf'
+    'cors_csrf',
+
+    'commerce',
 )
 
 ######################### CSRF #########################################
@@ -2160,17 +2165,16 @@ SEARCH_ENGINE = None
 SEARCH_RESULT_PROCESSOR = "lms.lib.courseware_search.lms_result_processor.LmsSearchResultProcessor"
 
 ##### CDN EXPERIMENT/MONITORING FLAGS #####
-PERFORMANCE_GRAPHITE_URL = ''
 CDN_VIDEO_URLS = {}
 
-# The configuration for learner profiles
-PROFILE_CONFIGURATION = {
+# The configuration visibility of account fields.
+ACCOUNT_VISIBILITY_CONFIGURATION = {
     # Default visibility level for accounts without a specified value
     # The value is one of: 'all_users', 'private'
     "default_visibility": "private",
 
-    # The list of all fields that can be shown on a learner's profile
-    "all_fields": [
+    # The list of all fields that can be shared with other users
+    "shareable_fields": [
         'username',
         'profile_image',
         'country',
@@ -2179,9 +2183,14 @@ PROFILE_CONFIGURATION = {
         'bio',
     ],
 
-    # The list of fields that are always public on a learner's profile
+    # The list of account fields that are always public
     "public_fields": [
         'username',
         'profile_image',
     ],
 }
+
+# E-Commerce API Configuration
+ECOMMERCE_API_URL = None
+ECOMMERCE_API_SIGNING_KEY = None
+ECOMMERCE_API_TIMEOUT = 5
