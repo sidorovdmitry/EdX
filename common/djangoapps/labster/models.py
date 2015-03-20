@@ -41,6 +41,7 @@ class LabsterUser(models.Model):
     )
     user_type = models.IntegerField(choices=USER_TYPE_CHOICES, blank=True, null=True)
     phone_number = models.CharField(max_length=100, blank=True, default="")
+    ip_number = models.CharField(max_length=50, default="")
     organization_name = models.CharField(max_length=255, blank=True, default="")
     organization = models.ForeignKey(Organization, blank=True, null=True)
 
