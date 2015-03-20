@@ -61,6 +61,10 @@ class CustomLabsterUser(object):
         labster_user.phone_number = self.phone_number
         labster_user.user_school_level = self.user_school_level
         labster_user.organization_name = self.organization_name
+
+        if self.ip_number:
+            labster_user.ip_number = self.ip_number
+
         labster_user.save()
 
         profile = UserProfile.objects.get(user=user)
