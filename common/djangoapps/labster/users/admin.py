@@ -22,7 +22,7 @@ class LabsterUserForm(forms.ModelForm):
 
     class Meta:
         model = LabsterUser
-        exclude = ('user', 'ip_number')
+        exclude = ('user', 'ip_address')
 
     def __init__(self, *args, **kwargs):
         super(LabsterUserForm, self).__init__(*args, **kwargs)
@@ -121,7 +121,7 @@ make_inactive.short_description = "Set inactive"
 
 
 class LabsterUserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'user_id', 'username', 'user_type_display', 'is_active', 'ip_number')
+    list_display = ('email', 'user_id', 'username', 'user_type_display', 'is_active', 'ip_address')
     search_fields = ('user__email', 'user__username',)
     list_filter = ('user__is_active', 'user_type', 'is_new')
     raw_id_fields = ('user',)
