@@ -16,7 +16,7 @@ from labster.api.views import AuthMixin
 from labster.models import LabsterUser
 
 
-def get_user_as_custom_labster_user(user, password=None):
+def get_user_as_custom_labster_user(user, password=None, ip_number=None):
     user = User.objects.get(id=user.id)
     labster_user = user.labster_user
     profile, _ = UserProfile.objects.get_or_create(user=user)
@@ -34,6 +34,7 @@ def get_user_as_custom_labster_user(user, password=None):
         organization_name=labster_user.organization_name,
         user_school_level=labster_user.user_school_level,
         user_school_level_display=labster_user.get_user_school_level_display(),
+        ip_number = ip_number,
         date_of_birth=labster_user.date_of_birth,
         name=profile.name,
         password=password,
@@ -94,7 +95,8 @@ class UserView(AuthMixin, generics.RetrieveUpdateAPIView):
             raise Http404
 
         password = self.request.DATA.get('password')
-        return get_user_as_custom_labster_user(user, password)
+        ip_number = self.request.META.get('REMOTE_ADDR', None)
+        return get_user_as_custom_labster_user(user, password, ip_number)
 
     def get_queryset(self):
         return User.objects.all()
