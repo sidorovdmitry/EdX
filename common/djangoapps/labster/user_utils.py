@@ -3,7 +3,7 @@ import re
 from django.core import mail
 from django.conf import settings
 
-from edxmako.shortcuts import render_to_string
+from django.template.loader import render_to_string
 
 from microsite_configuration import microsite
 
