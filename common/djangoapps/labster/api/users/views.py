@@ -14,6 +14,7 @@ from labster.api.users.serializers import UserCreateSerializer, LabsterUserSeria
 from labster.api.users.serializers import CustomLabsterUser
 from labster.api.views import AuthMixin
 from labster.models import LabsterUser
+from labster.user_utils import send_activation_email
 
 
 def get_user_as_custom_labster_user(user, password=None, ip_number=None):
@@ -59,6 +60,7 @@ class SendEmailUserCreate(APIView):
         except User.DoesNotExist:
             raise Http404
 
+        user_profile = UserProfile.objects.get(user=user)
         labster_user = get_user_as_custom_labster_user(user)
 
         context = {
@@ -80,6 +82,9 @@ class SendEmailUserCreate(APIView):
             from labster_salesforce.tasks import labster_create_salesforce_lead
             # labster_create_salesforce_lead.delay(instance.id)
             labster_create_salesforce_lead(user.id)
+
+        # send activation email to user
+        send_activation_email(user, user_profile)
 
         return Response(http_status)
 
