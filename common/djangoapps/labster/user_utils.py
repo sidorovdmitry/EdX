@@ -1,5 +1,12 @@
 import re
 
+from django.core import mail
+from django.conf import settings
+
+from edxmako.shortcuts import render_to_string
+
+from microsite_configuration import microsite
+
 
 def generate_unique_username(name, model):
     """
@@ -36,3 +43,23 @@ def get_names(name):
     except ValueError:
         first_name = name
     return first_name, last_name
+
+
+def send_activation_email(user, profile):
+    context = {
+        'name': profile.name,
+        'username': user.username,
+    }
+
+    # composes activation email
+    subject = render_to_string('emails/activation_email_subject.txt', context)
+    # Email subject *must not* contain newlines
+    subject = ''.join(subject.splitlines())
+    message = render_to_string('emails/activation_email_labster.txt', context)
+    from_address = microsite.get_value(
+            'email_from_address',
+            settings.DEFAULT_FROM_EMAIL
+        )
+    dest_addr = user.email
+
+    mail.send_mail(subject, message, from_address, [dest_addr], fail_silently=False)

@@ -14,6 +14,7 @@ from labster.api.users.serializers import UserCreateSerializer, LabsterUserSeria
 from labster.api.users.serializers import CustomLabsterUser
 from labster.api.views import AuthMixin
 from labster.models import LabsterUser
+from labster.user_utils import send_activation_email
 
 
 def get_user_as_custom_labster_user(user, password=None, ip_address=None):
@@ -59,6 +60,7 @@ class SendEmailUserCreate(APIView):
         except User.DoesNotExist:
             raise Http404
 
+        user_profile = UserProfile.objects.get(user=user)
         labster_user = get_user_as_custom_labster_user(user)
 
         context = {
@@ -81,6 +83,9 @@ class SendEmailUserCreate(APIView):
             # labster_create_salesforce_lead.delay(instance.id)
             labster_create_salesforce_lead(user.id)
 
+        # send activation email to user
+        send_activation_email(user, user_profile)
+
         return Response(http_status)
 
 
@@ -100,39 +105,3 @@ class UserView(AuthMixin, generics.RetrieveUpdateAPIView):
 
     def get_queryset(self):
         return User.objects.all()
-
-
-class DeactivateUser(APIView):
-
-    def post(self, request, *args, **kwargs):
-        data = request.DATA
-
-        try:
-            labster_user = LabsterUser.objects.get(user__id=data['user_id'])
-        except LabsterUser.DoesNotExist:
-            http_status = status.HTTP_404_NOT_FOUND
-            return Response(http_status)
-
-        labster_user.is_active = False
-        labster_user.save()
-
-        http_status = status.HTTP_200_OK
-        return Response(http_status)
-
-
-class ActivateUser(APIView):
-
-    def post(self, request, *args, **kwargs):
-        data = request.DATA
-
-        try:
-            labster_user = LabsterUser.objects.get(user__id=data['user_id'])
-        except LabsterUser.DoesNotExist:
-            http_status = status.HTTP_404_NOT_FOUND
-            return Response(http_status)
-
-        labster_user.is_active = True
-        labster_user.save()
-
-        http_status = status.HTTP_200_OK
-        return Response(http_status)

@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
 
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from student.models import CourseEnrollment, UserProfile
@@ -48,3 +49,23 @@ def login_by_token(request):
                 CourseEnrollment.enroll(user, course_key)
 
     return HttpResponseRedirect(next_url)
+
+def activate_user_email(request):
+    username = request.GET.get('username')
+
+    if not username:
+        return HttpResponseRedirect('/')
+
+    try:
+        user = User.objects.get(username=username)
+        labster_user = LabsterUser.objects.get(user=user)
+    except User.DoesNotExist:
+        raise Http404
+
+    labster_user.is_email_active = True
+    labster_user.save()
+
+    return render_to_response("users/activated_user.html")
+
+
+

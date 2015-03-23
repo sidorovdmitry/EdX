@@ -69,6 +69,7 @@ class LabsterUser(models.Model):
 
     is_new = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
+    is_email_active = models.BooleanField(default=False)
 
     def __unicode__(self):
         return unicode(self.user)
