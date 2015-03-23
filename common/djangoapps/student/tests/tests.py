@@ -204,6 +204,7 @@ class DashboardTest(ModuleStoreTestCase):
         cache.clear()
 
     @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
+    @unittest.skip('LABSTER')
     def _check_verification_status_on(self, mode, value):
         """
         Check that the css class and the status message are in the dashboard html.
