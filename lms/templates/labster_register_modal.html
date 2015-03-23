@@ -63,7 +63,6 @@
       <label>
         <div class="select-container">
           <select id="occupation" name="user_school_level" class="required" analytics-on="click" analytics-category="Registration" analytics-event="Input Occupation">
-            <option value="">Occupation</option>
             % for key, value in LabsterUser.USER_SCHOOL_LEVEL_CHOICES:
             <option value="${key}">${value}</option>
             % endfor

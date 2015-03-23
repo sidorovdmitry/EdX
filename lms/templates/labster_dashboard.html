@@ -266,7 +266,7 @@
     <a href="${marketing_link('COURSES')}" analytics-on="click" analytics-category="Dashboard" class="sidebar-button">Find More Courses</a>
 
     % if user.labster_user.is_teacher:
-    <a href="${reverse('labster_backoffice')}" analytics-on="click" analytics-category="Dashboard" class="sidebar-button">${_("Buy Student Licenses")}</a>
+    <a href="${reverse('labster_backoffice')}" analytics-on="click" analytics-category="Dashboard" id="buy-student-licenses-link" class="sidebar-button">${_("Buy Student Licenses")}</a>
     % elif user.labster_user.is_student:
     <a href="${reverse('labster_student_voucher_code')}" analytics-on="click" analytics-category="Dashboard" class="sidebar-button">${_("Use Voucher")}</a>
     % endif
