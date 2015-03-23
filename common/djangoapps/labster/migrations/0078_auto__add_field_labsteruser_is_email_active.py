@@ -157,7 +157,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'LabsterUser'},
             'date_of_birth': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'ip_number': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
+            'ip_address': ('django.db.models.fields.GenericIPAddressField', [], {'max_length': '39', 'null': 'True', 'blank': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_email_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_new': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
