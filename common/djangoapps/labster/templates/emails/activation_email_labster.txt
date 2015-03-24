@@ -1,19 +1,10 @@
-<%namespace file="../main.html" import="stanford_theme_enabled" />
-<%! from django.utils.translation import ugettext as _ %>
+Thank you for signing up for {{platform_name}}. To get started, please activate your account by clicking on the link below. You may also copy and paste the link into your browser's address bar.
 
-{{_("Thank you for signing up for {{platform_name}}.").format(platform_name=settings.PLATFORM_NAME)}}
+{{ url }}labster/activate-user-email/{{ user_id }}
 
-{{_("To get started, please activate your account by clicking on the link below"
-      " (you may also copy and paste the link into your browser's address"
-      " bar).").format(platform_name=settings.PLATFORM_NAME)}}
+If you didn't request this, you don't need to do anything, and you won't receive any more email from us. Please do not reply to this e-mail.
+If you have any questions, please don't hesitate to contact us.
 
-% if is_secure:
-  https://${ site }/labster/api/users/activate/{{ username }}
-% else:
-  http://${ site }/labster/api/users/activate/{{ username }}
-% endif
+All the best,
 
-{{_("If you didn't request this, you don't need to do anything; you won't "
-      "receive any more email from us. Please do not reply to this e-mail; "
-      "if you require assistance, check the help section of the "
-      "{platform_name} website.").format(platform_name=settings.PLATFORM_NAME)}}
+Labster Team

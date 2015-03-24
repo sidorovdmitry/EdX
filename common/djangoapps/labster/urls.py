@@ -6,7 +6,8 @@ urlpatterns = patterns('labster',  # nopep8
     url('^api/', include('labster.api_urls', namespace='labster-api')),
 
     url('^login-by-token/', 'users.views.login_by_token', name='labster_login_token'),
-    url('^activate-user-email/$', 'users.views.activate_user_email', name='activate-user-email'),
+    # url('^activate-user-email/(?P<key>[\w{}.-]+)/$', 'users.views.activate_user_email', name='activate-user-email'),
+    url('^activate-user-email/(?P<user_id>\d+)/$', 'users.views.activate_user_email', name='activate-user-email'),
 
     url('^enroll-student-voucher/', 'lms.views.enroll_student_voucher', name='labster_enroll_student_voucher'),
     url('^enroll-student-course/', 'lms.views.enroll_student_course', name='labster_enroll_student_course'),

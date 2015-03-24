@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django_future.csrf import ensure_csrf_cookie
 
+from edxmako.shortcuts import render_to_response
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from student.models import CourseEnrollment, UserProfile
+from student.models import CourseEnrollment, UserProfile, Registration
 
 from rest_framework.authtoken.models import Token
 
@@ -50,22 +51,25 @@ def login_by_token(request):
 
     return HttpResponseRedirect(next_url)
 
-def activate_user_email(request):
-    username = request.GET.get('username')
-
-    if not username:
-        return HttpResponseRedirect('/')
-
+@ensure_csrf_cookie
+def activate_user_email(request, user_id):
     try:
-        user = User.objects.get(username=username)
+        user = User.objects.get(id=user_id)
         labster_user = LabsterUser.objects.get(user=user)
+        profile = UserProfile.objects.get(user=user)
     except User.DoesNotExist:
-        raise Http404
+        pass
 
+    user_logged_in = request.user.is_authenticated()
     labster_user.is_email_active = True
     labster_user.save()
 
-    return render_to_response("users/activated_user.html")
-
-
-
+    resp = render_to_response(
+        "registration/labster_activation_complete.html",
+        {
+            'user_logged_in': user_logged_in,
+            'already_active': False,
+            'profile': profile,
+        }
+    )
+    return resp

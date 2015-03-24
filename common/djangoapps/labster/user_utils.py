@@ -45,21 +45,21 @@ def get_names(name):
     return first_name, last_name
 
 
-def send_activation_email(user, profile):
+def send_activation_email(user, url):
+    platform_name = settings.PLATFORM_NAME
+
     context = {
-        'name': profile.name,
-        'username': user.username,
+        'user_id': user.id,
+        'url': url,
+        'platform_name': platform_name,
     }
 
     # composes activation email
-    subject = render_to_string('emails/activation_email_subject.txt', context)
+    subject = ("Activate Your {} Account").format(platform_name)
     # Email subject *must not* contain newlines
     subject = ''.join(subject.splitlines())
     message = render_to_string('emails/activation_email_labster.txt', context)
-    from_address = microsite.get_value(
-            'email_from_address',
-            settings.DEFAULT_FROM_EMAIL
-        )
+    from_address = settings.DEFAULT_FROM_EMAIL
     dest_addr = user.email
 
     mail.send_mail(subject, message, from_address, [dest_addr], fail_silently=False)

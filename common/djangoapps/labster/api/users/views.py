@@ -2,13 +2,14 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import Http404
 from django.core.mail import EmailMessage
+from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from student.models import UserProfile, CourseEnrollment
+from student.models import UserProfile, CourseEnrollment, Registration
 
 from labster.api.users.serializers import UserCreateSerializer, LabsterUserSerializer
 from labster.api.users.serializers import CustomLabsterUser
@@ -60,7 +61,7 @@ class SendEmailUserCreate(APIView):
         except User.DoesNotExist:
             raise Http404
 
-        user_profile = UserProfile.objects.get(user=user)
+        # registration = Registration.objects.get(user=user)
         labster_user = get_user_as_custom_labster_user(user)
 
         context = {
@@ -84,7 +85,8 @@ class SendEmailUserCreate(APIView):
             labster_create_salesforce_lead(user.id)
 
         # send activation email to user
-        send_activation_email(user, user_profile)
+        url = request.build_absolute_uri(reverse('root'))
+        # send_activation_email(user, url)
 
         return Response(http_status)
 
