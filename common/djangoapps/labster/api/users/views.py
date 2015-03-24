@@ -85,8 +85,7 @@ class SendEmailUserCreate(APIView):
             labster_create_salesforce_lead(user.id)
 
         # send activation email to user
-        url = request.build_absolute_uri(reverse('root'))
-        send_activation_email(user, url)
+        send_activation_email(request, user, labster_user)
 
         return Response(http_status)
 

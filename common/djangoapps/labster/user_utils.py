@@ -1,11 +1,10 @@
 import re
 
-from django.core import mail
 from django.conf import settings
+from django.core import mail
+from django.core.urlresolvers import reverse
 
 from django.template.loader import render_to_string
-
-from microsite_configuration import microsite
 
 
 def generate_unique_username(name, model):
@@ -45,12 +44,12 @@ def get_names(name):
     return first_name, last_name
 
 
-def send_activation_email(user, url):
+def send_activation_email(request, user, labster_user):
     platform_name = settings.PLATFORM_NAME
+    activation_url = reverse('labster_activate', args=[labster_user.email_activation_key])
 
     context = {
-        'user_id': user.id,
-        'url': url,
+        'activation_url': request.build_absolute_uri(activation_url),
         'platform_name': platform_name,
     }
 

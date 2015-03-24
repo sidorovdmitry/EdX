@@ -1,11 +1,11 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django_future.csrf import ensure_csrf_cookie
 
 from edxmako.shortcuts import render_to_response
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from student.models import CourseEnrollment, UserProfile, Registration
+from student.models import CourseEnrollment, UserProfile
 
 from rest_framework.authtoken.models import Token
 
@@ -51,14 +51,18 @@ def login_by_token(request):
 
     return HttpResponseRedirect(next_url)
 
+
 @ensure_csrf_cookie
-def activate_user_email(request, user_id):
+def activate_user_email(request, activation_key):
     try:
-        user = User.objects.get(id=user_id)
-        labster_user = LabsterUser.objects.get(user=user)
-        profile = UserProfile.objects.get(user=user)
-    except User.DoesNotExist:
-        pass
+        labster_user = LabsterUser.objects.get(email_activation_key=activation_key)
+    except LabsterUser.DoesNotExist:
+        raise Http404
+
+    try:
+        profile = UserProfile.objects.get(user=labster_user.user)
+    except UserProfile.DoesNotExist:
+        raise Http404
 
     user_logged_in = request.user.is_authenticated()
     labster_user.is_email_active = True
