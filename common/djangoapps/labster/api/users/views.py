@@ -86,7 +86,7 @@ class SendEmailUserCreate(APIView):
 
         # send activation email to user
         url = request.build_absolute_uri(reverse('root'))
-        # send_activation_email(user, url)
+        send_activation_email(user, url)
 
         return Response(http_status)
 

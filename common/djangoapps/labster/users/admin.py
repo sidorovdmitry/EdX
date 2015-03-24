@@ -137,6 +137,7 @@ class LabsterUserAdmin(admin.ModelAdmin):
             'fields': (
                 'name',
                 'is_active',
+                'is_email_active',
                 'gender',
                 'level_of_education',
             )
