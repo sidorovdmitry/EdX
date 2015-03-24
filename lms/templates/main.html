@@ -66,6 +66,7 @@
   <%static:css group='style-app'/>
   <%static:css group='style-app-extend1'/>
   <%static:css group='style-app-extend2'/>
+  <link rel="stylesheet" href="${static.url('labster/css/labster_main.css')}">
 
   % if disable_courseware_js:
     <%static:js group='base_vendor'/>
@@ -88,12 +89,12 @@
       });
     }).call(this, require || RequireJS.require);
   </script>
-  <script data-cfasync="false" type="text/javascript" src="${static.url("require-config-lms.js")}"></script>
-  <script data-cfasync="false" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.js"></script>
-  <script data-cfasync="false" type="text/javascript" src="${static.url('labster/lib/angulartics.min.js')}"></script>
-  <script data-cfasync="false" type="text/javascript" src="${static.url('labster/lib/angulartics-ga.min.js')}"></script>
-  <script data-cfasync="false" type="text/javascript" src="${static.url('labster/lib/angulartics-gtm.min.js')}"></script>
-  <script data-cfasync="false" type="text/javascript" src="${static.url('labster/analytics/app.js')}"></script>
+  <script type="text/javascript" src="${static.url("require-config-lms.js")}"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.js"></script>
+  <script type="text/javascript" src="${static.url('labster/lib/angulartics.min.js')}"></script>
+  <script type="text/javascript" src="${static.url('labster/lib/angulartics-ga.min.js')}"></script>
+  <script type="text/javascript" src="${static.url('labster/lib/angulartics-gtm.min.js')}"></script>
+  <script type="text/javascript" src="${static.url('labster/analytics/app.js')}"></script>
   <%block name="headextra"/>
 
 <%
