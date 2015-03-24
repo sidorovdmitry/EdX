@@ -86,6 +86,7 @@ LANGUAGES = [
       margin-top: 20px;
     }
   </style>
+  <script src="https://s3-us-west-2.amazonaws.com/labster/static/js/jquery.browser.min.js"></script>
   <script type="text/javascript">
   <!--
   var unityObjectUrl = "http://webplayer.unity3d.com/download_webplayer-3.x/3.0/uo/UnityObject2.js";
@@ -494,7 +495,6 @@ LANGUAGES = [
           }
         }
       } else {
-        console.log(browser);
         jQuery('.browser.ie').show();
         jQuery('#missingUnityContainer').show();
         if (isMac(userAgent)) {

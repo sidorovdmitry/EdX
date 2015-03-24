@@ -27,6 +27,8 @@ class CourseAccessRoleAdmin(admin.ModelAdmin):
     """Admin panel for the Course Access Role. """
     form = CourseAccessRoleForm
     raw_id_fields = ("user",)
+    search_fields = ('user__email', 'course_id'),
+    list_filter = ('org', 'role')
     list_display = (
         'id', 'user', 'org', 'course_id', 'role'
     )
