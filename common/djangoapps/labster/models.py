@@ -3,6 +3,7 @@ import calendar
 import json
 import os
 import re
+import uuid
 
 from datetime import datetime
 
@@ -70,6 +71,8 @@ class LabsterUser(models.Model):
     is_new = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     is_email_active = models.BooleanField(default=False)
+    email_activation_key = models.CharField(
+        max_length=32, db_index=True, blank=True, default="")
 
     def __unicode__(self):
         return unicode(self.user)
@@ -118,6 +121,11 @@ class LabsterUser(models.Model):
         if self.is_teacher:
             return Lead.objects.filter(user=self.user).exists()
         return True
+
+    def save(self, *args, **kwargs):
+        if not self.is_email_active and not self.email_activation_key:
+            self.email_activation_key = uuid.uuid4().hex
+        return super(LabsterUser, self).save(*args, **kwargs)
 
 
 def create_labster_user(sender, instance, created, **kwargs):
