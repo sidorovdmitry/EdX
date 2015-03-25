@@ -168,14 +168,6 @@ class Token(models.Model):
         super(Token, self).save(*args, **kwargs)
 
 
-class LanguageLab(models.Model):
-    language_code = models.CharField(max_length=4)
-    language_name = models.CharField(max_length=32)
-
-    def __unicode__(self):
-        return self.language_name
-
-
 class ActiveManager(models.Manager):
     def get_query_set(self):
         qs = super(ActiveManager, self).get_query_set()
@@ -204,18 +196,8 @@ class Lab(models.Model):
         max_length=255,
         default=URL_PREFIX)
 
-    # lab can have many languages
-    languages = models.ManyToManyField(LanguageLab)
-
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
-
-    # unused
-    screenshot = models.ImageField(upload_to='edx/labster/lab/images', blank=True)
-    screenshot_url = models.URLField(max_length=500, blank=True, default="")
-    url = models.URLField(max_length=120, blank=True, default="")
-    wiki_url = models.URLField(max_length=120, blank=True, default="")
-    questions = models.TextField(default='', blank=True)
 
     all_objects = models.Manager()
     objects = ActiveManager()
