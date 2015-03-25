@@ -29,6 +29,7 @@ from labster_salesforce.models import Lead
 PLATFORM_NAME = 'platform'
 URL_PREFIX = getattr(settings, 'LABSTER_UNITY_URL_PREFIX', '')
 ENGINE_FILE = 'labster.unity3d'
+LANGUAGES = [lang for lang in settings.LANGUAGES if lang[0] in settings.LABSTER_LANGUAGES]
 
 
 class LabsterUser(models.Model):
@@ -423,6 +424,9 @@ class LabProxy(models.Model):
     lab = models.ForeignKey(Lab, blank=True, null=True)
     location = models.CharField(max_length=200, unique=True)
     is_active = models.BooleanField(default=True)
+    language = models.CharField(
+        choices=LANGUAGES,
+        max_length=4, db_index=True, default='en')
 
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)

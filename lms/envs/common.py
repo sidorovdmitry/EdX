@@ -1814,6 +1814,7 @@ if FEATURES.get('LABSTER'):
     LABSTER_ENABLE_SALESFORCE = False
 
     HIJACK_EMAILS = ['edx+staging-lms@labster.com']
+    LABSTER_LANGUAGES = ('en', 'da')
 
     PLATFORM_NAME = 'LabsterX'
     THEME_NAME = 'labster'
