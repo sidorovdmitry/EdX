@@ -14,5 +14,17 @@
                 <% }); %>
             </select>
         </li>
+        <li class="field field-lab-id field-select">
+            <label for="labster_language" class="label"><%= gettext('Language:') %></label>
+            <select class="input" id="labster_language">
+                <% _.each(labster_languages, function(lang) { %>
+                    <% if (lang.code == labster_language) { %>
+                    <option value="<%= lang.code %>" selected><%= lang.name %></option>
+                    <% } else { %>
+                    <option value="<%= lang.code %>"><%= lang.name %></option>
+                    <% }; %>
+                <% }); %>
+            </select>
+        </li>
     </ul>
 </div>

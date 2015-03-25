@@ -821,6 +821,7 @@ if FEATURES.get('LABSTER'):
     LABSTER_UNITY_URL_PREFIX = "{}unity/".format(LABSTER_S3_BASE_URL)
 
     HIJACK_EMAILS = ['edx+staging-cms@labster.com']
+    LABSTER_LANGUAGES = ('en', 'da')
 
     RQ_QUEUES = {
         'default': {
