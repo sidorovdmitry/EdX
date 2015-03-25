@@ -61,6 +61,10 @@
     </header>
     <form id="register-wizard-2-t-form" action="#" method="post" class="labster-register-form">
       <label>
+        <input type="text" id="phone_number-2" type="tel" placeholder="Phone Number" name="phone_number"  class="required" analytics-on="focus" analytics-category="Registration" analytics-event="Input Phone Number">
+        <span class="error-message"></span>
+      </label>
+      <label>
         <div class="select-container">
           <select id="occupation" name="user_school_level" class="required" analytics-on="click" analytics-category="Registration" analytics-event="Input Occupation">
             % for key, value in LabsterUser.USER_SCHOOL_LEVEL_CHOICES:
@@ -72,10 +76,6 @@
       </label>
       <label>
         <input type="text" id="school-2" placeholder="School/Company Name" name="organization_name" class="required" analytics-on="focus" analytics-category="School/Company Name" analytics-event="Input School/Company Name">
-        <span class="error-message"></span>
-      </label>
-      <label>
-        <input type="text" id="phone_number-2" placeholder="Phone Number" name="phone_number"  class="required" analytics-on="focus" analytics-category="Registration" analytics-event="Input Phone Number">
         <span class="error-message"></span>
       </label>
       <div class="submit">

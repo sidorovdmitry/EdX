@@ -5,7 +5,7 @@ from django_future.csrf import ensure_csrf_cookie
 
 from edxmako.shortcuts import render_to_response
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from student.models import CourseEnrollment, UserProfile
+from student.models import CourseEnrollment, CourseEnrollmentAllowed, UserProfile
 
 from rest_framework.authtoken.models import Token
 
@@ -19,6 +19,17 @@ def sync_user(user):
         create_user(user, user_profile.name, labster_user, format='json')
     except LabsterUser.DoesNotExist:
         pass
+
+
+def enroll_user(user):
+    # Teacher could enroll student that doesn't exist yet.
+    # So if the student registers, enroll him/her to the courses
+
+    ceas = CourseEnrollmentAllowed.objects.filter(email=user.email)
+    for cea in ceas:
+        if cea.auto_enroll:
+            CourseEnrollment.enroll(user, cea.course_id)
+
 
 def login_by_token(request):
     user_id = request.POST.get('user_id')
@@ -39,6 +50,7 @@ def login_by_token(request):
         user = authenticate(key=token.key)
         if user and user.is_active:
             login(request, user)
+            enroll_user(user)
 
         if int(user_type) == 2:
             # sync data to Backoffice
