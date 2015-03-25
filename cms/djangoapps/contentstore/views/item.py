@@ -167,6 +167,7 @@ def xblock_handler(request, usage_key_string):
                 xblock = _get_xblock(usage_key, request.user)
                 lab_id_changed = xblock.lab_id != lab_id
 
+            labster_language = request.json.get('labsterLanguage', 'en')
             response = _save_xblock(
                 request.user,
                 _get_xblock(usage_key, request.user),
@@ -177,12 +178,14 @@ def xblock_handler(request, usage_key_string):
                 grader_type=request.json.get('graderType'),
                 publish=request.json.get('publish'),
                 lab_id=lab_id,
+                labster_language=labster_language,
             )
 
             if lab_id_changed:
                 from labster.proxies import prepare_lab_from_lab_id
                 xblock = _get_xblock(usage_key, request.user)
-                prepare_lab_from_lab_id(lab_id, xblock.location.to_deprecated_string())
+                prepare_lab_from_lab_id(lab_id, xblock.location.to_deprecated_string(),
+                                        language=labster_language)
 
             return response
 
@@ -399,7 +402,7 @@ def _update_with_callback(xblock, user, old_metadata=None, old_content=None):
 
 
 def _save_xblock(user, xblock, data=None, children_strings=None, metadata=None, nullout=None,
-                 grader_type=None, publish=None, lab_id=None):
+                 grader_type=None, publish=None, lab_id=None, labster_language='en'):
     """
     Saves xblock w/ its fields. Has special processing for grader_type, publish, and nullout and Nones in metadata.
     nullout means to truly set the field to None whereas nones in metadata mean to unset them (so they revert
@@ -497,6 +500,7 @@ def _save_xblock(user, xblock, data=None, children_strings=None, metadata=None, 
         # update the xblock and call any xblock callbacks
         if lab_id is not None:
             xblock.lab_id = lab_id
+            xblock.labster_language = labster_language
         xblock = _update_with_callback(xblock, user, old_metadata, old_content)
 
         # for static tabs, their containing course also records their display name
@@ -840,11 +844,14 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
     if xblock.category == 'sequential':
         # import here to reduce circular imports
         from labster.masters import fetch_labs_as_json
+        from labster.models import LANGUAGES as LABSTER_LANGUAGES
         labster_labs = fetch_labs_as_json()
 
         xblock_info.update({
             "labster_labs": json.dumps(labster_labs),
             "lab_id": getattr(xblock, 'lab_id', ''),
+            "labster_languages": json.dumps([{'code': code, 'name': name} for code, name in LABSTER_LANGUAGES]),
+            "labster_language": getattr(xblock, 'labster_language', 'en'),
         })
 
     # Entrance exam subsection should be hidden. in_entrance_exam is inherited metadata, all children will have it.

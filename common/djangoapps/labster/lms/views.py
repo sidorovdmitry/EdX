@@ -142,6 +142,7 @@ class SettingsXml(LabProxyXMLView):
 
         engine_xml = self.get_engine_xml(lab_proxy, user)
         url_prefix = lab_proxy.lab.xml_url_prefix
+        language = lab_proxy.language if lab_proxy.language else 'en'
 
         return {
             'EngineXML': engine_xml,
@@ -150,6 +151,7 @@ class SettingsXml(LabProxyXMLView):
             'InputMode': "Mouse",
             'HandMode': "Hand",
             'URLPrefix': url_prefix,
+            'Language': language,
         }
 
 
@@ -180,7 +182,7 @@ class ServerXml(LabProxyXMLView):
         save_game = reverse('labster-api:save', args=[lab_proxy.id])
         player_start_end = reverse('labster-api:play', args=[lab_proxy.id])
         quiz_block = reverse('labster-api:questions', args=[lab_proxy.id])
-        graph_data = reverse('labster-api:graph_data')
+        # graph_data = reverse('labster-api:graph_data')
 
         if lab_proxy.lab.use_quiz_blocks:
             quiz_statistic = reverse('labster-api:answer', args=[lab_proxy.id])

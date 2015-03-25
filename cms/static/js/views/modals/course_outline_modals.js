@@ -320,14 +320,19 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
 
         getRequestData: function () {
             return {
-                'labId': this.getValue()
+                // 'labId': this.getValue()
+                'labId': this.getValue(),
+                'labsterLanguage': this.$('#labster_language').val()
             };
         },
 
         getContext: function () {
             return {
                 labster_labs: JSON.parse(this.model.get('labster_labs')),
-                lab_id: this.model.get('lab_id')
+                // lab_id: this.model.get('lab_id')
+                lab_id: this.model.get('lab_id'),
+                labster_language: this.model.get('labster_language'),
+                labster_languages: JSON.parse(this.model.get('labster_languages'))
             };
         }
     });
