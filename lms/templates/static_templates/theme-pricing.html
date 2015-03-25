@@ -7,7 +7,9 @@
 <%block name="headextra">
 <link rel="stylesheet" href="${static.url('labster/css/register_modal.css')}">
 <link rel="stylesheet" href="${static.url('labster/css/landing.css')}">
+<link rel="stylesheet" href="${static.url('css/vendor/intlTelInput.css')}">
 <script src="${static.url('js/labster/register_modal.js')}"></script>
+<script src="${static.url('js/intl-tel-input/intlTelInput.min.js')}"></script>
 </%block>
 
 <div class="pricing-wrapper" id="content">
@@ -76,6 +78,7 @@
 <%include file="../labster_register_modal.html" />
 
 <script>
+  $("#phone_number-2").intlTelInput();
   window.csrfToken = "${csrf_token}";
   registerModalInit({
     nextUrl: "/labs",
