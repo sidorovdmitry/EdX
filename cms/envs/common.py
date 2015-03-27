@@ -800,6 +800,7 @@ if FEATURES.get('LABSTER'):
         'labster_admin',
         'labster_accounts',
         'labster_salesforce',
+        'labster_frontend',
         'corsheaders',
         'rest_framework',
         'rest_framework.authtoken',
