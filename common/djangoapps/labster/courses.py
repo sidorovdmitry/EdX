@@ -167,3 +167,11 @@ def course_key_str(course_key):
 
 def unicode_to_str(labs):
     return [lab.encode("utf-8") for lab in labs]
+
+
+def get_lab_by_course_id(course_id):
+    """ gets lab id from course id """
+    try:
+        return Lab.objects.get(demo_course_id=course_id)
+    except Lab.DoesNotExist:
+        return None
