@@ -1,6 +1,6 @@
 angular.module('LabsterStudentLicense')
 
-  .controller('NewLicenseController', function ($scope, $routeParams, $http, $timeout) {
+  .controller('NewLicenseController', function ($scope, $routeParams, $http, $timeout, ngDialog, StudentLicenseService) {
     $scope.payment_description = "";
     $scope.user = window.requestUser;
     $scope.courseId = window.courseId;
@@ -18,8 +18,21 @@ angular.module('LabsterStudentLicense')
       data.created_date = moment(data.created_at).format('ll');
       $scope.payment = data;
       setDescription();
-      // console.log(data);
-      checkStripe();
+
+      if (data.total <= 0){
+        // enroll immediately if the price is 0
+        ngDialog.open({
+          template: '<h2 class="align-center">Please wait. We are processing your payment.</h2>',
+          plain: true,
+          showClose: false,
+          closeByDocument: false,
+          closeByEscape : false
+        });
+
+        StudentLicenseService.enrollStudentApi($scope.courseId, paymentId, $scope.user.email);
+      } else {
+        checkStripe();
+      }
     });
 
     function setDescription() {
