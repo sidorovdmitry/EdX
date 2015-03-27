@@ -1406,11 +1406,6 @@ def _do_create_account(form):
         log.exception("UserProfile creation failed for user {id}.".format(id=user.id))
         raise
 
-    # TODO: remove circular dependency on openedx from common
-    from openedx.core.djangoapps.user_api.models import UserPreference
-
-    UserPreference.set_preference(user, LANGUAGE_KEY, get_language())
-
     try:
         labster_user = LabsterUser.objects.get(user=user)
     except LabsterUser.DoesNotExist:

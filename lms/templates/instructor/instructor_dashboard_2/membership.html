@@ -31,7 +31,7 @@
 
 % if settings.FEATURES.get('LABSTER'):
 <script>
-window.userLicenses = JSON.parse('${section_data['user_licenses']}');
+window.userLicenses = JSON.parse("${section_data.get('user_licenses', '[]')}");
 window.courseId = "${course.id}";
 </script>
 <script type="text/template" id="license-row-template">

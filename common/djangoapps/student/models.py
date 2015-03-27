@@ -1211,13 +1211,6 @@ class CourseEnrollment(models.Model):
 
 
 
-class CourseEnrollmentAdmin(admin.ModelAdmin):
-    list_display = ('user', 'course_id', 'mode', 'created', 'is_active')
-    list_filter = ('is_active', 'mode')
-    search_fields = ('user__email', 'course_id')
-    raw_id_fields = ('user',)
-
-
 class CourseEnrollmentAllowed(models.Model):
     """
     Table of users (specified by email address strings) who are allowed to enroll in a specified course.
@@ -1283,14 +1276,6 @@ class CourseAccessRole(models.Model):
 
     def __unicode__(self):
         return "[CourseAccessRole] user: {}   role: {}   org: {}   course: {}".format(self.user.username, self.role, self.org, self.course_id)
-
-
-class CourseAccessRoleAdmin(admin.ModelAdmin):
-    raw_id_fields = ("user",)
-    search_fields = ('user__email', 'course_id')
-    list_filter = ('org', 'role')
-
-#### Helper methods for use from python manage.py shell and other classes.
 
 
 def get_user_by_username_or_email(username_or_email):

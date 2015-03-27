@@ -7,7 +7,7 @@ from config_models.admin import ConfigurationModelAdmin
 from student.models import UserProfile, UserTestGroup, CourseEnrollmentAllowed, DashboardConfiguration
 from student.models import (
     CourseEnrollment, Registration, PendingNameChange, CourseAccessRole, LinkedInAddToProfileConfiguration,
-    CourseEnrollmentAdmin,
+    # CourseEnrollmentAdmin,
     # CourseAccessRoleAdmin,
 )
 from ratelimitbackend import admin
@@ -49,6 +49,13 @@ class LinkedInAddToProfileConfigurationAdmin(admin.ModelAdmin):
 
     # Exclude deprecated fields
     exclude = ('dashboard_tracking_code',)
+
+
+class CourseEnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course_id', 'mode', 'created', 'is_active')
+    list_filter = ('is_active', 'mode')
+    search_fields = ('user__email', 'course_id')
+    raw_id_fields = ('user',)
 
 
 admin.site.register(UserProfile)
