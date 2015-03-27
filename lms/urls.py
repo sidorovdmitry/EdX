@@ -305,6 +305,9 @@ if settings.COURSEWARE_ENABLED:
         url(r'^mktg/{}/?$'.format(settings.COURSE_ID_PATTERN),
             'courseware.views.mktg_course_about', name="mktg_about_course"),
 
+        # labster courses
+        url(r'courses/(?P<slug>[\w-]+)/$', 'labster_frontend.views.demo_course', name='labster_demo_course'),
+
         #Inside the course
         url(r'^courses/{}/$'.format(settings.COURSE_ID_PATTERN),
             'courseware.views.course_info', name="course_root"),
