@@ -12,7 +12,7 @@ from django.utils import timezone
   % elif course.is_newish:
     <span class="status">${_("New")}</span>
   % endif
-  <a href="${reverse('about_course', args=[course.id.to_deprecated_string()])}" analytics-on="hover" analytics-category="Course Listings" analytics-event="${course.id.to_deprecated_string()}">
+  <a href="${course.labster_demo_course_url}" analytics-on="hover" analytics-category="Course Listings" analytics-event="${course.id.to_deprecated_string()}">
   <div class="inner-wrapper">
       <header class="course-preview">
         <hgroup>
