@@ -46,7 +46,7 @@ class CourseDuplicateForm(forms.Form):
             return course_id
 
     def clean_target(self):
-        course_id = self.cleaned_data.get('source')
+        course_id = self.cleaned_data.get('target')
         try:
             course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
             get_course(course_key)
