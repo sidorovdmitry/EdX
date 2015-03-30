@@ -4,7 +4,6 @@
 
 <%!
   from django.core.urlresolvers import reverse
-  import waffle
 %>
 
 <%inherit file="../main.html" />
@@ -71,6 +70,7 @@ window.backofficeUrls = {
 <script src="${static.url('labster/lib/jsvat.js')}"></script>
 <script src="${static.url('labster/student_license/js/app.js')}"></script>
 <script src="${static.url('labster/student_license/js/directives.js')}"></script>
+<script src="${static.url('labster/student_license/js/services.js')}"></script>
 <!-- controllers -->
 <script src="${static.url('labster/student_license/controllers/home.js')}"></script>
 <script src="${static.url('labster/student_license/controllers/new.license.js')}"></script>

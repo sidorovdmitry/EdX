@@ -6,6 +6,9 @@ from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import FormView, TemplateView, View
 
+from courseware.courses import get_course
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
+
 from labster.courses import duplicate_course
 from labster.edx_bridge import duplicate_lab_content
 from labster.masters import fetch_quizblocks
@@ -31,6 +34,26 @@ def duplicate_lab(request):
 class CourseDuplicateForm(forms.Form):
     source = forms.CharField(help_text="course id in slash format, e.g. LabsterX/CYT101/2014")
     target = forms.CharField(help_text="course id in slash format, e.g. LabsterX/NEW-CYT101/2014")
+
+    def clean_source(self):
+        course_id = self.cleaned_data.get('source')
+        try:
+            course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+            get_course(course_key)
+        except:
+            raise forms.ValidationError('invalid source, check the ID')
+        else:
+            return course_id
+
+    def clean_target(self):
+        course_id = self.cleaned_data.get('source')
+        try:
+            course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+            get_course(course_key)
+        except:
+            return course_id
+        else:
+            raise forms.ValidationError('target exists, please use another ID')
 
     def duplicate(self, user, http_protocol):
         source = self.cleaned_data.get('source')

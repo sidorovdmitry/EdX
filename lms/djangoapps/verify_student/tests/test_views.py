@@ -3,13 +3,14 @@
 Tests of verify_student views.
 """
 import json
-import mock
 import urllib
-import decimal
+from datetime import timedelta, datetime
+from uuid import uuid4
+
+from django.test.utils import override_settings
+import mock
 from mock import patch, Mock
 import pytz
-from datetime import timedelta, datetime
-
 import ddt
 from django.test.client import Client
 from django.test import TestCase
@@ -18,14 +19,16 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import mail
 from bs4 import BeautifulSoup
-
-from openedx.core.djangoapps.user_api.accounts.views import AccountView
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore import ModuleStoreEnum
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from opaque_keys.edx.locator import CourseLocator
+
+from openedx.core.djangoapps.user_api.accounts.api import get_account_settings
+from commerce.exceptions import ApiError
+from commerce.tests import EcommerceApiTestMixin
 from student.tests.factories import UserFactory, CourseEnrollmentFactory
 from student.models import CourseEnrollment
 from course_modes.tests.factories import CourseModeFactory
@@ -73,7 +76,7 @@ class TestPayAndVerifyView(UrlResetMixin, ModuleStoreTestCase):
     YESTERDAY = NOW - timedelta(days=1)
     TOMORROW = NOW + timedelta(days=1)
 
-    @mock.patch.dict(settings.FEATURES, {'ENABLE_COUNTRY_ACCESS': True})
+    @mock.patch.dict(settings.FEATURES, {'EMBARGO': True})
     def setUp(self):
         super(TestPayAndVerifyView, self).setUp('embargo')
         self.user = UserFactory.create(username=self.USERNAME, password=self.PASSWORD)
@@ -98,6 +101,21 @@ class TestPayAndVerifyView(UrlResetMixin, ModuleStoreTestCase):
         ])
         self._assert_upgrade_session_flag(False)
 
+    @ddt.data("no-id-professional")
+    def test_start_flow_with_no_id_professional(self, course_mode):
+        course = self._create_course(course_mode)
+        # by default enrollment is honor
+        self._enroll(course.id, "honor")
+        response = self._get_page('verify_student_start_flow', course.id)
+        self._assert_displayed_mode(response, course_mode)
+        self._assert_steps_displayed(
+            response,
+            PayAndVerifyView.PAYMENT_STEPS,
+            PayAndVerifyView.MAKE_PAYMENT_STEP
+        )
+        self._assert_messaging(response, PayAndVerifyView.FIRST_TIME_VERIFY_MSG)
+        self._assert_requirements_displayed(response, [])
+
     @ddt.data("expired", "denied")
     def test_start_flow_expired_or_denied_verification(self, verification_status):
         course = self._create_course("verified")
@@ -121,7 +139,8 @@ class TestPayAndVerifyView(UrlResetMixin, ModuleStoreTestCase):
         ("verified", "submitted"),
         ("verified", "approved"),
         ("verified", "error"),
-        ("professional", "submitted")
+        ("professional", "submitted"),
+        ("no-id-professional", None),
     )
     @ddt.unpack
     def test_start_flow_already_verified(self, course_mode, verification_status):
@@ -516,6 +535,14 @@ class TestPayAndVerifyView(UrlResetMixin, ModuleStoreTestCase):
                 expected_status_code=404
             )
 
+    @ddt.data([], ["no-id-professional", "professional"], ["honor", "audit"])
+    def test_no_id_professional_entry_point(self, modes_available):
+        course = self._create_course(*modes_available)
+        if "no-id-professional" in modes_available or "professional" in modes_available:
+            self._get_page("verify_student_start_flow", course.id, expected_status_code=200)
+        else:
+            self._get_page("verify_student_start_flow", course.id, expected_status_code=404)
+
     @ddt.data(
         "verify_student_start_flow",
         "verify_student_verify_now",
@@ -624,7 +651,7 @@ class TestPayAndVerifyView(UrlResetMixin, ModuleStoreTestCase):
         self.assertContains(response, "verification deadline")
         self.assertContains(response, "Jan 02, 1999 at 00:00 UTC")
 
-    @mock.patch.dict(settings.FEATURES, {'ENABLE_COUNTRY_ACCESS': True})
+    @mock.patch.dict(settings.FEATURES, {'EMBARGO': True})
     def test_embargo_restrict(self):
         course = self._create_course("verified")
         with restrict_course(course.id) as redirect_url:
@@ -633,7 +660,7 @@ class TestPayAndVerifyView(UrlResetMixin, ModuleStoreTestCase):
             response = self._get_page('verify_student_start_flow', course.id, expected_status_code=302)
             self.assertRedirects(response, redirect_url)
 
-    @mock.patch.dict(settings.FEATURES, {'ENABLE_COUNTRY_ACCESS': True})
+    @mock.patch.dict(settings.FEATURES, {'EMBARGO': True})
     def test_embargo_allow(self):
         course = self._create_course("verified")
         self._get_page('verify_student_start_flow', course.id)
@@ -647,7 +674,7 @@ class TestPayAndVerifyView(UrlResetMixin, ModuleStoreTestCase):
             modulestore().update_item(course, ModuleStoreEnum.UserID.test)
 
         for course_mode in course_modes:
-            min_price = (self.MIN_PRICE if course_mode != "honor" else 0)
+            min_price = (0 if course_mode in ["honor", "audit"] else self.MIN_PRICE)
             CourseModeFactory(
                 course_id=course.id,
                 mode_slug=course_mode,
@@ -797,8 +824,26 @@ class TestPayAndVerifyView(UrlResetMixin, ModuleStoreTestCase):
         url = reverse('verify_student_upgrade_and_verify', kwargs={'course_id': unicode(course_id)})
         self.assertRedirects(response, url)
 
+    def test_course_upgrade_page_with_unicode_and_special_values_in_display_name(self):
+        """Check the course information on the page. """
+        mode_display_name = u"Introduction à l'astrophysique"
+        course = CourseFactory.create(display_name=mode_display_name)
+        for course_mode in ["honor", "verified"]:
+            min_price = (self.MIN_PRICE if course_mode != "honor" else 0)
+            CourseModeFactory(
+                course_id=course.id,
+                mode_slug=course_mode,
+                mode_display_name=mode_display_name,
+                min_price=min_price
+            )
 
-class TestCreateOrder(ModuleStoreTestCase):
+        self._enroll(course.id, "honor")
+        response_dict = self._get_page_data(self._get_page('verify_student_start_flow', course.id))
+
+        self.assertEqual(response_dict['course_name'], mode_display_name)
+
+
+class TestCreateOrder(EcommerceApiTestMixin, ModuleStoreTestCase):
     """
     Tests for the create order view.
     """
@@ -808,20 +853,28 @@ class TestCreateOrder(ModuleStoreTestCase):
 
         self.user = UserFactory.create(username="test", password="test")
         self.course = CourseFactory.create()
-        for mode in ('audit', 'honor', 'verified'):
-            CourseModeFactory(mode_slug=mode, course_id=self.course.id)
+        for mode, min_price in (('audit', 0), ('honor', 0), ('verified', 100)):
+            # Set SKU to empty string to ensure view knows how to handle such values
+            CourseModeFactory(mode_slug=mode, course_id=self.course.id, min_price=min_price, sku='')
         self.client.login(username="test", password="test")
+
+    def _post(self, data):
+        """
+        POST to the view being tested and return the response.
+        """
+        url = reverse('verify_student_create_order')
+        return self.client.post(url, data)
 
     def test_create_order_already_verified(self):
         # Verify the student so we don't need to submit photos
         self._verify_student()
 
         # Create an order
-        url = reverse('verify_student_create_order')
         params = {
             'course_id': unicode(self.course.id),
+            'contribution': 100
         }
-        response = self.client.post(url, params)
+        response = self._post(params)
         self.assertEqual(response.status_code, 200)
 
         # Verify that the information will be sent to the correct callback URL
@@ -839,14 +892,11 @@ class TestCreateOrder(ModuleStoreTestCase):
 
         # Create a prof ed course
         course = CourseFactory.create()
-        CourseModeFactory(mode_slug="professional", course_id=course.id)
+        CourseModeFactory(mode_slug="professional", course_id=course.id, min_price=10)
 
         # Create an order for a prof ed course
-        url = reverse('verify_student_create_order')
-        params = {
-            'course_id': unicode(course.id)
-        }
-        response = self.client.post(url, params)
+        params = {'course_id': unicode(course.id)}
+        response = self._post(params)
         self.assertEqual(response.status_code, 200)
 
         # Verify that the course ID and transaction type are included in "merchant-defined data"
@@ -854,25 +904,52 @@ class TestCreateOrder(ModuleStoreTestCase):
         self.assertEqual(data['merchant_defined_data1'], unicode(course.id))
         self.assertEqual(data['merchant_defined_data2'], "professional")
 
+    def test_create_order_for_no_id_professional(self):
+
+        # Create a no-id-professional ed course
+        course = CourseFactory.create()
+        CourseModeFactory(mode_slug="no-id-professional", course_id=course.id, min_price=10)
+
+        # Create an order for a prof ed course
+        params = {'course_id': unicode(course.id)}
+        response = self._post(params)
+        self.assertEqual(response.status_code, 200)
+
+        # Verify that the course ID and transaction type are included in "merchant-defined data"
+        data = json.loads(response.content)
+        self.assertEqual(data['merchant_defined_data1'], unicode(course.id))
+        self.assertEqual(data['merchant_defined_data2'], "no-id-professional")
+
+    def test_create_order_for_multiple_paid_modes(self):
+
+        # Create a no-id-professional ed course
+        course = CourseFactory.create()
+        CourseModeFactory(mode_slug="no-id-professional", course_id=course.id, min_price=10)
+        CourseModeFactory(mode_slug="professional", course_id=course.id, min_price=10)
+
+        # Create an order for a prof ed course
+        params = {'course_id': unicode(course.id)}
+        response = self._post(params)
+        self.assertEqual(response.status_code, 200)
+
+        # Verify that the course ID and transaction type are included in "merchant-defined data"
+        data = json.loads(response.content)
+        self.assertEqual(data['merchant_defined_data1'], unicode(course.id))
+        self.assertEqual(data['merchant_defined_data2'], "no-id-professional")
+
     def test_create_order_set_donation_amount(self):
         # Verify the student so we don't need to submit photos
         self._verify_student()
 
         # Create an order
-        url = reverse('verify_student_create_order')
         params = {
             'course_id': unicode(self.course.id),
             'contribution': '1.23'
         }
-        self.client.post(url, params)
+        self._post(params)
 
         # Verify that the client's session contains the new donation amount
-        self.assertIn('donation_for_course', self.client.session)
-        self.assertIn(unicode(self.course.id), self.client.session['donation_for_course'])
-
-        actual_amount = self.client.session['donation_for_course'][unicode(self.course.id)]
-        expected_amount = decimal.Decimal('1.23')
-        self.assertEqual(actual_amount, expected_amount)
+        self.assertNotIn('donation_for_course', self.client.session)
 
     def _verify_student(self):
         """ Simulate that the student's identity has already been verified. """
@@ -880,6 +957,52 @@ class TestCreateOrder(ModuleStoreTestCase):
         attempt.mark_ready()
         attempt.submit()
         attempt.approve()
+
+    @override_settings(ECOMMERCE_API_URL=EcommerceApiTestMixin.ECOMMERCE_API_URL,
+                       ECOMMERCE_API_SIGNING_KEY=EcommerceApiTestMixin.ECOMMERCE_API_SIGNING_KEY)
+    def test_create_order_with_ecommerce_api(self):
+        """ Verifies that the view communicates with the E-Commerce API to create orders. """
+        # Keep track of the original number of orders to verify the old code is not being called.
+        order_count = Order.objects.count()
+
+        # Add SKU to CourseModes
+        for course_mode in CourseMode.objects.filter(course_id=self.course.id):
+            course_mode.sku = uuid4().hex.decode('ascii')
+            course_mode.save()
+
+        # Mock the E-Commerce Service response
+        with self.mock_create_order():
+            self._verify_student()
+            params = {'course_id': unicode(self.course.id), 'contribution': 100}
+            response = self._post(params)
+
+        # Verify the response is correct.
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(json.loads(response.content), self.ECOMMERCE_API_SUCCESSFUL_BODY['payment_parameters'])
+
+        # Verify old code is not called (e.g. no Order object created in LMS)
+        self.assertEqual(order_count, Order.objects.count())
+
+    def _add_course_mode_skus(self):
+        """ Add SKUs to the CourseMode objects for self.course. """
+        for course_mode in CourseMode.objects.filter(course_id=self.course.id):
+            course_mode.sku = uuid4().hex.decode('ascii')
+            course_mode.save()
+
+    @override_settings(ECOMMERCE_API_URL=EcommerceApiTestMixin.ECOMMERCE_API_URL,
+                       ECOMMERCE_API_SIGNING_KEY=EcommerceApiTestMixin.ECOMMERCE_API_SIGNING_KEY)
+    def test_create_order_with_ecommerce_api_errors(self):
+        """
+        Verifies that the view communicates with the E-Commerce API to create orders, and handles errors
+        appropriately.
+        """
+        self._add_course_mode_skus()
+
+        with self.mock_create_order(side_effect=ApiError):
+            self._verify_student()
+            params = {'course_id': unicode(self.course.id), 'contribution': 100}
+            self.assertRaises(ApiError, self._post, params)
 
 
 class TestCreateOrderView(ModuleStoreTestCase):
@@ -946,7 +1069,7 @@ class TestCreateOrderView(ModuleStoreTestCase):
             photo_id_image=self.IMAGE_DATA,
             expect_status_code=400
         )
-        self.assertIn('This course doesn\'t support verified certificates', response.content)
+        self.assertIn('This course doesn\'t support paid certificates', response.content)
 
     @patch.dict(settings.FEATURES, {'AUTOMATIC_VERIFY_STUDENT_IDENTITY_FOR_TESTING': True})
     def test_create_order_fail_with_get(self):
@@ -1149,7 +1272,7 @@ class TestSubmitPhotosForVerification(TestCase):
             AssertionError
 
         """
-        account_settings = AccountView.get_serialized_account(self.user.username)
+        account_settings = get_account_settings(self.user)
         self.assertEqual(account_settings['name'], full_name)
 
 

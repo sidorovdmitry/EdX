@@ -3,7 +3,7 @@ Defines the URL routes for this app.
 """
 
 from .accounts.views import AccountView
-from .profiles.views import ProfileView
+from .preferences.views import PreferencesView, PreferencesDetailView
 
 from django.conf.urls import patterns, url
 
@@ -17,8 +17,13 @@ urlpatterns = patterns(
         name="accounts_api"
     ),
     url(
-        r'^v0/profiles/' + USERNAME_PATTERN + '$',
-        ProfileView.as_view(),
-        name="profiles_api"
+        r'^v0/preferences/' + USERNAME_PATTERN + '$',
+        PreferencesView.as_view(),
+        name="preferences_api"
+    ),
+    url(
+        r'^v0/preferences/' + USERNAME_PATTERN + '/(?P<preference_key>[a-zA-Z0-9_]+)$',
+        PreferencesDetailView.as_view(),
+        name="preferences_detail_api"
     ),
 )

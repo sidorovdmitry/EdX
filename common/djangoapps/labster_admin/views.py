@@ -56,7 +56,7 @@ class DuplicateMultipleCourse(StaffMixin, FormView):
         return context
 
     def form_valid(self, form):
-        user = form.save()
+        user = form.save(request=self.request)
         messages.success(
             self.request,
             "You have successfully duplicate course for <strong>{}</strong>".format(user))

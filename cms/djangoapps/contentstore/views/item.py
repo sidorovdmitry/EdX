@@ -24,7 +24,7 @@ from xblock.fields import Scope
 from xblock.fragment import Fragment
 
 import xmodule
-from xmodule.tabs import StaticTab, CourseTabList
+from xmodule.tabs import CourseTabList
 from xmodule.modulestore import ModuleStoreEnum, EdxJSONEncoder
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.exceptions import ItemNotFoundError, InvalidLocationError
@@ -47,7 +47,7 @@ from contentstore.views.preview import get_preview_fragment
 from edxmako.shortcuts import render_to_string
 from models.settings.course_grading import CourseGradingModel
 from cms.lib.xblock.runtime import handler_url, local_resource_url
-from opaque_keys.edx.keys import UsageKey, CourseKey
+from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locator import LibraryUsageLocator
 from cms.lib.xblock.authoring_mixin import VISIBILITY_VIEW
 
@@ -167,6 +167,7 @@ def xblock_handler(request, usage_key_string):
                 xblock = _get_xblock(usage_key, request.user)
                 lab_id_changed = xblock.lab_id != lab_id
 
+            labster_language = request.json.get('labsterLanguage', 'en')
             response = _save_xblock(
                 request.user,
                 _get_xblock(usage_key, request.user),
@@ -177,12 +178,14 @@ def xblock_handler(request, usage_key_string):
                 grader_type=request.json.get('graderType'),
                 publish=request.json.get('publish'),
                 lab_id=lab_id,
+                labster_language=labster_language,
             )
 
             if lab_id_changed:
                 from labster.proxies import prepare_lab_from_lab_id
                 xblock = _get_xblock(usage_key, request.user)
-                prepare_lab_from_lab_id(lab_id, xblock.location.to_deprecated_string())
+                prepare_lab_from_lab_id(lab_id, xblock.location.to_deprecated_string(),
+                                        language=labster_language)
 
             return response
 
@@ -282,7 +285,7 @@ def xblock_view_handler(request, usage_key_string, view_name):
                 # pylint: disable=too-many-format-args
                 return HttpResponse(
                     content="Couldn't parse paging parameters: enable_paging: "
-                            "%s, page_number: %s, page_size: %s".format(
+                            "{0}, page_number: {1}, page_size: {2}".format(
                                 request.REQUEST.get('enable_paging', 'false'),
                                 request.REQUEST.get('page_number', 0),
                                 request.REQUEST.get('page_size', 0)
@@ -290,6 +293,8 @@ def xblock_view_handler(request, usage_key_string, view_name):
                     status=400,
                     content_type="text/plain",
                 )
+
+            force_render = request.REQUEST.get('force_render', None)
 
             # Set up the context to be passed to each XBlock's render method.
             context = {
@@ -299,6 +304,7 @@ def xblock_view_handler(request, usage_key_string, view_name):
                 'root_xblock': xblock if (view_name == 'container_preview') else None,
                 'reorderable_items': reorderable_items,
                 'paging': paging,
+                'force_render': force_render,
             }
 
             fragment = get_preview_fragment(request, xblock, context)
@@ -399,7 +405,7 @@ def _update_with_callback(xblock, user, old_metadata=None, old_content=None):
 
 
 def _save_xblock(user, xblock, data=None, children_strings=None, metadata=None, nullout=None,
-                 grader_type=None, publish=None, lab_id=None):
+                 grader_type=None, publish=None, lab_id=None, labster_language='en'):
     """
     Saves xblock w/ its fields. Has special processing for grader_type, publish, and nullout and Nones in metadata.
     nullout means to truly set the field to None whereas nones in metadata mean to unset them (so they revert
@@ -497,6 +503,7 @@ def _save_xblock(user, xblock, data=None, children_strings=None, metadata=None, 
         # update the xblock and call any xblock callbacks
         if lab_id is not None:
             xblock.lab_id = lab_id
+            xblock.labster_language = labster_language
         xblock = _update_with_callback(xblock, user, old_metadata, old_content)
 
         # for static tabs, their containing course also records their display name
@@ -801,10 +808,18 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
         visibility_state = None
     published = modulestore().has_published_version(xblock) if not is_library_block else None
 
-    #instead of adding a new feature directly into xblock-info, we should add them into override_type.
-    override_type = {}
-    if getattr(xblock, "is_entrance_exam", None):
-        override_type['is_entrance_exam'] = xblock.is_entrance_exam
+    # defining the default value 'True' for delete, drag and add new child actions in xblock_actions for each xblock.
+    xblock_actions = {'deletable': True, 'draggable': True, 'childAddable': True}
+    explanatory_message = None
+    # is_entrance_exam is inherited metadata.
+    if xblock.category == 'chapter' and getattr(xblock, "is_entrance_exam", None):
+        # Entrance exam section should not be deletable, draggable and not have 'New Subsection' button.
+        xblock_actions['deletable'] = xblock_actions['childAddable'] = xblock_actions['draggable'] = False
+        if parent_xblock is None:
+            parent_xblock = get_parent_xblock(xblock)
+
+        explanatory_message = _('Students must score {score}% or higher to access course materials.').format(
+            score=int(parent_xblock.entrance_exam_minimum_score_pct * 100))
 
     xblock_info = {
         "id": unicode(xblock.location),
@@ -825,18 +840,26 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
         "format": xblock.format,
         "course_graders": json.dumps([grader.get('type') for grader in graders]),
         "has_changes": has_changes,
-        "override_type": override_type,
+        "actions": xblock_actions,
+        "explanatory_message": explanatory_message
     }
 
     if xblock.category == 'sequential':
         # import here to reduce circular imports
         from labster.masters import fetch_labs_as_json
+        from labster.models import LANGUAGES as LABSTER_LANGUAGES
         labster_labs = fetch_labs_as_json()
 
         xblock_info.update({
             "labster_labs": json.dumps(labster_labs),
             "lab_id": getattr(xblock, 'lab_id', ''),
+            "labster_languages": json.dumps([{'code': code, 'name': name} for code, name in LABSTER_LANGUAGES]),
+            "labster_language": getattr(xblock, 'labster_language', 'en'),
         })
+
+    # Entrance exam subsection should be hidden. in_entrance_exam is inherited metadata, all children will have it.
+    if xblock.category == 'sequential' and getattr(xblock, "in_entrance_exam", False):
+        xblock_info["is_header_visible"] = False
 
     if data is not None:
         xblock_info["data"] = data

@@ -49,12 +49,8 @@ CC_MERCHANT_NAME = PLATFORM_NAME
 # Shows up in the platform footer, eg "(c) COPYRIGHT_YEAR"
 COPYRIGHT_YEAR = "2015"
 
-PLATFORM_FACEBOOK_ACCOUNT = "http://www.facebook.com/teamlabster"
-PLATFORM_TWITTER_ACCOUNT = "@labster"
-PLATFORM_TWITTER_URL = "https://twitter.com/YourPlatformTwitterAccount"
-PLATFORM_MEETUP_URL = "http://www.meetup.com/YourMeetup"
-PLATFORM_LINKEDIN_URL = "http://www.linkedin.com/company/YourPlatform"
-PLATFORM_GOOGLE_PLUS_URL = "https://plus.google.com/YourGooglePlusAccount/"
+PLATFORM_FACEBOOK_ACCOUNT = "http://www.facebook.com/YourPlatformFacebookAccount"
+PLATFORM_TWITTER_ACCOUNT = "@YourPlatformTwitterAccount"
 
 COURSEWARE_ENABLED = True
 ENABLE_JASMINE = False
@@ -79,10 +75,22 @@ FEATURES = {
     ## Doing so will cause all courses to be released on production
     'DISABLE_START_DATES': False,  # When True, all courses will be active, regardless of start date
 
-    # When True, will only publicly list courses by the subdomain. Expects you
-    # to define COURSE_LISTINGS, a dictionary mapping subdomains to lists of
-    # course_ids (see dev_int.py for an example)
+    # When True, will only publicly list courses by the subdomain.
     'SUBDOMAIN_COURSE_LISTINGS': False,
+    # Expects you to define COURSE_LISTINGS, a dictionary mapping
+    # subdomains to lists of course_ids
+    # COURSE_LISTINGS = {
+    #     'default': [
+    #         'BerkeleyX/CS169.1x/2012_Fall',
+    #         'HarvardX/CS50x/2012',
+    #         'MITx/3.091x/2012_Fall',
+    #     ],
+    #     'openedx': [
+    #         'BerkeleyX/CS169.1x/2012_Fall',
+    #     ],
+    # }
+    # To see it in action, add the following to your /etc/hosts file:
+    #     127.0.0.1 openedx.dev
 
     # When True, will override certain branding with university specific values
     # Expects a SUBDOMAIN_BRANDING dictionary that maps the subdomain to the
@@ -262,20 +270,14 @@ FEATURES = {
     ],
 
     # Turn off account locking if failed login attempts exceeds a limit
-    'ENABLE_MAX_FAILED_LOGIN_ATTEMPTS': True,
+    'ENABLE_MAX_FAILED_LOGIN_ATTEMPTS': False,
 
     # Hide any Personally Identifiable Information from application logs
     'SQUELCH_PII_IN_LOGS': True,
 
-    # Toggles the embargo functionality, which enable embargoing for particular courses
+    # Toggles the embargo functionality, which blocks users from
+    # the site or courses based on their location.
     'EMBARGO': False,
-
-    # Toggles the embargo site functionality, which enable embargoing for the whole site
-    'SITE_EMBARGOED': False,
-
-    # Toggle whether to replace the current embargo implementation with
-    # the more flexible "country access" feature.
-    'ENABLE_COUNTRY_ACCESS': False,
 
     # Whether the Wiki subsystem should be accessible via the direct /wiki/ paths. Setting this to True means
     # that people can submit content and modify the Wiki in any arbitrary manner. We're leaving this as True in the
@@ -353,6 +355,12 @@ FEATURES = {
 
     # log all information from cybersource callbacks
     'LOG_POSTPAY_CALLBACKS': True,
+
+    # enable beacons for video timing statistics
+    'ENABLE_VIDEO_BEACON': False,
+
+    # Certificates Web/HTML Views
+    'CERTIFICATES_HTML_VIEW': False,
 
     # labster app
     'LABSTER': True,
@@ -561,7 +569,7 @@ TRACKING_BACKENDS = {
 
 # We're already logging events, and we don't want to capture user
 # names/passwords.  Heartbeat events are likely not interesting.
-TRACKING_IGNORE_URL_PATTERNS = [r'^/event', r'^/login', r'^/heartbeat', r'^/segmentio/event']
+TRACKING_IGNORE_URL_PATTERNS = [r'^/event', r'^/login', r'^/heartbeat', r'^/segmentio/event', r'^/performance']
 
 EVENT_TRACKING_ENABLED = True
 EVENT_TRACKING_BACKENDS = {
@@ -1015,7 +1023,13 @@ MIDDLEWARE_CLASSES = (
 
     'django.contrib.messages.middleware.MessageMiddleware',
     'track.middleware.TrackMiddleware',
+
+    # CORS and CSRF
+    'corsheaders.middleware.CorsMiddleware',
+    'cors_csrf.middleware.CorsCSRFMiddleware',
+    'cors_csrf.middleware.CsrfCrossDomainCookieMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+
     'splash.middleware.SplashMiddleware',
 
     # Allows us to dark-launch particular languages
@@ -1109,7 +1123,10 @@ rwd_header_footer_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'js/common_he
 staff_grading_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/staff_grading/**/*.js'))
 open_ended_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/open_ended/**/*.js'))
 notes_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/notes/**/*.js'))
-instructor_dash_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/instructor_dashboard/**/*.js'))
+instructor_dash_js = (
+    sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/instructor_dashboard/**/*.js')) +
+    sorted(rooted_glob(PROJECT_ROOT / 'static', 'js/instructor_dashboard/**/*.js'))
+)
 
 # JavaScript used by the student account and profile pages
 # These are not courseware, so they do not need many of the courseware-specific
@@ -1565,6 +1582,8 @@ INSTALLED_APPS = (
     'provider.oauth2',
     'oauth2_provider',
 
+    'oauth_exchange',
+
     # For the wiki
     'wiki',  # The new django-wiki from benjaoming
     'django_notify',
@@ -1651,7 +1670,19 @@ INSTALLED_APPS = (
 
     'openedx.core.djangoapps.content.course_structures',
     'course_structure_api',
+
+    # CORS and cross-domain CSRF
+    'corsheaders',
+    'cors_csrf',
+
+    'commerce',
 )
+
+######################### CSRF #########################################
+
+# Forwards-compatibility with Django 1.7
+CSRF_COOKIE_AGE = 60 * 60 * 24 * 7 * 52
+
 
 ######################### MARKETING SITE ###############################
 EDXMKTG_COOKIE_NAME = 'edxloggedin'
@@ -1677,6 +1708,77 @@ MKTG_URL_LINK_MAP = {
 
     # Verified Certificates
     'WHAT_IS_VERIFIED_CERT': None,
+}
+
+################# Social Media Footer Links #######################
+# The names list controls the order of social media
+# links in the footer.
+SOCIAL_MEDIA_FOOTER_NAMES = [
+    "facebook",
+    "twitter",
+    "linkedin",
+    "google_plus",
+    "tumblr",
+    "meetup",
+    "reddit",
+    "youtube",
+]
+
+# The footer URLs dictionary maps social footer names
+# to URLs defined in configuration.
+SOCIAL_MEDIA_FOOTER_URLS = {}
+
+# The display dictionary defines the title
+# and icon class for each social media link.
+SOCIAL_MEDIA_FOOTER_DISPLAY = {
+    "facebook": {
+        # Translators: This is the website name of www.facebook.com.  Please
+        # translate this the way that Facebook advertises in your language.
+        "title": _("Facebook"),
+        "icon": "fa-facebook-square"
+    },
+    "twitter": {
+        # Translators: This is the website name of www.twitter.com.  Please
+        # translate this the way that Twitter advertises in your language.
+        "title": _("Twitter"),
+        "icon": "fa-twitter"
+    },
+    "linkedin": {
+        # Translators: This is the website name of www.linkedin.com.  Please
+        # translate this the way that LinkedIn advertises in your language.
+        "title": _("LinkedIn"),
+        "icon": "fa-linkedin-square"
+    },
+    "google_plus": {
+        # Translators: This is the website name of plus.google.com.  Please
+        # translate this the way that Google+ advertises in your language.
+        "title": _("Google+"),
+        "icon": "fa-google-plus-square"
+    },
+    "tumblr": {
+        # Translators: This is the website name of www.tumblr.com.  Please
+        # translate this the way that Tumblr advertises in your language.
+        "title": _("Tumblr"),
+        "icon": "fa-tumblr-square"
+    },
+    "meetup": {
+        # Translators: This is the website name of www.meetup.com.  Please
+        # translate this the way that MeetUp advertises in your language.
+        "title": _("Meetup"),
+        "icon": "fa-calendar"
+    },
+    "reddit": {
+        # Translators: This is the website name of www.reddit.com.  Please
+        # translate this the way that Reddit advertises in your language.
+        "title": _("Reddit"),
+        "icon": "fa-reddit-square"
+    },
+    "youtube": {
+        # Translators: This is the website name of www.youtube.com.  Please
+        # translate this the way that YouTube advertises in your language.
+        "title": _("Youtube"),
+        "icon": "fa-youtube-square"
+    }
 }
 
 ################# Mobile URLS ##########################
@@ -1711,11 +1813,6 @@ if FEATURES.get('AUTH_USE_CAS'):
 ############# CORS headers for cross-domain requests #################
 
 if FEATURES.get('ENABLE_CORS_HEADERS'):
-    INSTALLED_APPS += ('corsheaders', 'cors_csrf')
-    MIDDLEWARE_CLASSES = (
-        'corsheaders.middleware.CorsMiddleware',
-        'cors_csrf.middleware.CorsCSRFMiddleware',
-    ) + MIDDLEWARE_CLASSES
     CORS_ALLOW_CREDENTIALS = True
     CORS_ORIGIN_WHITELIST = ()
     CORS_ORIGIN_ALLOW_ALL = False
@@ -1738,8 +1835,8 @@ REGISTRATION_EXTRA_FIELDS = {
     'terms_of_service': 'hidden',
     'city': 'optional',
     'country': 'required',
-    'user_type': 'optional',
-    'user_school_level': 'optional',
+    'user_type': 'required',
+    'user_school_level': 'required',
 }
 
 ########################## CERTIFICATE NAME ########################
@@ -1774,6 +1871,7 @@ if FEATURES.get('LABSTER'):
         'labster_adaptive',
         'labster_search',
         'labster_accounts',
+        'labster_frontend',
         'labster_salesforce',
         'labster_backoffice.api',
         'labster_backoffice.front_end',
@@ -1785,6 +1883,7 @@ if FEATURES.get('LABSTER'):
         'diplomat',
         'form_utils',
         'rest_framework.authtoken',
+        'django_rq',
     )
 
     MIDDLEWARE_CLASSES = (
@@ -1800,14 +1899,24 @@ if FEATURES.get('LABSTER'):
     LABSTER_UNITY_API_PREFIX = "https://www.labster.com"
     LABSTER_BACKOFFICE_BASE_URL = "{}/labster/internal".format(LABSTER_UNITY_API_PREFIX)
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
-    LABSTER_ENABLE_NUTSHELL = False
     LABSTER_ENABLE_SALESFORCE = False
 
     HIJACK_EMAILS = ['edx+staging-lms@labster.com']
+    LABSTER_LANGUAGES = ('en', 'da')
 
     PLATFORM_NAME = 'LabsterX'
     THEME_NAME = 'labster'
     FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
+
+    RQ_QUEUES = {
+        'default': {
+            'HOST': 'localhost',
+            'PORT': 6379,
+            'DB': 1,
+            'PASSWORD': '',
+            'DEFAULT_TIMEOUT': 600,
+        },
+    }
 
     LABSTER_OLD_PAGES = [
         "features/",
@@ -2049,6 +2158,7 @@ ALL_LANGUAGES = (
 ### Apps only installed in some instances
 OPTIONAL_APPS = (
     'mentoring',
+    'edx_sga',
 
     # edx-ora2
     'submissions',
@@ -2143,14 +2253,17 @@ SEARCH_ENGINE = None
 # Use the LMS specific result processor
 SEARCH_RESULT_PROCESSOR = "lms.lib.courseware_search.lms_result_processor.LmsSearchResultProcessor"
 
-# The configuration for learner profiles
-PROFILE_CONFIGURATION = {
+##### CDN EXPERIMENT/MONITORING FLAGS #####
+CDN_VIDEO_URLS = {}
+
+# The configuration visibility of account fields.
+ACCOUNT_VISIBILITY_CONFIGURATION = {
     # Default visibility level for accounts without a specified value
     # The value is one of: 'all_users', 'private'
     "default_visibility": "private",
 
-    # The list of all fields that can be shown on a learner's profile
-    "all_fields": [
+    # The list of all fields that can be shared with other users
+    "shareable_fields": [
         'username',
         'profile_image',
         'country',
@@ -2159,9 +2272,14 @@ PROFILE_CONFIGURATION = {
         'bio',
     ],
 
-    # The list of fields that are always public on a learner's profile
+    # The list of account fields that are always public
     "public_fields": [
         'username',
         'profile_image',
     ],
 }
+
+# E-Commerce API Configuration
+ECOMMERCE_API_URL = None
+ECOMMERCE_API_SIGNING_KEY = None
+ECOMMERCE_API_TIMEOUT = 5

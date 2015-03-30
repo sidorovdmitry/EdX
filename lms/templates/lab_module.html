@@ -86,6 +86,7 @@ LANGUAGES = [
       margin-top: 20px;
     }
   </style>
+  <script src="https://s3-us-west-2.amazonaws.com/labster/static/js/jquery.browser.min.js"></script>
   <script type="text/javascript">
   <!--
   var unityObjectUrl = "http://webplayer.unity3d.com/download_webplayer-3.x/3.0/uo/UnityObject2.js";
@@ -163,7 +164,7 @@ LANGUAGES = [
   <div id="missingUnityContainer" style="display:none">
     <h2>${lab.name}</h2>
 
-    <div class="browser ie opera" style="display:none">
+    <div class="browser chrome ie opera" style="display:none">
       <h3>Please use Firefox or Safari</h3>
       <p>Currently Labster is best supported on Firefox and Safari browsers.</p>
       <p>It appears that you are currently using another browser, so we recommend that you launch e.g. Firefox to start using Labster.</p>
@@ -180,7 +181,7 @@ LANGUAGES = [
         Download Mozilla Firefox</a>
       </p>
     </div>
-    <div class="browser chrome firefox safari" style="display:none">
+    <div class="browser firefox safari" style="display:none">
       <h3>Using Labster For the First Time</h3>
       <p>This appears to be the first time you use Labster on this computer.
       To get started, you simply need to install the Unity3D web player, which only takes a few minutes.</p>
@@ -359,10 +360,6 @@ LANGUAGES = [
       });
     }
 
-    function nutshellPlayLab() {
-      return;
-    }
-
     function detectUnityWebPlayer() {
       var tInstalled = false;
       if (navigator.mimeTypes && navigator.mimeTypes["application/vnd.unity"]){
@@ -429,19 +426,6 @@ LANGUAGES = [
         return ua.toUpperCase().indexOf('MACINTOSH') > -1;
       };
 
-      if (browser.mozilla) {
-        jQuery('.browser.chrome').show();
-        jQuery('#course-content').css(
-            'background-position', 'top -50px right -90px');
-      } else {
-        jQuery('.browser.ie').show();
-        if (isMac(userAgent)) {
-          jQuery('.firefox-download.fx-mac').show();
-        } else {
-          jQuery('.firefox-download.fx-windows').show();
-        }
-      }
-
       var resizeProc = undefined;
       jQuery(window).resize(function() {
         if (resizeProc != undefined) {
@@ -480,29 +464,43 @@ LANGUAGES = [
         location.reload();
       });
 
-      if (isVerifiedLab && ! isVerifiedLabster) {
-        initVerifiedForm(function() {
+      if (browser.mozilla) {
+        jQuery('.browser.firefox').show();
+        jQuery('#course-content').css(
+            'background-position', 'top -50px right -90px');
+
+        if (isVerifiedLab && ! isVerifiedLabster) {
+          initVerifiedForm(function() {
+            if (hasUnity) {
+              jQuery('#labModuleContainer').show();
+              jQuery('.loading').hide();
+            } else {
+              jQuery('#missingUnityContainer').show();
+              jQuery('.loading').hide();
+            }
+          });
+
+        } else {
           if (hasUnity) {
             jQuery('#labModuleContainer').show();
             jQuery('.loading').hide();
           } else {
             jQuery('#missingUnityContainer').show();
+            if (platform == 'MACINTEL') {
+              jQuery('.unity-download.mac').show();
+            } else {
+              jQuery('.unity-download.windows').show();
+            }
             jQuery('.loading').hide();
           }
-        });
-
+        }
       } else {
-        if (hasUnity) {
-          jQuery('#labModuleContainer').show();
-          jQuery('.loading').hide();
+        jQuery('.browser.ie').show();
+        jQuery('#missingUnityContainer').show();
+        if (isMac(userAgent)) {
+          jQuery('.firefox-download.fx-mac').show();
         } else {
-          jQuery('#missingUnityContainer').show();
-          if (platform == 'MACINTEL') {
-            jQuery('.unity-download.mac').show();
-          } else {
-            jQuery('.unity-download.windows').show();
-          }
-          jQuery('.loading').hide();
+          jQuery('.firefox-download.fx-windows').show();
         }
       }
 
@@ -530,7 +528,6 @@ LANGUAGES = [
 
       jQuery('#livechat-compact-container').hide();
       isPlaying = true;
-      nutshellPlayLab();
 
       // jQuery('window').bind('resize', function(event) {
       //   setPlayerSize();

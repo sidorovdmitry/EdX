@@ -18,8 +18,6 @@ from pytz import UTC
 import uuid
 from collections import defaultdict, OrderedDict
 import dogstats_wrapper as dog_stats_api
-from django.db.models import Q
-import pytz
 from urllib import urlencode
 
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -28,7 +26,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.signals import user_logged_in, user_logged_out
-from django.db import models, IntegrityError, transaction
+from django.db import models, IntegrityError
 from django.db.models import Count
 from django.dispatch import receiver, Signal
 from django.core.exceptions import ObjectDoesNotExist
@@ -40,8 +38,6 @@ from eventtracking import tracker
 from importlib import import_module
 
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from xmodule.modulestore import Location
-from opaque_keys import InvalidKeyError
 
 import lms.lib.comment_client as cc
 from util.query import use_read_replica_if_available
@@ -53,8 +49,6 @@ from functools import total_ordering
 
 from certificates.models import GeneratedCertificate
 from course_modes.models import CourseMode
-
-from ratelimitbackend import admin
 
 import analytics
 
@@ -754,6 +748,25 @@ class CourseEnrollment(models.Model):
         return enrollment
 
     @classmethod
+    def get_enrollment(cls, user, course_key):
+        """Returns a CoursewareEnrollment object.
+
+        Args:
+            user (User): The user associated with the enrollment.
+            course_id (CourseKey): The key of the course associated with the enrollment.
+
+        Returns:
+            Course enrollment object or None
+        """
+        try:
+            return CourseEnrollment.objects.get(
+                user=user,
+                course_id=course_key
+            )
+        except cls.DoesNotExist:
+            return None
+
+    @classmethod
     def num_enrolled_in(cls, course_id):
         """
         Returns the count of active enrollments in a course.
@@ -1137,9 +1150,8 @@ class CourseEnrollment(models.Model):
         """
         Returns True, if course is paid
         """
-        paid_course = CourseMode.objects.filter(Q(course_id=self.course_id) & Q(mode_slug='honor') &
-                                                (Q(expiration_datetime__isnull=True) | Q(expiration_datetime__gte=datetime.now(pytz.UTC)))).exclude(min_price=0)
-        if paid_course or self.mode == 'professional':
+        paid_course = CourseMode.is_white_label(self.course_id)
+        if paid_course or CourseMode.is_professional_slug(self.mode):
             return True
 
         return False
@@ -1191,13 +1203,12 @@ class CourseEnrollment(models.Model):
     def course(self):
         return modulestore().get_course(self.course_id)
 
+    def is_verified_enrollment(self):
+        """
+        Check the course enrollment mode is verified or not
+        """
+        return CourseMode.is_verified_slug(self.mode)
 
-
-class CourseEnrollmentAdmin(admin.ModelAdmin):
-    list_display = ('user', 'course_id', 'mode', 'created', 'is_active')
-    list_filter = ('is_active', 'mode')
-    search_fields = ('user__email', 'course_id')
-    raw_id_fields = ('user',)
 
 
 class CourseEnrollmentAllowed(models.Model):
@@ -1265,14 +1276,6 @@ class CourseAccessRole(models.Model):
 
     def __unicode__(self):
         return "[CourseAccessRole] user: {}   role: {}   org: {}   course: {}".format(self.user.username, self.role, self.org, self.course_id)
-
-
-class CourseAccessRoleAdmin(admin.ModelAdmin):
-    raw_id_fields = ("user",)
-    search_fields = ('user__email', 'course_id')
-    list_filter = ('org', 'role')
-
-#### Helper methods for use from python manage.py shell and other classes.
 
 
 def get_user_by_username_or_email(username_or_email):
@@ -1458,6 +1461,9 @@ class LinkedInAddToProfileConfiguration(ConfigurationModel):
         "honor": ugettext_lazy(u"{platform_name} Honor Code Certificate for {course_name}"),
         "verified": ugettext_lazy(u"{platform_name} Verified Certificate for {course_name}"),
         "professional": ugettext_lazy(u"{platform_name} Professional Certificate for {course_name}"),
+        "no-id-professional": ugettext_lazy(
+            u"{platform_name} Professional Certificate for {course_name}"
+        ),
     }
 
     company_identifier = models.TextField(
@@ -1555,3 +1561,43 @@ class LinkedInAddToProfileConfiguration(ConfigurationModel):
             )
             if self.trk_partner_name else None
         )
+
+
+class EntranceExamConfiguration(models.Model):
+    """
+    Represents a Student's entrance exam specific data for a single Course
+    """
+
+    user = models.ForeignKey(User, db_index=True)
+    course_id = CourseKeyField(max_length=255, db_index=True)
+    created = models.DateTimeField(auto_now_add=True, null=True, db_index=True)
+    updated = models.DateTimeField(auto_now=True, db_index=True)
+
+    # if skip_entrance_exam is True, then student can skip entrance exam
+    # for the course
+    skip_entrance_exam = models.BooleanField(default=True)
+
+    class Meta(object):
+        """
+        Meta class to make user and course_id unique in the table
+        """
+        unique_together = (('user', 'course_id'), )
+
+    def __unicode__(self):
+        return "[EntranceExamConfiguration] %s: %s (%s) = %s" % (
+            self.user, self.course_id, self.created, self.skip_entrance_exam
+        )
+
+    @classmethod
+    def user_can_skip_entrance_exam(cls, user, course_key):
+        """
+        Return True if given user can skip entrance exam for given course otherwise False.
+        """
+        can_skip = False
+        if settings.FEATURES.get('ENTRANCE_EXAMS', False):
+            try:
+                record = EntranceExamConfiguration.objects.get(user=user, course_id=course_key)
+                can_skip = record.skip_entrance_exam
+            except EntranceExamConfiguration.DoesNotExist:
+                can_skip = False
+        return can_skip

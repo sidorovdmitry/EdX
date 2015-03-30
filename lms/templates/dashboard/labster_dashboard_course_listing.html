@@ -147,9 +147,9 @@
         % else:
           <a href="${course_target}" analytics-on="click" analytics-category="Dashboard" class="enter-course">${_('View Course')}</a>
           % if course.labster_demo and user.labster_user.is_teacher:
-          <a href="#invite-students-modal" class="invite-students" rel="leanModal" data-course-name="${course.display_name_with_default}" data-course-location="${course.location.org}/${course.location.course}/${course.location.run}">${_('Invite Students to Try Course')}</a>
+          <a href="#invite-students-modal" class="invite-students-modal invite-students" rel="leanModal" data-course-name="${course.display_name_with_default}" data-course-location="${course.location.org}/${course.location.course}/${course.location.run}">${_('Invite Students to Try Course')}</a>
           % elif 'staff' in user_course_role:
-          <a href="${membership_url}" class="invite-students">Manage Students</a>
+          <a href="${membership_url}" class="manage-students-link invite-students">Manage Students</a>
           % endif
         % endif
       % endif

@@ -2,21 +2,23 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import Http404
 from django.core.mail import EmailMessage
+from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from student.models import UserProfile, CourseEnrollment
+from student.models import UserProfile, CourseEnrollment, Registration
 
 from labster.api.users.serializers import UserCreateSerializer, LabsterUserSerializer
 from labster.api.users.serializers import CustomLabsterUser
 from labster.api.views import AuthMixin
 from labster.models import LabsterUser
+from labster.user_utils import send_activation_email
 
 
-def get_user_as_custom_labster_user(user, password=None):
+def get_user_as_custom_labster_user(user, password=None, ip_address=None):
     user = User.objects.get(id=user.id)
     labster_user = user.labster_user
     profile, _ = UserProfile.objects.get_or_create(user=user)
@@ -34,6 +36,7 @@ def get_user_as_custom_labster_user(user, password=None):
         organization_name=labster_user.organization_name,
         user_school_level=labster_user.user_school_level,
         user_school_level_display=labster_user.get_user_school_level_display(),
+        ip_address=ip_address,
         date_of_birth=labster_user.date_of_birth,
         name=profile.name,
         password=password,
@@ -58,6 +61,7 @@ class SendEmailUserCreate(APIView):
         except User.DoesNotExist:
             raise Http404
 
+        # registration = Registration.objects.get(user=user)
         labster_user = get_user_as_custom_labster_user(user)
 
         context = {
@@ -80,6 +84,9 @@ class SendEmailUserCreate(APIView):
             # labster_create_salesforce_lead.delay(instance.id)
             labster_create_salesforce_lead(user.id)
 
+        # send activation email to user
+        send_activation_email(request, user, labster_user)
+
         return Response(http_status)
 
 
@@ -94,43 +101,8 @@ class UserView(AuthMixin, generics.RetrieveUpdateAPIView):
             raise Http404
 
         password = self.request.DATA.get('password')
-        return get_user_as_custom_labster_user(user, password)
+        ip_address = self.request.META.get('REMOTE_ADDR', None)
+        return get_user_as_custom_labster_user(user, password, ip_address)
 
     def get_queryset(self):
         return User.objects.all()
-
-
-class DeactivateUser(APIView):
-
-    def post(self, request, *args, **kwargs):
-        data = request.DATA
-
-        try:
-            labster_user = LabsterUser.objects.get(user__id=data['user_id'])
-        except LabsterUser.DoesNotExist:
-            http_status = status.HTTP_404_NOT_FOUND
-            return Response(http_status)
-
-        labster_user.is_active = False
-        labster_user.save()
-
-        http_status = status.HTTP_200_OK
-        return Response(http_status)
-
-
-class ActivateUser(APIView):
-
-    def post(self, request, *args, **kwargs):
-        data = request.DATA
-
-        try:
-            labster_user = LabsterUser.objects.get(user__id=data['user_id'])
-        except LabsterUser.DoesNotExist:
-            http_status = status.HTTP_404_NOT_FOUND
-            return Response(http_status)
-
-        labster_user.is_active = True
-        labster_user.save()
-
-        http_status = status.HTTP_200_OK
-        return Response(http_status)

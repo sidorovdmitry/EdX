@@ -82,6 +82,15 @@ FEATURES['ENTRANCE_EXAMS'] = True
 FEATURES['ENABLE_COURSEWARE_INDEX'] = False
 SEARCH_ENGINE = "search.elastic.ElasticSearchEngine"
 
+# rq
+for queueConfig in RQ_QUEUES.itervalues():
+    queueConfig['ASYNC'] = False
+
+###############################################################################
+
+STRIPE_API_KEY = ''
+STRIPE_PUBLISHABLE_KEY = ''
+
 ###############################################################################
 
 STRIPE_API_KEY = ''

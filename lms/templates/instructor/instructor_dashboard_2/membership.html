@@ -31,7 +31,7 @@
 
 % if settings.FEATURES.get('LABSTER'):
 <script>
-window.userLicenses = JSON.parse('${section_data['user_licenses']}');
+window.userLicenses = JSON.parse("${section_data.get('user_licenses', '[]')}");
 window.courseId = "${course.id}";
 </script>
 <script type="text/template" id="license-row-template">
@@ -104,8 +104,8 @@ window.courseId = "${course.id}";
   </div>
 
   <div>
-    <input type="button" name="enrollment-button" class="enrollment-button" value="${_("Enroll")}" data-endpoint="${ section_data['enroll_button_url'] }" data-action="enroll" >
-    <input type="button" name="enrollment-button" class="enrollment-button" value="${_("Unenroll")}" data-endpoint="${ section_data['unenroll_button_url'] }" data-action="unenroll" >
+    <input type="button" name="enrollment-button" class="enrollment-button-enroll enrollment-button" value="${_("Enroll")}" data-endpoint="${ section_data['enroll_button_url'] }" data-action="enroll" >
+    <input type="button" name="enrollment-button" class="enrollment-button-unenroll enrollment-button" value="${_("Unenroll")}" data-endpoint="${ section_data['unenroll_button_url'] }" data-action="unenroll" >
   </div>
   <div class="request-response"></div>
   <div class="request-response-error"></div>
@@ -288,56 +288,6 @@ window.courseId = "${course.id}";
   %endif
 
 </div>
-
-% if course.is_cohorted:
-    <hr class="divider" />
-    <div class="cohort-management membership-section"
-         data-ajax_url="${section_data['cohorts_ajax_url']}"
-         data-advanced-settings-url="${section_data['advanced_settings_url']}"
-         data-upload_cohorts_csv_url="${section_data['upload_cohorts_csv_url']}"
-    >
-    </div>
-
-    <%block name="headextra">
-        <%
-        cohorted_user_partition = get_cohorted_user_partition(course.id)
-        content_groups = cohorted_user_partition.groups if cohorted_user_partition else []
-        %>
-        <script>
-        $(document).ready(function() {
-            var cohortManagementElement = $('.cohort-management');
-            if (cohortManagementElement.length > 0) {
-                var cohorts = new edx.groups.CohortCollection(),
-                    cohortUserPartitionId = ${cohorted_user_partition.id if cohorted_user_partition else 'null'},
-                    contentGroups = [
-                        % for content_group in content_groups:
-                            new edx.groups.ContentGroupModel({
-                                id: ${content_group.id},
-                                name: "${content_group.name | h}",
-                                user_partition_id: cohortUserPartitionId
-                            }),
-                        % endfor
-                    ];
-                cohorts.url = cohortManagementElement.data('ajax_url');
-                var cohortsView = new edx.groups.CohortsView({
-                    el: cohortManagementElement,
-                    model: cohorts,
-                    contentGroups: contentGroups,
-                    context: {
-                        uploadCohortsCsvUrl: cohortManagementElement.data('upload_cohorts_csv_url'),
-                        studioAdvancedSettingsUrl: cohortManagementElement.data('advanced-settings-url'),
-                        studioGroupConfigurationsUrl: '${get_studio_url(course, 'group_configurations') | h}'
-                    }
-                });
-                cohorts.fetch().done(function() {
-                    cohortsView.render();
-                });
-            }
-        });
-        </script>
-
-    </%block>
-% endif
 
 % if settings.FEATURES.get('LABSTER'):
 <%namespace name='static' file='/static_content.html'/>

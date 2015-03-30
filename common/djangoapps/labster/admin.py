@@ -7,7 +7,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
 from labster.models import (
-    LanguageLab, Lab, UserSave, Token, LabProxy,
+    Lab, UserSave, Token, LabProxy,
     UnityLog, UserAnswer, LabsterUserLicense, ProblemProxy,
     UnityPlatformLog, QuizBlock, Problem, Answer, AdaptiveProblem,
     LabProxyData, UserAttempt, LabsterUser, LabsterCourseLicense)
@@ -35,7 +35,6 @@ class LabAdminForm(forms.ModelForm):
             'engine_file',
             'quiz_block_file',
             'xml_url_prefix',
-            'languages',
             'use_quiz_blocks', 'is_active', 'demo_course_id',
             'verified_only')
 
@@ -66,11 +65,6 @@ class LabAdmin(admin.ModelAdmin):
     list_display = (
         'name', 'engine_xml_link', 'engine_file_link', 'quiz_block_file_link',
         'use_quiz_blocks', 'demo_course_id', 'xml_url_prefix', 'is_active')
-    # fields = (
-    #     'name', 'description', 'engine_xml', 'languages', 'engine_file',
-    #     'quiz_block_file', 'use_quiz_blocks', 'is_active', 'demo_course_id',
-    #     'verified_only')
-    filter_horizontal = ('languages',)
     list_filter = ('is_active', 'engine_file')
     form = LabAdminForm
 
@@ -131,8 +125,8 @@ class AnswerAdmin(BaseAdmin):
 
 
 class LabProxyAdmin(BaseAdmin):
-    list_display = ('id', 'course_from_location', 'lab', 'location', 'is_active', 'created_at')
-    list_filter = ('is_active',)
+    list_display = ('id', 'course_from_location', 'lab', 'language', 'is_active', 'created_at')
+    list_filter = ('is_active', 'language')
 
     def queryset(self, request):
         return LabProxy.objects.all().select_related('lab')
@@ -272,7 +266,6 @@ class LabsterCourseLicenseAdmin(admin.ModelAdmin):
 
 
 admin.site.register(LabsterUser, LabsterUserAdmin)
-admin.site.register(LanguageLab)
 # admin.site.register(ErrorInfo, ErrorInfoAdmin)
 # admin.site.register(DeviceInfo, DeviceInfoAdmin)
 admin.site.register(UserSave, UserSaveAdmin)

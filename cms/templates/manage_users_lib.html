@@ -2,7 +2,7 @@
 <%! from django.utils.translation import ugettext as _ %>
 <%! from django.core.urlresolvers import reverse %>
 <%inherit file="base.html" />
-<%def name="online_help_token()"><% return "team" %></%def>
+<%def name="online_help_token()"><% return "team_library" %></%def>
 <%block name="title">${_("Library User Access")}</%block>
 <%block name="bodyclass">is-signedin course users view-team</%block>
 
@@ -15,7 +15,7 @@
       <span class="sr">&gt; </span>${_("User Access")}
     </h1>
 
-    <nav class="nav-actions">
+    <nav class="nav-actions" aria-label="${_('Page Actions')}">
       <h3 class="sr">${_("Page Actions")}</h3>
       <ul>
         %if allow_actions:

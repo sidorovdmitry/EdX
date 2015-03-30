@@ -3,6 +3,7 @@ import calendar
 import json
 import os
 import re
+import uuid
 
 from datetime import datetime
 
@@ -28,6 +29,7 @@ from labster_salesforce.models import Lead
 PLATFORM_NAME = 'platform'
 URL_PREFIX = getattr(settings, 'LABSTER_UNITY_URL_PREFIX', '')
 ENGINE_FILE = 'labster.unity3d'
+LANGUAGES = [lang for lang in settings.LANGUAGES if lang[0] in settings.LABSTER_LANGUAGES]
 
 
 class LabsterUser(models.Model):
@@ -41,6 +43,7 @@ class LabsterUser(models.Model):
     )
     user_type = models.IntegerField(choices=USER_TYPE_CHOICES, blank=True, null=True)
     phone_number = models.CharField(max_length=100, blank=True, default="")
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
     organization_name = models.CharField(max_length=255, blank=True, default="")
     organization = models.ForeignKey(Organization, blank=True, null=True)
 
@@ -68,6 +71,9 @@ class LabsterUser(models.Model):
 
     is_new = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
+    is_email_active = models.BooleanField(default=False)
+    email_activation_key = models.CharField(
+        max_length=32, db_index=True, blank=True, default="")
 
     def __unicode__(self):
         return unicode(self.user)
@@ -117,6 +123,11 @@ class LabsterUser(models.Model):
             return Lead.objects.filter(user=self.user).exists()
         return True
 
+    def save(self, *args, **kwargs):
+        if not self.is_email_active and not self.email_activation_key:
+            self.email_activation_key = uuid.uuid4().hex
+        return super(LabsterUser, self).save(*args, **kwargs)
+
 
 def create_labster_user(sender, instance, created, **kwargs):
     if created:
@@ -158,14 +169,6 @@ class Token(models.Model):
         super(Token, self).save(*args, **kwargs)
 
 
-class LanguageLab(models.Model):
-    language_code = models.CharField(max_length=4)
-    language_name = models.CharField(max_length=32)
-
-    def __unicode__(self):
-        return self.language_name
-
-
 class ActiveManager(models.Manager):
     def get_query_set(self):
         qs = super(ActiveManager, self).get_query_set()
@@ -194,18 +197,8 @@ class Lab(models.Model):
         max_length=255,
         default=URL_PREFIX)
 
-    # lab can have many languages
-    languages = models.ManyToManyField(LanguageLab)
-
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
-
-    # unused
-    screenshot = models.ImageField(upload_to='edx/labster/lab/images', blank=True)
-    screenshot_url = models.URLField(max_length=500, blank=True, default="")
-    url = models.URLField(max_length=120, blank=True, default="")
-    wiki_url = models.URLField(max_length=120, blank=True, default="")
-    questions = models.TextField(default='', blank=True)
 
     all_objects = models.Manager()
     objects = ActiveManager()
@@ -431,6 +424,9 @@ class LabProxy(models.Model):
     lab = models.ForeignKey(Lab, blank=True, null=True)
     location = models.CharField(max_length=200, unique=True)
     is_active = models.BooleanField(default=True)
+    language = models.CharField(
+        choices=LANGUAGES,
+        max_length=4, db_index=True, default='en')
 
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)

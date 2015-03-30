@@ -6,7 +6,7 @@ from student.models import CourseEnrollment, UserProfile, CourseAccessRole
 from student.roles import CourseStaffRole, CourseInstructorRole
 
 from labster.models import LabsterCourseLicense, LabsterUser, Lab
-from labster.courses import duplicate_multiple_courses
+from labster.tasks import duplicate_courses
 
 
 class TeacherToLicenseForm(forms.Form):
@@ -86,6 +86,7 @@ class DuplicateMultipleCourseForm(forms.Form):
         return labs
 
     def save(self, *args, **kwargs):
+        request = kwargs.get('request')
         email = self.cleaned_data.get('email')
         labs = self.cleaned_data.get('labs')
         all_labs = self.cleaned_data.get('all_labs')
@@ -94,6 +95,6 @@ class DuplicateMultipleCourseForm(forms.Form):
 
         user = User.objects.get(email=email)
 
-        duplicate_multiple_courses(user, license_count, all_labs, labs, org)
+        duplicate_courses.delay(user.id, license_count, all_labs, labs, org, request_user_id=request.user.id)
 
         return user

@@ -25,7 +25,7 @@ from xmodule.modulestore.inheritance import InheritanceMixin
 from xmodule.modulestore.tests.test_cross_modulestore_import_export import MongoContentstoreBuilder
 from xmodule.contentstore.content import StaticContent
 from opaque_keys.edx.keys import CourseKey
-from xmodule.modulestore.xml_importer import import_from_xml
+from xmodule.modulestore.xml_importer import import_course_from_xml
 from xmodule.modulestore.django import SignalHandler
 
 if not settings.configured:
@@ -38,7 +38,7 @@ from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.draft_and_published import UnsupportedRevisionError, DIRECT_ONLY_CATEGORIES
 from xmodule.modulestore.exceptions import ItemNotFoundError, DuplicateCourseError, ReferentialIntegrityError, NoPathToItem
 from xmodule.modulestore.mixed import MixedModuleStore
-from xmodule.modulestore.search import path_to_location
+from xmodule.modulestore.search import path_to_location, navigation_index
 from xmodule.modulestore.tests.factories import check_mongo_calls, check_exact_number_of_calls, \
     mongo_uses_error_check
 from xmodule.modulestore.tests.utils import create_modulestore_instance, LocationMixin
@@ -1153,6 +1153,18 @@ class TestMixedModuleStore(CourseComparisonTest):
             with self.assertRaises(ItemNotFoundError):
                 path_to_location(self.store, location)
 
+    def test_navigation_index(self):
+        """
+        Make sure that navigation_index correctly parses the various position values that we might get from calls to
+        path_to_location
+        """
+        self.assertEqual(1, navigation_index("1"))
+        self.assertEqual(10, navigation_index("10"))
+        self.assertEqual(None, navigation_index(None))
+        self.assertEqual(1, navigation_index("1_2"))
+        self.assertEqual(5, navigation_index("5_2"))
+        self.assertEqual(7, navigation_index("7_3_5_6_"))
+
     @ddt.data('draft', 'split')
     def test_revert_to_published_root_draft(self, default_ms):
         """
@@ -2031,9 +2043,9 @@ class TestMixedModuleStore(CourseComparisonTest):
                     # Note: The signal is fired once when the course is created and
                     # a second time after the actual data import.
                     receiver.reset_mock()
-                    import_from_xml(
+                    import_course_from_xml(
                         self.store, self.user_id, DATA_DIR, ['toy'], load_error_modules=False,
                         static_content_store=contentstore,
-                        create_course_if_not_present=True,
+                        create_if_not_present=True,
                     )
                     self.assertEqual(receiver.call_count, 2)

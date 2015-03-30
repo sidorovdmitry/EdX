@@ -94,11 +94,9 @@ FEATURES = {
     # Hide any Personally Identifiable Information from application logs
     'SQUELCH_PII_IN_LOGS': False,
 
-    # Toggles the embargo functionality, which enable embargoing for particular courses
+    # Toggles the embargo functionality, which blocks users
+    # based on their location.
     'EMBARGO': False,
-
-    # Toggles the embargo site functionality, which enable embargoing for the whole site
-    'SITE_EMBARGOED': False,
 
     # Turn on/off Microsites feature
     'USE_MICROSITES': False,
@@ -128,16 +126,13 @@ FEATURES = {
 
     # Enable support for content libraries. Note that content libraries are
     # only supported in courses using split mongo.
-    'ENABLE_CONTENT_LIBRARIES': False,
+    'ENABLE_CONTENT_LIBRARIES': True,
 
     # Milestones application flag
     'MILESTONES_APP': False,
 
     # Prerequisite courses feature flag
     'ENABLE_PREREQUISITE_COURSES': False,
-
-    # Toggle course milestones app/feature
-    'MILESTONES_APP': False,
 
     # Toggle course entrance exams feature
     'ENTRANCE_EXAMS': False,
@@ -217,6 +212,13 @@ LMS_BASE = None
 from lms.envs.common import (
     COURSE_KEY_PATTERN, COURSE_ID_PATTERN, USAGE_KEY_PATTERN, ASSET_KEY_PATTERN
 )
+
+
+######################### CSRF #########################################
+
+# Forwards-compatibility with Django 1.7
+CSRF_COOKIE_AGE = 60 * 60 * 24 * 7 * 52
+
 
 #################### CAPA External Code Evaluation #############################
 XQUEUE_INTERFACE = {
@@ -573,8 +575,13 @@ REQUIRE_EXCLUDE = ("build.txt",)
 REQUIRE_ENVIRONMENT = "node"
 
 # If you want to enable Tender integration (http://tenderapp.com/),
-# put in the domain where Tender hosts tender_widget.js. For example,
-# TENDER_DOMAIN = "example.tenderapp.com"
+# put in the subdomain where Tender hosts tender_widget.js. For example,
+# if you want to use the URL https://example.tenderapp.com/tender_widget.js,
+# you should use "example".
+TENDER_SUBDOMAIN = None
+# If you want to have a vanity domain that points to Tender, put that here.
+# For example, "help.myapp.com". Otherwise, should should be your full
+# tenderapp domain name: for example, "example.tenderapp.com".
 TENDER_DOMAIN = None
 
 ################################# CELERY ######################################
@@ -793,17 +800,19 @@ if FEATURES.get('LABSTER'):
         'labster_admin',
         'labster_accounts',
         'labster_salesforce',
+        'labster_frontend',
         'labster_backoffice.api',
         'labster_backoffice.front_end',
         'labster_backoffice.payments',
         'labster_backoffice.products',
         'labster_backoffice.vouchers',
-        'widget_tweaks',
         'corsheaders',
         'diplomat',
         'form_utils',
         'rest_framework',
         'rest_framework.authtoken',
+        'widget_tweaks',
+        'django_rq',
         # 'profiler',
     )
 
@@ -812,7 +821,6 @@ if FEATURES.get('LABSTER'):
     ) + MIDDLEWARE_CLASSES
 
     CORS_ORIGIN_ALLOW_ALL = True
-    LABSTER_ENABLE_NUTSHELL = False
     LABSTER_ENABLE_SALESFORCE = False
     LABSTER_UNITY_API_PREFIX = "https://www.labster.com"
     LABSTER_BACKOFFICE_BASE_URL = "{}/labster/internal".format(LABSTER_UNITY_API_PREFIX)
@@ -822,6 +830,17 @@ if FEATURES.get('LABSTER'):
     LABSTER_UNITY_URL_PREFIX = "{}unity/".format(LABSTER_S3_BASE_URL)
 
     HIJACK_EMAILS = ['edx+staging-cms@labster.com']
+    LABSTER_LANGUAGES = ('en', 'da')
+
+    RQ_QUEUES = {
+        'default': {
+            'HOST': 'localhost',
+            'PORT': 6379,
+            'DB': 0,
+            'PASSWORD': '',
+            'DEFAULT_TIMEOUT': 600,
+        },
+    }
 
     # MIDDLEWARE_CLASSES += (
     #     'labster.middleware.ProfileMiddleware',
@@ -833,6 +852,7 @@ if FEATURES.get('LABSTER'):
 
 OPTIONAL_APPS = (
     'mentoring',
+    'edx_sga',
 
     # edx-ora2
     'submissions',
@@ -895,6 +915,7 @@ ADVANCED_COMPONENT_TYPES = [
     'graphical_slider_tool',
     'lti',
     'library_content',
+    'edx_sga',
     # XBlocks from pmitros repos are prototypes. They should not be used
     # except for edX Learning Sciences experiments on edge.edx.org without
     # further work to make them robust, maintainable, finalize data formats,

@@ -197,7 +197,6 @@ def library_blocks_view(library, user, response_format):
         'component_templates': json.dumps(component_templates),
         'xblock_info': xblock_info,
         'templates': CONTAINER_TEMPATES,
-        'lib_users_url': reverse_library_url('manage_library_users', unicode(library.location.library_key)),
     })
 
 
@@ -232,4 +231,5 @@ def manage_library_users(request, library_key_string):
         'allow_actions': bool(user_perms & STUDIO_EDIT_ROLES),
         'library_key': unicode(library_key),
         'lib_users_url': reverse_library_url('manage_library_users', library_key_string),
+        'show_children_previews': library.show_children_previews
     })

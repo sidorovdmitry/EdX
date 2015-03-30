@@ -18,11 +18,9 @@ from django.test.utils import override_settings
 from util.testing import UrlResetMixin
 from third_party_auth.tests.testutil import simulate_running_pipeline
 from embargo.test_utils import restrict_course
-from openedx.core.djangoapps.user_api.api import account as account_api
-from openedx.core.djangoapps.user_api.api import profile as profile_api
-from xmodule.modulestore.tests.django_utils import (
-    ModuleStoreTestCase, mixed_store_config
-)
+from openedx.core.djangoapps.user_api.accounts.api import activate_account, create_account
+from openedx.core.djangoapps.user_api.accounts import EMAIL_MAX_LENGTH
+from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory
 from student.tests.factories import CourseModeFactory
 
@@ -53,7 +51,7 @@ class StudentAccountUpdateTest(UrlResetMixin, TestCase):
         # Long email -- subtract the length of the @domain
         # except for one character (so we exceed the max length limit)
         u"{user}@example.com".format(
-            user=(u'e' * (account_api.EMAIL_MAX_LENGTH - 11))
+            user=(u'e' * (EMAIL_MAX_LENGTH - 11))
         )
     ]
 
@@ -63,8 +61,8 @@ class StudentAccountUpdateTest(UrlResetMixin, TestCase):
         super(StudentAccountUpdateTest, self).setUp("student_account.urls")
 
         # Create/activate a new account
-        activation_key = account_api.create_account(self.USERNAME, self.OLD_PASSWORD, self.OLD_EMAIL)
-        account_api.activate_account(activation_key)
+        activation_key = create_account(self.USERNAME, self.OLD_PASSWORD, self.OLD_EMAIL)
+        activate_account(activation_key)
 
         # Login
         result = self.client.login(username=self.USERNAME, password=self.OLD_PASSWORD)
@@ -148,7 +146,7 @@ class StudentAccountUpdateTest(UrlResetMixin, TestCase):
         self.client.logout()
 
         # Create a second user, but do not activate it
-        account_api.create_account(self.ALTERNATE_USERNAME, self.OLD_PASSWORD, self.NEW_EMAIL)
+        create_account(self.ALTERNATE_USERNAME, self.OLD_PASSWORD, self.NEW_EMAIL)
 
         # Send the view the email address tied to the inactive user
         response = self._change_password(email=self.NEW_EMAIL)
@@ -209,7 +207,7 @@ class StudentAccountLoginAndRegistrationTest(UrlResetMixin, ModuleStoreTestCase)
     EMAIL = "bob@example.com"
     PASSWORD = "password"
 
-    @mock.patch.dict(settings.FEATURES, {'ENABLE_COUNTRY_ACCESS': True})
+    @mock.patch.dict(settings.FEATURES, {'EMBARGO': True})
     def setUp(self):
         super(StudentAccountLoginAndRegistrationTest, self).setUp('embargo')
 
@@ -226,8 +224,8 @@ class StudentAccountLoginAndRegistrationTest(UrlResetMixin, ModuleStoreTestCase)
     @ddt.data("account_login", "account_register")
     def test_login_and_registration_form_already_authenticated(self, url_name):
         # Create/activate a new account and log in
-        activation_key = account_api.create_account(self.USERNAME, self.PASSWORD, self.EMAIL)
-        account_api.activate_account(activation_key)
+        activation_key = create_account(self.USERNAME, self.PASSWORD, self.EMAIL)
+        activate_account(activation_key)
         result = self.client.login(username=self.USERNAME, password=self.PASSWORD)
         self.assertTrue(result)
 
@@ -242,6 +240,7 @@ class StudentAccountLoginAndRegistrationTest(UrlResetMixin, ModuleStoreTestCase)
         (True, "account_register"),
     )
     @ddt.unpack
+    @skip('LABSTER')
     def test_login_and_registration_form_signin_preserves_params(self, is_edx_domain, url_name):
         params = {
             'enrollment_action': 'enroll',
@@ -300,8 +299,8 @@ class StudentAccountLoginAndRegistrationTest(UrlResetMixin, ModuleStoreTestCase)
         ]
         self._assert_third_party_auth_data(response, current_provider, expected_providers)
 
-    @ddt.data([], ["honor"], ["honor", "verified", "audit"], ["professional"])
-    @skipUnless(settings.FEATURES['ENABLE_THIRD_PARTY_AUTH'], 'no social')
+    @ddt.data([], ["honor"], ["honor", "verified", "audit"], ["professional"], ["no-id-professional"])
+    @skip('LABSTER')
     def test_third_party_auth_course_id_verified(self, modes):
         # Create a course with the specified course modes
         course = CourseFactory.create()
@@ -402,7 +401,7 @@ class StudentAccountLoginAndRegistrationTest(UrlResetMixin, ModuleStoreTestCase)
         response = self.client.get(reverse("account_login"), {"course_id": unicode(course.id)})
         self._assert_third_party_auth_data(response, None, expected_providers)
 
-    @mock.patch.dict(settings.FEATURES, {'ENABLE_COUNTRY_ACCESS': True})
+    @mock.patch.dict(settings.FEATURES, {'EMBARGO': True})
     @skip('skip')
     def test_third_party_auth_enrollment_embargo(self):
         course = CourseFactory.create()

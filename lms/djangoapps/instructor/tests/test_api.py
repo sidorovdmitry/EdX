@@ -23,6 +23,7 @@ from django.http import HttpRequest, HttpResponse
 from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 from django.utils.timezone import utc
+from django.utils.translation import ugettext as _
 
 from mock import Mock, patch
 from nose.tools import raises
@@ -31,7 +32,6 @@ from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from course_modes.models import CourseMode
 from courseware.models import StudentModule
 from courseware.tests.factories import StaffFactory, InstructorFactory, BetaTesterFactory
-from xmodule.modulestore.tests.django_utils import TEST_DATA_MOCK_MODULESTORE
 from courseware.tests.helpers import LoginEnrollmentTestCase
 from django_comment_common.models import FORUM_ROLE_COMMUNITY_TA
 from django_comment_common.utils import seed_permissions_roles
@@ -57,6 +57,8 @@ from instructor.tests.utils import FakeContentTask, FakeEmail, FakeEmailInfo
 from instructor.views.api import generate_unique_password
 from instructor.views.api import _split_input_list, common_exceptions_400
 from instructor_task.api_helper import AlreadyRunningError
+
+from openedx.core.djangoapps.course_groups.cohorts import set_course_cohort_settings
 
 from .test_tools import msk_from_problem_urlname
 from ..views.tools import get_extended_due
@@ -601,12 +603,6 @@ class TestInstructorAPIEnrollment(ModuleStoreTestCase, LoginEnrollmentTestCase):
         # (comment because pylint C0103(invalid-name))
         # self.maxDiff = None
 
-    def tearDown(self):
-        """
-        Undo all patches.
-        """
-        patch.stopall()
-
     def test_missing_params(self):
         """ Test missing all query parameters. """
         url = reverse('students_update_enrollment', kwargs={'course_id': self.course.id.to_deprecated_string()})
@@ -806,7 +802,7 @@ class TestInstructorAPIEnrollment(ModuleStoreTestCase, LoginEnrollmentTestCase):
         self.assertEqual(
             mail.outbox[0].body,
             "Dear student,\n\nYou have been invited to join {} at edx.org by a member of the course staff.\n\n"
-            "To finish your registration, please visit {proto}://{site}/register and fill out the "
+            "To finish your registration, please visit {proto}://{site}/login and fill out the "
             "registration form making sure to use robot-not-an-email-yet@robot.org in the E-mail field.\n"
             "Once you have registered and activated your account, "
             "visit {proto}://{site}{about_path} to join the course.\n\n----\n"
@@ -827,7 +823,7 @@ class TestInstructorAPIEnrollment(ModuleStoreTestCase, LoginEnrollmentTestCase):
         self.assertEqual(
             mail.outbox[0].body,
             "Dear student,\n\nYou have been invited to join {display_name} at edx.org by a member of the course staff.\n\n"
-            "To finish your registration, please visit {proto}://{site}/register and fill out the registration form "
+            "To finish your registration, please visit {proto}://{site}/login and fill out the registration form "
             "making sure to use robot-not-an-email-yet@robot.org in the E-mail field.\n"
             "You can then enroll in {display_name}.\n\n----\n"
             "This email was automatically sent from edx.org to robot-not-an-email-yet@robot.org".format(
@@ -854,7 +850,7 @@ class TestInstructorAPIEnrollment(ModuleStoreTestCase, LoginEnrollmentTestCase):
         self.assertEqual(
             mail.outbox[0].body,
             "Dear student,\n\nYou have been invited to join {display_name} at edx.org by a member of the course staff.\n\n"
-            "To finish your registration, please visit {proto}://{site}/register and fill out the registration form "
+            "To finish your registration, please visit {proto}://{site}/login and fill out the registration form "
             "making sure to use robot-not-an-email-yet@robot.org in the E-mail field.\n"
             "Once you have registered and activated your account, you will see {display_name} listed on your dashboard.\n\n----\n"
             "This email was automatically sent from edx.org to robot-not-an-email-yet@robot.org".format(
@@ -2008,8 +2004,7 @@ class TestInstructorAPILevelsDataDump(ModuleStoreTestCase, LoginEnrollmentTestCa
         cohorted, and does not when the course is not cohorted.
         """
         url = reverse('get_students_features', kwargs={'course_id': unicode(self.course.id)})
-        self.course.cohort_config = {'cohorted': is_cohorted}
-        self.store.update_item(self.course, self.instructor.id)
+        set_course_cohort_settings(self.course.id, is_cohorted=is_cohorted)
 
         response = self.client.get(url, {})
         res_json = json.loads(response.content)
@@ -2319,7 +2314,6 @@ class TestInstructorAPIRegradeTask(ModuleStoreTestCase, LoginEnrollmentTestCase)
         self.assertEqual(response.status_code, 400)
 
 
-@override_settings(MODULESTORE=TEST_DATA_MOCK_MODULESTORE)
 @patch.dict(settings.FEATURES, {'ENTRANCE_EXAMS': True})
 class TestEntranceExamInstructorAPIRegradeTask(ModuleStoreTestCase, LoginEnrollmentTestCase):
     """
@@ -2375,13 +2369,13 @@ class TestEntranceExamInstructorAPIRegradeTask(ModuleStoreTestCase, LoginEnrollm
             student=self.student,
             course_id=self.course.id,
             module_state_key=self.ee_problem_1.location,
-            state=json.dumps({'attempts': 10}),
+            state=json.dumps({'attempts': 10, 'done': True}),
         )
         ee_module_to_reset2 = StudentModule.objects.create(
             student=self.student,
             course_id=self.course.id,
             module_state_key=self.ee_problem_2.location,
-            state=json.dumps({'attempts': 10}),
+            state=json.dumps({'attempts': 10, 'done': True}),
         )
         self.ee_modules = [ee_module_to_reset1.module_state_key, ee_module_to_reset2.module_state_key]
 
@@ -2521,6 +2515,7 @@ class TestEntranceExamInstructorAPIRegradeTask(ModuleStoreTestCase, LoginEnrollm
         # check response
         tasks = json.loads(response.content)['tasks']
         self.assertEqual(len(tasks), 1)
+        self.assertEqual(tasks[0]['status'], _('Complete'))
 
     def test_list_entrance_exam_instructor_tasks_all_student(self):
         """ Test list task history for entrance exam AND all student. """
@@ -2541,8 +2536,28 @@ class TestEntranceExamInstructorAPIRegradeTask(ModuleStoreTestCase, LoginEnrollm
         })
         self.assertEqual(response.status_code, 400)
 
+    def test_skip_entrance_exam_student(self):
+        """ Test skip entrance exam api for student. """
+        # create a re-score entrance exam task
+        url = reverse('mark_student_can_skip_entrance_exam', kwargs={'course_id': unicode(self.course.id)})
+        response = self.client.post(url, {
+            'unique_student_identifier': self.student.email,
+        })
+        self.assertEqual(response.status_code, 200)
+        # check response
+        message = _('This student (%s) will skip the entrance exam.') % self.student.email
+        self.assertContains(response, message)
 
-@override_settings(MODULESTORE=TEST_DATA_MOCK_MODULESTORE)
+        # post again with same student
+        response = self.client.post(url, {
+            'unique_student_identifier': self.student.email,
+        })
+
+        # This time response message should be different
+        message = _('This student (%s) is already allowed to skip the entrance exam.') % self.student.email
+        self.assertContains(response, message)
+
+
 @patch('bulk_email.models.html_to_text', Mock(return_value='Mocking CourseEmail.text_message'))
 @patch.dict(settings.FEATURES, {'ENABLE_INSTRUCTOR_EMAIL': True, 'REQUIRE_COURSE_EMAIL_AUTH': False})
 class TestInstructorSendEmail(ModuleStoreTestCase, LoginEnrollmentTestCase):
@@ -2702,12 +2717,6 @@ class TestInstructorAPITaskLists(ModuleStoreTestCase, LoginEnrollmentTestCase):
         self.tasks = [self.FakeTask(mock_factory.mock_get_task_completion_info) for _ in xrange(7)]
         self.tasks[-1].make_invalid_output()
 
-    def tearDown(self):
-        """
-        Undo all patches.
-        """
-        patch.stopall()
-
     @patch.object(instructor_task.api, 'get_running_instructor_tasks')
     def test_list_instructor_tasks_running(self, act):
         """ Test list of all running tasks. """
@@ -2806,12 +2815,6 @@ class TestInstructorEmailContentList(ModuleStoreTestCase, LoginEnrollmentTestCas
         self.tasks = {}
         self.emails = {}
         self.emails_info = {}
-
-    def tearDown(self):
-        """
-        Undo all patches.
-        """
-        patch.stopall()
 
     def setup_fake_email_info(self, num_emails, with_failures=False):
         """ Initialize the specified number of fake emails """
@@ -3760,10 +3763,7 @@ class TestBulkCohorting(ModuleStoreTestCase):
         self.staff_user = StaffFactory(course_key=self.course.id)
         self.non_staff_user = UserFactory.create()
         self.tempdir = tempfile.mkdtemp()
-
-    def tearDown(self):
-        if os.path.exists(self.tempdir):
-            shutil.rmtree(self.tempdir)
+        self.addCleanup(shutil.rmtree, self.tempdir)
 
     def call_add_users_to_cohorts(self, csv_data, suffix='.csv', method='POST'):
         """

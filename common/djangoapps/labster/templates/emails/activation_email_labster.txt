@@ -1,0 +1,10 @@
+Thank you for signing up for {{platform_name}}. To get started, please activate your account by clicking on the link below. You may also copy and paste the link into your browser's address bar.
+
+{{ activation_url }}
+
+If you didn't request this, you don't need to do anything, and you won't receive any more email from us. Please do not reply to this e-mail.
+If you have any questions, please don't hesitate to contact us.
+
+All the best,
+
+Labster Team

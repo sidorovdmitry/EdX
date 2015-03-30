@@ -135,6 +135,13 @@ FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
 STRIPE_API_KEY = ''
 STRIPE_PUBLISHABLE_KEY = ''
 
+for queueConfig in RQ_QUEUES.itervalues():
+    queueConfig['ASYNC'] = False
+
+########################## Certificates Web/HTML View #######################
+FEATURES['CERTIFICATES_HTML_VIEW'] = True
+
+
 #####################################################################
 # See if the developer has any local overrides.
 try:

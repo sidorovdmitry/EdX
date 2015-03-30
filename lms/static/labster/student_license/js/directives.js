@@ -1,6 +1,6 @@
 angular.module('LabsterStudentLicense')
 
-  .directive('stripe', function ($location, $http, ngDialog) {
+  .directive('stripe', function ($location, $http, ngDialog, StudentLicenseService) {
     return {
       restrict: 'E',
       scope: {paymentId: '@', email: '@', amount: '@', description: '@', courseId: '@'},
@@ -29,27 +29,9 @@ angular.module('LabsterStudentLicense')
               'Authorization': "Token " + window.requestUser.backoffice.token
             }
           })
-
             .success(function (data, status, headers, config) {
-
               // register the student to the course
-              $http.post(
-                '/labster/enroll-student-course/',
-                {
-                  'course_id': scope.courseId,
-                  'email': scope.email
-                },
-                {
-                    headers: {
-                        'X-CSRFToken': window.csrfToken
-                    }
-                })
-                .success(function(data, status, headers, config) {
-                  var courseId = window.courseId;
-                  ngDialog.close();
-                  var url = '/student_license/' + courseId + '/#/invoice/' + scope.paymentId + '/thank-you';
-                  window.location.href = url;
-                });
+              var enroll = StudentLicenseService.enrollStudentApi(scope.courseId, scope.paymentId, scope.email);
             })
         };
 

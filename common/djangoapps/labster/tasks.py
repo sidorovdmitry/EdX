@@ -1,80 +1,39 @@
-from celery.task import task
-
-from django.contrib.auth.models import User
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
 
-from labster.models import Lab, NutshellUser
-from labster.nutshell import create_new_lead, play_lab, invite_students, view_course
+from django_rq import job
 
-
-ENABLE_NUTSHELL = getattr(settings, 'LABSTER_ENABLE_NUTSHELL', False)
-
-
-def send_nutshell(user_id, lab_id=None):
-    if not ENABLE_NUTSHELL:
-        return False
-
-    user = lab = None
-
-    try:
-        user = User.objects.get(id=user_id)
-    except User.DoesNotExist:
-        return (None, None)
-
-    labster_user = user.labster_user
-    if labster_user.user_type != labster_user.USER_TYPE_TEACHER:
-        return (None, None)
-
-    if lab_id:
-        try:
-            lab = Lab.objects.get(id=lab_id)
-        except Lab.DoesNotExist:
-            pass
-
-    return (user, lab)
+from labster.courses import duplicate_multiple_courses
 
 
-@task()
-def create_nutshell_data(user_id):
-    user, lab = send_nutshell(user_id)
-    if not user:
-        return
+COMPLETED_EMAIL_BODY = """
+Hello,
 
-    profile = user.profile
-    labster_user = user.labster_user
-    name = profile.name
-    email = user.email
-    phone = labster_user.phone_number
-    contact_id, lead_id = create_new_lead(name, email, phone)
+We're happy to inform you the courses you bought are ready.
+Go to dashboard (http://www.labster.com/dashboard) to check it.
 
-    NutshellUser.objects.get_or_create(
-        user=user,
-        contact_id=contact_id,
-        lead_id=lead_id)
+Best Regards,
+Labster
+"""
 
 
-@task()
-def send_play_lab(user_id, lab_id):
-    user, lab = send_nutshell(user_id, lab_id)
-    if not user or not lab:
-        return
-
-    play_lab(user, lab)
-
-
-@task()
-def send_invite_students(user_id, course_id):
-    user, lab = send_nutshell(user_id)
-    if not user:
-        return
-
-    invite_students(user, course_id)
+def send_completed_email(user, course_ids):
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_emails = [
+        user.email,
+    ]
+    subject = "Your {} is Ready".format("Courses" if len(course_ids) > 1 else "Course")
+    body = COMPLETED_EMAIL_BODY.strip()
+    send_mail(subject, body, from_email, to_emails)
 
 
-@task()
-def send_view_course(user_id, course_name):
-    user = send_nutshell(user_id)
-    if not user:
-        return
-
-    view_course(user, course_name)
+@job
+def duplicate_courses(user_id, license_count, all_labs, labs, org, request_user_id=None):
+    user = User.objects.get(id=user_id)
+    course_ids = duplicate_multiple_courses(user, license_count, all_labs, labs, org)
+    if request_user_id:
+        request_user = User.objects.get(id=request_user_id)
+    else:
+        request_user = user
+    send_completed_email(request_user, course_ids)

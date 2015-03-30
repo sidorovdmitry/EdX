@@ -16,6 +16,7 @@ Examples of html5 videos for manual testing:
 import copy
 import json
 import logging
+import random
 from collections import OrderedDict
 from operator import itemgetter
 
@@ -232,10 +233,27 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
 
         track_url, transcript_language, sorted_languages = self.get_transcripts_for_student()
 
+        # CDN_VIDEO_URLS is only to be used here and will be deleted
+        # TODO(ali@edx.org): Delete this after the CDN experiment has completed.
+        html_id = self.location.html_id()
+        if self.system.user_location == 'CN' and \
+                settings.FEATURES.get('ENABLE_VIDEO_BEACON', False) and \
+                html_id in getattr(settings, 'CDN_VIDEO_URLS', {}).keys():
+            cdn_urls = getattr(settings, 'CDN_VIDEO_URLS', {})[html_id]
+            cdn_exp_group, new_source = random.choice(zip(range(len(cdn_urls)), cdn_urls))
+            if cdn_exp_group > 0:
+                sources[0] = new_source
+            cdn_eval = True
+        else:
+            cdn_eval = False
+            cdn_exp_group = None
+
         return self.system.render_template('video.html', {
             'ajax_url': self.system.ajax_url + '/save_user_state',
             'autoplay': settings.FEATURES.get('AUTOPLAY_VIDEOS', False),
             'branding_info': branding_info,
+            'cdn_eval': cdn_eval,
+            'cdn_exp_group': cdn_exp_group,
             # This won't work when we move to data that
             # isn't on the filesystem
             'data_dir': getattr(self, 'data_dir', None),

@@ -5,6 +5,8 @@ from django.conf.urls.static import static
 
 import django.contrib.auth.views
 from microsite_configuration import microsite
+import oauth_exchange.views
+
 from labster.sitemaps import PageSitemap
 
 # Uncomment the next two lines to enable the admin:
@@ -41,6 +43,7 @@ urlpatterns = (
     url(r'^email_confirm/(?P<key>[^/]*)$', 'student.views.confirm_email_change'),
     url(r'^change_name$', 'student.views.change_name_request', name="change_name"),
     url(r'^event$', 'track.views.user_track'),
+    url(r'^performance$', 'performance.views.performance_log'),
     url(r'^segmentio/event$', 'track.views.segmentio.segmentio_event'),
     url(r'^t/(?P<template>[^/]*)$', 'static_template_view.views.index'),   # TODO: Is this used anymore? What is STATIC_GRAB?
 
@@ -79,8 +82,6 @@ urlpatterns = (
     url(r'^lang_pref/', include('lang_pref.urls')),
 
     url(r'^i18n/', include('django.conf.urls.i18n')),
-
-    url(r'^embargo$', 'student.views.embargo', name="embargo"),
 
     # Feedback Form endpoint
     url(r'^submit_feedback$', 'util.views.submit_feedback'),
@@ -304,6 +305,9 @@ if settings.COURSEWARE_ENABLED:
         url(r'^mktg/{}/?$'.format(settings.COURSE_ID_PATTERN),
             'courseware.views.mktg_course_about', name="mktg_about_course"),
 
+        # labster courses
+        url(r'courses/(?P<slug>[\w-]+)/$', 'labster_frontend.views.demo_course', name='labster_demo_course'),
+
         #Inside the course
         url(r'^courses/{}/$'.format(settings.COURSE_ID_PATTERN),
             'courseware.views.course_info', name="course_root"),
@@ -406,6 +410,9 @@ if settings.COURSEWARE_ENABLED:
             'open_ended_grading.views.take_action_on_flags', name='open_ended_flagged_problems_take_action'),
 
         # Cohorts management
+        url(r'^courses/{}/cohorts/settings$'.format(settings.COURSE_KEY_PATTERN),
+            'openedx.core.djangoapps.course_groups.views.course_cohort_settings_handler',
+            name="course_cohort_settings"),
         url(r'^courses/{}/cohorts/(?P<cohort_id>[0-9]+)?$'.format(settings.COURSE_KEY_PATTERN),
             'openedx.core.djangoapps.course_groups.views.cohort_handler', name="cohorts"),
         url(r'^courses/{}/cohorts/(?P<cohort_id>[0-9]+)$'.format(settings.COURSE_KEY_PATTERN),
@@ -420,6 +427,9 @@ if settings.COURSEWARE_ENABLED:
         url(r'^courses/{}/cohorts/debug$'.format(settings.COURSE_KEY_PATTERN),
             'openedx.core.djangoapps.course_groups.views.debug_cohort_mgmt',
             name="debug_cohort_mgmt"),
+        url(r'^courses/{}/cohorts/topics$'.format(settings.COURSE_KEY_PATTERN),
+            'openedx.core.djangoapps.course_groups.views.cohort_discussion_topics',
+            name='cohort_discussion_topics'),
 
         # Open Ended Notifications
         url(r'^courses/{}/open_ended_notifications$'.format(settings.COURSE_ID_PATTERN),
@@ -527,10 +537,11 @@ if settings.FEATURES.get('RESTRICT_ENROLL_BY_REG_METHOD'):
 # Shopping cart
 urlpatterns += (
     url(r'^shoppingcart/', include('shoppingcart.urls')),
+    url(r'^commerce/', include('commerce.urls', namespace='commerce')),
 )
 
-# Country access (embargo)
-if settings.FEATURES.get('ENABLE_COUNTRY_ACCESS'):
+# Embargo
+if settings.FEATURES.get('EMBARGO'):
     urlpatterns += (
         url(r'^embargo/', include('embargo.urls')),
     )
@@ -617,7 +628,20 @@ if settings.FEATURES.get('AUTOMATIC_AUTH_FOR_TESTING'):
 if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
     urlpatterns += (
         url(r'', include('third_party_auth.urls')),
+        url(
+            r'^oauth2/exchange_access_token/(?P<backend>[^/]+)/$',
+            oauth_exchange.views.AccessTokenExchangeView.as_view(),
+            name="exchange_access_token"
+        ),
+        # NOTE: The following login_oauth_token endpoint is DEPRECATED.
+        # Please use the exchange_access_token endpoint instead.
         url(r'^login_oauth_token/(?P<backend>[^/]+)/$', 'student.views.login_oauth_token'),
+    )
+
+# Certificates Web/HTML View
+if settings.FEATURES.get('CERTIFICATES_HTML_VIEW', False):
+    urlpatterns += (
+        url(r'^certificates/html', 'certificates.views.render_html_view', name='cert_html_view'),
     )
 
 # Labster
@@ -627,6 +651,7 @@ if settings.FEATURES.get('LABSTER'):
         url(r'^student_license/(?P<course_id>[^/]+/[^/]+/[^/]+)/$', 'labster.student_license.views.home', name="labster_student_license"),
         url('^labs/', include('labster.backoffice_urls')),
         url('^labster/', include('labster.urls')),
+        url(r'^django-rq/', include('django_rq.urls')),
     )
 
     for path in settings.LABSTER_OLD_PAGES:

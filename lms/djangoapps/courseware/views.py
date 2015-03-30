@@ -23,19 +23,18 @@ from django.utils.timezone import UTC
 from django.views.decorators.http import require_GET, require_POST
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect
-from certificates.api import certificate_downloadable_status, generate_user_certificates
-from certificates.models import CertificateGenerationConfiguration
+from certificates import api as certs_api
 from edxmako.shortcuts import render_to_response, render_to_string, marketing_link
 from django_future.csrf import ensure_csrf_cookie
 from django.views.decorators.cache import cache_control
 from django.db import transaction
-from functools import wraps
 from markupsafe import escape
 
 from courseware import grades
 from courseware.access import has_access, _adjust_start_date_for_beta_testers
-from courseware.courses import get_courses, get_course, get_studio_url, get_course_with_access, sort_by_announcement
-from courseware.courses import sort_by_start_date, get_course_info_section
+from courseware.courses import get_courses, get_course, get_studio_url, get_course_with_access, sort_by_announcement,\
+    get_entrance_exam_content_info
+from courseware.courses import sort_by_start_date, get_course_info_section, get_entrance_exam_score
 from courseware.masquerade import setup_masquerade
 from courseware.model_data import FieldDataCache
 from .module_render import toc_for_course, get_module_for_descriptor, get_module
@@ -51,7 +50,7 @@ from util.cache import cache, cache_if_anonymous
 from xblock.fragment import Fragment
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.exceptions import ItemNotFoundError, NoPathToItem
-from xmodule.modulestore.search import path_to_location
+from xmodule.modulestore.search import path_to_location, navigation_index
 from xmodule.tabs import CourseTabList, StaffGradingTab, PeerGradingTab, OpenEndedGradingTab
 from xmodule.x_module import STUDENT_VIEW
 from xmodule.x_module import STUDENT_LAB_VIEW
@@ -63,7 +62,7 @@ from util.milestones_helpers import get_prerequisite_courses_display
 
 from microsite_configuration import microsite
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from opaque_keys.edx.keys import CourseKey
+from opaque_keys.edx.keys import CourseKey, UsageKey
 from instructor.enrollment import uses_shib
 
 from util.db import commit_on_success_with_read_committed
@@ -320,7 +319,7 @@ def index(request, course_id, chapter=None, section=None,
      - HTTPresponse
     """
 
-    course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+    course_key = CourseKey.from_string(course_id)
 
     user = User.objects.prefetch_related("groups").get(id=request.user.id)
 
@@ -417,6 +416,19 @@ def _index_bulk_op(request, course_key, chapter, section, position):
             # Show empty courseware for a course with no units
             return render_to_response('courseware/courseware.html', context)
         elif chapter is None:
+            # Check first to see if we should instead redirect the user to an Entrance Exam
+            if settings.FEATURES.get('ENTRANCE_EXAMS', False) and course.entrance_exam_enabled:
+                exam_chapter, __ = get_entrance_exam_content_info(request, course)
+                if exam_chapter is not None:
+                    exam_section = None
+                    if exam_chapter.get_children():
+                        exam_section = exam_chapter.get_children()[0]
+                        if exam_section:
+                            return redirect('courseware_section',
+                                            course_id=unicode(course_key),
+                                            chapter=exam_chapter.url_name,
+                                            section=exam_section.url_name)
+
             # passing CONTENT_DEPTH avoids returning 404 for a course with an
             # empty first section and a second section with content
             return redirect_to_course_position(course_module, CONTENT_DEPTH)
@@ -447,6 +459,14 @@ def _index_bulk_op(request, course_key, chapter, section, position):
                 return redirect(reverse('courseware', args=[course.id.to_deprecated_string()]))
             raise Http404
 
+        if settings.FEATURES.get('ENTRANCE_EXAMS', False) and course.entrance_exam_enabled:
+            # Message should not appear outside the context of entrance exam subsection.
+            # if section is none then we don't need to show message on welcome back screen also.
+            if getattr(chapter_module, 'is_entrance_exam', False) and section is not None:
+                __, is_exam_passed = get_entrance_exam_content_info(request, course)
+                context['entrance_exam_current_score'] = get_entrance_exam_score(request, course)
+                context['entrance_exam_passed'] = is_exam_passed
+
         if section is not None:
             section_descriptor = chapter_descriptor.get_child_by(lambda m: m.location.name == section)
 
@@ -474,8 +494,8 @@ def _index_bulk_op(request, course_key, chapter, section, position):
 
             # Load all descendants of the section, because we're going to display its
             # html, which in general will need all of its children
-            section_field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
-                course_key, user, section_descriptor, depth=None, asides=XBlockAsidesConfig.possible_asides()
+            field_data_cache.add_descriptor_descendents(
+                section_descriptor, depth=None
             )
 
             # Verify that position a string is in fact an int
@@ -489,7 +509,7 @@ def _index_bulk_op(request, course_key, chapter, section, position):
                 request.user,
                 request,
                 section_descriptor,
-                section_field_data_cache,
+                field_data_cache,
                 course_key,
                 position
             )
@@ -610,8 +630,8 @@ def jump_to(_request, course_id, location):
     has access, and what they should see.
     """
     try:
-        course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
-        usage_key = course_key.make_usage_key_from_deprecated_string(location)
+        course_key = CourseKey.from_string(course_id)
+        usage_key = UsageKey.from_string(location).replace(course_key=course_key)
     except InvalidKeyError:
         raise Http404(u"Invalid course_key or usage_key")
     try:
@@ -625,13 +645,27 @@ def jump_to(_request, course_id, location):
     # args provided by the redirect.
     # Rely on index to do all error handling and access control.
     if chapter is None:
-        return redirect('courseware', course_id=course_key.to_deprecated_string())
+        return redirect('courseware', course_id=unicode(course_key))
     elif section is None:
-        return redirect('courseware_chapter', course_id=course_key.to_deprecated_string(), chapter=chapter)
+        return redirect('courseware_chapter', course_id=unicode(course_key), chapter=chapter)
     elif position is None:
-        return redirect('courseware_section', course_id=course_key.to_deprecated_string(), chapter=chapter, section=section)
+        return redirect(
+            'courseware_section',
+            course_id=unicode(course_key),
+            chapter=chapter,
+            section=section
+        )
     else:
-        return redirect('courseware_position', course_id=course_key.to_deprecated_string(), chapter=chapter, section=section, position=position)
+        # Here we use the navigation_index from the position returned from
+        # path_to_location - we can only navigate to the topmost vertical at the
+        # moment
+        return redirect(
+            'courseware_position',
+            course_id=unicode(course_key),
+            chapter=chapter,
+            section=section,
+            position=navigation_index(position)
+        )
 
 
 @ensure_csrf_cookie
@@ -642,7 +676,6 @@ def course_info(request, course_id):
 
     Assumes the course_id is in a valid format.
     """
-
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
 
     with modulestore().bulk_operations(course_key):
@@ -1033,7 +1066,7 @@ def _progress(request, course_key, student_id):
         raise Http404
 
     # checking certificate generation configuration
-    show_generate_cert_btn = CertificateGenerationConfiguration.current().enabled
+    show_generate_cert_btn = certs_api.cert_generation_enabled(course_key)
 
     context = {
         'course': course,
@@ -1043,12 +1076,12 @@ def _progress(request, course_key, student_id):
         'staff_access': staff_access,
         'student': student,
         'reverifications': fetch_reverify_banner_info(request, course_key),
-        'passed': is_course_passed(course, grade_summary) if show_generate_cert_btn else False,
+        'passed': is_course_passed(course, grade_summary),
         'show_generate_cert_btn': show_generate_cert_btn
     }
 
     if show_generate_cert_btn:
-        context.update(certificate_downloadable_status(student, course_key))
+        context.update(certs_api.certificate_downloadable_status(student, course_key))
 
     with grades.manual_transaction():
         response = render_to_response('courseware/progress.html', context)
@@ -1295,11 +1328,12 @@ def fetch_reverify_banner_info(request, course_key):
     user = request.user
     if not user.id:
         return reverifications
-    enrollment = CourseEnrollment.get_or_create_enrollment(request.user, course_key)
-    course = modulestore().get_course(course_key)
-    info = single_course_reverification_info(user, course, enrollment)
-    if info:
-        reverifications[info.status].append(info)
+    enrollment = CourseEnrollment.get_enrollment(request.user, course_key)
+    if enrollment is not None:
+        course = modulestore().get_course(course_key)
+        info = single_course_reverification_info(user, course, enrollment)
+        if info:
+            reverifications[info.status].append(info)
     return reverifications
 
 
@@ -1552,10 +1586,10 @@ def generate_user_cert(request, course_id):
     if not is_course_passed(course, None, student, request):
         return HttpResponseBadRequest(_("Your certificate will be available when you pass the course."))
 
-    certificate_status = certificate_downloadable_status(student, course.id)
+    certificate_status = certs_api.certificate_downloadable_status(student, course.id)
 
     if not certificate_status["is_downloadable"] and not certificate_status["is_generating"]:
-        generate_user_certificates(student, course)
+        certs_api.generate_user_certificates(student, course.id)
         _track_successful_certificate_generation(student.id, course.id)
         return HttpResponse(_("Creating certificate"))
 

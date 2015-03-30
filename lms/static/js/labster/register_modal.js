@@ -76,7 +76,6 @@ function registerModalInit(options) {
               xhr.setRequestHeader("Authorization", "Token " + window.user.token_key);
           },
           success: function(response) {
-            console.log("success");
           },
           error: function(obj, msg, status) {
           }
