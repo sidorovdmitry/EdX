@@ -197,3 +197,8 @@ button.labster-register {
   width: 882px;
   height: 500px;
 }
+
+#course_video_bottom iframe {
+  width: 741px;
+  height: 416px;
+}

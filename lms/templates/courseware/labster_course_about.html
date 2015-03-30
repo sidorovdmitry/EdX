@@ -289,6 +289,13 @@
 
       <div class="inner-wrapper">
         ${get_course_about_section(course, "overview")}
+
+        % if get_course_about_section(course, "video"):
+          <h2>TRAILER VIDEO</h2>
+          <div id="course_video_bottom">
+            ${get_course_about_section(course, "video")}
+          </div>
+        % endif
       </div>
     </section>
 
