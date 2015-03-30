@@ -68,6 +68,7 @@ def create_problem_from_tree(quiz_block, tree):
 def create_answer_from_tree(problem, tree):
     order = 1
     Answer.objects.filter(problem=problem).update(is_active=False)
+    Answer.objects.filter(problem=problem).update(is_correct=False)
     for options in tree.getchildren():
         if options.tag != 'Options':
             continue
