@@ -99,6 +99,12 @@ button.labster-register {
     border: 1px solid #ccc;
 }
 
+.course-info header.course-profile .intro-inner-wrapper .media .hero .play-intro {
+    background-image: -webkit-linear-gradient(-90deg,rgba(195,0,0,0.65),rgba(195, 0, 0, 0.80));
+    background-image: linear-gradient(-90deg,rgba(195,0,0,0.65),rgba(195, 0, 0, 0.80));
+    width: 90px;
+}
+
 .labster-register-box-container {
     display: -webkit-flex;
     display: flex;
