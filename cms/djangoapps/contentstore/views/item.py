@@ -159,15 +159,17 @@ def xblock_handler(request, usage_key_string):
             return JsonResponse()
         else:  # Since we have a usage_key, we are updating an existing xblock.
             lab_id_changed = False
+            xblock = _get_xblock(usage_key, request.user)
             try:
                 lab_id = int(request.json.get('labId'))
             except TypeError:
                 lab_id = None
             else:
-                xblock = _get_xblock(usage_key, request.user)
                 lab_id_changed = xblock.lab_id != lab_id
 
             labster_language = request.json.get('labsterLanguage', 'en')
+            labster_language_changed = labster_language != xblock.labster_language
+
             response = _save_xblock(
                 request.user,
                 _get_xblock(usage_key, request.user),
@@ -181,7 +183,7 @@ def xblock_handler(request, usage_key_string):
                 labster_language=labster_language,
             )
 
-            if lab_id_changed:
+            if lab_id_changed or labster_language_changed:
                 from labster.proxies import prepare_lab_from_lab_id
                 xblock = _get_xblock(usage_key, request.user)
                 prepare_lab_from_lab_id(lab_id, xblock.location.to_deprecated_string(),
