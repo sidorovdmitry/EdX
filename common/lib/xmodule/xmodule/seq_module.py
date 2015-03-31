@@ -58,8 +58,7 @@ class SequenceFields(object):
         scope=Scope.content,
     )
 
-
-class LabsterFields(object):
+    # labster fields
     lab_id = Integer(help="Lab ID if the gradeType is Lab", scope=Scope.settings)
     labster_language = String(
         display_name=_("Labster Lab Language"),
@@ -69,7 +68,7 @@ class LabsterFields(object):
     )
 
 
-class SequenceModule(SequenceFields, LabsterFields, XModule):
+class SequenceModule(SequenceFields, XModule):
     ''' Layout module which lays out content in a temporal sequence
     '''
     js = {
