@@ -66,8 +66,8 @@ def user_attempts_to_rows(user_attempts):
             answered.append(user_answer.quiz_id)
 
             row = [
-                user.email,
-                user.profile.name,
+                user.email.encode('utf-8'),
+                user.profile.name.encode('utf-8'),
                 user_answer.question.encode('utf-8'),
                 user_answer.answer_string.encode('utf-8'),
                 user_answer.correct_answer.encode('utf-8'),
