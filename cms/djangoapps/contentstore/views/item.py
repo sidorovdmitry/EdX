@@ -168,7 +168,7 @@ def xblock_handler(request, usage_key_string):
                 lab_id_changed = xblock.lab_id != lab_id
 
             labster_language = request.json.get('labsterLanguage', 'en')
-            labster_language_changed = labster_language != xblock.labster_language
+            labster_language_changed = labster_language != getattr(xblock, 'labster_language', 'en')
 
             response = _save_xblock(
                 request.user,
