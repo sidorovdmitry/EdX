@@ -85,18 +85,13 @@ add_teacher_to_license = AddTeacherToLicense.as_view()
 duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
 
 
-class LoginRequiredMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
-        return login_required(view)
-
+# Start from here is code for Labster BackOffice, views is in edX while urls, models, and templates are in another repo
 
 def home(request):
     return HttpResponseRedirect(reverse('license:index'))
 
 
-class IndexView(LoginRequiredMixin, generic.ListView):
+class IndexView(StaffMixin, generic.ListView):
     template_name = "vouchers/index.html"
     context_object_name = 'voucher_list'
     paginate_by = 20
@@ -119,7 +114,7 @@ class IndexView(LoginRequiredMixin, generic.ListView):
         return result
 
 
-class VoucherCreate(LoginRequiredMixin, generic.CreateView):
+class VoucherCreate(StaffMixin, generic.CreateView):
     form_class = VoucherForm
     template_name = "vouchers/create.html"
 
@@ -127,7 +122,7 @@ class VoucherCreate(LoginRequiredMixin, generic.CreateView):
         return reverse('voucher:index')
 
 
-class VoucherUpdate(LoginRequiredMixin, generic.UpdateView):
+class VoucherUpdate(StaffMixin, generic.UpdateView):
     model = Voucher
     form_class = VoucherForm
     template_name = "vouchers/update.html"
@@ -143,7 +138,7 @@ class VoucherUpdate(LoginRequiredMixin, generic.UpdateView):
         return context
 
 
-class VoucherDelete(LoginRequiredMixin, generic.DeleteView):
+class VoucherDelete(StaffMixin, generic.DeleteView):
     model = Voucher
     template_name = "vouchers/delete.html"
 
@@ -151,7 +146,7 @@ class VoucherDelete(LoginRequiredMixin, generic.DeleteView):
         return reverse('voucher:index')
 
 
-class PaymentIndexView(LoginRequiredMixin, generic.ListView):
+class PaymentIndexView(StaffMixin, generic.ListView):
     template_name = "payment/index.html"
     context_object_name = 'payment_list'
     paginate_by = 20
@@ -175,7 +170,7 @@ class PaymentIndexView(LoginRequiredMixin, generic.ListView):
 
 
 # FIXME: deprecated
-class PaymentCreate(LoginRequiredMixin, generic.CreateView):
+class PaymentCreate(StaffMixin, generic.CreateView):
     # form_class = PaymentForm
     from_class = forms.ModelForm
     model = Payment
@@ -197,7 +192,7 @@ class PaymentCreate(LoginRequiredMixin, generic.CreateView):
         return form_kwargs
 
 
-class PaymentDetail(LoginRequiredMixin, generic.DetailView):
+class PaymentDetail(StaffMixin, generic.DetailView):
     model = Payment
     template_name = 'payment/detail.html'
 
@@ -294,7 +289,7 @@ class PaymentDetailPDF(generic.View):
             return HttpResponse(rendered)
 
 
-class LicenseIndexView(LoginRequiredMixin, generic.ListView):
+class LicenseIndexView(StaffMixin, generic.ListView):
     template_name = "license/index.html"
     context_object_name = 'license_list'
     paginate_by = 20
@@ -317,7 +312,7 @@ class LicenseIndexView(LoginRequiredMixin, generic.ListView):
         return result
 
 
-class LicenseCreate(LoginRequiredMixin, generic.CreateView):
+class LicenseCreate(StaffMixin, generic.CreateView):
     template_name = "license/form.html"
     model = License
     form_class = LicenseForm
@@ -326,7 +321,7 @@ class LicenseCreate(LoginRequiredMixin, generic.CreateView):
         return reverse('license:index')
 
 
-class LicenseUpdate(LoginRequiredMixin, generic.UpdateView):
+class LicenseUpdate(StaffMixin, generic.UpdateView):
     template_name = "license/form.html"
     model = License
     form_class = LicenseForm
