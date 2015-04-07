@@ -39,7 +39,7 @@ class Home(StaffMixin, generic.TemplateView):
 
 
 class AddTeacherToLicense(StaffMixin, generic.FormView):
-    template_name = "labster_admin/add_teacher_to_license.html"
+    template_name = "admin/add_teacher_to_license.html"
     form_class = TeacherToLicenseForm
 
     def get_success_url(self):
