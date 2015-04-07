@@ -819,8 +819,9 @@ if FEATURES.get('LABSTER'):
 
     CORS_ORIGIN_ALLOW_ALL = True
     LABSTER_ENABLE_SALESFORCE = False
-    LABSTER_UNITY_API_PREFIX = "https://www.labster.com"
-    LABSTER_BACKOFFICE_BASE_URL = "{}/labster/internal".format(LABSTER_UNITY_API_PREFIX)
+    LABSTER_UNITY_API_PREFIX = "https://www.labster.com"    
+    LABSTER_CMS_BASE = 'https://studio.labster.com'
+    LABSTER_BACKOFFICE_BASE_URL = "{}/labster/internal".format(LABSTER_CMS_BASE)
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
 
     LABSTER_S3_BASE_URL = "https://labster.s3.amazonaws.com/"

@@ -34,16 +34,16 @@ class StaffMixin(object):
         return super(StaffMixin, self).dispatch(*args, **kwargs)
 
 
-class Home(StaffMixin, generic.TemplateView):
-    template_name = "labster_admin/home.html"
+# class Home(StaffMixin, generic.TemplateView):
+#     template_name = "labster_admin/home.html"
 
 
 class AddTeacherToLicense(StaffMixin, generic.FormView):
-    template_name = "admin/add_teacher_to_license.html"
+    template_name = "labster_backoffice/add_teacher_to_license.html"
     form_class = TeacherToLicenseForm
 
     def get_success_url(self):
-        return reverse('labster_add_teacher_to_license')
+        return reverse('labster-backoffice:labster_add_teacher_to_license')
 
     def get_context_data(self, **kwargs):
         context = super(AddTeacherToLicense, self).get_context_data(**kwargs)
@@ -60,11 +60,11 @@ class AddTeacherToLicense(StaffMixin, generic.FormView):
 
 
 class DuplicateMultipleCourse(StaffMixin, generic.FormView):
-    template_name = "labster_admin/duplicate_multiple_courses.html"
+    template_name = "labster_backoffice/duplicate_multiple_courses.html"
     form_class = DuplicateMultipleCourseForm
 
     def get_success_url(self):
-        return reverse('labster_duplicate_multiple_courses')
+        return reverse('labster-backoffice:labster_duplicate_multiple_courses')
 
     def get_context_data(self, **kwargs):
         context = super(DuplicateMultipleCourse, self).get_context_data(**kwargs)
@@ -80,7 +80,7 @@ class DuplicateMultipleCourse(StaffMixin, generic.FormView):
         return super(DuplicateMultipleCourse, self).form_valid(form)
 
 
-home = Home.as_view()
+# home = Home.as_view()
 add_teacher_to_license = AddTeacherToLicense.as_view()
 duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
 
@@ -88,7 +88,7 @@ duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
 # Start from here is code for Labster BackOffice, views is in edX while urls, models, and templates are in another repo
 
 def home(request):
-    return HttpResponseRedirect(reverse('license:index'))
+    return HttpResponseRedirect(reverse('labster-backoffice:license:index'))
 
 
 class IndexView(StaffMixin, generic.ListView):
@@ -119,7 +119,7 @@ class VoucherCreate(StaffMixin, generic.CreateView):
     template_name = "vouchers/create.html"
 
     def get_success_url(self):
-        return reverse('voucher:index')
+        return reverse('labster-backoffice:voucher:index')
 
 
 class VoucherUpdate(StaffMixin, generic.UpdateView):
@@ -128,7 +128,7 @@ class VoucherUpdate(StaffMixin, generic.UpdateView):
     template_name = "vouchers/update.html"
 
     def get_success_url(self):
-        return reverse('voucher:index')
+        return reverse('labster-backoffice:voucher:index')
 
     def get_context_data(self, **kwargs):
 
@@ -143,7 +143,7 @@ class VoucherDelete(StaffMixin, generic.DeleteView):
     template_name = "vouchers/delete.html"
 
     def get_success_url(self):
-        return reverse('voucher:index')
+        return reverse('labster-backoffice:voucher:index')
 
 
 class PaymentIndexView(StaffMixin, generic.ListView):
@@ -177,11 +177,11 @@ class PaymentCreate(StaffMixin, generic.CreateView):
     template_name = "payment/buy_lab.html"
 
     def get_success_url(self):
-        return reverse('payment:index')
+        return reverse('labster-backoffice:payment:index')
 
     def get_context_data(self, **kwargs):
         context = super(PaymentCreate, self).get_context_data(**kwargs)
-        context['action'] = reverse('payment:buy_lab')
+        context['action'] = reverse('labster-backoffice:payment:buy_lab')
 
         return context
 
@@ -199,7 +199,7 @@ class PaymentDetail(StaffMixin, generic.DetailView):
 
 @login_required
 def activate_payment_view(request, payment_id):
-    return HttpResponseRedirect(reverse('payment:index'))
+    return HttpResponseRedirect(reverse('labster-backoffice:payment:index'))
 
     # FIXME: updating DB should use POST
     if payment_id:
@@ -217,7 +217,7 @@ def activate_payment_view(request, payment_id):
                                 date_end_license=date_end_license, is_active=True)
         valid_license.save()
 
-        return HttpResponseRedirect(reverse('payment:index'))
+        return HttpResponseRedirect(reverse('labster-backoffice:payment:index'))
 
 
 @login_required
@@ -252,7 +252,7 @@ def send_invoice_view(request, pk):
 
     try:
         payment = Payment.objects.get(pk=pk)
-        link_to_payment = reverse("payment:detail", args=[pk])
+        link_to_payment = reverse("labster-backoffice:payment:detail", args=[pk])
         link_to_payment = request.build_absolute_uri(link_to_payment)
         send_invoice_mail(link_to_payment, payment)
     except Payment.DoesNotExist:
@@ -318,7 +318,7 @@ class LicenseCreate(StaffMixin, generic.CreateView):
     form_class = LicenseForm
 
     def get_success_url(self):
-        return reverse('license:index')
+        return reverse('labster-backoffice:license:index')
 
 
 class LicenseUpdate(StaffMixin, generic.UpdateView):
@@ -327,7 +327,7 @@ class LicenseUpdate(StaffMixin, generic.UpdateView):
     form_class = LicenseForm
 
     def get_success_url(self):
-        return reverse('license:index')
+        return reverse('labster-backoffice:license:index')
 
 
 @login_required
@@ -338,9 +338,9 @@ def deactivate_license_view(request, license_id):
         license_data.is_active = False
         license_data.save()
 
-        return HttpResponseRedirect(reverse('license:index'))
+        return HttpResponseRedirect(reverse('labster-backoffice:license:index'))
     else:
-        return HttpResponseRedirect(reverse('license:index'))
+        return HttpResponseRedirect(reverse('labster-backoffice:license:index'))
 
 
 @login_required
@@ -351,4 +351,4 @@ def activate_license_view(request, license_id):
         license_data.is_active = True
         license_data.save()
 
-        return HttpResponseRedirect(reverse('license:index'))
+        return HttpResponseRedirect(reverse('labster-backoffice:license:index'))
