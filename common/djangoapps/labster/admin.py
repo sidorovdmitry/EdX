@@ -43,13 +43,13 @@ class LabAdminForm(forms.ModelForm):
 
     def clean_demo_course_id(self):
         demo_course_id = self.cleaned_data.get('demo_course_id')
-        try:
-            course_key = SlashSeparatedCourseKey.from_deprecated_string(demo_course_id)
-            get_course(course_key)
-        except:
-            raise forms.ValidationError('invalid course ID')
-        else:
-            return demo_course_id
+        if demo_course_id:
+            try:
+                course_key = SlashSeparatedCourseKey.from_deprecated_string(demo_course_id)
+                get_course(course_key)
+            except:
+                raise forms.ValidationError('invalid course ID')
+        return demo_course_id
 
     def clean(self):
         cleaned_data = super(LabAdminForm, self).clean()
