@@ -464,7 +464,7 @@ LANGUAGES = [
         location.reload();
       });
 
-      if (browser.mozilla) {
+      if (browser.mozilla || browser.safari) {
         jQuery('.browser.firefox').show();
         jQuery('#course-content').css(
             'background-position', 'top -50px right -90px');
