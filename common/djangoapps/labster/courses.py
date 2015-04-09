@@ -54,7 +54,6 @@ def get_org(user):
 
 
 def duplicate_course(source, target, user, fields=None, replace_org=False):
-    from contentstore.utils import delete_course_and_groups
 
     org = target.split('/')[0]
     source_org = source.split('/')[0]
@@ -67,7 +66,9 @@ def duplicate_course(source, target, user, fields=None, replace_org=False):
     dest_course_id = course_key_from_str(target)
 
     mstore = modulestore()
-    delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
+
+    # from contentstore.utils import delete_course_and_groups
+    # delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
 
     try:
         with mstore.bulk_operations(dest_course_id):
