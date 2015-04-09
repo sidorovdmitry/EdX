@@ -59,7 +59,7 @@ class CourseDuplicateForm(forms.Form):
         source = self.cleaned_data.get('source')
         target = self.cleaned_data.get('target')
 
-        course = duplicate_course(source, target, user)
+        course = duplicate_course(source, target, user, replace_org=False)
 
         return course
 

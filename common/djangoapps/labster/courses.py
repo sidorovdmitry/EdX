@@ -53,14 +53,14 @@ def get_org(user):
     return org
 
 
-def duplicate_course(source, target, user, fields=None):
+def duplicate_course(source, target, user, fields=None, replace_org=False):
     from contentstore.utils import delete_course_and_groups
 
     org = target.split('/')[0]
     source_org = source.split('/')[0]
     target_org = org
 
-    if source_org == target_org:
+    if replace_org and source_org == target_org:
         target = target.replace(org, get_org(user))
 
     source_course_id = course_key_from_str(source)
