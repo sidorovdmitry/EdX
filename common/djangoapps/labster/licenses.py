@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 
 from courseware.courses import get_course
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
+from student.models import UserProfile
 
 from labster.models import LabsterUserLicense
 
@@ -31,7 +32,13 @@ def get_user_licenses(course_id):
     user_licenses = LabsterUserLicense.get_for_course(course_id)
     emails = [each.email for each in user_licenses]
     users = User.objects.filter(email__in=emails).prefetch_related('profile')
-    name_by_emails = {user.email: user.profile.name for user in users}
+    name_by_emails = {}
+    for user in users:
+        try:
+            profile = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            profile = UserProfile.objects.create(user=user)
+        name_by_emails[user.email] = profile.name
 
     return [
         {
