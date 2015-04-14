@@ -19,7 +19,7 @@ from dateutil.relativedelta import relativedelta
 from labster_admin.forms import TeacherToLicenseForm, DuplicateMultipleCourseForm
 
 from labster_backoffice.models import Voucher, Payment, PaymentProduct, License
-from labster_backoffice.forms import VoucherForm, StripePaymentForm, LicenseForm
+from labster_backoffice.forms import VoucherForm, StripePaymentForm, LicenseForm, ActivateDeactivateUserForm
 from labster_backoffice.helpers import send_invoice_mail, send_confirmation_mail
 
 
@@ -32,10 +32,6 @@ class StaffMixin(object):
     @method_decorator(user_passes_test(is_staff))
     def dispatch(self, *args, **kwargs):
         return super(StaffMixin, self).dispatch(*args, **kwargs)
-
-
-# class Home(StaffMixin, generic.TemplateView):
-#     template_name = "labster_admin/home.html"
 
 
 class AddTeacherToLicense(StaffMixin, generic.FormView):
@@ -80,12 +76,34 @@ class DuplicateMultipleCourse(StaffMixin, generic.FormView):
         return super(DuplicateMultipleCourse, self).form_valid(form)
 
 
-# home = Home.as_view()
 add_teacher_to_license = AddTeacherToLicense.as_view()
 duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
+activate_deactivate_user = ActivateDeactivateUser.as_view()
 
 
 # Start from here is code for Labster BackOffice, views is in edX while urls, models, and templates are in another repo
+
+class ActivateDeactivateUser(StaffMixin, generic.FormView):
+    template_name = "labster_backoffice/activate_deactivate_user.html"
+    form_class = ActivateDeactivateUserForm
+
+    def get_success_url(self):
+        return reverse('labster-backoffice:labster-activate-deactivate-user')
+
+    def get_context_data(self, **kwargs):
+        context = super(ActivateDeactivateUser, self).get_context_data(**kwargs)
+        return context
+
+    def form_valid(self, form):
+        activate_user = form.save()
+
+        if activate_user:
+            messages.success(self.request, "The users have been activated")
+        else:
+            messages.success(self.request, "The users have been deactivated")
+
+        return super(ActivateDeactivateUser, self).form_valid(form)
+
 
 def home(request):
     return HttpResponseRedirect(reverse('labster-backoffice:license:index'))
