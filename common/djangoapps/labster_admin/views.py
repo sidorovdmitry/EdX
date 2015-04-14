@@ -76,11 +76,6 @@ class DuplicateMultipleCourse(StaffMixin, generic.FormView):
         return super(DuplicateMultipleCourse, self).form_valid(form)
 
 
-add_teacher_to_license = AddTeacherToLicense.as_view()
-duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
-activate_deactivate_user = ActivateDeactivateUser.as_view()
-
-
 # Start from here is code for Labster BackOffice, views is in edX while urls, models, and templates are in another repo
 
 class ActivateDeactivateUser(StaffMixin, generic.FormView):
@@ -370,3 +365,8 @@ def activate_license_view(request, license_id):
         license_data.save()
 
         return HttpResponseRedirect(reverse('labster-backoffice:license:index'))
+
+
+add_teacher_to_license = AddTeacherToLicense.as_view()
+duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
+activate_deactivate_user = ActivateDeactivateUser.as_view()
