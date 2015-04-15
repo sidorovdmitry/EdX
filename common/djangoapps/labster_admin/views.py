@@ -106,7 +106,7 @@ class UploadCsvVat(StaffMixin, generic.FormView):
     form_class = UploadCsvVatForm
 
     def get_success_url(self):
-        return reverse('labster_backoffice:labster-upload-vat')
+        return reverse('labster-backoffice:labster-upload-vat')
 
     def get_context_data(self, **kwargs):
         context = super(UploadCsvVat, self).get_context_data(**kwargs)
