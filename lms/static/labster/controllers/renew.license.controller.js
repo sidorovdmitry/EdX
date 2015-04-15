@@ -46,26 +46,11 @@ angular.module('LabsterBackOffice')
       });
 
     $scope.checkVat = function () {
-      /*
-       apply tax if:
-       1. Private person within EU
-       2. Private institution/school in Denmark
-       */
-      $scope.totalPrice = 0;
-      $scope.tax = 0;
-      $scope.is_denmark = false;
-      $scope.is_eu_country = LicenseService.checkEuCountry($scope.country);
+      // call function checkVat() in vat.js
+      var vatResult = checkVatHelper($scope.country, $scope.subTotalPrice, $scope.institution_type);
 
-      if ($scope.country.name == "Denmark") {
-        $scope.is_denmark = true;
-      }
-
-      if (($scope.is_eu_country && $scope.institution_type == 1) ||
-        ( $scope.is_denmark && $scope.institution_type == 2)) {
-        $scope.tax = 25 / 100 * $scope.subTotalPrice;
-      }
-
-      $scope.totalPrice = $scope.tax + $scope.subTotalPrice;
+      $scope.totalPrice = vatResult.totalPrice;
+      $scope.tax = vatResult.vat;
     };
 
     $scope.buyLabs = function () {

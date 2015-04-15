@@ -77,3 +77,30 @@ function getIndexCountryByCode(countryCode, all_countries) {
   }
   return 0;
 };
+
+function checkVatHelper(country, subTotalPrice, institution_type){
+  /*
+   apply tax if:
+   1. Private person within EU
+   2. Private institution/school in Denmark
+   */
+  var totalPrice, vat = 0;
+  var is_denmark = false;
+  var is_eu_country = checkEuCountry(country);
+
+  if (country.name == "Denmark") {
+    is_denmark = true;
+  }
+
+  if ((is_eu_country && institution_type == 1) ||
+    ( is_denmark && institution_type == 2)) {
+    vat = 25 / 100 * subTotalPrice;
+  }
+
+  totalPrice = vat + subTotalPrice;
+
+  return {
+    vat: vat,
+    totalPrice: totalPrice
+  };
+};
