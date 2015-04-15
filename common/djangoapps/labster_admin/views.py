@@ -18,7 +18,8 @@ from dateutil.relativedelta import relativedelta
 
 from labster_admin.forms import TeacherToLicenseForm, DuplicateMultipleCourseForm
 
-from labster_backoffice.models import Voucher, Payment, PaymentProduct, License
+from labster_backoffice.models import Voucher, Payment, PaymentProduct, \
+    License, CountryVat
 from labster_backoffice.forms import VoucherForm, StripePaymentForm, \
     LicenseForm, ActivateDeactivateUserForm, UploadCsvVatForm
 from labster_backoffice.helpers import send_invoice_mail, send_confirmation_mail
@@ -99,6 +100,29 @@ class ActivateDeactivateUser(StaffMixin, generic.FormView):
             messages.success(self.request, "The users have been deactivated")
 
         return super(ActivateDeactivateUser, self).form_valid(form)
+
+
+class VatIndexView(StaffMixin, generic.ListView):
+    template_name = "labster_backoffice/index_vat.html"
+    context_object_name = 'country_vat_list'
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        context = super(VatIndexView, self).get_context_data(**kwargs)
+        context['keyword'] = self.request.GET.get('keyword', '')
+        return context
+
+    def get_queryset(self):
+        """ Return the list of voucher. """
+        result = CountryVat.objects.all().order_by('-id')
+
+        keyword = self.request.GET.get('keyword')
+        if keyword:
+            result = result.filter(
+                Q(country_code__icontains=keyword) | Q(country_name__icontains=keyword)
+            )
+
+        return result
 
 
 class UploadCsvVat(StaffMixin, generic.FormView):
@@ -391,3 +415,4 @@ add_teacher_to_license = AddTeacherToLicense.as_view()
 duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
 activate_deactivate_user = ActivateDeactivateUser.as_view()
 upload_vat = UploadCsvVat.as_view()
+index_vat = VatIndexView.as_view()
