@@ -18,9 +18,11 @@ from diplomat.models import ISOCountry
 from labster_backoffice.api.serializers import PaymentSerializer, PaymentStripeSerializer, \
     ProductSerializer, PaymentListSerializer, LicenseListSerializer, \
     ProductGroupSerializer, CountrySerializer, PaymentProductMinSerializer, UserLicenseSerializer, VoucherSerializer, \
-    PaymentModelSerializer
+    PaymentModelSerializer, CountryVatSerializer
 
-from labster_backoffice.models import Payment, PaymentProduct, PaymentStripe, License, Product, ProductGroup, Voucher, create_license
+from labster_backoffice.models import Payment, PaymentProduct, PaymentStripe, License, Product, ProductGroup, Voucher, \
+    CountryVat
+from labster_backoffice.models import create_license
 
 
 class AuthMixin:
@@ -472,8 +474,23 @@ class LicenseList(AuthMixin, ListAPIView):
 
 
 class CountryList(ListAPIView):
-    model = ISOCountry
-    serializer_class = CountrySerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        countries = ISOCountry.objects.all()
+        countries_serializer = CountrySerializer(countries, many=True)
+
+        countries_vat = CountryVat.objects.all()
+        countries_vat_serializer = CountryVatSerializer(countries_vat, many=True)
+
+        response_data = {}
+        response_data.update({
+            'countries': countries_serializer.data,
+            'countries_vat': countries_vat_serializer.data
+        })
+
+        return Response(response_data)
+
 
 
 class CreateUserLicense(AuthMixin, CreateAPIView):

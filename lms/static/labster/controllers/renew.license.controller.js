@@ -40,14 +40,15 @@ angular.module('LabsterBackOffice')
     var url_country = window.backofficeUrls.country;
     $http.get(url_country)
       .success(function (data) {
-        $scope.countries = data;
+        $scope.countries = data.countries;
+        $scope.countries_vat = data.countries_vat;
         $scope.country = $scope.countries[0];
         getLicenseData();
       });
 
     $scope.checkVat = function () {
       // call function checkVat() in vat.js
-      var vatResult = checkVatHelper($scope.country, $scope.subTotalPrice, $scope.institution_type);
+      var vatResult = checkVatHelper($scope.country, $scope.subTotalPrice, $scope.institution_type, $scope.countries_vat);
 
       $scope.totalPrice = vatResult.totalPrice;
       $scope.tax = vatResult.vat;
