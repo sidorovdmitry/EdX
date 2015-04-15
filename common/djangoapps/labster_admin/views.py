@@ -19,7 +19,8 @@ from dateutil.relativedelta import relativedelta
 from labster_admin.forms import TeacherToLicenseForm, DuplicateMultipleCourseForm
 
 from labster_backoffice.models import Voucher, Payment, PaymentProduct, License
-from labster_backoffice.forms import VoucherForm, StripePaymentForm, LicenseForm, ActivateDeactivateUserForm
+from labster_backoffice.forms import VoucherForm, StripePaymentForm, \
+    LicenseForm, ActivateDeactivateUserForm, UploadCsvVatForm
 from labster_backoffice.helpers import send_invoice_mail, send_confirmation_mail
 
 
@@ -98,6 +99,25 @@ class ActivateDeactivateUser(StaffMixin, generic.FormView):
             messages.success(self.request, "The users have been deactivated")
 
         return super(ActivateDeactivateUser, self).form_valid(form)
+
+
+class UploadCsvVat(StaffMixin, generic.FormView):
+    template_name = "labster_backoffice/upload_vat.html"
+    form_class = UploadCsvVatForm
+
+    def get_success_url(self):
+        return reverse('labster_backoffice:labster-upload-vat')
+
+    def get_context_data(self, **kwargs):
+        context = super(UploadCsvVat, self).get_context_data(**kwargs)
+        return context
+
+    def form_valid(self, form):
+        form.save()
+
+        messages.success(self.request, "We have import all of the countries vat")
+
+        return super(UploadCsvVat, self).form_valid(form)
 
 
 def home(request):
@@ -370,3 +390,4 @@ def activate_license_view(request, license_id):
 add_teacher_to_license = AddTeacherToLicense.as_view()
 duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
 activate_deactivate_user = ActivateDeactivateUser.as_view()
+upload_vat = UploadCsvVat.as_view()
