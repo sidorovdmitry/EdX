@@ -17,6 +17,7 @@ from django.views import generic
 from dateutil.relativedelta import relativedelta
 
 from labster_admin.forms import TeacherToLicenseForm, DuplicateMultipleCourseForm
+from labster.users.admin import LabsterUserForm
 
 from labster_backoffice.models import Voucher, Payment, PaymentProduct, \
     License, CountryVat
@@ -142,6 +143,24 @@ class UploadCsvVat(StaffMixin, generic.FormView):
         messages.success(self.request, "We have import all of the countries vat")
 
         return super(UploadCsvVat, self).form_valid(form)
+
+
+class CreateLabsterUser(StaffMixin, generic.FormView):
+    template_name = "user/create_user.html"
+    form_class = LabsterUserForm
+
+    def get_success_url(self):
+        return reverse('labster-backoffice:labster-create-user')
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateLabsterUser, self).get_context_data(**kwargs)
+
+    def form_valid(self,form):
+        labster_user = form.save()
+
+        messages.success(
+            self.request,
+            "You have successfully created user for <strong>{}</strong>".format(labster_user.user))
 
 
 def home(request):
@@ -416,3 +435,4 @@ duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
 activate_deactivate_user = ActivateDeactivateUser.as_view()
 upload_vat = UploadCsvVat.as_view()
 index_vat = VatIndexView.as_view()
+create_labster_user = CreateLabsterUser.as_view()
