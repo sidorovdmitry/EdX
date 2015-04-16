@@ -17,7 +17,7 @@ from django.views import generic
 from dateutil.relativedelta import relativedelta
 
 from labster_admin.forms import TeacherToLicenseForm, DuplicateMultipleCourseForm
-from labster.users.admin import LabsterUserForm
+from labster.users.forms import LabsterUserForm
 
 from labster_backoffice.models import Voucher, Payment, PaymentProduct, \
     License, CountryVat
