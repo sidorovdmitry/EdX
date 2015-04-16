@@ -82,7 +82,7 @@ class DuplicateMultipleCourse(StaffMixin, generic.FormView):
 # Start from here is code for Labster BackOffice, views is in edX while urls, models, and templates are in another repo
 
 class ActivateDeactivateUser(StaffMixin, generic.FormView):
-    template_name = "labster_backoffice/activate_deactivate_user.html"
+    template_name = "user/activate_deactivate_user.html"
     form_class = ActivateDeactivateUserForm
 
     def get_success_url(self):
