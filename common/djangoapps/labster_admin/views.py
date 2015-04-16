@@ -154,6 +154,7 @@ class CreateLabsterUser(StaffMixin, generic.FormView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateLabsterUser, self).get_context_data(**kwargs)
+        return context
 
     def form_valid(self,form):
         labster_user = form.save()

@@ -11,12 +11,14 @@ class LabsterUserForm(forms.ModelForm):
 
     name = forms.CharField()
     email = forms.EmailField()
-    password = forms.CharField(required=False, widget=forms.PasswordInput)
+    password = forms.CharField(required=True, widget=forms.PasswordInput)
     user_is_active = forms.BooleanField(
         required=False,
         help_text="False means user can't login")
 
     gender = forms.ChoiceField(choices=UserProfile.GENDER_CHOICES, required=False)
+    user_type = forms.ChoiceField(choices=LabsterUser.USER_TYPE_CHOICES, required=False)
+    user_school_level = forms.ChoiceField(choices=LabsterUser.USER_SCHOOL_LEVEL_CHOICES, required=False)
     level_of_education = forms.ChoiceField(choices=UserProfile.LEVEL_OF_EDUCATION_CHOICES, required=False)
 
     class Meta:
@@ -26,6 +28,7 @@ class LabsterUserForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(LabsterUserForm, self).__init__(*args, **kwargs)
         self.fields['is_active'].help_text = "False means user can't play lab"
+        self.fields['is_email_active'].help_text = "True means user has validated their email"
 
         if self.instance.id:
             user = self.instance.user
