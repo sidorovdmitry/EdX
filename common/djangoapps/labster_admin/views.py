@@ -103,7 +103,7 @@ class ActivateDeactivateUser(StaffMixin, generic.FormView):
 
 
 class VatIndexView(StaffMixin, generic.ListView):
-    template_name = "labster_backoffice/index_vat.html"
+    template_name = "vat/index_vat.html"
     context_object_name = 'country_vat_list'
     paginate_by = 20
 
@@ -126,7 +126,7 @@ class VatIndexView(StaffMixin, generic.ListView):
 
 
 class UploadCsvVat(StaffMixin, generic.FormView):
-    template_name = "labster_backoffice/upload_vat.html"
+    template_name = "vat/upload_vat.html"
     form_class = UploadCsvVatForm
 
     def get_success_url(self):
