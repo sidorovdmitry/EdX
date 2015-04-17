@@ -366,6 +366,7 @@ FEATURES = {
     'CERTIFICATES_HTML_VIEW': False,
 
     # labster app
+    'LABSTER_NEW_USER_ACTIVE': True,
     'LABSTER': True,
 }
 

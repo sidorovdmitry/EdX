@@ -142,6 +142,8 @@ FEATURES = {
 
     'ALLOW_COURSE_RERUNS': True,
 
+    # new user is always active
+    'LABSTER_NEW_USER_ACTIVE': True,
     'LABSTER': True,
 }
 

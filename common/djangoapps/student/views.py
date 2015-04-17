@@ -1355,10 +1355,12 @@ def _do_create_account(form):
     if not form.is_valid():
         raise ValidationError(form.errors)
 
+    new_user_active = settings.FEATURES.get('LABSTER_NEW_USER_ACTIVE', False)
+
     user = User(
         username=form.cleaned_data["username"],
         email=form.cleaned_data["email"],
-        is_active=True
+        is_active=new_user_active,
     )
     user.set_password(form.cleaned_data["password"])
     registration = Registration()
