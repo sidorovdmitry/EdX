@@ -40,10 +40,10 @@
       $('.link_tags').hide();
     };
   (function() {
-    $(".register").click(function(event) {
-      $("#class_enroll_form").submit();
-      event.preventDefault();
-    });
+    //$(".register").click(function(event) {
+    //  $("#class_enroll_form").submit();
+    //  event.preventDefault();
+    //});
 
     % if is_shopping_cart_enabled:
       add_course_complete_handler = function(jqXHR, textStatus) {
@@ -240,8 +240,8 @@
               <!-- endif user is authenticated -->
             % endif
           % else:
-          <a href="#" class="register">
-            ${_("Register Course")}
+          <a href="#register-modal" rel="leanModal" class="register">
+            ${_("Register for Course")}
           </a>
           % endif
           </div> <!-- end ng-app -->
