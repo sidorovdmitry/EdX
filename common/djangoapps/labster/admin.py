@@ -110,7 +110,7 @@ class QuizBlockAdmin(BaseAdmin):
 
 
 class ProblemAdmin(BaseAdmin):
-    list_display = ('element_id', 'quiz_block', 'order', 'sentence')
+    list_display = ('element_id', 'quiz_block', 'order', 'sentence', 'quiz_group')
     search_fields = ('element_id', 'quiz_block__element_id')
     raw_id_fields = ('quiz_block',)
     list_filter = ('quiz_block__lab',)
