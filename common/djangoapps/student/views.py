@@ -1153,9 +1153,15 @@ def login_user(request, error=""):  # pylint: disable-msg=too-many-statements,un
         if third_party_auth_successful:
             redirect_url = pipeline.get_complete_url(backend_name)
 
+        course_id = request.POST.get('course_id', '')
+        if course_id:
+            course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+            CourseEnrollment.enroll(user, course_key)
+
         response = JsonResponse({
             "success": True,
             "redirect_url": redirect_url,
+            'course_id': course_id,
         })
 
         # Ensure that the external marketing site can
