@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
 from django_future.csrf import ensure_csrf_cookie
 
@@ -60,6 +61,9 @@ def login_by_token(request):
                 user = User.objects.get(id=user.id)
                 course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
                 CourseEnrollment.enroll(user, course_key)
+
+                next_url = reverse('info', args=[course_key.to_deprecated_string()])
+                return HttpResponseRedirect(next_url)
 
     return HttpResponseRedirect(next_url)
 
