@@ -159,33 +159,40 @@ function registerModalInit(options) {
     containerFormLogin.find('form').submit(function(ev) {
         var inputEmail,
             submit,
+            remember,
             password,
-            email,
             errorMessage,
             form;
 
         form = containerFormLogin.find('form');
         inputEmail = form.find('input[name=email]');
         password = form.find('input[name=password]');
+        remember = form.find('input[name=remember]');
         submit = form.find('button[type=submit]');
         errorMessage = form.find('.error-message');
+
+        var rememberVal = "";
+        if (remember[0].checked) {
+            rememberVal = "true";
+        }
 
         buttonInLoggingIn(submit);
         errorMessage.hide().empty();
 
         if (validateForm(form)) {
-
+            var next = "/courses/" + options.courseId;
             $.ajax({
                 url: loginFormUrl,
                 type: "POST",
-                data: {email: inputEmail.val(), password:password.val(), remember: true},
+                data: {email: inputEmail.val(), password:password.val(), remember: rememberVal, course_id: options.courseId},
                 success: function(response) {
-                    next = "/courses/" + options.courseId + "/courseware";
+                    next = next + "/courseware";
                     window.location.href = next;
-                    console.log("sukses broh");
                 },
                 error: function(obj, msg, status) {
-                    console.log("gagal broh");
+                    var response = JSON.parse(obj.responseText);
+                    showFormErrors(form, response);
+                    resetButton(submit);
                 }
             });
         } else {
