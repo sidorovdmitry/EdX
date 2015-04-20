@@ -38,7 +38,7 @@
     font-style: normal;
 }
 
-.register-wizard-1, .register-wizard-2-t, .register-wizard-2-s, .register-wizard-3 {
+.register-wizard-0, .register-wizard-1, .register-wizard-2-t, .register-wizard-2-s, .register-wizard-3 {
     display: none;
 }
 
@@ -65,10 +65,14 @@
 .labster-register-form .button-link-submit {
 }
 
-.labster-register-form .tos-container {
+.labster-register-form .tos-container, .labster-login-form .tos-container {
     font-size: 0.8em;
     text-align: center;
     color: #666;
     margin-top: 20px;
+}
+
+.tos-container a {
+    cursor:pointer;
 }
 

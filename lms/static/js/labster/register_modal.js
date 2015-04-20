@@ -34,6 +34,8 @@ function registerModalInit(options) {
     var createUrl,
         updateUrl,
         loginUrl,
+        loginFormUrl,
+        containerFormLogin,
         containerFormZero,
         containerFormOne,
         containerFormTwoT,
@@ -50,6 +52,7 @@ function registerModalInit(options) {
 
     createUrl = "/labster/api/users/";
     loginUrl = "/labster/login-by-token/";
+    loginFormUrl = "/login_ajax";
     updateUrl = function(userId) {
         return createUrl + userId + "/";
     };
@@ -57,6 +60,7 @@ function registerModalInit(options) {
         return createUrl + "send-email/" + userId + "/";
     }
 
+    containerFormLogin = $('.login-wizard');
     containerFormZero = $('.register-wizard-0');
     containerFormOne = $('.register-wizard-1');
     containerFormTwoT = $('.register-wizard-2-t');
@@ -66,6 +70,16 @@ function registerModalInit(options) {
     $('.button-link-submit').click(function(ev) {
         ev.preventDefault();
         $(this).closest('form').submit();
+    });
+
+    $('.show-register-form').click(function(){
+        containerFormLogin.fadeOut();
+        containerFormZero.fadeIn();
+    });
+
+    $('.show-login-form').click(function(){
+        containerFormLogin.fadeIn();
+        containerFormZero.fadeOut();
     });
 
     sendEmailTeacher = function() {
@@ -85,6 +99,11 @@ function registerModalInit(options) {
     buttonInSaving = function(button) {
         button.data('original-html', button.html());
         button.html('<i class="icon fa fa-spinner fa-spin"></i> Saving');
+    };
+
+    buttonInLoggingIn = function(button) {
+        button.data('original-html', button.html());
+        button.html('<i class="icon fa fa-spinner fa-spin"></i> Logging in');
     };
 
     resetButton = function(button) {
@@ -136,6 +155,45 @@ function registerModalInit(options) {
             });
         });
     };
+
+    containerFormLogin.find('form').submit(function(ev) {
+        var inputEmail,
+            submit,
+            password,
+            email,
+            errorMessage,
+            form;
+
+        form = containerFormLogin.find('form');
+        inputEmail = form.find('input[name=email]');
+        password = form.find('input[name=password]');
+        submit = form.find('button[type=submit]');
+        errorMessage = form.find('.error-message');
+
+        buttonInLoggingIn(submit);
+        errorMessage.hide().empty();
+
+        if (validateForm(form)) {
+
+            $.ajax({
+                url: loginFormUrl,
+                type: "POST",
+                data: {email: inputEmail.val(), password:password.val(), remember: true},
+                success: function(response) {
+                    next = "/courses/" + options.courseId + "/courseware";
+                    window.location.href = next;
+                    console.log("sukses broh");
+                },
+                error: function(obj, msg, status) {
+                    console.log("gagal broh");
+                }
+            });
+        } else {
+            resetButton(submit);
+        }
+
+    return false;
+    });
 
     containerFormZero.find('form').submit(function(ev) {
         var inputEmail,
