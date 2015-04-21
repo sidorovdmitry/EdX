@@ -253,6 +253,7 @@ function registerModalInit(options) {
                         containerFormThree.find('input[name=token_key]').val(window.user.token_key);
                         containerFormThree.find('input[name=next]').val(next);
                         containerFormThree.find('input[name=course_id]').val(options.courseId);
+                        containerFormThree.find('input[name=is_demo_course]').val(isDemoCourse.toString());
                     });
 
                 },
