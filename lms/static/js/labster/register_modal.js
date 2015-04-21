@@ -29,7 +29,8 @@ $.ajaxSetup({
 function registerModalInit(options) {
     // options:
     // - nextUrl
-    // - courseId
+    // - courseId,
+    // - labster_demo
 
     var createUrl,
         updateUrl,
@@ -44,7 +45,13 @@ function registerModalInit(options) {
         buttonInSaving,
         resetButton,
         validateForm,
-        showFormErrors;
+        showFormErrors,
+        isDemoCourse;
+
+    isDemoCourse = false
+    if (options.isDemoCourse == "True") {
+      isDemoCourse = true
+    }
 
     $('.new-register').click(function(ev) {
         window.userType = $(this).data('user-type');
@@ -224,8 +231,13 @@ function registerModalInit(options) {
         if (validateForm(form)) {
             var next = options.nextUrl;
             if (parseInt(window.userType) === 1 && options.courseId != "") {
-                // if student and it's coming from the about page, redirect to payment page
-                next = "/student_license/" + options.courseId;
+                if (isDemoCourse) {
+                    // if student and it's coming from the about page, redirect to payment page
+                    next = "/student_license/" + options.courseId;
+                } else {
+                    // if it's not demo course
+                    next = "/courses/" + options.courseId + "/courseware";
+                }
             }
 
             $.ajax({
