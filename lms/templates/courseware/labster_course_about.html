@@ -40,10 +40,10 @@
       $('.link_tags').hide();
     };
   (function() {
-    //$(".register").click(function(event) {
-    //  $("#class_enroll_form").submit();
-    //  event.preventDefault();
-    //});
+    $(".enroll").click(function(event) {
+      $("#class_enroll_form").submit();
+      event.preventDefault();
+    });
 
     % if is_shopping_cart_enabled:
       add_course_complete_handler = function(jqXHR, textStatus) {
@@ -216,6 +216,7 @@
                   % endif
                 % endif
               % else:
+                <!-- user is not authenticated -->
                 <div class="labster-register-box-container">
                   <div class="labster-register-box students">
                     <h4><a href="#register-modal" rel="leanModal" class="new-register student-button" data-click-type="cta-header" data-user-type="1">Students</a></h4>
@@ -239,10 +240,16 @@
               % endif
               <!-- endif user is authenticated -->
             % endif
+          % elif user.is_authenticated():
+            <!-- not course demo and authenticated -->
+            <a href="#" class="register enroll">
+              ${_("Take Course")}
+            </a>
           % else:
-          <a href="#register-modal" rel="leanModal" class="register" data-user-type="1">
-            ${_("Take Course")}
-          </a>
+            <!-- not course demo and not authenticated -->
+            <a href="#register-modal" rel="leanModal" class="new-register register" data-user-type="1">
+              ${_("Take Course")}
+            </a>
           % endif
           </div> <!-- end ng-app -->
           <div id="register_error"></div>
@@ -492,7 +499,7 @@
       <p>If you are a student, who have been invited by your teacher to use Labster, please use the link provided in the email to register directly for the full course.</p>
       <p>If you are a teacher, wanting to evaluate Labster, please proceed by clicking "Continue" below.</p>
       <div class="submit">
-        <input name="submit" type="submit" class="register" value="${_('Continue')}" />
+        <input name="submit" type="submit" class="register enroll" value="${_('Continue')}" />
       </div>
     </form>
   </div>
