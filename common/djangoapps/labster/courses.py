@@ -176,3 +176,8 @@ def get_lab_by_course_id(course_id):
         return Lab.objects.get(demo_course_id=course_id)
     except Lab.DoesNotExist:
         return None
+
+
+def is_demo_course(course_key):
+    course = modulestore().get_course(course_key)
+    return course is not None and course.labster_demo
