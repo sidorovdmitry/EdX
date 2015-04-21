@@ -73,13 +73,15 @@ function registerModalInit(options) {
     });
 
     $('.show-register-form').click(function(){
-        containerFormLogin.fadeOut();
-        containerFormZero.fadeIn();
+        containerFormLogin.fadeOut(function(){
+          containerFormZero.fadeIn();
+        });
     });
 
     $('.show-login-form').click(function(){
-        containerFormLogin.fadeIn();
-        containerFormZero.fadeOut();
+        containerFormZero.fadeOut(function(){
+          containerFormLogin.fadeIn();
+        });
     });
 
     sendEmailTeacher = function() {
