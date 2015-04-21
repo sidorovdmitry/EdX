@@ -196,17 +196,17 @@ function registerModalInit(options) {
                 data: {email: inputEmail.val(), password:password.val(), remember: rememberVal, course_id: options.courseId},
                 success: function(response) {
                     if (response.success) {
-                        //  successfully login
                         if (options.courseId != "") {
                             next = "/courses/" + options.courseId + "/courseware";
                         }
                         window.location.href = next;
                     } else {
-                        // username or password is incorrect
-                        $('#email-login').next('.error-message').append(response.value).show();
+                        var messages = {
+                            email: [response.value]
+                        };
+                        showFormErrors(form, messages);
                         resetButton(submit);
                     }
-
                 },
                 error: function(obj, msg, status) {
                     var response = JSON.parse(obj.responseText);
