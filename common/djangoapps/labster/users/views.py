@@ -13,6 +13,7 @@ from rest_framework.authtoken.models import Token
 from labster.backoffice.views import create_user
 from labster.models import LabsterUser
 
+
 def sync_user(user):
     try:
         labster_user = LabsterUser.objects.get(user=user)
