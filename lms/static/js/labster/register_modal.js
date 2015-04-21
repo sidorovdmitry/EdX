@@ -157,7 +157,7 @@ function registerModalInit(options) {
             _.each(inputs, function(input) {
                 _.each(messageList, function(message) {
                     if (message == "Email is used") {
-                        message = 'Email already in use. Please <a href="/login">login here</a>.';
+                        message = 'Email is already in use. Please <a href="/login">login here</a>.';
                     }
                     $(input).next('.error-message').append(message).show();
                 });
@@ -195,10 +195,18 @@ function registerModalInit(options) {
                 type: "POST",
                 data: {email: inputEmail.val(), password:password.val(), remember: rememberVal, course_id: options.courseId},
                 success: function(response) {
-                    if (options.courseId != "") {
-                        next = "/courses/" + options.courseId + "/courseware";
+                    if (response.success) {
+                        //  successfully login
+                        if (options.courseId != "") {
+                            next = "/courses/" + options.courseId + "/courseware";
+                        }
+                        window.location.href = next;
+                    } else {
+                        // username or password is incorrect
+                        $('#email-login').next('.error-message').append(response.value).show();
+                        resetButton(submit);
                     }
-                    window.location.href = next;
+
                 },
                 error: function(obj, msg, status) {
                     var response = JSON.parse(obj.responseText);
