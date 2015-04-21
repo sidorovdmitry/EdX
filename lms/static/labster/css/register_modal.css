@@ -1,7 +1,7 @@
 .labster-register-form {
     color: #666;
 }
-.labster-register-form button {
+.labster-register-form button, .labster-login-form button {
     width: 100%;
 }
 .labster-register-form .error-message {

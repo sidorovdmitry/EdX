@@ -50,7 +50,7 @@ function registerModalInit(options) {
 
     isDemoCourse = false
     if (options.isDemoCourse == "True") {
-      isDemoCourse = true
+      isDemoCourse = true;
     }
 
     $('.new-register').click(function(ev) {
@@ -189,13 +189,15 @@ function registerModalInit(options) {
         errorMessage.hide().empty();
 
         if (validateForm(form)) {
-            var next = "/courses/" + options.courseId;
+            var next = options.nextUrl;
             $.ajax({
                 url: loginFormUrl,
                 type: "POST",
                 data: {email: inputEmail.val(), password:password.val(), remember: rememberVal, course_id: options.courseId},
                 success: function(response) {
-                    next = next + "/courseware";
+                    if (options.courseId != "") {
+                        next = "/courses/" + options.courseId + "/courseware";
+                    }
                     window.location.href = next;
                 },
                 error: function(obj, msg, status) {
