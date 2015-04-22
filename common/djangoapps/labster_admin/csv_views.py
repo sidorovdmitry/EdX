@@ -4,7 +4,7 @@ from django.views.generic import FormView
 
 from labster_backoffice.csv_forms import UploadCsvProductForm, UploadCsvProductGroupForm, \
     UploadCsvVoucherForm, UploadCsvVoucherProductForm, UploadCsvPaymentForm, \
-    UploadCsvPaymentProductForm
+    UploadCsvPaymentProductForm, UploadCsvPaymentStripeForm
 
 from labster_admin.views import StaffMixin
 
@@ -118,6 +118,25 @@ class UploadCsvPaymentProduct(StaffMixin, FormView):
     def form_valid(self, form):
         form.save()
 
-        messages.success(self.request, "We have imported all of the payments")
+        messages.success(self.request, "We have imported all of the payment products")
 
         return super(UploadCsvPaymentProduct, self).form_valid(form)
+
+
+class UploadCsvPaymentStripe(StaffMixin, FormView):
+    template_name = "payment/upload_csv_payment.html"
+    form_class = UploadCsvPaymentStripeForm
+
+    def get_success_url(self):
+        return reverse('labster-backoffice:payment:upload-csv-payment-product')
+
+    def get_context_data(self, **kwargs):
+        context = super(UploadCsvPaymentStripe, self).get_context_data(**kwargs)
+        return context
+
+    def form_valid(self, form):
+        form.save()
+
+        messages.success(self.request, "We have imported all of the payment stripes")
+
+        return super(UploadCsvPaymentStripe, self).form_valid(form)
