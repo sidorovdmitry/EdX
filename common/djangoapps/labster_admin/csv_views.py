@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.views.generic import FormView
 
 from labster_backoffice.csv_forms import UploadCsvProductForm, UploadCsvProductGroupForm, \
-    UploadCsvVatForm
+    UploadCsvVoucherForm
 
 from labster_admin.views import StaffMixin
 
@@ -46,15 +46,15 @@ class UploadCsvProductGroup(StaffMixin, FormView):
         return super(UploadCsvProductGroup, self).form_valid(form)
 
 
-class UploadCsvVat(StaffMixin, FormView):
-    template_name = "vat/upload_vat.html"
-    form_class = UploadCsvVatForm
+class UploadCsvVoucher(StaffMixin, FormView):
+    template_name = "vouchers/upload_csv_voucher.html"
+    form_class = UploadCsvVoucherForm
 
     def get_success_url(self):
-        return reverse('labster-backoffice:vat:upload-csv-vat')
+        return reverse('labster-backoffice:voucher:upload-csv-voucher')
 
     def get_context_data(self, **kwargs):
-        context = super(UploadCsvVat, self).get_context_data(**kwargs)
+        context = super(UploadCsvVoucher, self).get_context_data(**kwargs)
         return context
 
     def form_valid(self, form):
@@ -62,4 +62,4 @@ class UploadCsvVat(StaffMixin, FormView):
 
         messages.success(self.request, "We have imported all of the vat")
 
-        return super(UploadCsvVat, self).form_valid(form)
+        return super(UploadCsvVoucher, self).form_valid(form)
