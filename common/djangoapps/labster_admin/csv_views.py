@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.views.generic import FormView
 
 from labster_backoffice.csv_forms import UploadCsvProductForm, UploadCsvProductGroupForm, \
-    UploadCsvVoucherForm, UploadCsvVoucherProductForm
+    UploadCsvVoucherForm, UploadCsvVoucherProductForm, UploadCsvPaymentForm
 
 from labster_admin.views import StaffMixin
 
@@ -82,3 +82,22 @@ class UploadCsvVoucherProduct(StaffMixin, FormView):
         messages.success(self.request, "We have imported all of the voucher products")
 
         return super(UploadCsvVoucherProduct, self).form_valid(form)
+
+
+class UploadCsvPayment(StaffMixin, FormView):
+    template_name = "payment/upload_csv_payment.html"
+    form_class = UploadCsvPaymentForm
+
+    def get_success_url(self):
+        return reverse('labster-backoffice:payment:upload-csv-payment')
+
+    def get_context_data(self, **kwargs):
+        context = super(UploadCsvPayment, self).get_context_data(**kwargs)
+        return context
+
+    def form_valid(self, form):
+        form.save()
+
+        messages.success(self.request, "We have imported all of the payments")
+
+        return super(UploadCsvPayment, self).form_valid(form)
