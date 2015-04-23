@@ -16,12 +16,18 @@ from labster.api.users.serializers import CustomLabsterUser
 from labster.api.views import AuthMixin
 from labster.models import LabsterUser
 from labster.user_utils import send_activation_email
+from labster.utils import country_code_from_ip
 
 
 def get_user_as_custom_labster_user(user, password=None, ip_address=None):
     user = User.objects.get(id=user.id)
     labster_user = user.labster_user
-    profile, _ = UserProfile.objects.get_or_create(user=user)
+    country = None
+
+    if ip_address:
+        country = country_code_from_ip(ip_address)
+
+    profile, _ = UserProfile.objects.get_or_create(user=user, country=country)
 
     return CustomLabsterUser(
         id=user.id,
