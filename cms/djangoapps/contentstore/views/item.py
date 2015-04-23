@@ -13,6 +13,7 @@ from functools import partial
 from static_replace import replace_static_urls
 from xmodule_modifiers import wrap_xblock, request_token
 
+import dogstats_wrapper as dog_stats_api
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
@@ -30,7 +31,7 @@ from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.exceptions import ItemNotFoundError, InvalidLocationError
 from xmodule.modulestore.inheritance import own_metadata
 from xmodule.modulestore.draft_and_published import DIRECT_ONLY_CATEGORIES
-from xmodule.x_module import PREVIEW_VIEWS, STUDIO_VIEW, STUDENT_VIEW
+from xmodule.x_module import PREVIEW_VIEWS, STUDIO_VIEW, STUDENT_VIEW, DEPRECATION_VSCOMPAT_EVENT
 
 from xmodule.course_module import DEFAULT_START_DATE
 from django.contrib.auth.models import User
@@ -159,15 +160,17 @@ def xblock_handler(request, usage_key_string):
             return JsonResponse()
         else:  # Since we have a usage_key, we are updating an existing xblock.
             lab_id_changed = False
+            xblock = _get_xblock(usage_key, request.user)
             try:
                 lab_id = int(request.json.get('labId'))
             except TypeError:
                 lab_id = None
             else:
-                xblock = _get_xblock(usage_key, request.user)
                 lab_id_changed = xblock.lab_id != lab_id
 
             labster_language = request.json.get('labsterLanguage', 'en')
+            labster_language_changed = labster_language != getattr(xblock, 'labster_language', 'en')
+
             response = _save_xblock(
                 request.user,
                 _get_xblock(usage_key, request.user),
@@ -181,7 +184,7 @@ def xblock_handler(request, usage_key_string):
                 labster_language=labster_language,
             )
 
-            if lab_id_changed:
+            if lab_id_changed or labster_language_changed:
                 from labster.proxies import prepare_lab_from_lab_id
                 xblock = _get_xblock(usage_key, request.user)
                 prepare_lab_from_lab_id(lab_id, xblock.location.to_deprecated_string(),
@@ -661,6 +664,15 @@ def _delete_item(usage_key, user):
         # if we add one then we need to also add it to the policy information (i.e. metadata)
         # we should remove this once we can break this reference from the course to static tabs
         if usage_key.category == 'static_tab':
+
+            dog_stats_api.increment(
+                DEPRECATION_VSCOMPAT_EVENT,
+                tags=(
+                    "location:_delete_item_static_tab",
+                    u"course:{}".format(unicode(usage_key.course_key)),
+                )
+            )
+
             course = store.get_course(usage_key.course_key)
             existing_tabs = course.tabs or []
             course.tabs = [tab for tab in existing_tabs if tab.get('url_slug') != usage_key.name]

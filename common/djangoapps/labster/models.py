@@ -534,11 +534,21 @@ class UserAttempt(models.Model):
 
     @cached_property
     def problems_count(self):
-        return Problem.objects.filter(
+        problems = Problem.objects.filter(
             is_active=True,
             no_score=False,
             quiz_block__lab=self.lab_proxy.lab,
-        ).count()
+        )
+
+        # without quiz_group
+        count = problems.filter(quiz_group='').count()
+
+        # check the quiz_group
+        quiz_groups = list(problems.exclude(quiz_group='').values_list('quiz_group', flat=True))
+        quiz_groups = list(set(quiz_groups))
+        count = count + len(quiz_groups)
+
+        return count
 
     @cached_property
     def answers_count(self):

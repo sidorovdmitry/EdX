@@ -53,21 +53,22 @@ def get_org(user):
     return org
 
 
-def duplicate_course(source, target, user, fields=None):
-    from contentstore.utils import delete_course_and_groups
+def duplicate_course(source, target, user, fields=None, replace_org=False):
 
     org = target.split('/')[0]
     source_org = source.split('/')[0]
     target_org = org
 
-    if source_org == target_org:
+    if replace_org and source_org == target_org:
         target = target.replace(org, get_org(user))
 
     source_course_id = course_key_from_str(source)
     dest_course_id = course_key_from_str(target)
 
     mstore = modulestore()
-    delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
+
+    # from contentstore.utils import delete_course_and_groups
+    # delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
 
     try:
         with mstore.bulk_operations(dest_course_id):
@@ -175,3 +176,8 @@ def get_lab_by_course_id(course_id):
         return Lab.objects.get(demo_course_id=course_id)
     except Lab.DoesNotExist:
         return None
+
+
+def is_demo_course(course_key):
+    course = modulestore().get_course(course_key)
+    return course is not None and course.labster_demo

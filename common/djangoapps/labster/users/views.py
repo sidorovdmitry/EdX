@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
 from django_future.csrf import ensure_csrf_cookie
 
@@ -10,6 +11,7 @@ from student.models import CourseEnrollment, CourseEnrollmentAllowed, UserProfil
 from rest_framework.authtoken.models import Token
 
 from labster.models import LabsterUser
+
 
 def sync_user(user):
     try:
@@ -36,6 +38,7 @@ def login_by_token(request):
     course_id = request.POST.get('course_id')
     token_key = request.POST.get('token_key')
     next_url = request.POST.get('next', '/')
+    is_demo_course = request.POST.get('is_demo_course', "true") # from javascript it sends string
 
     if not token_key or not user_id:
         return HttpResponseRedirect(next_url)
@@ -51,11 +54,19 @@ def login_by_token(request):
             login(request, user)
             enroll_user(user)
 
-        if int(user_type) == LabsterUser.USER_TYPE_TEACHER and course_id:
-            # only enroll the teacher
-            user = User.objects.get(id=user.id)
-            course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
-            CourseEnrollment.enroll(user, course_key)
+        if int(user_type) == LabsterUser.USER_TYPE_TEACHER:
+            # sync data to Backoffice
+            sync_user(user)
+
+        if course_id :
+            if (is_demo_course == "false" and int(user_type) == LabsterUser.USER_TYPE_STUDENT) or int(user_type) == LabsterUser.USER_TYPE_TEACHER:
+                # if it's an open course e.g. adaptive course then enroll them all otherwise just enroll the teacher
+                user = User.objects.get(id=user.id)
+                course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+                CourseEnrollment.enroll(user, course_key)
+
+                next_url = reverse('info', args=[course_key.to_deprecated_string()])
+                return HttpResponseRedirect(next_url)
 
     return HttpResponseRedirect(next_url)
 

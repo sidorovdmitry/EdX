@@ -81,7 +81,9 @@
           </p>
           <p>Licenses Available:
             <%
-            licenses_left = course.max_student_enrollments_allowed - course_used_licenses
+            licenses_left = 0
+            if course.max_student_enrollments_allowed:
+              licenses_left = course.max_student_enrollments_allowed - course_used_licenses
             %>
             % if licenses_left:
             <span>${licenses_left}</span>

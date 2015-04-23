@@ -871,12 +871,6 @@ class LabsterCourseFields(object):
         scope=Scope.settings,
         default=False,
     )
-    labster_language = String(
-        display_name=_("Labster Lab Language"),
-        help=_("Enter the language code for the Lab. The default is en."),
-        scope=Scope.settings,
-        default="en",
-    )
 
 
 class CourseDescriptor(CourseFields, LabsterCourseFields, SequenceDescriptor):

@@ -6,6 +6,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
+from courseware.courses import get_course
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
+
 from labster.models import (
     Lab, UserSave, Token, LabProxy,
     UnityLog, UserAnswer, LabsterUserLicense, ProblemProxy,
@@ -37,6 +40,16 @@ class LabAdminForm(forms.ModelForm):
             'xml_url_prefix',
             'use_quiz_blocks', 'is_active', 'demo_course_id',
             'verified_only')
+
+    def clean_demo_course_id(self):
+        demo_course_id = self.cleaned_data.get('demo_course_id')
+        if demo_course_id:
+            try:
+                course_key = SlashSeparatedCourseKey.from_deprecated_string(demo_course_id)
+                get_course(course_key)
+            except:
+                raise forms.ValidationError('invalid course ID')
+        return demo_course_id
 
     def clean(self):
         cleaned_data = super(LabAdminForm, self).clean()
@@ -97,7 +110,7 @@ class QuizBlockAdmin(BaseAdmin):
 
 
 class ProblemAdmin(BaseAdmin):
-    list_display = ('element_id', 'quiz_block', 'order', 'sentence')
+    list_display = ('element_id', 'quiz_block', 'order', 'sentence', 'quiz_group')
     search_fields = ('element_id', 'quiz_block__element_id')
     raw_id_fields = ('quiz_block',)
     list_filter = ('quiz_block__lab',)

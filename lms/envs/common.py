@@ -359,10 +359,14 @@ FEATURES = {
     # enable beacons for video timing statistics
     'ENABLE_VIDEO_BEACON': False,
 
+    # enable beacons for lms onload event statistics
+    'ENABLE_ONLOAD_BEACON': False,
+
     # Certificates Web/HTML Views
     'CERTIFICATES_HTML_VIEW': False,
 
     # labster app
+    'LABSTER_NEW_USER_ACTIVE': True,
     'LABSTER': True,
 }
 
@@ -392,7 +396,6 @@ DATA_DIR = COURSES_ROOT
 sys.path.append(REPO_ROOT)
 sys.path.append(PROJECT_ROOT / 'djangoapps')
 sys.path.append(COMMON_ROOT / 'djangoapps')
-sys.path.append(COMMON_ROOT / 'lib')
 
 # For Node.js
 
@@ -1077,7 +1080,7 @@ X_FRAME_OPTIONS = 'ALLOW'
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
-from rooted_paths import rooted_glob
+from openedx.core.lib.rooted_paths import rooted_glob
 
 courseware_js = (
     [
@@ -2251,8 +2254,12 @@ SEARCH_ENGINE = None
 # Use the LMS specific result processor
 SEARCH_RESULT_PROCESSOR = "lms.lib.courseware_search.lms_result_processor.LmsSearchResultProcessor"
 
-##### CDN EXPERIMENT/MONITORING FLAGS #####
+### PERFORMANCE EXPERIMENT SETTINGS ###
+# CDN experiment/monitoring flags
 CDN_VIDEO_URLS = {}
+
+# Page onload event sampling rate (min 0.0, max 1.0)
+ONLOAD_BEACON_SAMPLE_RATE = 0.0
 
 # The configuration visibility of account fields.
 ACCOUNT_VISIBILITY_CONFIGURATION = {

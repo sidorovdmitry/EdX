@@ -7,7 +7,7 @@ from lxml import etree
 
 from django.core.urlresolvers import reverse
 
-from xblock.fields import Integer, Scope, Boolean
+from xblock.fields import Integer, Scope, Boolean, String
 from xblock.fragment import Fragment
 from pkg_resources import resource_string
 
@@ -57,7 +57,15 @@ class SequenceFields(object):
         ),
         scope=Scope.content,
     )
+
+    # labster fields
     lab_id = Integer(help="Lab ID if the gradeType is Lab", scope=Scope.settings)
+    labster_language = String(
+        display_name=_("Labster Lab Language"),
+        help=_("Enter the language code for the Lab. The default is en."),
+        scope=Scope.settings,
+        default="en",
+    )
 
 
 class SequenceModule(SequenceFields, XModule):

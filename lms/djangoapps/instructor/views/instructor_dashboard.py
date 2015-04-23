@@ -336,6 +336,12 @@ def _section_membership(course, access):
         'list_forum_members_url': reverse('list_forum_members', kwargs={'course_id': unicode(course_key)}),
         'update_forum_role_membership_url': reverse('update_forum_role_membership', kwargs={'course_id': unicode(course_key)}),
     }
+
+    if settings.FEATURES.get('LABSTER'):
+        from labster.licenses import get_user_licenses
+        user_licenses = get_user_licenses(course_key)
+        section_data['user_licenses'] = json.dumps(user_licenses)
+
     return section_data
 
 
@@ -356,11 +362,6 @@ def _section_cohort_management(course, access):
         'list_course_students_url': reverse('list_course_students', kwargs={'course_id': unicode(course_key)}),
         'list_course_licenses_url': reverse('list_course_licenses', kwargs={'course_id': unicode(course_key)}),
     }
-
-    if settings.FEATURES.get('LABSTER'):
-        from labster.licenses import get_user_licenses
-        user_licenses = get_user_licenses(course_key)
-        section_data['user_licenses'] = json.dumps(user_licenses)
 
     return section_data
 

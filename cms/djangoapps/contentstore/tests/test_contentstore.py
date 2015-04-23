@@ -11,7 +11,6 @@ from datetime import timedelta
 from fs.osfs import OSFS
 from json import loads
 from path import path
-from tempdir import mkdtemp_clean
 from textwrap import dedent
 from uuid import uuid4
 from functools import wraps
@@ -22,8 +21,11 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.test.utils import override_settings
 
+from openedx.core.lib.tempdir import mkdtemp_clean
 from contentstore.tests.utils import parse_json, AjaxEnabledTestClient, CourseTestCase
 from contentstore.views.component import ADVANCED_COMPONENT_TYPES
+
+from edxval.api import create_video, get_videos_for_course
 
 from xmodule.contentstore.django import contentstore
 from xmodule.contentstore.utils import restore_asset_from_trashcan, empty_asset_trashcan
@@ -1712,10 +1714,36 @@ class RerunCourseTest(ContentStoreTestCase):
         self.assertInCourseListing(source_course_key)
         self.assertInCourseListing(destination_course_key)
 
-    def test_rerun_course_success(self):
+    def test_rerun_course_no_videos_in_val(self):
+        """
+        Test when rerunning a course with no videos, VAL copies nothing
+        """
         source_course = CourseFactory.create()
         destination_course_key = self.post_rerun_request(source_course.id)
         self.verify_rerun_course(source_course.id, destination_course_key, self.destination_course_data['display_name'])
+        videos = list(get_videos_for_course(destination_course_key))
+        self.assertEqual(0, len(videos))
+        self.assertInCourseListing(destination_course_key)
+
+    def test_rerun_course_success(self):
+        source_course = CourseFactory.create()
+        create_video(
+            dict(
+                edx_video_id="tree-hugger",
+                courses=[source_course.id],
+                status='test',
+                duration=2,
+                encoded_videos=[]
+            )
+        )
+        destination_course_key = self.post_rerun_request(source_course.id)
+        self.verify_rerun_course(source_course.id, destination_course_key, self.destination_course_data['display_name'])
+
+        # Verify that the VAL copies videos to the rerun
+        source_videos = list(get_videos_for_course(source_course.id))
+        target_videos = list(get_videos_for_course(destination_course_key))
+        self.assertEqual(1, len(source_videos))
+        self.assertEqual(source_videos, target_videos)
 
     def test_rerun_of_rerun(self):
         source_course = CourseFactory.create()
