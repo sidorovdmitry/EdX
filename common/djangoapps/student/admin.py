@@ -58,7 +58,13 @@ class CourseEnrollmentAdmin(admin.ModelAdmin):
     raw_id_fields = ('user',)
 
 
-admin.site.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name', 'country')
+    search_fields = ('user__email',)
+    list_filter = ('country',)
+
+
+admin.site.register(UserProfile, UserProfileAdmin)
 
 admin.site.register(UserTestGroup)
 
