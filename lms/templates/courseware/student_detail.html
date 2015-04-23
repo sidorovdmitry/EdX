@@ -46,23 +46,24 @@
   background-color: #c3dcbf;
   padding: 5px 10px;
 }
+.float-right { float:right; }
 </style>
 
 
 <div class="container">
   <div class="profile-wrapper">
     <div class="course-info lab-result-wrapper" id="course-info-progress" aria-label="${_('Result Detail')}">
-
-      <a href="${progress_all_url}">View all students</a>
-
+      <a href="${progress_all_url}" class="float-right">View all students</a>
+    <h2>Score details for ${student.profile.name}</h2>
     % for attempt in attempts:
     % if attempt.answers:
-    <h3 class="score">Score
+    <h3 class="score">Score:
       % if hasattr(attempt, 'custom_score'):
-        <span>${attempt.custom_score}%</span></h3>
+        <span>${attempt.custom_score}%</span>
       % else:
-        <span>${attempt.get_score()}</span></h3>
+        <span>${attempt.get_score()}</span>
       % endif
+      / Progress: <span> ${attempt.progress_in_percent}</h3></span>
     <table>
       <thead>
         <tr>
