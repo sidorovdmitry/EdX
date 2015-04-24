@@ -210,7 +210,7 @@ class VoucherUpdate(StaffMixin, generic.UpdateView):
     def get_context_data(self, **kwargs):
 
         context = super(VoucherUpdate, self).get_context_data(**kwargs)
-        context['action'] = reverse('voucher:update', kwargs={'pk': self.get_object().id})
+        context['action'] = reverse('labster-backoffice:voucher:update', kwargs={'pk': self.get_object().id})
 
         return context
 
