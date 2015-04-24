@@ -101,9 +101,10 @@ class DuplicateMultipleCourseForm(forms.Form):
         all_labs = self.cleaned_data.get('all_labs')
         license_count = self.cleaned_data.get('license_count')
         org = self.cleaned_data.get('org')
+        voucher_code = self.cleaned_data.get('voucher_code')
 
         user = User.objects.get(email=email)
 
-        duplicate_courses.delay(user.id, license_count, all_labs, labs, org, request_user_id=request.user.id)
+        duplicate_courses.delay(user.id, license_count, all_labs, labs, org, voucher_code, request_user_id=request.user.id)
 
         return user
