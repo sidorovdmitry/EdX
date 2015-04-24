@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from django_rq import job
 
-from labster.courses import duplicate_multiple_courses
+from labster.courses import duplicate_multiple_courses, course_key_from_str
 from labster.models import LabsterCourseLicense
 
 from labster_backoffice.models import License, Voucher
@@ -53,7 +53,8 @@ def duplicate_courses(user_id, license_count, all_labs, labs, org, voucher_code=
         license.save()
 
         # create course license data
-        for course_id in course_ids:
+        for item in course_ids:
+            course_id = course_key_from_str(item)
             LabsterCourseLicense.objects.get_or_create(
                 user_id=user.id,
                 license_id=license.id,
