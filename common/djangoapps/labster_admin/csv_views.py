@@ -71,15 +71,14 @@ class UploadCsvVoucherProduct(StaffMixin, FormView):
     def get_success_url(self):
         return reverse('labster-backoffice:voucher:upload-csv-voucher-product')
 
-    def get_context_data(self, **kwargs):
-        context = super(UploadCsvVoucherProduct, self).get_context_data(**kwargs)
-        return context
+    def get_form_kwargs( self ):
+        kwargs = super( UploadCsvVoucherProduct, self ).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         form.save()
-
-        messages.success(self.request, "We have imported all of the voucher products")
-
+        messages.success(self.request, QUEUED_MESSAGE)
         return super(UploadCsvVoucherProduct, self).form_valid(form)
 
 
