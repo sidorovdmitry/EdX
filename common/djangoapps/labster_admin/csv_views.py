@@ -143,13 +143,12 @@ class UploadCsvLicense(StaffMixin, FormView):
     def get_success_url(self):
         return reverse('labster-backoffice:payment:upload-csv-payment-product')
 
-    def get_context_data(self, **kwargs):
-        context = super(UploadCsvLicense, self).get_context_data(**kwargs)
-        return context
+    def get_form_kwargs( self ):
+        kwargs = super( UploadCsvLicense, self ).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         form.save()
-
-        messages.success(self.request, "We have imported all of the licenses")
-
+        messages.success(self.request, QUEUED_MESSAGE)
         return super(UploadCsvLicense, self).form_valid(form)
