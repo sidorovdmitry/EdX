@@ -8,6 +8,7 @@ from labster_backoffice.csv_forms import UploadCsvProductForm, UploadCsvProductG
 
 from labster_admin.views import StaffMixin
 
+QUEUED_MESSAGE = "We have queued this task to the background service. You are going to get a notification email soon"
 
 class UploadCsvProduct(StaffMixin, FormView):
     template_name = "product/upload_csv_product.html"
@@ -16,15 +17,14 @@ class UploadCsvProduct(StaffMixin, FormView):
     def get_success_url(self):
         return reverse('labster-backoffice:product:upload-csv-product')
 
-    def get_context_data(self, **kwargs):
-        context = super(UploadCsvProduct, self).get_context_data(**kwargs)
-        return context
+    def get_form_kwargs( self ):
+        kwargs = super( UploadCsvProduct, self ).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         form.save()
-
-        messages.success(self.request, "We have imported all of the products")
-
+        messages.success(self.request, QUEUED_MESSAGE)
         return super(UploadCsvProduct, self).form_valid(form)
 
 
