@@ -35,15 +35,14 @@ class UploadCsvProductGroup(StaffMixin, FormView):
     def get_success_url(self):
         return reverse('labster-backoffice:product:upload-csv-product-group')
 
-    def get_context_data(self, **kwargs):
-        context = super(UploadCsvProductGroup, self).get_context_data(**kwargs)
-        return context
+    def get_form_kwargs( self ):
+        kwargs = super( UploadCsvProductGroup, self ).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         form.save()
-
-        messages.success(self.request, "We have imported all of the product groups")
-
+        messages.success(self.request, QUEUED_MESSAGE)
         return super(UploadCsvProductGroup, self).form_valid(form)
 
 
