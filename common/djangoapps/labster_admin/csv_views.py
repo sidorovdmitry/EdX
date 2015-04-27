@@ -125,15 +125,14 @@ class UploadCsvPaymentStripe(StaffMixin, FormView):
     def get_success_url(self):
         return reverse('labster-backoffice:payment:upload-csv-payment-product')
 
-    def get_context_data(self, **kwargs):
-        context = super(UploadCsvPaymentStripe, self).get_context_data(**kwargs)
-        return context
+    def get_form_kwargs( self ):
+        kwargs = super( UploadCsvPaymentStripe, self ).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         form.save()
-
-        messages.success(self.request, "We have imported all of the payment stripes")
-
+        messages.success(self.request, QUEUED_MESSAGE)
         return super(UploadCsvPaymentStripe, self).form_valid(form)
 
 
