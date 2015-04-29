@@ -10,8 +10,9 @@ import requests
 from datetime import datetime
 import dateutil.parser
 from lazy import lazy
+from base64 import b32encode
 
-
+from xmodule.exceptions import UndefinedContext
 from xmodule.seq_module import SequenceDescriptor, SequenceModule
 from xmodule.graders import grader_from_conf
 from xmodule.tabs import CourseTabList
@@ -277,11 +278,12 @@ class CourseFields(object):
     discussion_blackouts = List(
         display_name=_("Discussion Blackout Dates"),
         help=_(
-            'Enter pairs of dates between which students cannot post to discussion forums. Each pair should be '
-            'formatted as ["YYYY-MM-DD", "YYYY-MM-DD"]. To specify times as well as dates, format each pair '
-            'as ["YYYY-MM-DDTHH:MM", "YYYY-MM-DDTHH:MM"] (be sure to include the "T" between the date and '
-            'time). An entry defining more than one blackout period might look like this: '
-            '[["2014-09-15", "2014-09-21"], ["2014-10-01", "2014-10-08"]]'
+            'Enter pairs of dates between which students cannot post to discussion forums. Inside the provided '
+            'brackets, enter an additional set of square brackets surrounding each pair of dates you add. '
+            'Format each pair of dates as ["YYYY-MM-DD", "YYYY-MM-DD"]. To specify times as well as dates, '
+            'format each pair as ["YYYY-MM-DDTHH:MM", "YYYY-MM-DDTHH:MM"]. Be sure to include the "T" between '
+            'the date and time. For example, an entry defining two blackout periods looks like this, including '
+            'the outer pair of square brackets: [["2015-09-15", "2015-09-21"], ["2015-10-01", "2015-10-08"]] '
         ),
         scope=Scope.settings
     )
@@ -290,8 +292,9 @@ class CourseFields(object):
         help=_(
             'Enter discussion categories in the following format: "CategoryName": '
             '{"id": "i4x-InstitutionName-CourseNumber-course-CourseRun"}. For example, one discussion '
-            'category may be "Lydian Mode": {"id": "i4x-UniversityX-MUS101-course-2014_T1"}. The "id" '
-            'value for each category must be unique.'
+            'category may be "Lydian Mode": {"id": "i4x-UniversityX-MUS101-course-2015_T1"}. The "id" '
+            'value for each category must be unique. In "id" values, the only special characters that are '
+            'supported are underscore, hyphen, and period.'
         ),
         scope=Scope.settings
     )
@@ -832,6 +835,17 @@ class CourseFields(object):
         scope=Scope.settings,
     )
 
+    social_sharing_url = String(
+        display_name=_("Social Media Sharing URL"),
+        help=_(
+            "If dashboard social sharing and custom course URLs are enabled, you can provide a URL "
+            "(such as the URL to a course About page) that social media sites can link to. URLs must "
+            "be fully qualified. For example: http://www.edx.org/course/Introduction-to-MOOCs-ITM001"
+        ),
+        default=None,
+        scope=Scope.settings,
+    )
+
 
 class LabsterCourseFields(object):
 
@@ -873,8 +887,16 @@ class LabsterCourseFields(object):
     )
 
 
+class CourseModule(CourseFields, SequenceModule):  # pylint: disable=abstract-method
+    """
+    The CourseDescriptor needs its module_class to be a SequenceModule, but some code that
+    expects a CourseDescriptor to have all its fields can fail if it gets a SequenceModule instead.
+    This class is to make sure that all the fields are present in all cases.
+    """
+
+
 class CourseDescriptor(CourseFields, LabsterCourseFields, SequenceDescriptor):
-    module_class = SequenceModule
+    module_class = CourseModule
 
     def __init__(self, *args, **kwargs):
         """
@@ -1251,6 +1273,14 @@ class CourseDescriptor(CourseFields, LabsterCourseFields, SequenceDescriptor):
 
 
         """
+        # If this descriptor has been bound to a student, return the corresponding
+        # XModule. If not, just use the descriptor itself
+        try:
+            module = getattr(self, '_xmodule', None)
+            if not module:
+                module = self
+        except UndefinedContext:
+            module = self
 
         all_descriptors = []
         graded_sections = {}
@@ -1408,4 +1438,13 @@ class CourseDescriptor(CourseFields, LabsterCourseFields, SequenceDescriptor):
         return (
             self.video_upload_pipeline is not None and
             'course_video_upload_token' in self.video_upload_pipeline
+        )
+
+    def clean_id(self, padding_char='='):
+        """
+        Returns a unique deterministic base32-encoded ID for the course.
+        The optional padding_char parameter allows you to override the "=" character used for padding.
+        """
+        return "course_{}".format(
+            b32encode(unicode(self.location.course_key)).replace('=', padding_char)
         )

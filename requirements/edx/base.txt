@@ -34,15 +34,11 @@ django-storages==1.1.5
 django-threaded-multihost==1.4-1
 django-method-override==0.1.0
 djangorestframework==2.3.14
-django==1.4.18
+django==1.4.20
 elasticsearch==0.4.5
 facebook-sdk==0.4.0
 feedparser==5.1.3
 firebase-token-generator==1.3.2
-# Master pyfs has a bug working with VPC auth. This is a fix. We should switch
-# back to master when and if this fix is merged back.
-# fs==0.4.0
-git+https://github.com/pmitros/pyfs.git@96e1922348bfe6d99201b9512a9ed946c87b7e0b
 GitPython==0.3.2.RC1
 glob2==0.3
 gunicorn==0.17.4
@@ -56,17 +52,17 @@ Markdown==2.4.1
 meliae==0.4.0
 mongoengine==0.7.10
 networkx==1.7
-nltk==2.0.4
+nltk==2.0.5
 nose==1.3.3
-oauthlib==0.6.3
+oauthlib==0.7.2
 paramiko==1.9.0
-path.py==3.0.1
+path.py==7.2
 Pillow==2.7.0
 polib==1.0.3
 pycrypto>=2.6
 pygments==2.0.1
 pygraphviz==1.1
-PyJWT==0.4.3
+PyJWT==1.0.1
 pymongo==2.7.2
 pyparsing==2.0.1
 python-memcached==1.48
@@ -144,19 +140,15 @@ pep8==1.5.7
 PyContracts==1.7.1
 pylint==1.4.2
 python-subunit==0.0.16
+pyquery==1.2.9
 radon==1.2
-rednose==0.3
+rednose==0.4.1
 selenium==2.42.1
 splinter==0.5.4
 testtools==0.9.34
 
 # Used for Segment.io analytics
 analytics-python==0.4.4
-
-git+https://github.com/mfogel/django-settings-context-processor.git
-
-# edX packages
-edx-submissions==0.0.8
 
 # labster
 django-live-profiler==0.0.9

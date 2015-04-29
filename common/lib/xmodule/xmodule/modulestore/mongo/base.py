@@ -466,16 +466,17 @@ class MongoBulkOpsMixin(BulkOperationsMixin):
         # ensure it starts clean
         bulk_ops_record.dirty = False
 
-    def _end_outermost_bulk_operation(self, bulk_ops_record, course_id, emit_signals=True):
+    def _end_outermost_bulk_operation(self, bulk_ops_record, structure_key, emit_signals=True):
         """
-        Restart updating the meta-data inheritance cache for the given course.
+        Restart updating the meta-data inheritance cache for the given course or library.
         Refresh the meta-data inheritance cache now since it was temporarily disabled.
         """
         if bulk_ops_record.dirty:
-            self.refresh_cached_metadata_inheritance_tree(course_id)
+            self.refresh_cached_metadata_inheritance_tree(structure_key)
 
-            if emit_signals and self.signal_handler:
-                self.signal_handler.send("course_published", course_key=course_id)
+            if emit_signals:
+                self.send_bulk_published_signal(bulk_ops_record, structure_key)
+                self.send_bulk_library_updated_signal(bulk_ops_record, structure_key)
 
             bulk_ops_record.dirty = False  # brand spanking clean now
 
@@ -1328,7 +1329,7 @@ class MongoModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase, Mongo
             else:
                 parent.children.insert(kwargs.get('position'), xblock.location)
 
-            self.update_item(parent, user_id)
+            self.update_item(parent, user_id, child_update=True)
 
         return xblock
 
