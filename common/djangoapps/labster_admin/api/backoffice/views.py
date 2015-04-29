@@ -474,7 +474,7 @@ class LicenseList(AuthMixin, ListAPIView):
 
 
 class CountryList(ListAPIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
         countries = ISOCountry.objects.all()

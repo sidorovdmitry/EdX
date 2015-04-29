@@ -54,10 +54,6 @@ def login_by_token(request):
             login(request, user)
             enroll_user(user)
 
-        if int(user_type) == LabsterUser.USER_TYPE_TEACHER:
-            # sync data to Backoffice
-            sync_user(user)
-
         if course_id :
             if (is_demo_course == "false" and int(user_type) == LabsterUser.USER_TYPE_STUDENT) or int(user_type) == LabsterUser.USER_TYPE_TEACHER:
                 # if it's an open course e.g. adaptive course then enroll them all otherwise just enroll the teacher
