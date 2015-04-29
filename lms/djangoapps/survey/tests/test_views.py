@@ -9,6 +9,7 @@ from django.test.client import Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
+from student.models import UserProfile
 from survey.models import SurveyForm
 
 from xmodule.modulestore.tests.factories import CourseFactory
@@ -30,6 +31,7 @@ class SurveyViewsTests(ModuleStoreTestCase):
         # Create two accounts
         self.password = 'abc'
         self.student = User.objects.create_user('student', 'student@test.com', self.password)
+        UserProfile.objects.create(user=self.student)
 
         self.test_survey_name = 'TestSurvey'
         self.test_form = '<input name="field1" /><input name="field2" /><select name="ddl"><option>1</option></select>'
