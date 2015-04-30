@@ -828,6 +828,9 @@ if FEATURES.get('LABSTER'):
     LABSTER_S3_BASE_URL = "https://labster.s3.amazonaws.com/"
     LABSTER_UNITY_URL_PREFIX = "{}unity/".format(LABSTER_S3_BASE_URL)
 
+    #FIXME: change the url
+    LABSTER_BACKOFFICE_PDF_GENERATOR_BASE_URL = 'http://10.0.2.2:5000'
+
     HIJACK_EMAILS = ['edx+staging-cms@labster.com']
     LABSTER_LANGUAGES = ('en', 'da')
 
