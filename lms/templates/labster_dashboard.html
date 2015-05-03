@@ -278,15 +278,9 @@
         </li>
         <li class="info--email">
           <span class="title">${_("Email")}
-            % if external_auth_map is None or 'shib' not in external_auth_map.external_domain:
             (<a href="#change_email" rel="leanModal" analytics-on="click" analytics-category="Dashboard" class="edit-email">${_("edit")}</a>)
-            % endif
           </span> <span class="data">${ user.email | h }</span>
         </li>
-
-        %if len(language_options) > 1:
-        <%include file='dashboard/_dashboard_info_language.html' />
-        %endif
 
         % if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
         <li class="controls--account">
@@ -335,7 +329,6 @@
         </li>
         % endif
 
-        % if external_auth_map is None or 'shib' not in external_auth_map.external_domain:
         <li class="controls--account">
           <span class="title"><a href="#password_reset_complete" analytics-on="click" analytics-category="Dashboard" rel="leanModal" id="pwd_reset_button">${_("Reset Password")}</a></span>
           <form id="password_reset_form" method="post" data-remote="true" action="${reverse('password_reset')}">
@@ -343,7 +336,6 @@
             <!-- <input type="submit" id="pwd_reset_button" value="${_('Reset Password')}" /> -->
           </form>
         </li>
-        % endif
 
         <%include file='dashboard/_dashboard_status_verification.html' />
 
@@ -500,8 +492,6 @@
     </div>
   </div>
 </section>
-
-<%include file='modal/_modal-settings-language.html' />
 
 <section id="apply_name_change" class="modal" aria-hidden="true">
   <div class="inner-wrapper" role="dialog" aria-labelledby="change-name-title">
