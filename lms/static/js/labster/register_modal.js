@@ -86,10 +86,16 @@ function registerModalInit(options) {
     });
 
     $('.show-login-form').click(function(){
+        showLoginForm();
+    });
+
+    showLoginForm = function(){
+        // when user enters existing email it will show error message 'the email is used'
+        // because the message is a new element so it won't trigger $('.show-login-form').click
         containerFormZero.fadeOut(function(){
           containerFormLogin.fadeIn();
         });
-    });
+    }
 
     sendEmailTeacher = function() {
       $.ajax({
@@ -157,7 +163,7 @@ function registerModalInit(options) {
             _.each(inputs, function(input) {
                 _.each(messageList, function(message) {
                     if (message == "Email is used") {
-                        message = 'Email is already in use. Please <a href="/login">login here</a>.';
+                        message = 'Email is already in use. Please <a class="show-login-form" onclick="showLoginForm()">login here</a>.';
                     }
                     $(input).next('.error-message').append(message).show();
                 });

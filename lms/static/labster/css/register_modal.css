@@ -76,3 +76,6 @@
     cursor:pointer;
 }
 
+form input {
+    font: 300 1rem/1.6rem "Lato","Crimson Text","Georgia" !important;
+}
