@@ -1,8 +1,12 @@
+import string
+import random
+
 from django.contrib.auth.models import User
 
 from rest_framework import serializers
 
 from labster.user_utils import generate_unique_username
+from labster.models import LabsterUser
 from student.models import UserProfile
 import lms.lib.comment_client as cc
 
@@ -11,12 +15,16 @@ def get_username(email, length=10):
     username = email.split('@')[0]
     return generate_unique_username(username, User)
 
+def get_temp_password(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 
 class UserCreateSerializer(serializers.Serializer):
 
     id = serializers.Field()
     token_key = serializers.SerializerMethodField('get_token')
     email = serializers.EmailField()
+    user_type = serializers.IntegerField(required=False)
 
     def get_token(self, obj):
         return obj.labster_user.token_key
@@ -30,14 +38,20 @@ class UserCreateSerializer(serializers.Serializer):
 
     def save_object(self, *args, **kwargs):
         self.object.username = get_username(self.object.email)
-        self.object.set_unusable_password()
+        # self.object.set_unusable_password()
+        self.object.password = get_temp_password()
         self.object.save()
+
+        user_profile = UserProfile.objects.get_or_create(user=self.object)
+        labster_user = LabsterUser(user=self.object, user_type=self.object.user_type)
+        labster_user.save()
 
         return self.object
 
     def restore_object(self, attrs, instance=None):
         if instance:
             instance.email = attrs.get('email', instance.email)
+            instance.labster_user.user_type = attrs.get('user_type', instance.labster_user.user_type)
             return instance
 
         return User(**attrs)
