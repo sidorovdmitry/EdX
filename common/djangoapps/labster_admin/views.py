@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, FormView
 
 from labster_admin.forms import TeacherToLicenseForm, DuplicateMultipleCourseForm
+from labster.models import Lab
 
 
 def is_staff(user):
@@ -64,6 +65,16 @@ class DuplicateMultipleCourse(StaffMixin, FormView):
         return super(DuplicateMultipleCourse, self).form_valid(form)
 
 
+class LabsPlayData(StaffMixin, TemplateView):
+    template_name = "labster_admin/lab_plays_data.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(LabsPlayData, self).get_context_data(**kwargs)
+        context['labs'] = Lab.objects.order_by('name')
+        return context
+
+
 home = Home.as_view()
 add_teacher_to_license = AddTeacherToLicense.as_view()
 duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
+labs_play_data = LabsPlayData.as_view()
