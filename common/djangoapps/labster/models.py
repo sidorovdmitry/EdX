@@ -200,6 +200,9 @@ class Lab(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
 
+    play_count = models.IntegerField(default=0)
+    duration = models.IntegerField(default=0)
+
     all_objects = models.Manager()
     objects = ActiveManager()
 
