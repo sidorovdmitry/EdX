@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from labster.user_utils import generate_unique_username
-from labster.models import LabsterUser
 from student.models import UserProfile
 import lms.lib.comment_client as cc
 
@@ -14,6 +13,7 @@ import lms.lib.comment_client as cc
 def get_username(email, length=10):
     username = email.split('@')[0]
     return generate_unique_username(username, User)
+
 
 def get_temp_password(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -31,7 +31,7 @@ class UserCreateSerializer(serializers.Serializer):
     def validate_email(self, attrs, source):
         value = attrs[source]
         if value and User.objects.filter(email__iexact=value.strip()).exists():
-            user = User.objects.get(email = value.strip())
+            user = User.objects.get(email=value.strip())
             if user.has_usable_password():
                 raise serializers.ValidationError("Email is used")
 
@@ -39,23 +39,21 @@ class UserCreateSerializer(serializers.Serializer):
 
     def save_object(self, *args, **kwargs):
         self.object.username = get_username(self.object.email)
-        try:
-            user = User.objects.get(email = self.object.email)
-            return user
-        except User.DoesNotExist:
-            self.object.set_unusable_password()
-            self.object.save()
-            UserProfile.objects.get_or_create(user=self.object)
-            LabsterUser.objects.get_or_create(user=self.object)
+        self.object.set_unusable_password()
+        self.object.save()
+
+        UserProfile.objects.get_or_create(user=self.object)
 
         return self.object
 
     def restore_object(self, attrs, instance=None):
-        if instance:
+        try:
+            instance = User.objects.get(email=attrs.get('email'))
             instance.email = attrs.get('email', instance.email)
-            return instance
+        except User.DoesNotExist:
+            instance = User(**attrs)
 
-        return User(**attrs)
+        return instance
 
 
 class CustomLabsterUser(object):
