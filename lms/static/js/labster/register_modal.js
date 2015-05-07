@@ -259,7 +259,7 @@ function registerModalInit(options) {
             $.ajax({
                 url: createUrl,
                 type: "POST",
-                data: {email: email},
+                data: {email: email, user_type: window.userType},
                 success: function(response) {
                     window.user = response;
                     containerFormZero.fadeOut(function() {
