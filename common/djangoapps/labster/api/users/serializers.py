@@ -24,7 +24,6 @@ class UserCreateSerializer(serializers.Serializer):
     id = serializers.Field()
     token_key = serializers.SerializerMethodField('get_token')
     email = serializers.EmailField()
-    user_type = serializers.IntegerField(required=False)
 
     def get_token(self, obj):
         return obj.labster_user.token_key
@@ -32,26 +31,28 @@ class UserCreateSerializer(serializers.Serializer):
     def validate_email(self, attrs, source):
         value = attrs[source]
         if value and User.objects.filter(email__iexact=value.strip()).exists():
-            raise serializers.ValidationError("Email is used")
+            user = User.objects.get(email = value.strip())
+            if user.has_usable_password():
+                raise serializers.ValidationError("Email is used")
 
         return attrs
 
     def save_object(self, *args, **kwargs):
         self.object.username = get_username(self.object.email)
-        # self.object.set_unusable_password()
-        self.object.password = get_temp_password()
-        self.object.save()
-
-        user_profile = UserProfile.objects.get_or_create(user=self.object)
-        labster_user = LabsterUser(user=self.object, user_type=self.object.user_type)
-        labster_user.save()
+        try:
+            user = User.objects.get(email = self.object.email)
+            return user
+        except User.DoesNotExist:
+            self.object.set_unusable_password()
+            self.object.save()
+            UserProfile.objects.get_or_create(user=self.object)
+            LabsterUser.objects.get_or_create(user=self.object)
 
         return self.object
 
     def restore_object(self, attrs, instance=None):
         if instance:
             instance.email = attrs.get('email', instance.email)
-            instance.labster_user.user_type = attrs.get('user_type', instance.labster_user.user_type)
             return instance
 
         return User(**attrs)
