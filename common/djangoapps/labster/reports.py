@@ -1,6 +1,8 @@
 from collections import defaultdict
 
-from labster.models import UserAnswer, UserAttempt, Problem, get_user_attempts_from_lab_proxy
+from labster.models import (
+    UserAnswer, UserAttempt, Problem, get_user_attempts_from_lab_proxy, Lab,
+)
 
 
 def get_attempts_and_answers(
@@ -129,3 +131,38 @@ def export_answers(lab_proxy):
     rows.extend(user_attempts_to_rows(missing_user_attempts))
 
     return rows
+
+
+def get_end_time_from_userattempt(userattempt):
+    if userattempt.finished_at:
+        return userattempt.finished_at
+    return userattempt.completed_at
+
+
+def get_last_end_time(userattempt):
+    end_time = get_end_time_from_userattempt(userattempt)
+    try:
+        useranswer = UserAnswer.objects.filter(attempt=userattempt).order_by('-end_time')[0]
+    except IndexError:
+        pass
+    else:
+        if end_time and useranswer.end_time:
+            end_time = end_time if end_time > useranswer.end_time else useranswer.end_time
+
+    return end_time
+
+
+def get_play_count(lab):
+    return UserAttempt.objects.filter(lab_proxy__lab=lab).count()
+
+
+def get_duration(lab):
+    userattempts = UserAttempt.objects.filter(lab_proxy__lab=lab)
+    duration = 0
+    for ua in userattempts:
+        end_time = get_last_end_time(ua)
+        if end_time:
+            _duration = (end_time - ua.created_at).seconds
+            duration += _duration
+
+    return duration
