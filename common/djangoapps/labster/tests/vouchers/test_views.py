@@ -56,6 +56,13 @@ class VoucherCreateTest(ViewTestMixin, VoucherPostMixin, TestCase):
         self.voucher = VoucherFactory(id='1234567890')
         self.url = reverse('labster-backoffice:voucher:create')
         User.objects.create_user('username', 'user@email.com', 'password')
+        self.valid_data = {
+            'id': '1234567890',
+            'price': 2000,
+            'limit': 10,
+            # 'products': product_ids,
+            'week_subscription': 4,
+        }
 
     def test_post(self):
         voucher = Voucher.objects.latest('id')
@@ -66,7 +73,11 @@ class VoucherCreateTest(ViewTestMixin, VoucherPostMixin, TestCase):
 class VoucherUpdateTest(ViewTestMixin, VoucherPostMixin, TestCase):
 
     def setUp(self):
-        self.voucher = VoucherFactory(id='1234567890')
+        # products = [ProductFactory() for i in range(3)]
+        # product_ids = [p.id for p in products]
+
+        self.voucher = VoucherFactory(id='1234567890', price=1000, limit=10, 
+            week_subscription=4)
 
         self.url = reverse('labster-backoffice:voucher:update', args=[self.voucher.id])
         User.objects.create_user('username', 'user@email.com', 'password')
@@ -74,11 +85,21 @@ class VoucherUpdateTest(ViewTestMixin, VoucherPostMixin, TestCase):
         self.product = ProductFactory()
         self.valid_data = {
             'id': '1234567890',
-            'price': 1000,
+            'price': 2000,
             'limit': 10,
-            'products': [self.product.id],
+            # 'products': product_ids,
             'week_subscription': 4,
         }
+
+    def test_post(self):
+        self.client.login(username=self.user.username, password=self.user.password)
+        response = self.client.post(self.url, self.valid_data)
+
+        self.assertEqual(response.status_code, 302)
+
+        voucher = Voucher.objects.get(id=self.voucher.id)
+        self.assertEqual(voucher.id, self.valid_data['id'])
+        self.assertEqual(voucher.price, self.valid_data['price'])
 
 
 @unittest.skipUnless(settings.ROOT_URLCONF == 'cms.urls', 'Test only valid in cms')
