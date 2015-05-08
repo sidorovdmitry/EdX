@@ -1,4 +1,7 @@
 import json
+import unittest
+
+from django.conf import settings
 from diplomat.models import ISOCountry
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -41,12 +44,13 @@ class AuthPostOnlyMixin(object):
         self.assertEqual(response.status_code, 401)
 
 
+@unittest.skipUnless(settings.ROOT_URLCONF == 'cms.urls', 'Test only valid in cms')
 class CreateListProductsTest(TestCase):
 
     def setUp(self):
         self.user = UserFactory()
         self.product = ProductFactory()
-        self.url = reverse('api:product')
+        self.url = reverse('labster-backoffice:api:product')
         self.headers = get_auth_header(self.user)
 
     def test_get_found(self):
@@ -74,13 +78,14 @@ class CreateListProductsTest(TestCase):
         self.assertEqual(product.count(), 2)
 
 
+@unittest.skipUnless(settings.ROOT_URLCONF == 'cms.urls', 'Test only valid in cms')
 class CreateListProductGroupsTest(TestCase):
 
     def setUp(self):
         self.user = UserFactory()
         self.product = ProductFactory()
         self.product_group = ProductGroupFactory()
-        self.url = reverse('api:product_group')
+        self.url = reverse('labster-backoffice:api:product_group')
         self.headers = get_auth_header(self.user)
 
     def test_get_found(self):
@@ -103,12 +108,13 @@ class CreateListProductGroupsTest(TestCase):
         self.assertEqual(product.count(), 1)
 
 
+@unittest.skipUnless(settings.ROOT_URLCONF == 'cms.urls', 'Test only valid in cms')
 class ListLicenseTest(TestCase):
 
     def setUp(self):
         self.user = UserFactory()
         self.payment_product = PaymentProductFactory()
-        self.url = reverse('api:list-license')
+        self.url = reverse('labster-backoffice:api:list-license')
         self.headers = get_auth_header(self.user)
 
     def test_get_found(self):
@@ -132,12 +138,13 @@ class ListLicenseTest(TestCase):
         self.assertEqual(response.status_code, 405)
 
 
+@unittest.skipUnless(settings.ROOT_URLCONF == 'cms.urls', 'Test only valid in cms')
 class ListPaymentTest(TestCase):
 
     def setUp(self):
-        self.user = UserFactory()
-        self.payment = PaymentFactory()
-        self.url = reverse('api:list-payment')
+        self.user = UserFactory(username="snow", first_name="jon", email="jonsnow@got.com")
+        self.payment = PaymentFactory(user=self.user)
+        self.url = reverse('labster-backoffice:api:list-payment')
         self.headers = get_auth_header(self.user)
 
     def test_get_found(self):
@@ -147,19 +154,20 @@ class ListPaymentTest(TestCase):
 
     def test_detail_found(self):
         PaymentFactory()
-        url = reverse('api:detail-payment', args=[self.payment.id])
+        url = reverse('labster-backoffice:api:detail-payment', args=[self.payment.id])
 
         response = self.client.get(url, **self.headers)
         self.assertEqual(response.status_code, 200)
 
 
+@unittest.skipUnless(settings.ROOT_URLCONF == 'cms.urls', 'Test only valid in cms')
 class CreatePaymentTest(TestCase):
 
     def setUp(self):
         self.user = UserFactory()
         self.payment = PaymentFactory()
         self.product = ProductFactory()
-        self.url = reverse('api:create-payment')
+        self.url = reverse('labster-backoffice:api:create-payment')
         self.headers = get_auth_header(self.user)
 
     def test_post_new(self):

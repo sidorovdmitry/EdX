@@ -9,10 +9,10 @@ from labster_backoffice.models import Payment, PaymentProduct, License, \
 
 
 class UserFactory(DjangoModelFactory):
-
-    class Meta:
-        model = User
-        django_get_or_create = ('email', 'first_name', 'username')
+    FACTORY_FOR = User
+    # class Meta:
+    #     model = User
+    #     django_get_or_create = ('email', 'first_name', 'username')
 
     username = "batman"
     first_name = "bruce"
@@ -20,10 +20,10 @@ class UserFactory(DjangoModelFactory):
 
 
 class ProductFactory(DjangoModelFactory):
-
-    class Meta:
-        model = Product
-        django_get_or_create = ('name', 'price', 'description', 'is_active', 'source_name', 'image_url', 'external_id')
+    FACTORY_FOR = Product
+    # class Meta:
+    #     model = Product
+    #     django_get_or_create = ('name', 'price', 'description', 'is_active', 'source_name', 'image_url', 'external_id')
 
     name = factory.Sequence(lambda n: '{0} cytogenetics'.format(n))
     price = 15
@@ -35,18 +35,18 @@ class ProductFactory(DjangoModelFactory):
 
 
 class ProductGroupFactory(DjangoModelFactory):
-
-    class Meta:
-        model = ProductGroup
+    FACTORY_FOR = ProductGroup
+    # class Meta:
+    #     model = ProductGroup
 
     name = factory.Sequence(lambda n: '{0} group'.format(n))
     price = 15
 
 
 class PaymentFactory(DjangoModelFactory):
-
-    class Meta:
-        model = Payment
+    FACTORY_FOR = Payment
+    # class Meta:
+    #     model = Payment
 
     payment_type = 'stripe'
     total = 110
@@ -58,9 +58,9 @@ class PaymentFactory(DjangoModelFactory):
 
 
 class PaymentProductFactory(DjangoModelFactory):
-
-    class Meta:
-        model = PaymentProduct
+    FACTORY_FOR = PaymentProduct
+    # class Meta:
+    #     model = PaymentProduct
 
     price = 10
     month_subscription = 12
@@ -71,9 +71,9 @@ class PaymentProductFactory(DjangoModelFactory):
 
 
 class LicenseFactory(DjangoModelFactory):
-
-    class Meta:
-        model = License
+    FACTORY_FOR = License
+    # class Meta:
+    #     model = License
 
     user = factory.SubFactory(UserFactory)
     payment_product = factory.SubFactory(PaymentProductFactory)
@@ -82,8 +82,9 @@ class LicenseFactory(DjangoModelFactory):
 
 
 class VoucherFactory(DjangoModelFactory):
-    class Meta:
-        model = Voucher
+    FACTORY_FOR = Voucher
+    # class Meta:
+    #     model = Voucher
 
     id = factory.Sequence(lambda n: "abc{0}defghi".format(n))
     price = 100
