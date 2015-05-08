@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 
 from labster.models import LabsterUser
-from labster.users.admin import LabsterUserForm
+from labster.users.forms import LabsterUserForm
 from student.models import UserProfile
 
 

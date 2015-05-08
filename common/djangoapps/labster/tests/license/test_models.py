@@ -3,8 +3,8 @@ from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
 
-from labster_backoffice.payments.models import License, deactivate_trial_licenses
-from labster_backoffice.tests.factories import (
+from labster_backoffice.models import License, deactivate_trial_licenses
+from labster.tests.factories import (
     ProductFactory, ProductGroupFactory, PaymentProductFactory, LicenseFactory)
 
 

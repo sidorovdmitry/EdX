@@ -3,9 +3,9 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import timezone
 
-from labster_backoffice.payments.models import License
-from labster_backoffice.tests.views import ViewTestMixin
-from labster_backoffice.tests.factories import LicenseFactory, UserFactory
+from labster_backoffice.models import License
+from labster.tests.views import ViewTestMixin
+from labster.tests.factories import LicenseFactory, UserFactory
 
 
 class LicenseListTest(ViewTestMixin, TestCase):

@@ -1,8 +1,7 @@
 from django.test import TestCase
 
-from labster_backoffice.products.models import Product
-from labster_backoffice.payments.models import PaymentProduct
-from labster_backoffice.tests.factories import (
+from labster_backoffice.models import Product, PaymentProduct
+from labster.tests.factories import (
     ProductFactory, PaymentFactory, ProductGroupFactory)
 
 

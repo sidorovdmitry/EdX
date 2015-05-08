@@ -4,9 +4,8 @@ from django.contrib.auth.models import User
 import factory
 from factory.django import DjangoModelFactory
 
-from labster_backoffice.payments.models import Payment, PaymentProduct, License
-from labster_backoffice.products.models import Product, ProductGroup
-from labster_backoffice.vouchers.models import Voucher
+from labster_backoffice.models import Payment, PaymentProduct, License, \
+    Product, ProductGroup, Voucher
 
 
 class UserFactory(DjangoModelFactory):
@@ -86,5 +85,5 @@ class VoucherFactory(DjangoModelFactory):
     class Meta:
         model = Voucher
 
-    id = factory.Sequence(lambda n: "abc{0}de".format(n))
+    id = factory.Sequence(lambda n: "abc{0}defghi".format(n))
     price = 100

@@ -3,8 +3,8 @@ from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from labster_backoffice.tests.factories import PaymentFactory
-from labster_backoffice.tests.views import ViewTestMixin
+from labster.tests.factories import PaymentFactory
+from labster.tests.views import ViewTestMixin
 
 
 class PaymentListTest(ViewTestMixin, TestCase):

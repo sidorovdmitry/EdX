@@ -2,9 +2,9 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from labster_backoffice.vouchers.models import Voucher
-from labster_backoffice.tests.views import ViewTestMixin
-from labster_backoffice.tests.factories import VoucherFactory, ProductFactory
+from labster.tests.views import ViewTestMixin
+from labster.tests.factories import VoucherFactory, ProductFactory
+from labster_backoffice.models import Voucher
 
 
 class VoucherListTest(ViewTestMixin, TestCase):
@@ -53,7 +53,7 @@ class VoucherCreateTest(ViewTestMixin, VoucherPostMixin, TestCase):
 
         self.product = ProductFactory()
         self.valid_data = {
-            'id': '123456',
+            'id': '1234567890',
             'price': 1000,
             'limit': 10,
             'products': [self.product.id],
@@ -64,14 +64,14 @@ class VoucherCreateTest(ViewTestMixin, VoucherPostMixin, TestCase):
 class VoucherUpdateTest(ViewTestMixin, VoucherPostMixin, TestCase):
 
     def setUp(self):
-        self.voucher = VoucherFactory(id='123456')
+        self.voucher = VoucherFactory(id='1234567890')
 
         self.url = reverse('voucher:update', args=[self.voucher.id])
         User.objects.create_user('username', 'user@email.com', 'password')
 
         self.product = ProductFactory()
         self.valid_data = {
-            'id': '123456',
+            'id': '1234567890',
             'price': 1000,
             'limit': 10,
             'products': [self.product.id],
@@ -82,7 +82,7 @@ class VoucherUpdateTest(ViewTestMixin, VoucherPostMixin, TestCase):
 class VoucherDelete(ViewTestMixin, TestCase):
 
     def setUp(self):
-        self.voucher = VoucherFactory(id='123456')
+        self.voucher = VoucherFactory(id='1234567890')
 
         self.url = reverse('voucher:delete', args=[self.voucher.id])
         User.objects.create_user('username', 'user@email.com', 'password')
@@ -93,4 +93,4 @@ class VoucherDelete(ViewTestMixin, TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('voucher:index'))
 
-        self.assertFalse(Voucher.objects.filter(id='123456').exists())
+        self.assertFalse(Voucher.objects.filter(id='1234567890').exists())

@@ -3,9 +3,9 @@ from django.utils import timezone
 
 from datetime import timedelta
 
-from labster_backoffice.tests.factories import (
+from labster.tests.factories import (
     ProductFactory, ProductGroupFactory, PaymentProductFactory, PaymentFactory)
-from labster_backoffice.payments.models import send_reminder_emails, Payment
+from labster_backoffice.models import send_reminder_emails, Payment
 
 
 class PaymentProductModelTest(TestCase):

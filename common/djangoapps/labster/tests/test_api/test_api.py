@@ -3,8 +3,8 @@ from diplomat.models import ISOCountry
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import timezone
-from labster_backoffice.products.models import Product
-from labster_backoffice.tests.factories import ProductFactory, UserFactory, ProductGroupFactory, \
+from labster_backoffice.models import Product
+from labster.tests.factories import ProductFactory, UserFactory, ProductGroupFactory, \
     LicenseFactory, PaymentFactory, PaymentProductFactory
 from rest_framework.authtoken.models import Token
 

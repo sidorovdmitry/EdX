@@ -1,8 +1,8 @@
 from django.test import TestCase
 
-from labster_backoffice.tests.factories import ProductFactory
-from labster_backoffice.vouchers.forms import VoucherForm
-from labster_backoffice.vouchers.models import Voucher, VoucherProduct
+from labster.tests.factories import ProductFactory
+from labster_backoffice.forms import VoucherForm
+from labster_backoffice.models import Voucher, VoucherProduct
 
 
 class VoucherFormTest(TestCase):
