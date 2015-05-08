@@ -31,7 +31,7 @@
 
 % if settings.FEATURES.get('LABSTER'):
 <script>
-window.userLicenses = JSON.parse("${section_data.get('user_licenses', '[]')}");
+window.userLicenses = JSON.parse('${section_data.get('user_licenses', '[]')}');
 window.courseId = "${course.id}";
 </script>
 <script type="text/template" id="license-row-template">
@@ -139,7 +139,7 @@ window.courseId = "${course.id}";
 
 %if section_data['access']['instructor']:
 <!-- hide beta tester -->
-<!--
+<%doc>
 <div class="batch-beta-testers membership-section">
   <h2> ${_("Batch Beta Tester Addition")} </h2>
   <p>
@@ -183,7 +183,7 @@ window.courseId = "${course.id}";
 </div>
 
 <hr class="divider" />
--->
+</%doc>
 %endif
 
 <div class="member-lists-management membership-section">

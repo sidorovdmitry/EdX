@@ -7,6 +7,7 @@ from labster.user_utils import generate_unique_username
 
 from labster.models import LabsterUser
 
+
 class LabsterUserForm(forms.ModelForm):
 
     name = forms.CharField()

@@ -12,18 +12,22 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
-from django.views import generic
+from django.views.generic import TemplateView, FormView, ListView, CreateView, \
+    UpdateView, DeleteView, View, DetailView
 
 from dateutil.relativedelta import relativedelta
 
-from labster_admin.forms import TeacherToLicenseForm, DuplicateMultipleCourseForm
 from labster.users.forms import LabsterUserForm
+
+from labster_admin.forms import TeacherToLicenseForm, DuplicateMultipleCourseForm
 
 from labster_backoffice.models import Voucher, Payment, PaymentProduct, \
     License, CountryVat
 from labster_backoffice.forms import VoucherForm, StripePaymentForm, \
     LicenseForm, ActivateDeactivateUserForm, UploadCsvVatForm
 from labster_backoffice.helpers import send_invoice_mail, send_confirmation_mail
+
+from labster.models import Lab
 
 
 def is_staff(user):
@@ -37,7 +41,7 @@ class StaffMixin(object):
         return super(StaffMixin, self).dispatch(*args, **kwargs)
 
 
-class AddTeacherToLicense(StaffMixin, generic.FormView):
+class AddTeacherToLicense(StaffMixin, FormView):
     template_name = "labster_backoffice/add_teacher_to_license.html"
     form_class = TeacherToLicenseForm
 
@@ -58,7 +62,7 @@ class AddTeacherToLicense(StaffMixin, generic.FormView):
         return super(AddTeacherToLicense, self).form_valid(form)
 
 
-class DuplicateMultipleCourse(StaffMixin, generic.FormView):
+class DuplicateMultipleCourse(StaffMixin, FormView):
     template_name = "labster_backoffice/duplicate_multiple_courses.html"
     form_class = DuplicateMultipleCourseForm
 
@@ -79,9 +83,7 @@ class DuplicateMultipleCourse(StaffMixin, generic.FormView):
         return super(DuplicateMultipleCourse, self).form_valid(form)
 
 
-# Start from here is code for Labster BackOffice, views is in edX while urls, models, and templates are in another repo
-
-class ActivateDeactivateUser(StaffMixin, generic.FormView):
+class ActivateDeactivateUser(StaffMixin, FormView):
     template_name = "user/activate_deactivate_user.html"
     form_class = ActivateDeactivateUserForm
 
@@ -103,7 +105,7 @@ class ActivateDeactivateUser(StaffMixin, generic.FormView):
         return super(ActivateDeactivateUser, self).form_valid(form)
 
 
-class VatIndexView(StaffMixin, generic.ListView):
+class VatIndexView(StaffMixin, ListView):
     template_name = "vat/index.html"
     context_object_name = 'country_vat_list'
     paginate_by = 20
@@ -126,7 +128,7 @@ class VatIndexView(StaffMixin, generic.ListView):
         return result
 
 
-class UploadCsvVat(StaffMixin, generic.FormView):
+class UploadCsvVat(StaffMixin, FormView):
     template_name = "vat/upload_vat.html"
     form_class = UploadCsvVatForm
 
@@ -145,7 +147,7 @@ class UploadCsvVat(StaffMixin, generic.FormView):
         return super(UploadCsvVat, self).form_valid(form)
 
 
-class CreateLabsterUser(StaffMixin, generic.FormView):
+class CreateLabsterUser(StaffMixin, FormView):
     template_name = "user/create_user.html"
     form_class = LabsterUserForm
 
@@ -168,7 +170,7 @@ def home(request):
     return HttpResponseRedirect(reverse('labster-backoffice:license:index'))
 
 
-class IndexView(StaffMixin, generic.ListView):
+class IndexView(StaffMixin, ListView):
     template_name = "vouchers/index.html"
     context_object_name = 'voucher_list'
     paginate_by = 20
@@ -191,7 +193,7 @@ class IndexView(StaffMixin, generic.ListView):
         return result
 
 
-class VoucherCreate(StaffMixin, generic.CreateView):
+class VoucherCreate(StaffMixin, CreateView):
     form_class = VoucherForm
     template_name = "vouchers/create.html"
 
@@ -199,7 +201,7 @@ class VoucherCreate(StaffMixin, generic.CreateView):
         return reverse('labster-backoffice:voucher:index')
 
 
-class VoucherUpdate(StaffMixin, generic.UpdateView):
+class VoucherUpdate(StaffMixin, UpdateView):
     model = Voucher
     form_class = VoucherForm
     template_name = "vouchers/update.html"
@@ -215,7 +217,7 @@ class VoucherUpdate(StaffMixin, generic.UpdateView):
         return context
 
 
-class VoucherDelete(StaffMixin, generic.DeleteView):
+class VoucherDelete(StaffMixin, DeleteView):
     model = Voucher
     template_name = "vouchers/delete.html"
 
@@ -223,7 +225,7 @@ class VoucherDelete(StaffMixin, generic.DeleteView):
         return reverse('labster-backoffice:voucher:index')
 
 
-class PaymentIndexView(StaffMixin, generic.ListView):
+class PaymentIndexView(StaffMixin, ListView):
     template_name = "payment/index.html"
     context_object_name = 'payment_list'
     paginate_by = 20
@@ -247,7 +249,7 @@ class PaymentIndexView(StaffMixin, generic.ListView):
 
 
 # FIXME: deprecated
-class PaymentCreate(StaffMixin, generic.CreateView):
+class PaymentCreate(StaffMixin, CreateView):
     # form_class = PaymentForm
     from_class = forms.ModelForm
     model = Payment
@@ -269,7 +271,7 @@ class PaymentCreate(StaffMixin, generic.CreateView):
         return form_kwargs
 
 
-class PaymentDetail(StaffMixin, generic.DetailView):
+class PaymentDetail(StaffMixin, DetailView):
     model = Payment
     template_name = 'payment/detail.html'
 
@@ -344,7 +346,7 @@ def change_to_paid(payment):
     payment.save()
 
 
-class PaymentDetailPDF(generic.View):
+class PaymentDetailPDF(View):
 
     def get(self, request, *args, **kwargs):
         return HttpResponse(200)
@@ -366,7 +368,7 @@ class PaymentDetailPDF(generic.View):
             return HttpResponse(rendered)
 
 
-class LicenseIndexView(StaffMixin, generic.ListView):
+class LicenseIndexView(StaffMixin, ListView):
     template_name = "license/index.html"
     context_object_name = 'license_list'
     paginate_by = 20
@@ -389,7 +391,7 @@ class LicenseIndexView(StaffMixin, generic.ListView):
         return result
 
 
-class LicenseCreate(StaffMixin, generic.CreateView):
+class LicenseCreate(StaffMixin, CreateView):
     template_name = "license/form.html"
     model = License
     form_class = LicenseForm
@@ -398,7 +400,7 @@ class LicenseCreate(StaffMixin, generic.CreateView):
         return reverse('labster-backoffice:license:index')
 
 
-class LicenseUpdate(StaffMixin, generic.UpdateView):
+class LicenseUpdate(StaffMixin, UpdateView):
     template_name = "license/form.html"
     model = License
     form_class = LicenseForm
@@ -431,9 +433,19 @@ def activate_license_view(request, license_id):
         return HttpResponseRedirect(reverse('labster-backoffice:license:index'))
 
 
+class LabsPlayData(StaffMixin, TemplateView):
+    template_name = "labster_admin/lab_plays_data.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(LabsPlayData, self).get_context_data(**kwargs)
+        context['labs'] = Lab.objects.order_by('name')
+        return context
+
+
 add_teacher_to_license = AddTeacherToLicense.as_view()
 duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
 activate_deactivate_user = ActivateDeactivateUser.as_view()
 upload_vat = UploadCsvVat.as_view()
 index_vat = VatIndexView.as_view()
 create_labster_user = CreateLabsterUser.as_view()
+labs_play_data = LabsPlayData.as_view()

@@ -7,6 +7,10 @@ from django.conf.urls import patterns, include, url  # noqa
 #     url('^duplicate-multiple-courses/$', 'duplicate_multiple_courses', name='labster_duplicate_multiple_courses'),
 # )
 
+urlpatterns = patterns('labster_admin.views',  # nopep8
+    url('^labs-play-data/$', 'labs_play_data', name='labster_labs_play_data'),
+)
+
 urlpatterns = patterns('labster.cms.views',  # nopep8
     url('^duplicate-lab/$', 'duplicate_lab', name='labster_duplicate_lab'),
     url('^duplicate-course/$', 'duplicate_course_view', name='labster_duplicate_course'),
