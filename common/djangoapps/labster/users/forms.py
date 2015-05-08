@@ -50,6 +50,7 @@ class LabsterUserForm(forms.ModelForm):
             self.fields['date_of_birth'].initial = self.instance.date_of_birth
 
             self.fields['password'].widget.attrs['disabled'] = True
+            self.fields['password'].required = False
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
