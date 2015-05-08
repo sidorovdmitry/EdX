@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from labster.tests.views import ViewTestMixin
-from labster.tests.factories import VoucherFactory, ProductFactory
+from labster.tests.factories import VoucherFactory, ProductFactory, UserFactory
 from labster_backoffice.models import Voucher
 
 
