@@ -5,7 +5,7 @@ class ViewTestMixin(object):
 
     @property
     def login_url(self):
-        return "{}?next={}".format(reverse('account:login'), self.url)
+        return "{}?next={}".format(reverse('accounts_login'), self.url)
 
     def test_get_not_logged_in(self):
         response = self.client.get(self.url)
@@ -15,5 +15,5 @@ class ViewTestMixin(object):
     def test_get_logged_in(self):
         self.client.login(username='username', password='password')
 
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
