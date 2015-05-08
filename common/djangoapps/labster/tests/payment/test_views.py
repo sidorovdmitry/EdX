@@ -23,7 +23,7 @@ class PaymentCreateTest(ViewTestMixin, TestCase):
 
     def setUp(self):
         User.objects.create_user('username', 'user@email.com', 'password')
-        self.url = reverse('payment:buy_lab')
+        self.url = reverse('labster-backoffice:payment:buy_lab')
 
 
 @unittest.skipUnless(settings.ROOT_URLCONF == 'cms.urls', 'Test only valid in cms')
@@ -41,7 +41,7 @@ class ActivatePaymentTest(ViewTestMixin, TestCase):
     def setUp(self):
         User.objects.create_user('username', 'user@email.com', 'password')
         self.payment = PaymentFactory()
-        self.url = reverse('payment:activate', args=[self.payment.id])
+        self.url = reverse('labster-backoffice:payment:activate', args=[self.payment.id])
 
     def test_get_logged_in(self):
         self.client.login(username='username', password='password')
@@ -56,7 +56,7 @@ class ChargePaymentTest(ViewTestMixin, TestCase):
     def setUp(self):
         User.objects.create_user('username', 'user@email.com', 'password')
         self.payment = PaymentFactory()
-        self.url = reverse('payment:charge', args=[self.payment.id])
+        self.url = reverse('labster-backoffice:payment:charge', args=[self.payment.id])
 
 
 @unittest.skipUnless(settings.ROOT_URLCONF == 'cms.urls', 'Test only valid in cms')

@@ -5,7 +5,7 @@ class ViewTestMixin(object):
 
     @property
     def login_url(self):
-        return "{}?next={}".format(reverse('accounts_login'), self.url)
+        return "{}?next={}".format(reverse('login'), self.url)
 
     def test_get_not_logged_in(self):
         response = self.client.get(self.url)

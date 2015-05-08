@@ -24,11 +24,13 @@ class LicenseCreateTest(ViewTestMixin, TestCase):
 
     def setUp(self):
         self.url = reverse('labster-backoffice:license:create')
-        User.objects.create_user('username', 'user@email.com', 'password')
+        self.user = UserFactory(username="snow", first_name="jon", email="jonsnow@got.com")
+        self.license = LicenseFactory(user=self.user)
+        # User.objects.create_user('username', 'user@email.com', 'password')
         self.date_end = timezone.now()
 
         self.valid_data = {
-            'user': UserFactory().id,
+            'user': self.user.id,
             'item_count': 1,
             'date_bought': self.date_end.strftime('%Y-%m-%d %H:%M'),
             'date_end_license': self.date_end.strftime('%Y-%m-%d %H:%M'),
@@ -36,7 +38,7 @@ class LicenseCreateTest(ViewTestMixin, TestCase):
         }
 
     def test_post_valid_data(self):
-        self.client.login(username='username', password='password')
+        self.client.login(username=self.user.username, password=self.user.password)
         response = self.client.post(self.url, self.valid_data)
 
         self.assertEqual(response.status_code, 302)
@@ -58,21 +60,23 @@ class LicenseCreateTest(ViewTestMixin, TestCase):
 class LicenseUpdateTest(ViewTestMixin, TestCase):
 
     def setUp(self):
-        self.license = LicenseFactory()
-        self.url = reverse('license:update', args=[self.license.id])
-        User.objects.create_user('username', 'user@email.com', 'password')
         self.date_end = timezone.now()
+        self.user = UserFactory(username="snow", first_name="jon", email="jonsnow@got.com")
+        self.license = LicenseFactory(user=self.user, item_count=1, date_bought=self.date_end,
+            date_end_license=self.date_end, is_active=1)
+        self.url = reverse('labster-backoffice:license:update', args=[self.license.id])
+        # User.objects.create_user('username', 'user@email.com', 'password')        
 
         self.valid_data = {
-            'user': UserFactory().id,
+            'user': self.user.id,
             'item_count': 1,
-            'date_bought': self.date_end.strftime('%Y-%m-%d %H:%M'),
-            'date_end_license': self.date_end.strftime('%Y-%m-%d %H:%M'),
+            'date_bought': self.date_end,
+            'date_end_license': self.date_end,
             'is_active': 1,
         }
 
     def test_post_valid_data(self):
-        self.client.login(username='username', password='password')
+        self.client.login(username=self.user.username, password=self.user.password)
         response = self.client.post(self.url, self.valid_data)
 
         self.assertEqual(response.status_code, 302)
@@ -83,10 +87,10 @@ class LicenseUpdateTest(ViewTestMixin, TestCase):
         self.assertTrue(license.is_active)
         self.assertEqual(license.item_count, self.valid_data['item_count'])
         self.assertEqual(
-            license.date_bought.strftime('%Y-%m-%d %H:%M'),
+            license.date_bought,
             self.valid_data['date_bought'])
         self.assertEqual(
-            license.date_end_license.strftime('%Y-%m-%d %H:%M'),
+            license.date_end_license,
             self.valid_data['date_end_license'])
 
 

@@ -48,7 +48,7 @@ class AuthPostOnlyMixin(object):
 class CreateListProductsTest(TestCase):
 
     def setUp(self):
-        self.user = UserFactory()
+        self.user = UserFactory(username="snow", first_name="jon", email="jonsnow@got.com")
         self.product = ProductFactory()
         self.url = reverse('labster-backoffice:api:product')
         self.headers = get_auth_header(self.user)
@@ -82,7 +82,7 @@ class CreateListProductsTest(TestCase):
 class CreateListProductGroupsTest(TestCase):
 
     def setUp(self):
-        self.user = UserFactory()
+        self.user = UserFactory(username="snow", first_name="jon", email="jonsnow@got.com")
         self.product = ProductFactory()
         self.product_group = ProductGroupFactory()
         self.url = reverse('labster-backoffice:api:product_group')
@@ -112,7 +112,7 @@ class CreateListProductGroupsTest(TestCase):
 class ListLicenseTest(TestCase):
 
     def setUp(self):
-        self.user = UserFactory()
+        self.user = UserFactory(username="snow", first_name="jon", email="jonsnow@got.com")
         self.payment_product = PaymentProductFactory()
         self.url = reverse('labster-backoffice:api:list-license')
         self.headers = get_auth_header(self.user)
@@ -123,8 +123,8 @@ class ListLicenseTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_post_new(self):
-        UserFactory()
-        PaymentProductFactory()
+        # UserFactory()
+        # PaymentProductFactory()
         post_data = {
             "user": [self.user],
             "price": 15,
@@ -164,15 +164,15 @@ class ListPaymentTest(TestCase):
 class CreatePaymentTest(TestCase):
 
     def setUp(self):
-        self.user = UserFactory()
+        self.user = UserFactory(username="snow", first_name="jon", email="jonsnow@got.com")
         self.payment = PaymentFactory()
         self.product = ProductFactory()
         self.url = reverse('labster-backoffice:api:create-payment')
         self.headers = get_auth_header(self.user)
 
     def test_post_new(self):
-        UserFactory()
-        ProductFactory()
+        # UserFactory()
+        # ProductFactory()
         country = ISOCountry.objects.get(pk=1)
         list_product = [{'product': 1, 'item_count': 10, 'month_subscription': 5}]
         post_data = {

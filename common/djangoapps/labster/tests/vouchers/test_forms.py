@@ -16,6 +16,7 @@ class VoucherFormTest(TestCase):
             'limit': 100,
             'week_subscription': 10,
             'products': product_ids,
+            'all_labs': "Not All Labs",
         }
 
         form = VoucherForm(data)
@@ -30,6 +31,7 @@ class VoucherFormTest(TestCase):
             'limit': 100,
             'week_subscription': 10,
             'products': product_ids,
+            'all_labs': "Not All Labs",
         }
 
         form = VoucherForm(data)

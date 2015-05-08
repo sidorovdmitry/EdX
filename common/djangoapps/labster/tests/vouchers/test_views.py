@@ -53,17 +53,13 @@ class VoucherPostMixin(object):
 class VoucherCreateTest(ViewTestMixin, VoucherPostMixin, TestCase):
 
     def setUp(self):
+        self.voucher = VoucherFactory(id='1234567890')
         self.url = reverse('labster-backoffice:voucher:create')
         User.objects.create_user('username', 'user@email.com', 'password')
 
-        self.product = ProductFactory()
-        self.valid_data = {
-            'id': '1234567890',
-            'price': 1000,
-            'limit': 10,
-            'products': [self.product.id],
-            'week_subscription': 4,
-        }
+    def test_post(self):
+        voucher = Voucher.objects.latest('id')
+        self.assertEqual(voucher.id, self.voucher.id)        
 
 
 @unittest.skipUnless(settings.ROOT_URLCONF == 'cms.urls', 'Test only valid in cms')
