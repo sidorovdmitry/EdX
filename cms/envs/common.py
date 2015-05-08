@@ -802,7 +802,11 @@ if FEATURES.get('LABSTER'):
         'labster_accounts',
         'labster_salesforce',
         'labster_frontend',
+        'labster_backoffice.api',
+        'labster_backoffice',
         'corsheaders',
+        'diplomat',
+        'form_utils',
         'rest_framework',
         'rest_framework.authtoken',
         'widget_tweaks',
@@ -816,11 +820,16 @@ if FEATURES.get('LABSTER'):
 
     CORS_ORIGIN_ALLOW_ALL = True
     LABSTER_ENABLE_SALESFORCE = False
-    LABSTER_BACKOFFICE_BASE_URL = "https://internal.labster.com"
+    LABSTER_UNITY_API_PREFIX = "https://www.labster.com"    
+    LABSTER_CMS_BASE = 'https://studio.labster.com'
+    LABSTER_BACKOFFICE_BASE_URL = "{}/labster/internal".format(LABSTER_CMS_BASE)
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
 
     LABSTER_S3_BASE_URL = "https://labster.s3.amazonaws.com/"
     LABSTER_UNITY_URL_PREFIX = "{}unity/".format(LABSTER_S3_BASE_URL)
+
+    #FIXME: change the url
+    LABSTER_BACKOFFICE_PDF_GENERATOR_BASE_URL = 'http://10.0.2.2:5000'
 
     HIJACK_EMAILS = ['edx+staging-cms@labster.com']
     LABSTER_LANGUAGES = ('en', 'da')

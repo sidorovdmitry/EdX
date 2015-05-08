@@ -1876,7 +1876,12 @@ if FEATURES.get('LABSTER'):
         'labster_accounts',
         'labster_frontend',
         'labster_salesforce',
-        # 'corsheaders',
+        'labster_backoffice.api',
+        'labster_backoffice',        
+        'widget_tweaks',
+        'corsheaders',
+        'diplomat',
+        'form_utils',
         'rest_framework.authtoken',
         'django_rq',
     )
@@ -1892,7 +1897,8 @@ if FEATURES.get('LABSTER'):
     LABSTER_UNITY_URL_PREFIX = "{}unity/".format(LABSTER_S3_BASE_URL)
 
     LABSTER_UNITY_API_PREFIX = "https://www.labster.com"
-    LABSTER_BACKOFFICE_BASE_URL = "https://internal.labster.com"
+    LABSTER_CMS_BASE = 'https://studio.labster.com'
+    LABSTER_BACKOFFICE_BASE_URL = "{}/labster/internal".format(LABSTER_CMS_BASE)
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
     LABSTER_ENABLE_SALESFORCE = False
 

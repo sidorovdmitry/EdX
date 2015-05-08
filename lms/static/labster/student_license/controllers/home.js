@@ -34,7 +34,8 @@ angular.module('LabsterStudentLicense')
       }
     })
       .success(function (data, status, headers, config) {
-        $scope.countries = data;
+        $scope.countries = data.countries;
+        $scope.countries_vat = data.countries_vat;
         $scope.country = $scope.countries[0];
         var idx_country = getIndexCountryByCode($scope.default_country, $scope.countries);
         if (idx_country != 0) {
@@ -56,15 +57,11 @@ angular.module('LabsterStudentLicense')
        1. Private person within EU
        2. Private institution/school in Denmark
        */
-      $scope.totalPrice = 0;
-      $scope.vat = 0;
-      $scope.is_eu_country = checkEuCountry($scope.country);
+       // call function checkVat() in vat.js
+       var vatResult = checkVatHelper($scope.country, $scope.subTotalPrice, $scope.institution_type, $scope.countries_vat);
 
-      if ($scope.is_eu_country ) {
-        $scope.vat = 25 / 100 * $scope.subTotalPrice;
-      }
-
-      $scope.totalPrice = $scope.vat + $scope.subTotalPrice;
+       $scope.totalPrice = vatResult.totalPrice;
+       $scope.vat = vatResult.vat;
     };
 
     $scope.buyLab = function () {
