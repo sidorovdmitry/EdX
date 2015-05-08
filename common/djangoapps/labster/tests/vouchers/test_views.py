@@ -53,14 +53,16 @@ class VoucherPostMixin(object):
 class VoucherCreateTest(ViewTestMixin, VoucherPostMixin, TestCase):
 
     def setUp(self):
-        self.voucher = VoucherFactory(id='1234567890')
+        self.product = ProductFactory()
+        self.voucher = VoucherFactory(id='1234567890', price=1000, limit=10, 
+            week_subscription=4)
         self.url = reverse('labster-backoffice:voucher:create')
         User.objects.create_user('username', 'user@email.com', 'password')
         self.valid_data = {
             'id': '1234567890',
-            'price': 2000,
+            'price': 1000,
             'limit': 10,
-            # 'products': product_ids,
+            'products': [self.product.id],
             'week_subscription': 4,
         }
 
@@ -87,7 +89,7 @@ class VoucherUpdateTest(ViewTestMixin, VoucherPostMixin, TestCase):
             'id': '1234567890',
             'price': 2000,
             'limit': 10,
-            # 'products': product_ids,
+            'products': [self.product.id],
             'week_subscription': 4,
         }
 
