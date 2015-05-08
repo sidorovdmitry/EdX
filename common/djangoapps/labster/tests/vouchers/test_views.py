@@ -82,7 +82,7 @@ class VoucherUpdateTest(ViewTestMixin, VoucherPostMixin, TestCase):
             week_subscription=4)
 
         self.url = reverse('labster-backoffice:voucher:update', args=[self.voucher.id])
-        User.objects.create_user('username', 'user@email.com', 'password')
+        self.user = UserFactory(username="snow", first_name="jon", email="jonsnow@got.com")
 
         self.product = ProductFactory()
         self.valid_data = {
