@@ -65,6 +65,14 @@ class LabsterUserForm(forms.ModelForm):
 
         return email
 
+    def clean(self):
+        cleaned = super(LabsterUserForm, self).clean()
+        int_fields = ['user_school_level', 'user_type']
+        for field in int_fields:
+            if not cleaned.get(field):
+                cleaned[field] = None
+        return cleaned
+
     def get_or_create_user(self, data):
         name = data.get('name')
 
