@@ -1877,7 +1877,7 @@ if FEATURES.get('LABSTER'):
         'labster_frontend',
         'labster_salesforce',
         'labster_backoffice.api',
-        'labster_backoffice',        
+        'labster_backoffice',
         'widget_tweaks',
         'corsheaders',
         'diplomat',
@@ -1902,6 +1902,7 @@ if FEATURES.get('LABSTER'):
     LABSTER_BACKOFFICE_BASE_URL = "{}/labster/internal".format(LABSTER_CMS_BASE)
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
     LABSTER_ENABLE_SALESFORCE = False
+    LABSTER_EDX_BASE_URL = "https://www.labster.com"
 
     HIJACK_EMAILS = ['edx+staging-lms@labster.com']
     LABSTER_LANGUAGES = ('en', 'da')

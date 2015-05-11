@@ -37,7 +37,7 @@ class LicenseModelTest(TestCase):
         license.is_active = True
         license.save()
 
-        licenses = License.objects.trial_end()
+        licenses = License.trial_end_objects.all()
         self.assertFalse(licenses.exists())
 
     def test_trial_end_exists(self):
@@ -52,7 +52,7 @@ class LicenseModelTest(TestCase):
         license.is_active = True
         license.save()
 
-        licenses = License.objects.trial_end()
+        licenses = License.trial_end_objects.all()
         self.assertTrue(licenses.exists())
 
     def test_trial_end_exists_inactive(self):
@@ -66,7 +66,7 @@ class LicenseModelTest(TestCase):
         license.is_active = False
         license.save()
 
-        licenses = License.objects.trial_end()
+        licenses = License.trial_end_objects.all()
         self.assertFalse(licenses.exists())
 
     def test_trial_end_exists_bought(self):
@@ -81,7 +81,7 @@ class LicenseModelTest(TestCase):
         license.date_bought = timezone.now()
         license.save()
 
-        licenses = License.objects.trial_end()
+        licenses = License.trial_end_objects.all()
         self.assertFalse(licenses.exists())
 
     def test_deactivate(self):
@@ -96,5 +96,5 @@ class LicenseModelTest(TestCase):
         license.save()
 
         deactivate_trial_licenses()
-        licenses = License.objects.trial_end()
+        licenses = License.trial_end_objects.all()
         self.assertFalse(licenses.exists())

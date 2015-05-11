@@ -14,7 +14,7 @@ class UserFactory(DjangoModelFactory):
     #     model = User
     #     django_get_or_create = ('email', 'first_name', 'username')
 
-    username = "batman"
+    username = factory.Sequence(lambda n: 'batman{0}'.format(n))
     first_name = "bruce"
     email = "batman@labster.com"
 

@@ -312,6 +312,8 @@ SF_PASSWORD = ''
 SF_INSTANCE_URL = ''
 SF_API_VERSION = ''
 
+LABSTER_EDX_BASE_URL = "http://localhost:8000"
+
 #####################################################################
 # Lastly, see if the developer has any local overrides.
 try:

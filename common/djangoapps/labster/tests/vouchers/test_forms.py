@@ -16,7 +16,7 @@ class VoucherFormTest(TestCase):
             'limit': 100,
             'week_subscription': 10,
             'products': product_ids,
-            'all_labs': "Not All Labs",
+            'all_labs': "none",
         }
 
         form = VoucherForm(data)
@@ -31,11 +31,12 @@ class VoucherFormTest(TestCase):
             'limit': 100,
             'week_subscription': 10,
             'products': product_ids,
-            'all_labs': "Not All Labs",
+            'all_labs': "none",
         }
 
         form = VoucherForm(data)
         form.is_valid()
+        print form.errors
 
         voucher = form.save()
         voucher = Voucher.objects.get(id=voucher.id)

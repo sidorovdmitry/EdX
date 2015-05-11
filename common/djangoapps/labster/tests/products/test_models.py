@@ -17,7 +17,7 @@ class ProductModelTest(TestCase):
         self.assertIn(self.inactive, products)
 
     def test_active(self):
-        products = Product.objects.active()
+        products = Product.active_objects.all()
         self.assertIn(self.active, products)
         self.assertNotIn(self.inactive, products)
 
