@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import datetime
+from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
@@ -11,8 +11,54 @@ class Migration(SchemaMigration):
         # Removing unique constraint on 'UserSave', fields ['lab_proxy', 'user']
         db.delete_unique('labster_usersave', ['lab_proxy_id', 'user_id'])
 
+        # Adding model 'Mission'
+        db.create_table('labster_mission', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('lab', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['labster.Lab'])),
+            ('element_id', self.gf('django.db.models.fields.CharField')(max_length=100, db_index=True)),
+            ('title', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
+            ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('modified_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+        ))
+        db.send_create_signal('labster', ['Mission'])
+
+        # Adding model 'Task'
+        db.create_table('labster_task', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('mission', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['labster.Mission'])),
+            ('element_id', self.gf('django.db.models.fields.CharField')(max_length=100, db_index=True)),
+            ('title', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
+            ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('modified_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+        ))
+        db.send_create_signal('labster', ['Task'])
+
+        # Adding field 'UserSave.attempt'
+        db.add_column('labster_usersave', 'attempt',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['labster.UserAttempt'], null=True, blank=True),
+                      keep_default=False)
+
+        # Adding field 'UserSave.is_checkpoint'
+        db.add_column('labster_usersave', 'is_checkpoint',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
+
 
     def backwards(self, orm):
+        # Deleting model 'Mission'
+        db.delete_table('labster_mission')
+
+        # Deleting model 'Task'
+        db.delete_table('labster_task')
+
+        # Deleting field 'UserSave.attempt'
+        db.delete_column('labster_usersave', 'attempt_id')
+
+        # Deleting field 'UserSave.is_checkpoint'
+        db.delete_column('labster_usersave', 'is_checkpoint')
+
         # Adding unique constraint on 'UserSave', fields ['lab_proxy', 'user']
         db.create_unique('labster_usersave', ['lab_proxy_id', 'user_id'])
 
@@ -109,22 +155,18 @@ class Migration(SchemaMigration):
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'demo_course_id': ('xmodule_django.models.CourseKeyField', [], {'db_index': 'True', 'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'default': "''"}),
+            'duration': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'engine_file': ('django.db.models.fields.CharField', [], {'default': "'labster.unity3d'", 'max_length': '128', 'blank': 'True'}),
             'engine_xml': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '128'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'languages': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['labster.LanguageLab']", 'symmetrical': 'False'}),
             'modified_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
-            'questions': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
+            'play_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'quiz_block_file': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '128'}),
             'quiz_block_last_updated': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'screenshot': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
-            'screenshot_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '500', 'blank': 'True'}),
-            'url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '120', 'blank': 'True'}),
             'use_quiz_blocks': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'verified_only': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'wiki_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '120', 'blank': 'True'}),
             'xml_url_prefix': ('django.db.models.fields.CharField', [], {'default': "'https://labster.s3.amazonaws.com/unity/'", 'max_length': '255'})
         },
         'labster.labproxy': {
@@ -133,6 +175,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'lab': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.Lab']", 'null': 'True', 'blank': 'True'}),
+            'language': ('django.db.models.fields.CharField', [], {'default': "'en'", 'max_length': '4', 'db_index': 'True'}),
             'location': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '200'}),
             'modified_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'})
         },
@@ -154,9 +197,15 @@ class Migration(SchemaMigration):
         'labster.labsteruser': {
             'Meta': {'object_name': 'LabsterUser'},
             'date_of_birth': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'email_activation_key': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '32', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'ip_address': ('django.db.models.fields.GenericIPAddressField', [], {'max_length': '39', 'null': 'True', 'blank': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'is_email_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_new': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'language': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '255', 'blank': 'True'}),
             'nationality': ('django_countries.fields.CountryField', [], {'max_length': '2', 'null': 'True', 'blank': 'True'}),
+            'organization': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster_accounts.Organization']", 'null': 'True', 'blank': 'True'}),
             'organization_name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
             'phone_number': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '100', 'blank': 'True'}),
             'unique_id': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '100', 'blank': 'True'}),
@@ -173,11 +222,15 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'voucher_code': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'blank': 'True'})
         },
-        'labster.languagelab': {
-            'Meta': {'object_name': 'LanguageLab'},
+        'labster.mission': {
+            'Meta': {'object_name': 'Mission'},
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'element_id': ('django.db.models.fields.CharField', [], {'max_length': '100', 'db_index': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'language_code': ('django.db.models.fields.CharField', [], {'max_length': '4'}),
-            'language_name': ('django.db.models.fields.CharField', [], {'max_length': '32'})
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'lab': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.Lab']"}),
+            'modified_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'title': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'})
         },
         'labster.nutshelluser': {
             'Meta': {'object_name': 'NutshellUser'},
@@ -252,6 +305,16 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
         },
+        'labster.task': {
+            'Meta': {'object_name': 'Task'},
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'element_id': ('django.db.models.fields.CharField', [], {'max_length': '100', 'db_index': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'mission': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.Mission']"}),
+            'modified_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'title': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'})
+        },
         'labster.token': {
             'Meta': {'object_name': 'Token'},
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
@@ -310,14 +373,23 @@ class Migration(SchemaMigration):
         },
         'labster.usersave': {
             'Meta': {'object_name': 'UserSave'},
+            'attempt': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.UserAttempt']", 'null': 'True', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_checkpoint': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_finished': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'lab_proxy': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['labster.LabProxy']"}),
             'modified_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'play_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'save_file': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
+        },
+        'labster_accounts.organization': {
+            'Meta': {'object_name': 'Organization'},
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'label': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'db_index': 'True'})
         }
     }
 
