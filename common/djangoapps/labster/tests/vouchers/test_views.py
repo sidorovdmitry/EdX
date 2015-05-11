@@ -54,21 +54,32 @@ class VoucherCreateTest(ViewTestMixin, VoucherPostMixin, TestCase):
 
     def setUp(self):
         self.product = ProductFactory()
-        self.voucher = VoucherFactory(id='1234567890', price=1000, limit=10,
-            week_subscription=4)
+        # self.voucher = VoucherFactory(id='1234567890', price=1000, limit=10,
+        #     week_subscription=4)
         self.url = reverse('labster-backoffice:voucher:create')
-        User.objects.create_user('username', 'user@email.com', 'password')
+
+        self.user = User.objects.create_user('username', 'user@email.com', 'password')
+        self.user.is_staff = True
+        self.user.save()
+
         self.valid_data = {
             'id': '1234567890',
             'price': 1000,
             'limit': 10,
             'products': [self.product.id],
             'week_subscription': 4,
+            'all_labs': 'none',
         }
 
     def test_post(self):
+        self.client.login(username=self.user.username, password='password')
+        response = self.client.post(self.url, self.valid_data)
+
+        self.assertEqual(response.status_code, 302)
+
         voucher = Voucher.objects.latest('id')
-        self.assertEqual(voucher.id, self.voucher.id)
+        self.assertEqual(voucher.id, self.valid_data['id'])
+        self.assertEqual(voucher.price, self.valid_data['price'])
 
 
 @unittest.skipUnless(settings.ROOT_URLCONF == 'cms.urls', 'Test only valid in cms')
@@ -111,10 +122,13 @@ class VoucherDelete(ViewTestMixin, TestCase):
         self.voucher = VoucherFactory(id='1234567890')
 
         self.url = reverse('labster-backoffice:voucher:delete', args=[self.voucher.id])
-        User.objects.create_user('username', 'user@email.com', 'password')
+        self.user = User.objects.create_user('username', 'user@email.com', 'password')
+        self.user.is_staff = True
+        self.user.save()
+
 
     def test_post(self):
-        self.client.login(username='username', password='password')
+        self.client.login(username=self.user.username, password='password')
         response = self.client.post(self.url)
         self.assertEqual(response.status_code, 302)
         # self.assertRedirects(response, reverse('voucher:index'))
