@@ -11,13 +11,17 @@
 
 <%block name="headextra">
 <link rel="stylesheet" href="${static.url('labster/css/register_modal.css')}">
+<link rel="stylesheet" href="${static.url('css/vendor/intlTelInput.css')}">
 </%block>
 
 <%block name="bodyclass">view-login</%block>
 
 <%block name="js_extra">
   <script src="${static.url('js/labster/register_modal.js')}"></script>
+  <script src="${static.url('js/intl-tel-input/intlTelInput.min.js')}"></script>
+
   <script>
+    $("#phone_number-2").intlTelInput();
     window.csrfToken = "${csrf_token}";
     registerModalInit({
     nextUrl: "/",

@@ -1,7 +1,9 @@
 import json
+import unittest
 from datetime import date
 
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from rest_framework.test import APITestCase
 
@@ -9,6 +11,7 @@ from labster.models import LabsterUser
 from student.models import UserProfile
 
 
+@unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
 class UserCreateTest(APITestCase):
 
     def setUp(self):
@@ -43,7 +46,30 @@ class UserCreateTest(APITestCase):
         self.assertEqual(content['email'], user.email)
         self.assertEqual(content['token_key'], user.labster_user.token_key)
 
+    def test_post_unusable_password(self):
+        data = {'email': "user@email.com"}
 
+        user = User(username='testusername', email=data['email'])
+        user.set_unusable_password()
+        user.save()
+
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, 201)
+
+        users = User.objects.filter(email=data['email'])
+        self.assertTrue(users.exists())
+        self.assertEqual(users[0].id, user.id)
+
+        user = users[0]
+        self.assertFalse(user.has_usable_password())
+
+        content = json.loads(response.content)
+        self.assertEqual(content['id'], user.id)
+        self.assertEqual(content['email'], user.email)
+        self.assertEqual(content['token_key'], user.labster_user.token_key)
+
+
+@unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
 class UserViewTest(APITestCase):
 
     def setUp(self):

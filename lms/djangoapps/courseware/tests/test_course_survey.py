@@ -10,11 +10,12 @@ from django.core.urlresolvers import reverse
 from survey.models import SurveyForm
 
 from xmodule.modulestore.tests.factories import CourseFactory
+from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from courseware.tests.helpers import LoginEnrollmentTestCase
 
 
 @unittest.skip('skip')
-class SurveyViewsTests(LoginEnrollmentTestCase):
+class SurveyViewsTests(LoginEnrollmentTestCase, ModuleStoreTestCase):
     """
     All tests for the views.py file
     """

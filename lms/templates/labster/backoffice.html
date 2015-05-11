@@ -4,7 +4,6 @@
 
 <%!
   from django.core.urlresolvers import reverse
-  import waffle
 %>
 
 <%inherit file="../main.html" />
@@ -38,6 +37,7 @@ window.requestUser = {
     label: "${user_type}",
     id: "${user_type_id}"
   },
+  organization_name: "${user.labster_user.organization_name}",
   backoffice: {
     user: {
       id: "${backoffice['user_id']}",
@@ -84,7 +84,7 @@ window.labList = JSON.parse('${lab_list}');
 <script data-cfasync="false" type="text/javascript" src="${static.url('labster/controllers/home.controller.js')}"></script>
 <script data-cfasync="false" type="text/javascript" src="${static.url('labster/controllers/payment.cancel.controller.js')}"></script>
 <!-- services -->
-<script data-cfasync="false" type="text/javascript" src="${static.url('labster/js/backoffice.angular.services.js')}"></script>
+<script data-cfasync="false" type="text/javascript" src="${static.url('labster/js/vat.js')}"></script>
 </%block>
 
 <base href="/labs/">

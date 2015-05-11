@@ -41,7 +41,7 @@ site_status_msg = get_site_status_msg(course_id)
     <h1 class="logo">
       <a href="${marketing_link('ROOT')}">
         <%block name="navigation_logo">
-            <img src="${static.url(branding.get_logo_url())}" alt="${platform_name()}"/>
+            <img src="${branding.get_logo_url()}" alt="${platform_name()}"/>
         </%block>
       </a>
     </h1>
@@ -54,7 +54,7 @@ site_status_msg = get_site_status_msg(course_id)
       <%block name="navigation_global_links_authenticated">
         % if settings.FEATURES.get('COURSES_ARE_BROWSABLE'):
           <li class="nav-global-01">
-            <a href="${marketing_link('COURSES')}">${_('Browse Labs')}</a>
+            <a href="${marketing_link('COURSES')}" id="labster-browse-labs-link">${_('Browse Labs')}</a>
           </li>
         % endif
       </%block>
@@ -64,7 +64,7 @@ site_status_msg = get_site_status_msg(course_id)
       <li class="primary">
         <a href="${reverse('dashboard')}" class="user-link">
           <span class="avatar"></span>
-          <span class="sr">${_("Dashboard for:")} </span> ${user.username}
+          <span class="sr">${_("Dashboard for:")} </span> ${user.profile.name}
         </a>
       </li>
       <li class="primary">

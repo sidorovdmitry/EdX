@@ -1,6 +1,8 @@
 <%! from django.utils.translation import ugettext as _ %>
 <%page args="section_data"/>
+<%! from courseware.courses import get_studio_url %>
 <%! from microsite_configuration import microsite %>
+<%! from openedx.core.djangoapps.course_groups.partition_scheme import get_cohorted_user_partition %>
 
 <script type="text/template" id="member-list-widget-template">
   <div class="member-list-widget">
@@ -29,7 +31,7 @@
 
 % if settings.FEATURES.get('LABSTER'):
 <script>
-window.userLicenses = JSON.parse('${section_data['user_licenses']}');
+window.userLicenses = JSON.parse('${section_data.get('user_licenses', '[]')}');
 window.courseId = "${course.id}";
 </script>
 <script type="text/template" id="license-row-template">
@@ -102,8 +104,8 @@ window.courseId = "${course.id}";
   </div>
 
   <div>
-    <input type="button" name="enrollment-button" class="enrollment-button" value="${_("Enroll")}" data-endpoint="${ section_data['enroll_button_url'] }" data-action="enroll" >
-    <input type="button" name="enrollment-button" class="enrollment-button" value="${_("Unenroll")}" data-endpoint="${ section_data['unenroll_button_url'] }" data-action="unenroll" >
+    <input type="button" name="enrollment-button" class="enrollment-button-enroll enrollment-button" value="${_("Enroll")}" data-endpoint="${ section_data['enroll_button_url'] }" data-action="enroll" >
+    <input type="button" name="enrollment-button" class="enrollment-button-unenroll enrollment-button" value="${_("Unenroll")}" data-endpoint="${ section_data['unenroll_button_url'] }" data-action="unenroll" >
   </div>
   <div class="request-response"></div>
   <div class="request-response-error"></div>
@@ -137,7 +139,7 @@ window.courseId = "${course.id}";
 
 %if section_data['access']['instructor']:
 <!-- hide beta tester -->
-<!--
+<%doc>
 <div class="batch-beta-testers membership-section">
   <h2> ${_("Batch Beta Tester Addition")} </h2>
   <p>
@@ -181,7 +183,7 @@ window.courseId = "${course.id}";
 </div>
 
 <hr class="divider" />
--->
+</%doc>
 %endif
 
 <div class="member-lists-management membership-section">
@@ -286,38 +288,6 @@ window.courseId = "${course.id}";
   %endif
 
 </div>
-
-%if course.is_cohorted:
-    <hr class="divider" />
-    <div class="cohort-management membership-section"
-         data-ajax_url="${section_data['cohorts_ajax_url']}"
-         data-advanced-settings-url="${section_data['advanced_settings_url']}"
-         data-upload_cohorts_csv_url="${section_data['upload_cohorts_csv_url']}"
-    >
-    </div>
-
-    <%block name="headextra">
-        <script>
-        $(document).ready(function() {
-            var cohortManagementElement = $('.cohort-management');
-            if (cohortManagementElement.length > 0) {
-                var cohorts = new CohortCollection();
-                cohorts.url = cohortManagementElement.data('ajax_url');
-                var cohortsView = new CohortsView({
-                    el: cohortManagementElement,
-                    model: cohorts,
-                    advanced_settings_url: cohortManagementElement.data('advanced-settings-url'),
-                    upload_cohorts_csv_url: cohortManagementElement.data('upload_cohorts_csv_url')
-                });
-                cohorts.fetch().done(function() {
-                    cohortsView.render();
-                });
-            }
-        });
-        </script>
-
-    </%block>
-% endif
 
 % if settings.FEATURES.get('LABSTER'):
 <%namespace name='static' file='/static_content.html'/>

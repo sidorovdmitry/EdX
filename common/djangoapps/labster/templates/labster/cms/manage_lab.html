@@ -1,15 +1,20 @@
+{% extends "labster_admin/base.html" %}
 {% load url from future %}
-<html>
-  <head>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <style>
-      .container.manage-lab table tr td {
-        width: 25%;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container manage-lab">
+
+{% block page_title %}Update QuicBlocks{% endblock %}
+
+{% block extra_head %}
+<style>
+.container.manage-lab table tr td {
+  width: 25%;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid manage-lab">
+  <div class="row">
+    <div class="col-lg-12">
       <h1>Update Lab's QuizBlock</h1>
 
       <table class="table">
@@ -34,70 +39,73 @@
             </td>
           </tr>
           <!--
-          <tr>
+            <tr>
             <td id="lab-{{ lab.id }}-log" colspan="4">
-              <div>updating master course ... done</div>
-              <div>updating COURSE/SOMETHING/ELSE ... done</div>
-              <div>updating COURSE/SOMETHING/ELSE ... done</div>
-              <div>updating COURSE/SOMETHING/ELSE ... done</div>
-              <div>updating COURSE/SOMETHING/ELSE ... done</div>
-              <div>updating COURSE/SOMETHING/ELSE ... done</div>
-              <div>updating COURSE/SOMETHING/ELSE ... done</div>
-              <div>updating COURSE/SOMETHING/ELSE ... done</div>
+            <div>updating master course ... done</div>
+            <div>updating COURSE/SOMETHING/ELSE ... done</div>
+            <div>updating COURSE/SOMETHING/ELSE ... done</div>
+            <div>updating COURSE/SOMETHING/ELSE ... done</div>
+            <div>updating COURSE/SOMETHING/ELSE ... done</div>
+            <div>updating COURSE/SOMETHING/ELSE ... done</div>
+            <div>updating COURSE/SOMETHING/ELSE ... done</div>
+            <div>updating COURSE/SOMETHING/ELSE ... done</div>
             </td>
-          </tr>
+            </tr>
           -->
           {% endfor %}
         </tbody>
       </table>
 
     </div>
-    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
-    <script>
-    var csrf_token = '{{ csrf_token }}';
-    function csrfSafeMethod(method) {
-      // these HTTP methods do not require CSRF protection
-      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
+<script>
+var csrf_token = '{{ csrf_token }}';
+function csrfSafeMethod(method) {
+  // these HTTP methods do not require CSRF protection
+  return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+  beforeSend: function(xhr, settings) {
+    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+      xhr.setRequestHeader("X-CSRFToken", csrf_token);
     }
-    $.ajaxSetup({
-      beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-          xhr.setRequestHeader("X-CSRFToken", csrf_token);
-        }
+  }
+});
+
+$.fn.localTime = function() {
+  return this.each(function() {
+      var el = $(this);
+      var time = el.data('time');
+      var text = '';
+
+      if (time) {
+        var m = moment(time);
+        text = m.format('LLL');
       }
+      el.empty().append(text);
+  });
+};
+
+$(function() {
+  $('.moment').localTime();
+
+  $('.update-lab-link').click(function(ev) {
+    var el = $(ev.currentTarget);
+
+    var update_url = el.data('update-url');
+
+    el.addClass('hide').prev().removeClass('hide');
+    $.post(update_url, function(response) {
+      el.removeClass('hide').prev().addClass('hide');
+      el.parent('td').prev('td').data('time', response.quiz_block_last_updated);
+      el.parent('td').prev('td').localTime();
     });
-
-    $.fn.localTime = function() {
-      return this.each(function() {
-          var el = $(this);
-          var time = el.data('time');
-          var text = '';
-
-          if (time) {
-            var m = moment(time);
-            text = m.format('LLL');
-          }
-          el.empty().append(text);
-      });
-    };
-
-    $(function() {
-      $('.moment').localTime();
-
-      $('.update-lab-link').click(function(ev) {
-        var el = $(ev.currentTarget);
-
-        var update_url = el.data('update-url');
-
-        el.addClass('hide').prev().removeClass('hide');
-        $.post(update_url, function(response) {
-          el.removeClass('hide').prev().addClass('hide');
-          el.parent('td').prev('td').data('time', response.quiz_block_last_updated);
-          el.parent('td').prev('td').localTime();
-        });
-      });
-    });
-    </script>
-  </body>
-</html>
+  });
+});
+</script>
+{% endblock %}

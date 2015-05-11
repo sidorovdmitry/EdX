@@ -1,3 +1,4 @@
+<%! from django.core.urlresolvers import reverse %>
 <%! from django.utils.translation import ugettext as _ %>
 <%inherit file="../main.html" />
 <%namespace name='static' file='../static_content.html'/>
@@ -5,8 +6,10 @@
 
 <%block name="headextra">
 <link rel="stylesheet" href="${static.url('labster/css/register_modal.css')}">
-<link rel="stylesheet" href="${static.url('labster/css/static_pages.css')}">
+<link rel="stylesheet" href="${static.url('labster/css/landing.css')}">
+<link rel="stylesheet" href="${static.url('css/vendor/intlTelInput.css')}">
 <script src="${static.url('js/labster/register_modal.js')}"></script>
+<script src="${static.url('js/intl-tel-input/intlTelInput.min.js')}"></script>
 </%block>
 
 <div class="pricing-wrapper" id="content">
@@ -60,11 +63,11 @@
 
       <p class="call-pricing"><strong>Call +45  61 43 72 44 to learn more about our pricing.</strong></p>
 
-      <section class="curriculum-coverage" style="display:none;">
+      <section class="curriculum-coverage">
         <header class="heading-title">
           <h3>Curriculum Coverage</h3>
         </header>
-        <a href="#" class="btn-edx btn-edx-banner">View Our Curriculum Coverage Here</a>
+        <a href="${reverse('curriculum-coverage')}" class="btn-edx btn-edx-banner">View Our Curriculum Coverage Here</a>
       </section>
     </section>
   </section>
@@ -75,6 +78,7 @@
 <%include file="../labster_register_modal.html" />
 
 <script>
+  $("#phone_number-2").intlTelInput();
   window.csrfToken = "${csrf_token}";
   registerModalInit({
     nextUrl: "/labs",

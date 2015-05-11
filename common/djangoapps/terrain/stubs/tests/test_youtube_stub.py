@@ -24,9 +24,9 @@ class StubYouTubeServiceTest(unittest.TestCase):
             self.url + 'test_youtube/OEoXaMPEzfM?v=2&alt=jsonc&callback=callback_func'
         )
 
-        # YouTube metadata for video `OEoXaMPEzfM` states that duration is 116.
+        # YouTube metadata for video `OEoXaMPEzfM` states that duration is 236.
         self.assertEqual(
-            'callback_func({"data": {"duration": 116, "message": "I\'m youtube.", "id": "OEoXaMPEzfM"}})',
+            'callback_func({"data": {"duration": 236, "message": "I\'m youtube.", "id": "OEoXaMPEzfM"}})',
             response.content
         )
 

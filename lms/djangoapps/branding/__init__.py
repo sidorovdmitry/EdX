@@ -10,7 +10,10 @@ def get_visible_courses():
     """
     Return the set of CourseDescriptors that should be visible in this branded instance
     """
-    _courses = modulestore().get_courses()
+
+    filtered_by_org = microsite.get_value('course_org_filter')
+
+    _courses = modulestore().get_courses(org=filtered_by_org)
 
     courses = [c for c in _courses
                if isinstance(c, CourseDescriptor)]
@@ -27,8 +30,6 @@ def get_visible_courses():
     # this is legacy format which is outside of the microsite feature -- also handle dev case, which should not filter
     if hasattr(settings, 'COURSE_LISTINGS') and subdomain in settings.COURSE_LISTINGS and not settings.DEBUG:
         filtered_visible_ids = frozenset([SlashSeparatedCourseKey.from_deprecated_string(c) for c in settings.COURSE_LISTINGS[subdomain]])
-
-    filtered_by_org = microsite.get_value('course_org_filter')
 
     if filtered_by_org:
         return [course for course in courses if course.location.org == filtered_by_org]
@@ -53,6 +54,9 @@ def get_logo_url():
     """
     Return the url for the branded logo image to be used
     """
+
+    if settings.FEATURES.get('LABSTER', False):
+        return 'https://labsterim.s3.amazonaws.com/media/uploads/labster/labster_logo_30.png'
 
     # if the MicrositeConfiguration has a value for the logo_image_url
     # let's use that

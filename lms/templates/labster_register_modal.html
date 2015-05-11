@@ -5,6 +5,34 @@
 
 <%namespace name='static' file='/static_content.html'/>
 <section id="register-modal" class="modal register-modal" ng-app="LabsterAnalytics">
+  <div class="inner-wrapper login-wizard" role="alertdialog" aria-labelledy="register-modal-title">
+    <header>
+      <h2>
+        ${_("Please Log In")}
+      </h2>
+      <hr/>
+    </header>
+    <form id="login-wizard-form" action="#" method="post" class="labster-register-form">
+      <label>
+        <input id="email-login" type="text" name="email" class="required" placeholder="Email Address" analytics-on="focus" analytics-category="Login" analytics-event="Input Email Login">
+        <span class="error-message"></span>
+      </label>
+      <label>
+        <input id="password-login" type="password" name="password" class="required" placeholder="Password" analytics-on="focus" analytics-category="Login" analytics-event="Input Password Login">
+        <span class="error-message"></span>
+      </label>
+      <label>
+        <input id="checkbox-login" type="checkbox" name="remember" class="required" analytics-on="click" analytics-category="Login" analytics-event="Keep me Logged In Login">Keep me logged in
+        <span class="error-message"></span>
+      </label>
+      <div class="submit">
+        <button type="submit" id="register-wizard-login-btn" class="labster-register button-labster-blue" data-original-html="Sign Up" analytics-on="click" analytics-category="Registration" analytics-event="Submit Email">${_('Log In')}</button>
+      </div>
+      <div class="tos-container">
+        <p>Not a member yet? <a class="show-register-form">Sign up now</a></p>
+      </div>
+    </form>
+  </div>
   <div class="inner-wrapper register-wizard-0" role="alertdialog" aria-labelledy="register-modal-title">
     <header>
       <h2>
@@ -23,6 +51,7 @@
       </div>
       <div class="tos-container">
         By signing up, you agree to our <a href="/tos" target="_blank">Terms of Service</a>
+        <p>Have an account? <a class="show-login-form">Login now</a></p>
       </div>
     </form>
   </div>
@@ -41,7 +70,7 @@
       </label>
       <label>
         <span class="label">Password</span>
-        <input type="password" id="password-1" name="password" class="required" analytics-on="focus" analytics-category="Registration" analytics-event="Input Password">
+        <input type="password" id="password-1" placeholder="Password" name="password" class="required" analytics-on="focus" analytics-category="Registration" analytics-event="Input Password">
         <span class="error-message"></span>
       </label>
       <div class="submit">
@@ -61,9 +90,12 @@
     </header>
     <form id="register-wizard-2-t-form" action="#" method="post" class="labster-register-form">
       <label>
+        <input type="text" id="phone_number-2" type="tel" placeholder="Phone Number" name="phone_number"  class="required" analytics-on="focus" analytics-category="Registration" analytics-event="Input Phone Number">
+        <span class="error-message"></span>
+      </label>
+      <label>
         <div class="select-container">
           <select id="occupation" name="user_school_level" class="required" analytics-on="click" analytics-category="Registration" analytics-event="Input Occupation">
-            <option value="">Occupation</option>
             % for key, value in LabsterUser.USER_SCHOOL_LEVEL_CHOICES:
             <option value="${key}">${value}</option>
             % endfor
@@ -73,10 +105,6 @@
       </label>
       <label>
         <input type="text" id="school-2" placeholder="School/Company Name" name="organization_name" class="required" analytics-on="focus" analytics-category="School/Company Name" analytics-event="Input School/Company Name">
-        <span class="error-message"></span>
-      </label>
-      <label>
-        <input type="text" id="phone_number-2" placeholder="Phone Number" name="phone_number"  class="required" analytics-on="focus" analytics-category="Registration" analytics-event="Input Phone Number">
         <span class="error-message"></span>
       </label>
       <div class="submit">
@@ -139,8 +167,10 @@
     <form id="register-wizard-3-form" action="/labster/login-by-token/" method="post">
       <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
       <input type="hidden" name="user_id">
+      <input type="hidden" name="user_type">
       <input type="hidden" name="course_id">
       <input type="hidden" name="token_key">
+      <input type="hidden" name="is_demo_course">
       <input type="hidden" name="next">
       <div class="submit">
         <button type="submit" id="register-wizard-3-btn" class="labster-register button-labster-blue">Continue</button>

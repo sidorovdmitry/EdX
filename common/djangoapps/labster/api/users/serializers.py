@@ -1,3 +1,6 @@
+import string
+import random
+
 from django.contrib.auth.models import User
 
 from rest_framework import serializers
@@ -12,6 +15,10 @@ def get_username(email, length=10):
     return generate_unique_username(username, User)
 
 
+def get_temp_password(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
 class UserCreateSerializer(serializers.Serializer):
 
     id = serializers.Field()
@@ -24,7 +31,9 @@ class UserCreateSerializer(serializers.Serializer):
     def validate_email(self, attrs, source):
         value = attrs[source]
         if value and User.objects.filter(email__iexact=value.strip()).exists():
-            raise serializers.ValidationError("Email is used")
+            user = User.objects.get(email=value.strip())
+            if user.has_usable_password():
+                raise serializers.ValidationError("Email is used")
 
         return attrs
 
@@ -33,14 +42,18 @@ class UserCreateSerializer(serializers.Serializer):
         self.object.set_unusable_password()
         self.object.save()
 
+        UserProfile.objects.get_or_create(user=self.object)
+
         return self.object
 
     def restore_object(self, attrs, instance=None):
-        if instance:
+        try:
+            instance = User.objects.get(email=attrs.get('email'))
             instance.email = attrs.get('email', instance.email)
-            return instance
+        except User.DoesNotExist:
+            instance = User(**attrs)
 
-        return User(**attrs)
+        return instance
 
 
 class CustomLabsterUser(object):
@@ -61,6 +74,7 @@ class CustomLabsterUser(object):
         labster_user.phone_number = self.phone_number
         labster_user.user_school_level = self.user_school_level
         labster_user.organization_name = self.organization_name
+        labster_user.ip_address = self.ip_address
         labster_user.save()
 
         profile = UserProfile.objects.get(user=user)

@@ -24,6 +24,11 @@ Longer TODO:
 # want to import all variables from base settings files
 # pylint: disable=wildcard-import, unused-import, unused-wildcard-import, invalid-name
 
+# Pylint gets confused by path.py instances, which report themselves as class
+# objects. As a result, pylint applies the wrong regex in validating names,
+# and throws spurious errors. Therefore, we disable invalid-name checking.
+# pylint: disable=invalid-name
+
 import sys
 import os
 import imp
@@ -44,12 +49,8 @@ CC_MERCHANT_NAME = PLATFORM_NAME
 # Shows up in the platform footer, eg "(c) COPYRIGHT_YEAR"
 COPYRIGHT_YEAR = "2015"
 
-PLATFORM_FACEBOOK_ACCOUNT = "http://www.facebook.com/teamlabster"
-PLATFORM_TWITTER_ACCOUNT = "@labster"
-PLATFORM_TWITTER_URL = "https://twitter.com/YourPlatformTwitterAccount"
-PLATFORM_MEETUP_URL = "http://www.meetup.com/YourMeetup"
-PLATFORM_LINKEDIN_URL = "http://www.linkedin.com/company/YourPlatform"
-PLATFORM_GOOGLE_PLUS_URL = "https://plus.google.com/YourGooglePlusAccount/"
+PLATFORM_FACEBOOK_ACCOUNT = "http://www.facebook.com/YourPlatformFacebookAccount"
+PLATFORM_TWITTER_ACCOUNT = "@YourPlatformTwitterAccount"
 
 COURSEWARE_ENABLED = True
 ENABLE_JASMINE = False
@@ -74,10 +75,22 @@ FEATURES = {
     ## Doing so will cause all courses to be released on production
     'DISABLE_START_DATES': False,  # When True, all courses will be active, regardless of start date
 
-    # When True, will only publicly list courses by the subdomain. Expects you
-    # to define COURSE_LISTINGS, a dictionary mapping subdomains to lists of
-    # course_ids (see dev_int.py for an example)
+    # When True, will only publicly list courses by the subdomain.
     'SUBDOMAIN_COURSE_LISTINGS': False,
+    # Expects you to define COURSE_LISTINGS, a dictionary mapping
+    # subdomains to lists of course_ids
+    # COURSE_LISTINGS = {
+    #     'default': [
+    #         'BerkeleyX/CS169.1x/2012_Fall',
+    #         'HarvardX/CS50x/2012',
+    #         'MITx/3.091x/2012_Fall',
+    #     ],
+    #     'openedx': [
+    #         'BerkeleyX/CS169.1x/2012_Fall',
+    #     ],
+    # }
+    # To see it in action, add the following to your /etc/hosts file:
+    #     127.0.0.1 openedx.dev
 
     # When True, will override certain branding with university specific values
     # Expects a SUBDOMAIN_BRANDING dictionary that maps the subdomain to the
@@ -85,7 +98,7 @@ FEATURES = {
     'SUBDOMAIN_BRANDING': False,
 
     'FORCE_UNIVERSITY_DOMAIN': False,  # set this to the university domain to use, as an override to HTTP_HOST
-                                        # set to None to do no university selection
+                                       # set to None to do no university selection
 
     # for consistency in user-experience, keep the value of the following 3 settings
     # in sync with the corresponding ones in cms/envs/common.py
@@ -97,6 +110,13 @@ FEATURES = {
     # this should remain off in production until digest notifications are online.
     'ENABLE_DISCUSSION_HOME_PANEL': True,
 
+    # Set this to True if you want the discussion digest emails enabled automatically for new users.
+    # This will be set on all new account registrations.
+    # It is not recommended to enable this feature if ENABLE_DISCUSSION_HOME_PANEL is not enabled, since
+    # subscribers who receive digests in that case will only be able to unsubscribe via links embedded
+    # in their emails, and they will have no way to resubscribe.
+    'ENABLE_DISCUSSION_EMAIL_DIGEST': False,
+
     'ENABLE_PSYCHOMETRICS': False,  # real-time psychometrics (eg item response theory analysis in instructor dashboard)
 
     'ENABLE_DJANGO_ADMIN_SITE': True,  # set true to enable django's admin site, even on prod (e.g. for course ops)
@@ -106,7 +126,7 @@ FEATURES = {
 
     'ENABLE_MASQUERADE': True,  # allow course staff to change to student view of courseware
 
-    'ENABLE_SYSADMIN_DASHBOARD': True,  # sysadmin dashboard, to see what courses are loaded, to delete & load courses
+    'ENABLE_SYSADMIN_DASHBOARD': False,  # sysadmin dashboard, to see what courses are loaded, to delete & load courses
 
     'DISABLE_LOGIN_BUTTON': False,  # used in systems where login is automatic, eg MIT SSL
 
@@ -126,6 +146,13 @@ FEATURES = {
 
     # Toggles OAuth2 authentication provider
     'ENABLE_OAUTH2_PROVIDER': False,
+
+    # Allows to enable an API endpoint to serve XBlock view, used for example by external applications.
+    # See jquey-xblock: https://github.com/edx-solutions/jquery-xblock
+    'ENABLE_XBLOCK_VIEW_ENDPOINT': False,
+
+    # Allows to configure the LMS to provide CORS headers to serve requests from other domains
+    'ENABLE_CORS_HEADERS': True,
 
     # Can be turned off if course lists need to be hidden. Effects views and templates.
     'COURSES_ARE_BROWSABLE': True,
@@ -214,6 +241,9 @@ FEATURES = {
     # Enable flow for payments for course registration (DIFFERENT from verified student flow)
     'ENABLE_PAID_COURSE_REGISTRATION': False,
 
+    # Enable the display of cosmetic course price display (set in course advanced settings)
+    'ENABLE_COSMETIC_DISPLAY_PRICE': False,
+
     # Automatically approve student identity verification attempts
     'AUTOMATIC_VERIFY_STUDENT_IDENTITY_FOR_TESTING': False,
 
@@ -226,25 +256,28 @@ FEATURES = {
     'ENABLE_S3_GRADE_DOWNLOADS': False,
 
     # whether to use password policy enforcement or not
-    'ENFORCE_PASSWORD_POLICY': False,
+    'ENFORCE_PASSWORD_POLICY': True,
 
     # Give course staff unrestricted access to grade downloads (if set to False,
     # only edX superusers can perform the downloads)
     'ALLOW_COURSE_STAFF_GRADE_DOWNLOADS': False,
 
-    'ENABLED_PAYMENT_REPORTS': ["refund_report", "itemized_purchase_report", "university_revenue_share", "certificate_status"],
+    'ENABLED_PAYMENT_REPORTS': [
+        "refund_report",
+        "itemized_purchase_report",
+        "university_revenue_share",
+        "certificate_status"
+    ],
 
     # Turn off account locking if failed login attempts exceeds a limit
     'ENABLE_MAX_FAILED_LOGIN_ATTEMPTS': False,
 
     # Hide any Personally Identifiable Information from application logs
-    'SQUELCH_PII_IN_LOGS': False,
+    'SQUELCH_PII_IN_LOGS': True,
 
-    # Toggles the embargo functionality, which enable embargoing for particular courses
+    # Toggles the embargo functionality, which blocks users from
+    # the site or courses based on their location.
     'EMBARGO': False,
-
-    # Toggles the embargo site functionality, which enable embargoing for the whole site
-    'SITE_EMBARGOED': False,
 
     # Whether the Wiki subsystem should be accessible via the direct /wiki/ paths. Setting this to True means
     # that people can submit content and modify the Wiki in any arbitrary manner. We're leaving this as True in the
@@ -264,12 +297,8 @@ FEATURES = {
     # Prevent concurrent logins per user
     'PREVENT_CONCURRENT_LOGINS': True,
 
-    # Turn off Advanced Security by default
-    'ADVANCED_SECURITY': False,
-
-    # Show a "Download your certificate" on the Progress page if the lowest
-    # nonzero grade cutoff is met
-    'SHOW_PROGRESS_SUCCESS_BUTTON': False,
+    # Turn on Advanced Security by default
+    'ADVANCED_SECURITY': True,
 
     # When a logged in user goes to the homepage ('/') should the user be
     # redirected to the dashboard - this is default Open edX behavior. Set to
@@ -281,12 +310,13 @@ FEATURES = {
     # Set to True to change the course sorting behavior by their start dates, latest first.
     'ENABLE_COURSE_SORTING_BY_START_DATE': False,
 
+    # Flag to enable new user account APIs.
+    'ENABLE_USER_REST_API': False,
+
     # Expose Mobile REST API. Note that if you use this, you must also set
     # ENABLE_OAUTH2_PROVIDER to True
     'ENABLE_MOBILE_REST_API': False,
-
-    # Enable the new dashboard, account, and profile pages
-    'ENABLE_NEW_DASHBOARD': False,
+    'ENABLE_MOBILE_SOCIAL_FACEBOOK_FEATURES': False,
 
     # Enable the combined login/registration form
     'ENABLE_COMBINED_LOGIN_REGISTRATION': False,
@@ -305,13 +335,38 @@ FEATURES = {
     # Enable display of enrollment counts in instructor and legacy analytics dashboard
     'DISPLAY_ANALYTICS_ENROLLMENTS': True,
 
-    # Separate the verification flow from the payment flow
-    'SEPARATE_VERIFICATION_FROM_PAYMENT': False,
-
     # Show the mobile app links in the footer
     'ENABLE_FOOTER_MOBILE_APP_LINKS': False,
 
+    # Let students save and manage their annotations
+    'ENABLE_EDXNOTES': False,
+
+    # Milestones application flag
+    'MILESTONES_APP': False,
+
+    # Prerequisite courses feature flag
+    'ENABLE_PREREQUISITE_COURSES': False,
+
+    # For easily adding modes to courses during acceptance testing
+    'MODE_CREATION_FOR_TESTING': False,
+
+    # Courseware search feature
+    'ENABLE_COURSEWARE_SEARCH': False,
+
+    # log all information from cybersource callbacks
+    'LOG_POSTPAY_CALLBACKS': True,
+
+    # enable beacons for video timing statistics
+    'ENABLE_VIDEO_BEACON': False,
+
+    # enable beacons for lms onload event statistics
+    'ENABLE_ONLOAD_BEACON': False,
+
+    # Certificates Web/HTML Views
+    'CERTIFICATES_HTML_VIEW': False,
+
     # labster app
+    'LABSTER_NEW_USER_ACTIVE': True,
     'LABSTER': True,
 }
 
@@ -341,7 +396,6 @@ DATA_DIR = COURSES_ROOT
 sys.path.append(REPO_ROOT)
 sys.path.append(PROJECT_ROOT / 'djangoapps')
 sys.path.append(COMMON_ROOT / 'djangoapps')
-sys.path.append(COMMON_ROOT / 'lib')
 
 # For Node.js
 
@@ -518,7 +572,7 @@ TRACKING_BACKENDS = {
 
 # We're already logging events, and we don't want to capture user
 # names/passwords.  Heartbeat events are likely not interesting.
-TRACKING_IGNORE_URL_PATTERNS = [r'^/event', r'^/login', r'^/heartbeat', r'^/segmentio/event']
+TRACKING_IGNORE_URL_PATTERNS = [r'^/event', r'^/login', r'^/heartbeat', r'^/segmentio/event', r'^/performance']
 
 EVENT_TRACKING_ENABLED = True
 EVENT_TRACKING_BACKENDS = {
@@ -606,6 +660,16 @@ MODULESTORE = {
             'mappings': {},
             'stores': [
                 {
+                    'NAME': 'split',
+                    'ENGINE': 'xmodule.modulestore.split_mongo.split_draft.DraftVersioningModuleStore',
+                    'DOC_STORE_CONFIG': DOC_STORE_CONFIG,
+                    'OPTIONS': {
+                        'default_class': 'xmodule.hidden_module.HiddenDescriptor',
+                        'fs_root': DATA_DIR,
+                        'render_template': 'edxmako.shortcuts.render_to_string',
+                    }
+                },
+                {
                     'NAME': 'draft',
                     'ENGINE': 'xmodule.modulestore.mongo.DraftMongoModuleStore',
                     'DOC_STORE_CONFIG': DOC_STORE_CONFIG,
@@ -622,17 +686,7 @@ MODULESTORE = {
                         'data_dir': DATA_DIR,
                         'default_class': 'xmodule.hidden_module.HiddenDescriptor',
                     }
-                },
-                {
-                    'NAME': 'split',
-                    'ENGINE': 'xmodule.modulestore.split_mongo.split_draft.DraftVersioningModuleStore',
-                    'DOC_STORE_CONFIG': DOC_STORE_CONFIG,
-                    'OPTIONS': {
-                        'default_class': 'xmodule.hidden_module.HiddenDescriptor',
-                        'fs_root': DATA_DIR,
-                        'render_template': 'edxmako.shortcuts.render_to_string',
-                    }
-                },
+                }
             ]
         }
     }
@@ -817,7 +871,7 @@ LOCALE_PATHS = (REPO_ROOT + '/conf/locale',)  # edx-platform/conf/locale/
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Guidelines for translators
-TRANSLATORS_GUIDE = 'https://github.com/edx/edx-platform/blob/master/docs/en_us/developers/source/i18n_translators_guide.rst'
+TRANSLATORS_GUIDE = 'http://edx.readthedocs.org/projects/edx-developer-guide/en/latest/internationalization/i18n_translators_guide.html'  # pylint: disable=line-too-long
 
 #################################### GITHUB #######################################
 # gitreload is used in LMS-workflow to pull content from github
@@ -917,6 +971,14 @@ MOCK_PEER_GRADING = False
 # Used for testing, debugging staff grading
 MOCK_STAFF_GRADING = False
 
+
+################################# EdxNotes config  #########################
+
+# Configure the LMS to use our stub EdxNotes implementation
+EDXNOTES_INTERFACE = {
+    'url': 'http://localhost:8120/api/v1',
+}
+
 ################################# Jasmine ##################################
 JASMINE_TEST_DIRECTORY = PROJECT_ROOT + '/static/coffee'
 
@@ -964,7 +1026,13 @@ MIDDLEWARE_CLASSES = (
 
     'django.contrib.messages.middleware.MessageMiddleware',
     'track.middleware.TrackMiddleware',
+
+    # CORS and CSRF
+    'corsheaders.middleware.CorsMiddleware',
+    'cors_csrf.middleware.CorsCSRFMiddleware',
+    'cors_csrf.middleware.CsrfCrossDomainCookieMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+
     'splash.middleware.SplashMiddleware',
 
     # Allows us to dark-launch particular languages
@@ -1012,7 +1080,7 @@ X_FRAME_OPTIONS = 'ALLOW'
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
-from rooted_paths import rooted_glob
+from openedx.core.lib.rooted_paths import rooted_glob
 
 courseware_js = (
     [
@@ -1020,6 +1088,7 @@ courseware_js = (
         for pth in ['courseware', 'histogram', 'navigation', 'time']
     ] +
     ['js/' + pth + '.js' for pth in ['ajax-error']] +
+    ['js/search/main.js'] +
     sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/modules/**/*.js'))
 )
 
@@ -1057,7 +1126,10 @@ rwd_header_footer_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'js/common_he
 staff_grading_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/staff_grading/**/*.js'))
 open_ended_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/open_ended/**/*.js'))
 notes_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/notes/**/*.js'))
-instructor_dash_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/instructor_dashboard/**/*.js'))
+instructor_dash_js = (
+    sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/instructor_dashboard/**/*.js')) +
+    sorted(rooted_glob(PROJECT_ROOT / 'static', 'js/instructor_dashboard/**/*.js'))
+)
 
 # JavaScript used by the student account and profile pages
 # These are not courseware, so they do not need many of the courseware-specific
@@ -1102,6 +1174,7 @@ verify_student_js = [
     'js/src/string_utils.js',
     'js/verify_student/models/verification_model.js',
     'js/verify_student/views/error_view.js',
+    'js/verify_student/views/image_input_view.js',
     'js/verify_student/views/webcam_photo_view.js',
     'js/verify_student/views/step_view.js',
     'js/verify_student/views/intro_step_view.js',
@@ -1184,6 +1257,12 @@ PIPELINE_CSS = {
         ],
         'output_filename': 'css/lms-style-course-vendor.css',
     },
+    'style-student-notes': {
+        'source_filenames': [
+            'css/vendor/edxnotes/annotator.min.css',
+        ],
+        'output_filename': 'css/lms-style-student-notes.css',
+    },
     'style-course': {
         'source_filenames': [
             'sass/course.css',
@@ -1218,8 +1297,8 @@ PIPELINE_CSS = {
 }
 
 
-common_js = set(rooted_glob(COMMON_ROOT / 'static', 'coffee/src/**/*.js')) - set(courseware_js + discussion_js + staff_grading_js + open_ended_js + notes_js + instructor_dash_js)
-project_js = set(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/**/*.js')) - set(courseware_js + discussion_js + staff_grading_js + open_ended_js + notes_js + instructor_dash_js)
+common_js = set(rooted_glob(COMMON_ROOT / 'static', 'coffee/src/**/*.js')) - set(courseware_js + discussion_js + staff_grading_js + open_ended_js + notes_js + instructor_dash_js)    # pylint: disable=line-too-long
+project_js = set(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/**/*.js')) - set(courseware_js + discussion_js + staff_grading_js + open_ended_js + notes_js + instructor_dash_js)  # pylint: disable=line-too-long
 
 
 PIPELINE_JS = {
@@ -1236,6 +1315,7 @@ PIPELINE_JS = {
             'js/src/accessibility_tools.js',
             'js/src/ie_shim.js',
             'js/src/string_utils.js',
+            'js/src/logger.js',
         ],
         'output_filename': 'js/lms-application.js',
     },
@@ -1459,6 +1539,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.sitemaps',
     'djcelery',
     'south',
 
@@ -1493,6 +1574,7 @@ INSTALLED_APPS = (
     'licenses',
     'openedx.core.djangoapps.course_groups',
     'bulk_email',
+    'branding',
 
     # External auth (OpenID, shib)
     'external_auth',
@@ -1502,6 +1584,8 @@ INSTALLED_APPS = (
     'provider',
     'provider.oauth2',
     'oauth2_provider',
+
+    'oauth_exchange',
 
     # For the wiki
     'wiki',  # The new django-wiki from benjaoming
@@ -1527,6 +1611,8 @@ INSTALLED_APPS = (
     'django_comment_common',
     'notes',
 
+    'edxnotes',
+
     # Splash screen
     'splash',
 
@@ -1547,6 +1633,9 @@ INSTALLED_APPS = (
 
     # Different Course Modes
     'course_modes',
+
+    # Enrollment API
+    'enrollment',
 
     # Student Identity Verification
     'verify_student',
@@ -1581,30 +1670,118 @@ INSTALLED_APPS = (
     'survey',
 
     'lms.djangoapps.lms_xblock',
+
+    'openedx.core.djangoapps.content.course_structures',
+    'course_structure_api',
+
+    # CORS and cross-domain CSRF
+    'corsheaders',
+    'cors_csrf',
+
+    'commerce',
 )
+
+######################### CSRF #########################################
+
+# Forwards-compatibility with Django 1.7
+CSRF_COOKIE_AGE = 60 * 60 * 24 * 7 * 52
+
 
 ######################### MARKETING SITE ###############################
 EDXMKTG_COOKIE_NAME = 'edxloggedin'
 MKTG_URLS = {}
 MKTG_URL_LINK_MAP = {
-    'ABOUT': 'about_edx',
+    'ABOUT': None,
     'CONTACT': 'contact',  # 'contact',
-    'FAQ': None,  # 'help_edx',
+    'FAQ': 'faq',  # 'help_edx',
     'COURSES': 'courses',
     'ROOT': 'root',
     'TOS': 'tos',
     'HONOR': None,  # 'honor',
     'PRIVACY': None,  # 'privacy_edx',
-    'JOBS': 'jobs',
-    'PRESS': 'press',
+    'JOBS': None,
+    'PRESS': None,
     # 'BLOG': 'blog',
-    'DONATE': 'donate',
+    'DONATE': None,
     'CAREER': 'career',
     'PRICING': 'pricing',
     'TESTIMONIAL': 'testimonial',
+    'SUPPORT': 'support',
+    'CURRICULUM-COVERAGE': 'curriculum-coverage',
 
     # Verified Certificates
-    'WHAT_IS_VERIFIED_CERT': 'verified-certificate',
+    'WHAT_IS_VERIFIED_CERT': None,
+}
+
+################# Social Media Footer Links #######################
+# The names list controls the order of social media
+# links in the footer.
+SOCIAL_MEDIA_FOOTER_NAMES = [
+    "facebook",
+    "twitter",
+    "linkedin",
+    "google_plus",
+    "tumblr",
+    "meetup",
+    "reddit",
+    "youtube",
+]
+
+# The footer URLs dictionary maps social footer names
+# to URLs defined in configuration.
+SOCIAL_MEDIA_FOOTER_URLS = {}
+
+# The display dictionary defines the title
+# and icon class for each social media link.
+SOCIAL_MEDIA_FOOTER_DISPLAY = {
+    "facebook": {
+        # Translators: This is the website name of www.facebook.com.  Please
+        # translate this the way that Facebook advertises in your language.
+        "title": _("Facebook"),
+        "icon": "fa-facebook-square"
+    },
+    "twitter": {
+        # Translators: This is the website name of www.twitter.com.  Please
+        # translate this the way that Twitter advertises in your language.
+        "title": _("Twitter"),
+        "icon": "fa-twitter"
+    },
+    "linkedin": {
+        # Translators: This is the website name of www.linkedin.com.  Please
+        # translate this the way that LinkedIn advertises in your language.
+        "title": _("LinkedIn"),
+        "icon": "fa-linkedin-square"
+    },
+    "google_plus": {
+        # Translators: This is the website name of plus.google.com.  Please
+        # translate this the way that Google+ advertises in your language.
+        "title": _("Google+"),
+        "icon": "fa-google-plus-square"
+    },
+    "tumblr": {
+        # Translators: This is the website name of www.tumblr.com.  Please
+        # translate this the way that Tumblr advertises in your language.
+        "title": _("Tumblr"),
+        "icon": "fa-tumblr-square"
+    },
+    "meetup": {
+        # Translators: This is the website name of www.meetup.com.  Please
+        # translate this the way that MeetUp advertises in your language.
+        "title": _("Meetup"),
+        "icon": "fa-calendar"
+    },
+    "reddit": {
+        # Translators: This is the website name of www.reddit.com.  Please
+        # translate this the way that Reddit advertises in your language.
+        "title": _("Reddit"),
+        "icon": "fa-reddit-square"
+    },
+    "youtube": {
+        # Translators: This is the website name of www.youtube.com.  Please
+        # translate this the way that YouTube advertises in your language.
+        "title": _("Youtube"),
+        "icon": "fa-youtube-square"
+    }
 }
 
 ################# Mobile URLS ##########################
@@ -1636,6 +1813,13 @@ if FEATURES.get('AUTH_USE_CAS'):
     INSTALLED_APPS += ('django_cas',)
     MIDDLEWARE_CLASSES += ('django_cas.middleware.CASMiddleware',)
 
+############# CORS headers for cross-domain requests #################
+
+if FEATURES.get('ENABLE_CORS_HEADERS'):
+    CORS_ALLOW_CREDENTIALS = True
+    CORS_ORIGIN_WHITELIST = ()
+    CORS_ORIGIN_ALLOW_ALL = False
+
 ###################### Registration ##################################
 
 # For each of the fields, give one of the following values:
@@ -1645,7 +1829,6 @@ if FEATURES.get('AUTH_USE_CAS'):
 
 REGISTRATION_EXTRA_FIELDS = {
     'level_of_education': 'optional',
-    'user_type': 'required',
     'phone_number': 'optional',
     'gender': 'optional',
     'year_of_birth': 'optional',
@@ -1655,6 +1838,7 @@ REGISTRATION_EXTRA_FIELDS = {
     'terms_of_service': 'hidden',
     'city': 'optional',
     'country': 'required',
+    'user_type': 'required',
     'user_school_level': 'required',
 }
 
@@ -1671,16 +1855,11 @@ GRADES_DOWNLOAD = {
     'ROOT_PATH': '/tmp/edx-s3/grades',
 }
 
-######################## PROGRESS SUCCESS BUTTON ##############################
-# The following fields are available in the URL: {course_id} {student_id}
-PROGRESS_SUCCESS_BUTTON_URL = 'http://<domain>/<path>/{course_id}'
-PROGRESS_SUCCESS_BUTTON_TEXT_OVERRIDE = None
 
 #### PASSWORD POLICY SETTINGS #####
-
-PASSWORD_MIN_LENGTH = None
+PASSWORD_MIN_LENGTH = 8
 PASSWORD_MAX_LENGTH = None
-PASSWORD_COMPLEXITY = {}
+PASSWORD_COMPLEXITY = {"UPPER": 1, "LOWER": 1, "DIGITS": 1}
 PASSWORD_DICTIONARY_EDIT_DISTANCE_THRESHOLD = None
 PASSWORD_DICTIONARY = []
 
@@ -1694,8 +1873,12 @@ if FEATURES.get('LABSTER'):
         'labster',
         'labster_adaptive',
         'labster_search',
-        'corsheaders',
+        'labster_accounts',
+        'labster_frontend',
+        'labster_salesforce',
+        # 'corsheaders',
         'rest_framework.authtoken',
+        'django_rq',
     )
 
     MIDDLEWARE_CLASSES = (
@@ -1711,11 +1894,24 @@ if FEATURES.get('LABSTER'):
     LABSTER_UNITY_API_PREFIX = "https://www.labster.com"
     LABSTER_BACKOFFICE_BASE_URL = "https://internal.labster.com"
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
-    LABSTER_ENABLE_NUTSHELL = False
+    LABSTER_ENABLE_SALESFORCE = False
+
+    HIJACK_EMAILS = ['edx+staging-lms@labster.com']
+    LABSTER_LANGUAGES = ('en', 'da')
 
     PLATFORM_NAME = 'LabsterX'
     THEME_NAME = 'labster'
     FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
+
+    RQ_QUEUES = {
+        'default': {
+            'HOST': 'localhost',
+            'PORT': 6379,
+            'DB': 1,
+            'PASSWORD': '',
+            'DEFAULT_TIMEOUT': 600,
+        },
+    }
 
     LABSTER_OLD_PAGES = [
         "features/",
@@ -1957,6 +2153,7 @@ ALL_LANGUAGES = (
 ### Apps only installed in some instances
 OPTIONAL_APPS = (
     'mentoring',
+    'edx_sga',
 
     # edx-ora2
     'submissions',
@@ -1967,7 +2164,10 @@ OPTIONAL_APPS = (
     'openassessment.xblock',
 
     # edxval
-    'edxval'
+    'edxval',
+
+    # milestones
+    'milestones',
 )
 
 for app_name in OPTIONAL_APPS:
@@ -2021,3 +2221,64 @@ COURSE_ABOUT_VISIBILITY_PERMISSION = 'see_exists'
 
 #date format the api will be formatting the datetime values
 API_DATE_FORMAT = '%Y-%m-%d'
+
+# Enrollment API Cache Timeout
+ENROLLMENT_COURSE_DETAILS_CACHE_TIMEOUT = 60
+
+# for Student Notes we would like to avoid too frequent token refreshes (default is 30 seconds)
+if FEATURES['ENABLE_EDXNOTES']:
+    OAUTH_ID_TOKEN_EXPIRATION = 60 * 60
+
+# Configuration used for generating PDF Receipts/Invoices
+PDF_RECEIPT_TAX_ID = 'add here'
+PDF_RECEIPT_FOOTER_TEXT = 'add your own specific footer text here'
+PDF_RECEIPT_DISCLAIMER_TEXT = 'add your own specific disclaimer text here'
+PDF_RECEIPT_BILLING_ADDRESS = 'add your own billing address here with appropriate line feed characters'
+PDF_RECEIPT_TERMS_AND_CONDITIONS = 'add your own terms and conditions'
+PDF_RECEIPT_TAX_ID_LABEL = 'Tax ID'
+PDF_RECEIPT_LOGO_PATH = PROJECT_ROOT + '/static/images/openedx-logo-tag.png'
+# Height of the Logo in mm
+PDF_RECEIPT_LOGO_HEIGHT_MM = 12
+PDF_RECEIPT_COBRAND_LOGO_PATH = PROJECT_ROOT + '/static/images/default-theme/logo.png'
+# Height of the Co-brand Logo in mm
+PDF_RECEIPT_COBRAND_LOGO_HEIGHT_MM = 12
+
+# Use None for the default search engine
+SEARCH_ENGINE = None
+# Use the LMS specific result processor
+SEARCH_RESULT_PROCESSOR = "lms.lib.courseware_search.lms_result_processor.LmsSearchResultProcessor"
+
+### PERFORMANCE EXPERIMENT SETTINGS ###
+# CDN experiment/monitoring flags
+CDN_VIDEO_URLS = {}
+
+# Page onload event sampling rate (min 0.0, max 1.0)
+ONLOAD_BEACON_SAMPLE_RATE = 0.0
+
+# The configuration visibility of account fields.
+ACCOUNT_VISIBILITY_CONFIGURATION = {
+    # Default visibility level for accounts without a specified value
+    # The value is one of: 'all_users', 'private'
+    "default_visibility": "private",
+
+    # The list of all fields that can be shared with other users
+    "shareable_fields": [
+        'username',
+        'profile_image',
+        'country',
+        'time_zone',
+        'languages',
+        'bio',
+    ],
+
+    # The list of account fields that are always public
+    "public_fields": [
+        'username',
+        'profile_image',
+    ],
+}
+
+# E-Commerce API Configuration
+ECOMMERCE_API_URL = None
+ECOMMERCE_API_SIGNING_KEY = None
+ECOMMERCE_API_TIMEOUT = 5

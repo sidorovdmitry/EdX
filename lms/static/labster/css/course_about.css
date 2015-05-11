@@ -99,6 +99,18 @@ button.labster-register {
     border: 1px solid #ccc;
 }
 
+.course-info header.course-profile .intro-inner-wrapper .media .hero .play-intro {
+    background: #c20201;
+    width: 110px;
+    height: 70px;
+    border: none;
+}
+
+.course-info header.course-profile .intro-inner-wrapper .media .hero .play-intro::after {
+    color: white;
+    text-shadow: none;
+}
+
 .labster-register-box-container {
     display: -webkit-flex;
     display: flex;
@@ -187,4 +199,18 @@ button.labster-register {
 
 .course-info .course-sidebar .important-dates li .important-dates-item-title {
     font-weight: bold;
+}
+
+.modal.video-modal, .video-modal.leanModal_box {
+    width: 900px;
+}
+
+.modal.video-modal .inner-wrapper, .video-modal.leanModal_box .inner-wrapper {
+  width: 882px;
+  height: 500px;
+}
+
+#course_video_bottom iframe {
+  width: 741px;
+  height: 416px;
 }

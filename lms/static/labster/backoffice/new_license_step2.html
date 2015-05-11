@@ -45,11 +45,11 @@
       </tr>
     </tbody>
     <tfoot>
-      <tr ng-hide="tax == 0">
+      <tr>
         <td>Subtotal</td>
         <td class="align-right">{{ subTotalPrice|currency:"$" }}</td>
       </tr>
-      <tr ng-hide="tax == 0">
+      <tr>
         <td>Tax</td>
         <td class="align-right">{{ tax|currency:"$" }}</td>
       </tr>
@@ -69,12 +69,12 @@
             <a class="btn-labster-regular labster-disabled-btn"><i class='fa fa-credit-card'></i> Credit Card</a>
           </div>
           <div ng-show="totalPrice < 500">
-            <a ng-show="!loading_cc" ng-click="buyLabs('stripe')" class="btn-labster-regular"><i class='fa fa-credit-card'></i> Credit Card</a>
+            <a ng-show="!loading_cc" ng-click="buyLabs('stripe')" class="btn-labster-cc btn-labster-regular"><i class='fa fa-credit-card'></i> Credit Card</a>
             <a ng-show="loading_cc" class="btn-labster-regular "><i class='fa fa-refresh fa-spin'></i> Processing</a>
           </div>
         </td>
         <td>
-          <a ng-show="!loading_man" ng-click="buyLabs('manual')" class="btn-labster-regular"><i class='fa fa-exchange'></i> Wire Transfer</a>
+          <a ng-show="!loading_man" ng-click="buyLabs('manual')" class="btn-labster-regular btn-labster-manual"><i class='fa fa-exchange'></i> Wire Transfer</a>
           <a ng-show="loading_man" class="btn-labster-regular"><i class='fa fa-refresh fa-spin'></i> Processing</a>
         </td>
       </tr>

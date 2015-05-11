@@ -6,11 +6,9 @@ Unit tests for enrollment methods in views.py
 import ddt
 from mock import patch
 
-from django.test.utils import override_settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from courseware.tests.helpers import LoginEnrollmentTestCase
-from xmodule.modulestore.tests.django_utils import TEST_DATA_MOCK_MODULESTORE
 from xmodule.modulestore.tests.factories import CourseFactory
 from student.tests.factories import UserFactory, CourseEnrollmentFactory, AdminFactory
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
@@ -22,13 +20,13 @@ USER_COUNT = 4
 
 
 @ddt.ddt
-@override_settings(MODULESTORE=TEST_DATA_MOCK_MODULESTORE)
 class TestInstructorEnrollsStudent(ModuleStoreTestCase, LoginEnrollmentTestCase):
     """
     Check Enrollment/Unenrollment with/without auto-enrollment on activation and with/without email notification
     """
 
     def setUp(self):
+        super(TestInstructorEnrollsStudent, self).setUp()
 
         instructor = AdminFactory.create()
         self.client.login(username=instructor.username, password='test')
@@ -188,7 +186,7 @@ class TestInstructorEnrollsStudent(ModuleStoreTestCase, LoginEnrollmentTestCase)
         """
 
         string = "abc@test.com, def@test.com ghi@test.com \n \n jkl@test.com   \n mno@test.com   "
-        cleaned_string, cleaned_string_lc = get_and_clean_student_list(string)
+        cleaned_string, _cleaned_string_lc = get_and_clean_student_list(string)
         self.assertEqual(cleaned_string, ['abc@test.com', 'def@test.com', 'ghi@test.com', 'jkl@test.com', 'mno@test.com'])
 
     @ddt.data('http', 'https')
@@ -242,7 +240,7 @@ class TestInstructorEnrollsStudent(ModuleStoreTestCase, LoginEnrollmentTestCase)
             "{display_name} at edx.org by a member of the "
             "course staff.\n\n"
             "To finish your registration, please visit "
-            "{}://edx.org/register and fill out the registration form "
+            "{}://edx.org/login and fill out the registration form "
             "making sure to use student3_1@test.com in the E-mail field.\n"
             "Once you have registered and activated your account, you will "
             "see {display_name} listed on your dashboard.\n\n"

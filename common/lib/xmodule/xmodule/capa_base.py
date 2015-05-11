@@ -17,15 +17,13 @@ except ImportError:
     # pylint: disable=invalid-name
     dog_stats_api = None
 
-from pkg_resources import resource_string
-
 from capa.capa_problem import LoncapaProblem, LoncapaSystem
 from capa.responsetypes import StudentInputError, \
     ResponseError, LoncapaProblemError
 from capa.util import convert_files_to_filenames
 from .progress import Progress
-from xmodule.exceptions import NotFoundError, ProcessingError
 from xblock.fields import Scope, String, Boolean, Dict, Integer, Float, List
+from xmodule.exceptions import NotFoundError
 from .fields import Timedelta, Date
 from django.utils.timezone import UTC
 from .util.duedate import get_extended_due_date
@@ -225,8 +223,8 @@ class CapaFields(object):
                             default=-1,
                             scope=Scope.settings)
     correct_answer = String(help=_("The answer for comparison"), scope=Scope.settings, default="")
-    platform_score = Integer(help=_(""), default=0, scope=Scope.user_state)
-    platform_attempt = Integer(help=_(""), default=0, scope=Scope.user_state)
+    platform_score = Integer(help=_("Platform score"), default=0, scope=Scope.user_state)
+    platform_attempt = Integer(help=_("Platform attempt"), default=0, scope=Scope.user_state)
 
     quiz_id = String(help=_("Quiz ID"), scope=Scope.settings, default="")
     read_more_url = String(help=_("Read more url"), scope=Scope.settings, default="")

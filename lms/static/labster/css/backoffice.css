@@ -313,4 +313,6 @@ table.table-method td {
     overflow-x: hidden;
     overflow-y: auto;
  }
-
+.vertical-align-middle {
+    vertical-align: middle;
+}

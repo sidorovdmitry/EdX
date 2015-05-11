@@ -1,3 +1,5 @@
+import json
+import urllib2
 from lxml import etree
 
 from dateutil import parser
@@ -389,11 +391,36 @@ class CustomFileUploadParser(BaseParser):
             pass
 
 
-class SendDataGraph(AuthMixin, APIView):
+class SendGraphData(AuthMixin, APIView):
     parser_classes = (MultiPartParser, FormParser,)
 
-    def post(self, request, format=None):
-        csv_file = request.FILES
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        file = request.FILES['file']
+
+        context = {
+            'user': user,
+        }
+        email_html = render_to_string('emails/graph_data.html', context)
+        subject = "Graph Data"
+
+        email = EmailMessage(subject, email_html, "no-reply@labster.com", [user.email,])
+        email.content_subtype = "html"
+        email.attach(file.name, file.read(), file.content_type)
+        email.send(fail_silently=False)
+
+        http_status = status.HTTP_200_OK
+
+        return Response(http_status)
+
+    def get(self, request, *args, **kwargs):
+        file_url = self.request.QUERY_PARAMS.get('url')
+
+        if not file_url:
+            http_status = status.HTTP_204_NO_CONTENT
+            return Response(status=http_status)
+
+        response = urllib2.urlopen(file_url)
         user = request.user
 
         context = {
@@ -402,14 +429,14 @@ class SendDataGraph(AuthMixin, APIView):
         email_html = render_to_string('emails/graph_data.html', context)
         subject = "Graph Data"
 
-        email = EmailMessage(subject, email_html, "no-reply@labster.com", user.email)
+        email = EmailMessage(subject, email_html, "no-reply@labster.com", [user.email,])
         email.content_subtype = "html"
-        email.attach('data.csv', csv_file, 'text/csv')
+        email.attach(file_url.split('/')[-1], response.read(), 'application/octet-stream')
         email.send(fail_silently=False)
 
         http_status = status.HTTP_200_OK
 
-        return Response(http_status)
+        return Response(status=http_status)
 
 
 class CreateSave(AuthMixin, APIView):

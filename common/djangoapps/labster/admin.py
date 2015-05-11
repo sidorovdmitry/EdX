@@ -5,15 +5,18 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from django.utils.safestring import mark_safe
+
+from courseware.courses import get_course
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
 from labster.models import (
-    LanguageLab, Lab, ErrorInfo, DeviceInfo, UserSave, Token, LabProxy,
+    Lab, UserSave, Token, LabProxy,
     UnityLog, UserAnswer, LabsterUserLicense, ProblemProxy,
     UnityPlatformLog, QuizBlock, Problem, Answer, AdaptiveProblem,
     LabProxyData, UserAttempt, LabsterUser, LabsterCourseLicense,
     Mission, Task)
-from labster.utils import get_engine_xml_url, get_engine_file_url, get_quiz_block_file_url
+from labster.users.admin import LabsterUserAdmin
+from labster.utils import get_engine_xml_url, get_quiz_block_file_url
 
 
 S3_BASE_URL = settings.LABSTER_S3_BASE_URL
@@ -36,9 +39,18 @@ class LabAdminForm(forms.ModelForm):
             'engine_file',
             'quiz_block_file',
             'xml_url_prefix',
-            'languages',
             'use_quiz_blocks', 'is_active', 'demo_course_id',
             'verified_only')
+
+    def clean_demo_course_id(self):
+        demo_course_id = self.cleaned_data.get('demo_course_id')
+        if demo_course_id:
+            try:
+                course_key = SlashSeparatedCourseKey.from_deprecated_string(demo_course_id)
+                get_course(course_key)
+            except:
+                raise forms.ValidationError('invalid course ID')
+        return demo_course_id
 
     def clean(self):
         cleaned_data = super(LabAdminForm, self).clean()
@@ -67,11 +79,6 @@ class LabAdmin(admin.ModelAdmin):
     list_display = (
         'name', 'engine_xml_link', 'engine_file_link', 'quiz_block_file_link',
         'use_quiz_blocks', 'demo_course_id', 'xml_url_prefix', 'is_active')
-    # fields = (
-    #     'name', 'description', 'engine_xml', 'languages', 'engine_file',
-    #     'quiz_block_file', 'use_quiz_blocks', 'is_active', 'demo_course_id',
-    #     'verified_only')
-    filter_horizontal = ('languages',)
     list_filter = ('is_active', 'engine_file')
     form = LabAdminForm
 
@@ -104,7 +111,7 @@ class QuizBlockAdmin(BaseAdmin):
 
 
 class ProblemAdmin(BaseAdmin):
-    list_display = ('element_id', 'quiz_block', 'order', 'sentence')
+    list_display = ('element_id', 'quiz_block', 'order', 'sentence', 'quiz_group')
     search_fields = ('element_id', 'quiz_block__element_id')
     raw_id_fields = ('quiz_block',)
     list_filter = ('quiz_block__lab',)
@@ -132,8 +139,8 @@ class AnswerAdmin(BaseAdmin):
 
 
 class LabProxyAdmin(BaseAdmin):
-    list_display = ('id', 'course_from_location', 'lab', 'location', 'is_active', 'created_at')
-    list_filter = ('is_active',)
+    list_display = ('id', 'course_from_location', 'lab', 'language', 'is_active', 'created_at')
+    list_filter = ('is_active', 'language')
 
     def queryset(self, request):
         return LabProxy.objects.all().select_related('lab')
@@ -263,35 +270,16 @@ class UserAttemptAdmin(admin.ModelAdmin):
             'lab_proxy', 'lab_proxy__lab', 'user')
 
 
-class LabsterUserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'user_id', 'username', 'user_type_display')
-    search_fields = ('user__email', 'user__first_name', 'user__last_name',)
-    list_filter = ('user__is_active', 'user_type',)
-    raw_id_fields = ('user',)
-
-    def email(self, obj):
-        return obj.user.email
-
-    def user_id(self, obj):
-        return obj.user.id
-
-    def username(self, obj):
-        return obj.user.username
-
-    def user_type_display(self, obj):
-        return obj.get_user_type_display()
-
-
 class LabsterCourseLicenseAdmin(admin.ModelAdmin):
     list_display = ('user', 'user_id', 'course_id', 'license_id')
-    search_fields = ('user__id', 'course_id')
+    search_fields = ('user__id', 'user__email', 'user__username', 'course_id')
+    raw_id_fields = ('user',)
 
     def user_id(self, obj):
         return obj.user.id
 
 
 admin.site.register(LabsterUser, LabsterUserAdmin)
-admin.site.register(LanguageLab)
 # admin.site.register(ErrorInfo, ErrorInfoAdmin)
 # admin.site.register(DeviceInfo, DeviceInfoAdmin)
 admin.site.register(UserSave, UserSaveAdmin)

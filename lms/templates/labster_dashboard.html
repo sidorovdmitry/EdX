@@ -27,6 +27,9 @@
     .dashboard .my-courses .course .cover, .dashboard .my-courses .course a.fade-cover {
       border-bottom: 1px solid #ddd !important;
     }
+    .dashboard-banner { margin-bottom: 50px; }
+    .wrapper-msg.urgency-high { background: #16283A !important; }
+    a.link-white { color: #ffffff !important; text-decoration: underline !important; }
   </style>
 </%block>
 
@@ -126,7 +129,7 @@
       var rationale = $('#name_rationale_field').val();
 
       $.post('${reverse("change_name")}',
-             {"new_name":new_name, "rationale":rationale},
+             {"new_name":new_name, "rationale":""},
              function(data) {
                if(data.success) {
                  location.reload();
@@ -243,13 +246,29 @@
     </section>
   % endif
 
+  % if not user.labster_user.is_active:
+    <section class="dashboard-banner">
+      <div class="wrapper-msg urgency-high">
+          <div class="msg">
+              <div class="msg-content">
+                  <h2 class="title">Dear ${ user.profile.name },</h2>
+                  <div class="copy">
+                      <p class="activation-message">${_("Your trial account has expired. To activate your account again, please <a href='/labs' class='link-white'>purchase your license here</a>. If you have any questions, feel free to contact our support at <a href='mailto:support@labster.com' class='link-white'>support@labster.com</a>.")}
+                      </p>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </section>
+  % endif
+
   <section class="profile-sidebar">
     <a href="${marketing_link('COURSES')}" analytics-on="click" analytics-category="Dashboard" class="sidebar-button">Find More Courses</a>
 
     % if user.labster_user.is_teacher:
-    <a href="${reverse('labster_backoffice')}" analytics-on="click" analytics-category="Dashboard" class="sidebar-button">${_("Buy Student Licenses")}</a>
+    <a href="${reverse('labster_backoffice')}" analytics-on="click" analytics-category="Dashboard" id="buy-student-licenses-link" class="sidebar-button">${_("Buy Student Licenses")}</a>
     % elif user.labster_user.is_student:
-    <a href="${reverse('labster_student_voucher_code')}" analytics-on="click" analytics-category="Dashboard" class="sidebar-button">${_("Use Voucher")}</a>
+    <a href="${reverse('labster_student_voucher_code')}" analytics-on="click" analytics-category="Dashboard" id="use-voucher-link" class="sidebar-button">${_("Use Voucher")}</a>
     % endif
 
     <section class="user-info">
@@ -356,14 +375,6 @@
       </ul>
     % else:
       <section class="empty-dashboard-message">
-        % if settings.FEATURES.get('COURSES_ARE_BROWSABLE'):
-          <p>${_("Looks like you haven't registered for any courses yet.")}</p>
-          <a href="${marketing_link('COURSES')}" analytics-on="click" analytics-category="Dashboard">
-            ${_("Find courses now!")}
-          </a>
-        % else:
-          <p>${_("Looks like you haven't been enrolled in any courses yet.")}</p>
-        %endif
       </section>
     % endif
 
@@ -516,15 +527,13 @@
       <form id="change_name_form">
         <div id="change_name_error" class="modal-form-error"> </div>
         ## Translators: note that {platform} {cert_name_short} will look something like: "edX certificate". Please do not change the order of these placeholders.
-        <p>${_("To uphold the credibility of your {platform} {cert_name_short}, all name changes will be logged and recorded.").format(platform=settings.PLATFORM_NAME, cert_name_short=cert_name_short)}</p>
+        <p>${_("To uphold the credibility of your {platform}, all name changes will be logged and recorded.").format(platform=settings.PLATFORM_NAME)}</p>
         <br/>
         <fieldset>
           <div class="input-group">
             ## Translators: note that {platform} {cert_name_short} will look something like: "edX certificate". Please do not change the order of these placeholders.
-            <label>${_("Enter your desired full name, as it will appear on your {platform} {cert_name_short}:").format(platform=settings.PLATFORM_NAME, cert_name_short=cert_name_short)}</label>
+            <label>${_("Enter your desired full name")}</label>
             <input id="new_name_field" value="" type="text" />
-            <label>${_("Reason for name change:")}</label>
-            <textarea id="name_rationale_field" value=""></textarea>
           </div>
           <div class="submit">
             <input type="submit" id="submit" value="${_('Change My Name')}">

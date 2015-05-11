@@ -30,7 +30,7 @@ angular.module('StudentVoucherCode')
         $scope.voucher = data.voucher;
         $scope.limit_reached = data.limit_reached;
         // console.log(data);
-        if (data.response_license_id != 0){
+        if (data.voucher.price == 0){
           // voucher price is zero, enroll the student
           enrollStudent(data.response_license_id);
         } else {
@@ -57,7 +57,7 @@ angular.module('StudentVoucherCode')
       })
 
       $http.post(
-        '/labster/enroll-student/',
+        '/labster/enroll-student-voucher/',
         {
           'license_id': license_id,
           'email': $scope.user.email

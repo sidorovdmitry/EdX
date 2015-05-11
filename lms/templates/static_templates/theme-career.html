@@ -3,10 +3,17 @@
 <%namespace name='static' file='../static_content.html'/>
 <%block name="pagetitle">${_("Career")}</%block>
 
-<%block name="headextra">
-<link rel="stylesheet" href="${static.url('labster/css/static_pages.css')}">
-
+<%block name="js_extra">
+  <script type="text/javascript" src="${static.url('js/labster/career_page.js')}"></script>
 </%block>
+
+<%block name="headextra">
+  <link rel="stylesheet" href="${static.url('labster/css/landing.css')}">
+</%block>
+
+<%
+career_email = '&#99;&#97;&#114;&#101;&#101;&#114;&#64;&#108;&#97;&#98;&#115;&#116;&#101;&#114;&#46;&#99;&#111;&#109;'
+%>
 
 <div class="career-wrapper" id="content">
   <section class="container">
@@ -17,7 +24,7 @@
 
       <p>In all applications, your motivation letter should advertise how your presence in the company can improve what we do. We can see your qualifications and experience in your CV; what we can’t see is how you would use them at Labster.</p>
 
-        <p>Unsolicited applications are always welcomed, if you think you have what it takes to be a part of Labster! Please send information about yourself and what you do to <a href="mailto:career@labster.com">career@labster.com</a> to learn more.</p>
+      <p>Unsolicited applications are always welcomed, if you think you have what it takes to be a part of Labster! Please send information about yourself and what you do to <a href="mailto:${career_email}">${career_email}</a> to learn more.</p>
 
           <div class="open-position">
             <header class="heading-title">

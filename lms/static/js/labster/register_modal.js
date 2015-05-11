@@ -29,11 +29,14 @@ $.ajaxSetup({
 function registerModalInit(options) {
     // options:
     // - nextUrl
-    // - courseId
+    // - courseId,
+    // - labster_demo
 
     var createUrl,
         updateUrl,
         loginUrl,
+        loginFormUrl,
+        containerFormLogin,
         containerFormZero,
         containerFormOne,
         containerFormTwoT,
@@ -42,7 +45,13 @@ function registerModalInit(options) {
         buttonInSaving,
         resetButton,
         validateForm,
-        showFormErrors;
+        showFormErrors,
+        isDemoCourse;
+
+    isDemoCourse = false
+    if (options.isDemoCourse == "True") {
+      isDemoCourse = true;
+    }
 
     $('.new-register').click(function(ev) {
         window.userType = $(this).data('user-type');
@@ -50,6 +59,7 @@ function registerModalInit(options) {
 
     createUrl = "/labster/api/users/";
     loginUrl = "/labster/login-by-token/";
+    loginFormUrl = "/login_ajax";
     updateUrl = function(userId) {
         return createUrl + userId + "/";
     };
@@ -57,6 +67,7 @@ function registerModalInit(options) {
         return createUrl + "send-email/" + userId + "/";
     }
 
+    containerFormLogin = $('.login-wizard');
     containerFormZero = $('.register-wizard-0');
     containerFormOne = $('.register-wizard-1');
     containerFormTwoT = $('.register-wizard-2-t');
@@ -68,6 +79,24 @@ function registerModalInit(options) {
         $(this).closest('form').submit();
     });
 
+    $('.show-register-form').click(function(){
+        containerFormLogin.fadeOut(function(){
+          containerFormZero.fadeIn();
+        });
+    });
+
+    $('.show-login-form').click(function(){
+        showLoginForm();
+    });
+
+    showLoginForm = function(){
+        // when user enters existing email it will show error message 'the email is used'
+        // because the message is a new element so it won't trigger $('.show-login-form').click
+        containerFormZero.fadeOut(function(){
+          containerFormLogin.fadeIn();
+        });
+    }
+
     sendEmailTeacher = function() {
       $.ajax({
           url: sendEmailUrl(window.user.id),
@@ -76,7 +105,6 @@ function registerModalInit(options) {
               xhr.setRequestHeader("Authorization", "Token " + window.user.token_key);
           },
           success: function(response) {
-            console.log("success");
           },
           error: function(obj, msg, status) {
           }
@@ -86,6 +114,11 @@ function registerModalInit(options) {
     buttonInSaving = function(button) {
         button.data('original-html', button.html());
         button.html('<i class="icon fa fa-spinner fa-spin"></i> Saving');
+    };
+
+    buttonInLoggingIn = function(button) {
+        button.data('original-html', button.html());
+        button.html('<i class="icon fa fa-spinner fa-spin"></i> Logging in');
     };
 
     resetButton = function(button) {
@@ -130,13 +163,69 @@ function registerModalInit(options) {
             _.each(inputs, function(input) {
                 _.each(messageList, function(message) {
                     if (message == "Email is used") {
-                        message = 'Email already in use. Please <a href="/login">login here</a>.';
+                        message = 'Email is already in use. Please <a class="show-login-form" onclick="showLoginForm()">login here</a>.';
                     }
                     $(input).next('.error-message').append(message).show();
                 });
             });
         });
     };
+
+    containerFormLogin.find('form').submit(function(ev) {
+        var inputEmail,
+            submit,
+            remember,
+            password,
+            errorMessage,
+            form;
+
+        form = containerFormLogin.find('form');
+        inputEmail = form.find('input[name=email]');
+        password = form.find('input[name=password]');
+        remember = form.find('input[name=remember]');
+        submit = form.find('button[type=submit]');
+        errorMessage = form.find('.error-message');
+
+        var rememberVal = "";
+        if (remember[0].checked) {
+            rememberVal = "true";
+        }
+
+        buttonInLoggingIn(submit);
+        errorMessage.hide().empty();
+
+        if (validateForm(form)) {
+            var next = options.nextUrl;
+            $.ajax({
+                url: loginFormUrl,
+                type: "POST",
+                data: {email: inputEmail.val(), password:password.val(), remember: rememberVal, course_id: options.courseId},
+                success: function(response) {
+                    if (response.success) {
+                        if (options.courseId != "") {
+                            next = "/courses/" + options.courseId + "/courseware";
+                        }
+                        window.location.href = next;
+                    } else {
+                        var messages = {
+                            email: [response.value]
+                        };
+                        showFormErrors(form, messages);
+                        resetButton(submit);
+                    }
+                },
+                error: function(obj, msg, status) {
+                    var response = JSON.parse(obj.responseText);
+                    showFormErrors(form, response);
+                    resetButton(submit);
+                }
+            });
+        } else {
+            resetButton(submit);
+        }
+
+    return false;
+    });
 
     containerFormZero.find('form').submit(function(ev) {
         var inputEmail,
@@ -156,6 +245,17 @@ function registerModalInit(options) {
         errorMessage.hide().empty();
 
         if (validateForm(form)) {
+            var next = options.nextUrl;
+            if (parseInt(window.userType) === 1 && options.courseId != "") {
+                if (isDemoCourse) {
+                    // if student and it's coming from the about page, redirect to payment page
+                    next = "/student_license/" + options.courseId;
+                } else {
+                    // if it's not demo course
+                    next = "/courses/" + options.courseId + "/courseware";
+                }
+            }
+
             $.ajax({
                 url: createUrl,
                 type: "POST",
@@ -165,9 +265,11 @@ function registerModalInit(options) {
                     containerFormZero.fadeOut(function() {
                         containerFormOne.fadeIn();
                         containerFormThree.find('input[name=user_id]').val(window.user.id);
+                        containerFormThree.find('input[name=user_type]').val(window.userType);
                         containerFormThree.find('input[name=token_key]').val(window.user.token_key);
-                        containerFormThree.find('input[name=next]').val(options.nextUrl);
+                        containerFormThree.find('input[name=next]').val(next);
                         containerFormThree.find('input[name=course_id]').val(options.courseId);
+                        containerFormThree.find('input[name=is_demo_course]').val(isDemoCourse.toString());
                     });
 
                 },

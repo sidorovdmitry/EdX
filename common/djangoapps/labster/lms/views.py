@@ -27,7 +27,6 @@ from labster.models import LabProxy, UserAttempt, Problem, UserAnswer, QuizBlock
 from labster.models import LabsterCourseLicense, LabsterUserLicense
 from labster.model_utils import get_latest_user_save
 from labster.reports import get_attempts_and_answers
-from labster.tasks import send_play_lab, send_invite_students
 
 
 API_PREFIX = getattr(settings, 'LABSTER_UNITY_API_PREFIX', '')
@@ -140,6 +139,7 @@ class SettingsXml(LabProxyXMLView):
 
         engine_xml = self.get_engine_xml(lab_proxy, user)
         url_prefix = lab_proxy.lab.xml_url_prefix
+        language = lab_proxy.language if lab_proxy.language else 'en'
 
         return {
             'EngineXML': engine_xml,
@@ -148,6 +148,7 @@ class SettingsXml(LabProxyXMLView):
             'InputMode': "Mouse",
             'HandMode': "Hand",
             'URLPrefix': url_prefix,
+            'Language': language,
         }
 
 
@@ -178,6 +179,7 @@ class ServerXml(LabProxyXMLView):
         save_game = reverse('labster-api:save', args=[lab_proxy.id])
         player_start_end = reverse('labster-api:play', args=[lab_proxy.id])
         quiz_block = reverse('labster-api:questions', args=[lab_proxy.id])
+        # graph_data = reverse('labster-api:graph_data')
 
         if lab_proxy.lab.use_quiz_blocks:
             quiz_statistic = reverse('labster-api:answer', args=[lab_proxy.id])
@@ -200,6 +202,7 @@ class ServerXml(LabProxyXMLView):
             {'Id': "PlayerStartEnd", 'Path': player_start_end},
             {'Id': "Wiki", 'Path': wiki, 'CatchError': "false", 'AllowCache': "true"},
             {'Id': "QuizBlock", 'Path': quiz_block},
+            # {'Id': "GraphData", 'Path': graph_data},
         ]
 
         for child in children:
@@ -388,25 +391,7 @@ class AdaptiveTestResult(DetailView):
         return context
 
 
-class NutshellPlayLab(View):
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        lab_id = kwargs.get('lab_id')
-
-        send_play_lab.delay(user.id, lab_id)
-        return HttpResponse(1)
-
-
-class NutshellInviteStudents(View):
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        course_id = kwargs.get('course_id')
-
-        send_invite_students.delay(user.id, course_id)
-        return HttpResponse(1)
-
-
-class EnrollStudent(View):
+class EnrollStudentVoucher(View):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
         email = data.get('email')
@@ -430,6 +415,30 @@ class EnrollStudent(View):
         return HttpResponse(json.dumps({'success': True}))
 
 
+class EnrollStudentCourse(View):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        email = data.get('email')
+        course_id = data.get('course_id')
+        try:
+            user = User.objects.get(email=email)
+        except:
+            return HttpResponseBadRequest('invalid email or course id')
+
+        course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+
+        # enroll student to the course
+        record, _ = CourseEnrollment.objects.get_or_create(
+            user=user, course_id=course_key)
+        record.is_active = True
+        record.save()
+
+        user_license, _ = LabsterUserLicense.objects.get_or_create(
+            email=email, course_id=course_key)
+
+        return HttpResponse(json.dumps({'success': True}))
+
+
 settings_xml = SettingsXml.as_view()
 server_xml = ServerXml.as_view()
 platform_xml = PlatformXml.as_view()
@@ -437,6 +446,5 @@ start_new_lab = StartNewLab.as_view()
 continue_lab = ContinueLab.as_view()
 lab_result = login_required(LabResult.as_view())
 adaptive_test_result = login_required(AdaptiveTestResult.as_view())
-nutshell_play_lab = login_required(NutshellPlayLab.as_view())
-nutshell_invite_students = login_required(NutshellInviteStudents.as_view())
-enroll_student = login_required(EnrollStudent.as_view())
+enroll_student_voucher = login_required(EnrollStudentVoucher.as_view())
+enroll_student_course = login_required(EnrollStudentCourse.as_view())

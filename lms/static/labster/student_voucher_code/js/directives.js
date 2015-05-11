@@ -37,7 +37,7 @@ angular.module('StudentVoucherCode')
               // using the license id given
               var license_id = data.license_id;
               $http.post(
-                '/labster/enroll-student/',
+                '/labster/enroll-student-voucher/',
                 {
                   'license_id': license_id,
                   'email': scope.email

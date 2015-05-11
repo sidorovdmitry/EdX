@@ -1,0 +1,174 @@
+<%! from django.core.urlresolvers import reverse %>
+<%! from django.utils.translation import ugettext as _ %>
+<%inherit file="../main.html" />
+<%namespace name='static' file='../static_content.html'/>
+
+<%block name="pagetitle">${_("Curriculum Coverage")}</%block>
+
+<%block name="headextra">
+<link rel="stylesheet" href="${static.url('labster/css/landing.css')}">
+
+<script type="text/javascript" src="${static.url('labster/lib/jquery.idTabs.min.js')}"></script>
+</%block>
+
+<div class="curriculum-wrapper">
+  <section class="container">
+    <section class="curriculum">
+          <header class="heading-title">
+            <h3>Curriculum Coverage</h3>
+          </header>
+
+          <p>Our curriculum coverage is increasing rapidly. Here you can see our covered and upcoming topics:</p>
+
+          <div id="usual1" class="usual curriculum-tab">
+            <ul>
+              <li><a href="#tab1" class="selected">Genetics</a></li>
+              <li><a href="#tab2">Cell Biology</a></li>
+              <li><a href="#tab3">Microbiology</a></li>
+              <li><a href="#tab4">Biochemistry</a></li>
+              <li><a href="#tab5">Techniques</a></li>
+            </ul>
+            <div id="tab1" class="curri-content">
+              <h3>CURRENT</h3>
+              <ul>
+                <li>DNA synthesis</li>
+                <li>DNA replication</li>
+                <li>Transcription and translation</li>
+                <li>Exons and introns</li>
+                <li>Genes</li>
+                <li>Gene expression</li>
+                <li>Genomics</li>
+                <li>SNP</li>
+                <li>Cell division</li>
+                <li>Central dogma</li>
+                <li>Cancer</li>
+                <li>Chromosomes</li>
+                <li>Linkage and mapping</li>
+                <li>Classification</li>
+                <li>Speciation</li>
+                <li>Epigenetics</li>
+                <li>Mendelian inheritance</li>
+                <li>Non-Mendelian inheritance</li>
+                <li>Genotype and phenotype</li>
+                <li>Cloning</li>
+                <li>Mutation</li>
+                <li>Bioinformatics analysis</li>
+              </ul>
+
+              <h3>UPCOMING</h3>
+              <ul>
+                <li>Evolution</li>
+                <li>Hardy-Weinberg</li>
+                <li>Artificial selection</li>
+                <li>(Ecology)</li>
+              </ul>
+            </div>
+            <div id="tab2" class="curri-content">
+              <h3>CURRENT</h3>
+              <ul>
+                <li>Cell structure</li>
+                <li>Prokaryote and eukaryote</li>
+                <li>Cell cycle</li>
+                <li>Mitosis and meiosis</li>
+                <li>Apoptosis</li>
+                <li>Stem cell</li>
+              </ul>
+              <h3>UPCOMING</h3>
+              <ul>
+                <li>Photosynthesis</li>
+                <li>Cell membrane structure and function</li>
+                <li>Cell signalling</li>
+                <li>Transport across membrane</li>
+                <li>Fertilization</li>
+                <li>Development</li>
+              </ul>
+            </div>
+            <div id="tab3" class="curri-content">
+              <h3>CURRENT</h3>
+              <ul>
+                <li>Virus</li>
+                <li>Bacteria</li>
+                <li>Yeast</li>
+                <li>Recombinant DNA technology</li>
+                <li>Antibodies and antigens</li>
+                <li>Microbial growth</li>
+                <li>Transformation</li>
+              </ul>
+              <h3>UPCOMING</h3>
+              <ul>
+                <li>Antibiotic resistance</li>
+                <li>Immune system</li>
+              </ul>
+            </div>
+            <div id="tab4" class="curri-content">
+              <h3>CURRENT</h3>
+              <ul>
+                  <li>Fermentation</li>
+                <li>Glycolysis</li>
+                <li>Structure of DNA and RNA</li>
+                <li>Nucleotides</li>
+                <li>Amino acids</li>
+                <li>Structure of protein</li>
+                <li>Enzymes</li>
+                <li>Enzyme kinetics</li>
+                <li>Acids and bases</li>
+                <li>Krebs cycle</li>
+                <li>Free energy</li>
+                <li>Digestion</li>
+              </ul>
+              <h3>UPCOMING</h3>
+              <ul>
+                  <li>Cellular respiration</li>
+                <li>Protein synthesis</li>
+                <li>Metabolism</li>
+                <li>Respiration</li>
+                <li>Transpiration</li>
+                <li>Citric acid cycle</li>
+                <li>Calvin cycle</li>
+                <li>Electron transport chain</li>
+                <li>Phosphorylation</li>
+                <li>Energy flow</li>
+                <li>Thermodynamics</li>
+                <li>Redox</li>
+              </ul>
+            </div>
+            <div id="tab5" class="curri-content">
+              <h3>CURRENT</h3>
+              <ul>
+                <li>PCR</li>
+                <li>Gel electrophoresis</li>
+                <li>Microarray</li>
+                <li>aCGH</li>
+                <li>DNA sequencing</li>
+                <li>Microscopy</li>
+                <li>Spectrophotometry</li>
+                <li>Chromatography</li>
+                <li>Fermentation</li>
+                <li>Western blot</li>
+                <li>PTT</li>
+                <li>Enzyme reaction</li>
+                <li>Molecular cloning</li>
+                <li>Transformation</li>
+                <li>Bacterial streaking</li>
+                <li>Diffusion and osmosis</li>
+                <li>Cell culturing</li>
+                <li>Sterile techniques</li>
+              </ul>
+              <h3>UPCOMING</h3>
+              <ul>
+                <li>Mass spectrometry</li>
+                <li>Titration</li>
+                <li>FACS</li>
+                <li>ELISA</li>
+              </ul>
+            </div>
+          </div>
+
+          <script type="text/javascript">
+            $("#usual1 ul").idTabs();
+          </script>
+        </section>
+  </section>
+
+</div>
+<!-- end div content-wrapper -->

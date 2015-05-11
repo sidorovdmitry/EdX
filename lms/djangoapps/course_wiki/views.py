@@ -40,7 +40,8 @@ def course_wiki_redirect(request, course_id):  # pylint: disable=unused-argument
     if course.main_wiki_page:
         course_slug = course.main_wiki_page
     else:
-        course_slug = course_wiki_slug(course)
+        course_slug = course.location.course
+        # course_slug = course_wiki_slug(course)
 
     valid_slug = True
     if not course_slug:
@@ -128,7 +129,7 @@ def get_or_create_root():
         pass
 
     starting_content = "\n".join((
-        _("Welcome to the edX Wiki"),
+        _("Welcome to the {platform_name} Wiki").format(platform_name=settings.PLATFORM_NAME),
         "===",
         _("Visit a course wiki to add an article."),
     ))

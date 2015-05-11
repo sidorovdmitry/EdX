@@ -1,7 +1,7 @@
 .labster-register-form {
     color: #666;
 }
-.labster-register-form button {
+.labster-register-form button, .labster-login-form button {
     width: 100%;
 }
 .labster-register-form .error-message {
@@ -38,7 +38,7 @@
     font-style: normal;
 }
 
-.register-wizard-1, .register-wizard-2-t, .register-wizard-2-s, .register-wizard-3 {
+.login-wizard, .register-wizard-1, .register-wizard-2-t, .register-wizard-2-s, .register-wizard-3 {
     display: none;
 }
 
@@ -65,10 +65,17 @@
 .labster-register-form .button-link-submit {
 }
 
-.labster-register-form .tos-container {
+.labster-register-form .tos-container, .labster-login-form .tos-container {
     font-size: 0.8em;
     text-align: center;
     color: #666;
     margin-top: 20px;
 }
 
+.tos-container a {
+    cursor:pointer;
+}
+
+form input {
+    font: 300 1rem/1.6rem "Lato","Crimson Text","Georgia" !important;
+}

@@ -21,10 +21,10 @@ from labster.parsers.problem_parsers import QuizParser
 from labster.quiz_blocks import create_xblock, update_problem, validate_lab_proxy
 
 
-USER_ID = 19  # kriwil@gmail.com
+USER_ID = 31 # aldi@labster.com
 
 
-def prepare_lab(lab, location):
+def prepare_lab(lab, location, language):
     user = User.objects.get(id=USER_ID)
 
     try:
@@ -34,6 +34,7 @@ def prepare_lab(lab, location):
 
     lab_proxy.lab = lab
     lab_proxy.is_active = True
+    lab_proxy.language = language
     lab_proxy.save()
 
     # quizblocks
@@ -56,9 +57,9 @@ def prepare_lab(lab, location):
         modulestore().publish(unit.location, user.id)
 
 
-def prepare_lab_from_lab_id(lab_id, location):
+def prepare_lab_from_lab_id(lab_id, location, language='en'):
     lab = Lab.objects.get(id=lab_id)
-    return prepare_lab(lab, location)
+    return prepare_lab(lab, location, language)
 
 
 def create_unit_from_quiz_block(user, quiz_block, location):

@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import hashlib
 import re
+import pygeoip
 
 from lxml import etree
 import markdown
@@ -211,3 +212,20 @@ def get_quiz_block_file_url(quiz_block_file):
     prefix = S3_BASE_URL
     url = "{}uploads/{}".format(prefix, quiz_block_file)
     return url
+
+def country_code_from_ip(ip_addr):
+    """
+    Return the country code associated with an IP address.
+    Handles both IPv4 and IPv6 addresses.
+
+    Args:
+        ip_addr (str): The IP address to look up.
+
+    Returns:
+        str: A 2-letter country code.
+
+    """
+    if ip_addr.find(':') >= 0:
+        return pygeoip.GeoIP(settings.GEOIPV6_PATH).country_code_by_addr(ip_addr)
+    else:
+        return pygeoip.GeoIP(settings.GEOIP_PATH).country_code_by_addr(ip_addr)

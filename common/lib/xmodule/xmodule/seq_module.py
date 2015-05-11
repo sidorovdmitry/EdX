@@ -7,7 +7,7 @@ from lxml import etree
 
 from django.core.urlresolvers import reverse
 
-from xblock.fields import Integer, Scope
+from xblock.fields import Integer, Scope, Boolean, String
 from xblock.fragment import Fragment
 from pkg_resources import resource_string
 
@@ -48,7 +48,24 @@ class SequenceFields(object):
         scope=Scope.user_state,
     )
 
+    # Entrance Exam flag -- see cms/contentstore/views/entrance_exam.py for usage
+    is_entrance_exam = Boolean(
+        display_name=_("Is Entrance Exam"),
+        help=_(
+            "Tag this course module as an Entrance Exam. "
+            "Note, you must enable Entrance Exams for this course setting to take effect."
+        ),
+        scope=Scope.content,
+    )
+
+    # labster fields
     lab_id = Integer(help="Lab ID if the gradeType is Lab", scope=Scope.settings)
+    labster_language = String(
+        display_name=_("Labster Lab Language"),
+        help=_("Enter the language code for the Lab. The default is en."),
+        scope=Scope.settings,
+        default="en",
+    )
 
 
 class SequenceModule(SequenceFields, XModule):
@@ -216,9 +233,6 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
 
             user_profile = UserProfile.objects.get(user_id=user_id)
             labster_user = LabsterUser.objects.get(user_id=user_id)
-            nutshell_play_lab_url = reverse(
-                'labster_nutshell_play_lab',
-                args=[self.course_id.to_deprecated_string(), lab_proxy.id])
 
             if lab.id in [43, 44]:
                 result_url = reverse('labster_adaptive_test_result',
@@ -237,9 +251,27 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                 'unity_log_url': reverse('labster-api:create-unity-log', args=[lab_proxy.id]),
                 'user_attempt': user_attempt,
                 'result_url': result_url,
-                'nutshell_play_lab_url': nutshell_play_lab_url,
             })
 
         fragment.add_content(self.system.render_template('lab_module.html', params))
 
         return fragment
+
+    def index_dictionary(self):
+        """
+        Return dictionary prepared with module content and type for indexing.
+        """
+        # return key/value fields in a Python dict object
+        # values may be numeric / string or dict
+        # default implementation is an empty dict
+        xblock_body = super(SequenceDescriptor, self).index_dictionary()
+        html_body = {
+            "display_name": self.display_name,
+        }
+        if "content" in xblock_body:
+            xblock_body["content"].update(html_body)
+        else:
+            xblock_body["content"] = html_body
+        xblock_body["content_type"] = "Sequence"
+
+        return xblock_body

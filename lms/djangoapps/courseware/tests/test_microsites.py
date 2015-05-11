@@ -9,7 +9,6 @@ from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 
 from courseware.tests.helpers import LoginEnrollmentTestCase
-from xmodule.modulestore.tests.django_utils import TEST_DATA_MOCK_MODULESTORE
 from course_modes.models import CourseMode
 from xmodule.course_module import (
     CATALOG_VISIBILITY_CATALOG_AND_ABOUT, CATALOG_VISIBILITY_NONE)
@@ -27,6 +26,8 @@ class TestMicrosites(ModuleStoreTestCase, LoginEnrollmentTestCase):
     STUDENT_INFO = [('view@test.com', 'foo'), ('view2@test.com', 'foo')]
 
     def setUp(self):
+        super(TestMicrosites, self).setUp()
+
         # use a different hostname to test Microsites since they are
         # triggered on subdomain mappings
         #

@@ -5,17 +5,18 @@ Python tests for the Survey views
 import json
 from collections import OrderedDict
 
-from django.test import TestCase
 from django.test.client import Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
+from student.models import UserProfile
 from survey.models import SurveyForm
 
 from xmodule.modulestore.tests.factories import CourseFactory
+from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 
 
-class SurveyViewsTests(TestCase):
+class SurveyViewsTests(ModuleStoreTestCase):
     """
     All tests for the views.py file
     """
@@ -23,11 +24,14 @@ class SurveyViewsTests(TestCase):
         """
         Set up the test data used in the specific tests
         """
+        super(SurveyViewsTests, self).setUp()
+
         self.client = Client()
 
         # Create two accounts
         self.password = 'abc'
         self.student = User.objects.create_user('student', 'student@test.com', self.password)
+        UserProfile.objects.create(user=self.student)
 
         self.test_survey_name = 'TestSurvey'
         self.test_form = '<input name="field1" /><input name="field2" /><select name="ddl"><option>1</option></select>'

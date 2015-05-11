@@ -1,21 +1,76 @@
 '''
 django admin pages for courseware model
 '''
+from django import forms
 from config_models.admin import ConfigurationModelAdmin
 
 from student.models import UserProfile, UserTestGroup, CourseEnrollmentAllowed, DashboardConfiguration
-from student.models import CourseEnrollment, Registration, PendingNameChange, CourseAccessRole, CourseAccessRoleAdmin
-from student.models import CourseEnrollmentAdmin
+from student.models import (
+    CourseEnrollment, Registration, PendingNameChange, CourseAccessRole, LinkedInAddToProfileConfiguration,
+    # CourseEnrollmentAdmin,
+    # CourseAccessRoleAdmin,
+)
 from ratelimitbackend import admin
+from student.roles import REGISTERED_ACCESS_ROLES
 
 
-admin.site.register(UserProfile)
+class CourseAccessRoleForm(forms.ModelForm):
+    """Form for adding new Course Access Roles view the Django Admin Panel."""
+    class Meta:
+        model = CourseAccessRole
+
+    COURSE_ACCESS_ROLES = [(role_name, role_name) for role_name in REGISTERED_ACCESS_ROLES.keys()]
+    role = forms.ChoiceField(choices=COURSE_ACCESS_ROLES)
+
+
+class CourseAccessRoleAdmin(admin.ModelAdmin):
+    """Admin panel for the Course Access Role. """
+    form = CourseAccessRoleForm
+    raw_id_fields = ("user",)
+    search_fields = ('user__email', 'course_id'),
+    list_filter = ('org', 'role')
+    list_display = (
+        'id', 'user', 'org', 'course_id', 'role'
+    )
+
+
+class CourseEnrollmentAllowedAdmin(admin.ModelAdmin):
+    search_fields = ('email', 'course_id')
+    list_display = (
+        'email', 'course_id', 'auto_enroll', 'created',
+    )
+
+
+class LinkedInAddToProfileConfigurationAdmin(admin.ModelAdmin):
+    """Admin interface for the LinkedIn Add to Profile configuration. """
+
+    class Meta:
+        model = LinkedInAddToProfileConfiguration
+
+    # Exclude deprecated fields
+    exclude = ('dashboard_tracking_code',)
+
+
+class CourseEnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course_id', 'mode', 'created', 'is_active')
+    list_filter = ('is_active', 'mode')
+    search_fields = ('user__email', 'course_id')
+    raw_id_fields = ('user',)
+
+
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name', 'country')
+    search_fields = ('user__email',)
+    list_filter = ('country',)
+
+
+admin.site.register(UserProfile, UserProfileAdmin)
 
 admin.site.register(UserTestGroup)
 
 admin.site.register(CourseEnrollment, CourseEnrollmentAdmin)
 
-admin.site.register(CourseEnrollmentAllowed)
+admin.site.register(CourseEnrollmentAllowed, CourseEnrollmentAllowedAdmin)
 
 admin.site.register(Registration)
 
@@ -24,3 +79,5 @@ admin.site.register(PendingNameChange)
 admin.site.register(CourseAccessRole, CourseAccessRoleAdmin)
 
 admin.site.register(DashboardConfiguration, ConfigurationModelAdmin)
+
+admin.site.register(LinkedInAddToProfileConfiguration, LinkedInAddToProfileConfigurationAdmin)

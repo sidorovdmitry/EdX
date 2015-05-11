@@ -1,4 +1,5 @@
 import json
+import requests
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -18,6 +19,7 @@ from courseware.courses import get_courses, sort_by_announcement
 
 from labster.courses import get_popular_courses
 from labster.models import UserAttempt, Lab
+from labster_frontend.demo_courses import labsterify_courses
 from labster_search.search import get_courses_from_keywords
 
 
@@ -69,6 +71,9 @@ def index(request, user=AnonymousUser()):
     # get courses based on course id
     popular_labs = get_popular_courses(list_courses_id)[:6]
 
+    courses = labsterify_courses(courses)
+    popular_labs = labsterify_courses(popular_labs)
+
     context = {
         'courses': courses,
         'popular_labs': popular_labs,
@@ -103,6 +108,8 @@ def courses(request, user=AnonymousUser()):
         courses = get_courses(user, domain=domain)
         courses = sort_by_announcement(courses)
 
+    courses = labsterify_courses(courses)
+
     context = {
         'courses': courses,
         'keywords': keywords,
@@ -133,6 +140,14 @@ def contact_form(request):
         messages.success(request, 'Some error occurred in sending mail.', extra_tags='safe')
 
         return HttpResponseRedirect('/contact#feedbackForm')
+
+
+def fetch_career_data(request):
+    headers = {}
+    url = 'http://web.labster.com/rbcount.php'
+    resp = requests.get(url, headers=headers)
+
+    return HttpResponse(resp.content)
 
 
 def redirect_to_old(request, path=''):
