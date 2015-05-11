@@ -61,11 +61,14 @@ class LicenseUpdateTest(ViewTestMixin, TestCase):
 
     def setUp(self):
         self.date_end = timezone.now()
-        self.user = UserFactory(username="snow", first_name="jon", email="jonsnow@got.com")
+        self.payment_product = PaymentProductFactory()        
         self.license = LicenseFactory(user=self.user, item_count=1, date_bought=self.date_end,
             date_end_license=self.date_end, is_active=1)
         self.url = reverse('labster-backoffice:license:update', args=[self.license.id])
-        # User.objects.create_user('username', 'user@email.com', 'password')        
+        
+        self.user = User.objects.create_user('username', 'user@email.com', 'password')
+        self.user.is_staff = True
+        self.user.save()
 
         self.valid_data = {
             'user': self.user.id,
@@ -73,10 +76,12 @@ class LicenseUpdateTest(ViewTestMixin, TestCase):
             'date_bought': self.date_end,
             'date_end_license': self.date_end,
             'is_active': 1,
-        }
+            'voucher_code': "",
+            'payment_product': self.payment_product.id
+        }        
 
     def test_post_valid_data(self):
-        self.client.login(username=self.user.username, password=self.user.password)
+        self.client.login(username=self.user.username, password='password')
         response = self.client.post(self.url, self.valid_data)
 
         self.assertEqual(response.status_code, 302)
