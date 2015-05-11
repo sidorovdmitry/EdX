@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from labster.tests.views import ViewTestMixin
+from labster.tests.views import ViewTestMixin, StaffViewTestMixin
 from labster.tests.factories import VoucherFactory, ProductFactory, UserFactory
 from labster_backoffice.models import Voucher
 
@@ -54,7 +54,7 @@ class VoucherCreateTest(ViewTestMixin, VoucherPostMixin, TestCase):
 
     def setUp(self):
         self.product = ProductFactory()
-        self.voucher = VoucherFactory(id='1234567890', price=1000, limit=10, 
+        self.voucher = VoucherFactory(id='1234567890', price=1000, limit=10,
             week_subscription=4)
         self.url = reverse('labster-backoffice:voucher:create')
         User.objects.create_user('username', 'user@email.com', 'password')
@@ -68,21 +68,20 @@ class VoucherCreateTest(ViewTestMixin, VoucherPostMixin, TestCase):
 
     def test_post(self):
         voucher = Voucher.objects.latest('id')
-        self.assertEqual(voucher.id, self.voucher.id)        
+        self.assertEqual(voucher.id, self.voucher.id)
 
 
 @unittest.skipUnless(settings.ROOT_URLCONF == 'cms.urls', 'Test only valid in cms')
-class VoucherUpdateTest(ViewTestMixin, VoucherPostMixin, TestCase):
+class VoucherUpdateTest(StaffViewTestMixin, VoucherPostMixin, TestCase):
 
     def setUp(self):
-        # products = [ProductFactory() for i in range(3)]
-        # product_ids = [p.id for p in products]
-
-        self.voucher = VoucherFactory(id='1234567890', price=1000, limit=10, 
-            week_subscription=4)
+        self.voucher = VoucherFactory(id='1234567890', price=1000, limit=10,
+                                      week_subscription=4)
 
         self.url = reverse('labster-backoffice:voucher:update', args=[self.voucher.id])
-        self.user = UserFactory(username="snow", first_name="jon", email="jonsnow@got.com")
+        self.user = User.objects.create_user('username', 'user@email.com', 'password')
+        self.user.is_staff = True
+        self.user.save()
 
         self.product = ProductFactory()
         self.valid_data = {
@@ -91,10 +90,11 @@ class VoucherUpdateTest(ViewTestMixin, VoucherPostMixin, TestCase):
             'limit': 10,
             'products': [self.product.id],
             'week_subscription': 4,
+            'all_labs': 'none',
         }
 
     def test_post(self):
-        self.client.login(username=self.user.username, password=self.user.password)
+        self.client.login(username=self.user.username, password='password')
         response = self.client.post(self.url, self.valid_data)
 
         self.assertEqual(response.status_code, 302)

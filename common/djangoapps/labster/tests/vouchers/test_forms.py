@@ -36,11 +36,13 @@ class VoucherFormTest(TestCase):
 
         form = VoucherForm(data)
         form.is_valid()
-        print form.errors
 
         voucher = form.save()
         voucher = Voucher.objects.get(id=voucher.id)
         voucher_product = VoucherProduct.objects.get(voucher_code=voucher.id)
         products = voucher_product.products.all()
+
+        self.assertEqual(voucher.price, data['price'])
+        self.assertEqual(voucher.limit, data['limit'])
 
         self.assertItemsEqual(product_ids, [p.id for p in products])
