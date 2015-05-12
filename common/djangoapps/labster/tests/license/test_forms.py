@@ -43,7 +43,7 @@ class LicenseFormTest(TestCase):
         self.assertTrue(form.is_valid())
 
         license = form.save()
-        license = License.objects.get(id=license.id)        
+        license = License.objects.get(id=license.id)
 
         self.assertEqual(license.item_count, data['item_count'])
         self.assertEqual(license.is_active, data['is_active'])

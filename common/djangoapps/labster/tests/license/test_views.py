@@ -74,8 +74,8 @@ class LicenseUpdateTest(ViewTestMixin, TestCase):
         self.valid_data = {
             'user': self.user.id,
             'item_count': 2,
-            'date_bought': self.date_end,
-            'date_end_license': self.date_end,
+            'date_bought': self.date_end.strftime('%Y-%m-%d'),
+            'date_end_license': self.date_end.strftime('%Y-%m-%d'),
             'is_active': 1,
             'voucher_code': "",
             'payment_product': self.payment_product.id
@@ -93,10 +93,10 @@ class LicenseUpdateTest(ViewTestMixin, TestCase):
         self.assertTrue(license.is_active)
         self.assertEqual(license.item_count, self.valid_data['item_count'])
         self.assertEqual(
-            license.date_bought,
+            license.date_bought.strftime('%Y-%m-%d'),
             self.valid_data['date_bought'])
         self.assertEqual(
-            license.date_end_license,
+            license.date_end_license.strftime('%Y-%m-%d'),
             self.valid_data['date_end_license'])
 
 
