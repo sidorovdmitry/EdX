@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from labster_backoffice.models import License
 from labster.tests.views import ViewTestMixin
-from labster.tests.factories import LicenseFactory, UserFactory
+from labster.tests.factories import LicenseFactory, UserFactory, PaymentProductFactory
 
 
 @unittest.skipUnless(settings.ROOT_URLCONF == 'cms.urls', 'Test only valid in cms')
@@ -27,7 +27,7 @@ class LicenseCreateTest(ViewTestMixin, TestCase):
         self.user = UserFactory(username="snow", first_name="jon", email="jonsnow@got.com")
         self.license = LicenseFactory(user=self.user, item_count=1, date_bought=self.date_end,
             date_end_license=self.date_end, is_active=1)
-        self.url = reverse('labster-backoffice:license:create')        
+        self.url = reverse('labster-backoffice:license:create')
 
         self.valid_data = {
             'user': self.user.id,
@@ -61,14 +61,15 @@ class LicenseUpdateTest(ViewTestMixin, TestCase):
 
     def setUp(self):
         self.date_end = timezone.now()
-        self.payment_product = PaymentProductFactory()        
-        self.license = LicenseFactory(user=self.user, item_count=1, date_bought=self.date_end,
-            date_end_license=self.date_end, is_active=1)
-        self.url = reverse('labster-backoffice:license:update', args=[self.license.id])
-        
+        self.payment_product = PaymentProductFactory()
+
         self.user = User.objects.create_user('username', 'user@email.com', 'password')
         self.user.is_staff = True
         self.user.save()
+
+        self.license = LicenseFactory(user=self.user, item_count=1, date_bought=self.date_end,
+            date_end_license=self.date_end, is_active=1)
+        self.url = reverse('labster-backoffice:license:update', args=[self.license.id])
 
         self.valid_data = {
             'user': self.user.id,
@@ -78,7 +79,7 @@ class LicenseUpdateTest(ViewTestMixin, TestCase):
             'is_active': 1,
             'voucher_code': "",
             'payment_product': self.payment_product.id
-        }        
+        }
 
     def test_post_valid_data(self):
         self.client.login(username=self.user.username, password='password')
