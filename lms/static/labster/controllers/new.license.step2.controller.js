@@ -29,7 +29,8 @@ angular.module('LabsterBackOffice')
     var url_country = window.backofficeUrls.country;
     $http.get(url_country)
       .success(function (data, status, headers, config) {
-        $scope.countries = data;
+        $scope.countries = data.countries;
+        $scope.countries_vat = data.countries_vat;
         $scope.country = $scope.countries[0];
         var idx_country = getIndexCountryByCode($scope.default_country, $scope.countries);
         if (idx_country != 0) {
@@ -65,26 +66,11 @@ angular.module('LabsterBackOffice')
     }; // end of duplicateLabs
 
     $scope.checkVat = function () {
-      /*
-       apply tax if:
-       1. Private person within EU
-       2. Private institution/school in Denmark
-       */
-      $scope.totalPrice = 0;
-      $scope.tax = 0;
-      $scope.is_denmark = false;
-      $scope.is_eu_country = checkEuCountry($scope.country);
+      // call function checkVat() in vat.js
+      var vatResult = checkVatHelper($scope.country, $scope.subTotalPrice, $scope.institution_type, $scope.countries_vat);
 
-      if ($scope.country.name == "Denmark") {
-        $scope.is_denmark = true;
-      }
-
-      if (($scope.is_eu_country && $scope.institution_type == 1) ||
-        ( $scope.is_denmark && $scope.institution_type == 2)) {
-        $scope.tax = 25 / 100 * $scope.subTotalPrice;
-      }
-
-      $scope.totalPrice = $scope.tax + $scope.subTotalPrice;
+      $scope.totalPrice = vatResult.totalPrice;
+      $scope.tax = vatResult.vat;
     };
 
     $scope.buyLabs = function (payment_method) {

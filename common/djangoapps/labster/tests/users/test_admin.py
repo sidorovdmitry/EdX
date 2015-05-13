@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 
 from labster.models import LabsterUser
-from labster.users.admin import LabsterUserForm
+from labster.users.forms import LabsterUserForm
 from student.models import UserProfile
 
 
@@ -71,6 +71,7 @@ class LabsterUserFormTest(TestCase):
         data = {
             'name': "First Last",
             'email': "new@user.com",
+            'password': "password",
         }
 
         form = LabsterUserForm(data)
@@ -115,33 +116,6 @@ class LabsterUserFormTest(TestCase):
         self.assertEqual(labster_user.unique_id, data['unique_id'])
         self.assertEqual(labster_user.language, data['language'])
         self.assertEqual(str(labster_user.date_of_birth), data['date_of_birth'])
-
-    def test_create_inactive(self):
-        data = {
-            'name': "First Last",
-            'email': "new@user.com",
-        }
-
-        form = LabsterUserForm(data)
-        form.is_valid()
-        labster_user = form.save()
-        user = User.objects.get(id=labster_user.user.id)
-
-        self.assertFalse(user.is_active)
-        self.assertFalse(labster_user.is_active)
-
-    def test_create_no_password(self):
-        data = {
-            'name': "First Last",
-            'email': "new@user.com",
-        }
-
-        form = LabsterUserForm(data)
-        form.is_valid()
-        labster_user = form.save()
-        user = User.objects.get(id=labster_user.user.id)
-
-        self.assertFalse(user.has_usable_password())
 
     def test_update_valid(self):
         user = User.objects.create_user('new@user.com', 'new@user.com', 'user')

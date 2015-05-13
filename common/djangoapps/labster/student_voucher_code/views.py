@@ -1,4 +1,4 @@
-from labster.backoffice.views import get_backoffice_urls, create_user
+from labster.backoffice.views import get_backoffice_urls
 
 from edxmako.shortcuts import render_to_response
 
@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 from student.models import UserProfile
 
+from labster.backoffice.views import get_user_token
 from labster.models import LabsterUser
 
 
@@ -15,7 +16,7 @@ def home(request):
     template_name = 'labster/student_voucher_code.html'
     user_profile = UserProfile.objects.get(user=request.user)
     labster_user = LabsterUser.objects.get(user=request.user)
-    bo_user = create_user(request.user, user_profile.name, labster_user, format='json')
+    bo_user = get_user_token(request.user, format='json')
 
     token = bo_user['token']
     backoffice = {

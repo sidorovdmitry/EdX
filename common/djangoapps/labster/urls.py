@@ -4,6 +4,7 @@ from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('labster',  # nopep8
     url('^api/', include('labster.api_urls', namespace='labster-api')),
+    url('^internal/', include('labster_backoffice.urls')),
 
     url('^login-by-token/', 'users.views.login_by_token', name='labster_login_token'),
     url('^activate/(?P<activation_key>\w+)/$', 'users.views.activate_user_email', name='labster_activate'),

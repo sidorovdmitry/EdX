@@ -77,3 +77,47 @@ function getIndexCountryByCode(countryCode, all_countries) {
   }
   return 0;
 };
+
+function getVatRate(countryCode, countries_vat) {
+  for (var i = 0; i < countries_vat.length; i++) {
+    if (countries_vat[i].country_code == countryCode) {
+      var vat = parseFloat(countries_vat[i].country_vat);
+      return vat;
+    }
+  }
+  return 0.00;
+}
+
+function checkVatHelper(country, subTotalPrice, institution_type, countries_vat){
+  /*
+    apply tax if:
+    1. Private person within EU
+    2. Private institution/school in Denmark
+
+    $scope.institution_type
+    personal = 1
+    private = 2
+    public = 3
+   */
+
+  var totalPrice, vat = 0;
+  var is_denmark = false;
+  var is_eu_country = checkEuCountry(country);
+
+  if (country.name == "Denmark") {
+    is_denmark = true;
+  }
+
+  if ( is_denmark && institution_type == 2 ) {
+    vat = 25 / 100 * subTotalPrice;
+  } else if (is_eu_country) {
+    vat = getVatRate(country.alpha2, countries_vat);
+  }
+
+  totalPrice = vat + subTotalPrice;
+
+  return {
+    vat: vat,
+    totalPrice: totalPrice
+  };
+};

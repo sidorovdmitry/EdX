@@ -10,7 +10,6 @@ from student.models import CourseEnrollment, CourseEnrollmentAllowed, UserProfil
 
 from rest_framework.authtoken.models import Token
 
-from labster.backoffice.views import create_user
 from labster.models import LabsterUser
 
 
@@ -54,10 +53,6 @@ def login_by_token(request):
         if user and user.is_active:
             login(request, user)
             enroll_user(user)
-
-        if int(user_type) == LabsterUser.USER_TYPE_TEACHER:
-            # sync data to Backoffice
-            sync_user(user)
 
         if course_id :
             if (is_demo_course == "false" and int(user_type) == LabsterUser.USER_TYPE_STUDENT) or int(user_type) == LabsterUser.USER_TYPE_TEACHER:

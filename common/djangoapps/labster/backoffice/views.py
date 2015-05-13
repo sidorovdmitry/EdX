@@ -43,20 +43,11 @@ def get_payment(payment_id, token, format='json'):
     return resp.json()
 
 
-def create_user(user, name, labster_user, format='json'):
-    post_data = {
-        'email': user.email,
-        'username': user.username,
-        'first_name': name,
-        'external_id': user.id,
-        'phone_number': labster_user.phone_number,
-        'institution_name': labster_user.organization_name,
-        'occupation': labster_user.get_user_school_level_display(),
-    }
-    create_user_url = '{}/api/users/create/'.format(get_base_url())
+def get_user_token(user, format='json'):
+    get_user_url = '{}/api/users/token/{}'.format(get_base_url(), user.id)
 
-    resp = requests.post(create_user_url, data=post_data)
-    assert resp.status_code in range(200, 205), resp.status_code
+    resp = requests.get(get_user_url)
+    assert resp.status_code in range(200, 201), resp.status_code
 
     if format == 'string':
         return resp.content
@@ -88,7 +79,7 @@ def home(request, *args, **kwargs):
     template_name = 'labster/backoffice.html'
     user_profile = UserProfile.objects.get(user=request.user)
     labster_user = LabsterUser.objects.get(user=request.user)
-    bo_user = create_user(request.user, user_profile.name, labster_user, format='json')
+    bo_user = get_user_token(request.user, format='json')
 
     token = bo_user['token']
     lab_list = get_labs(token=token, format='string')

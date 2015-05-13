@@ -28,6 +28,8 @@ git+https://github.com/mitocw/django-cas.git@60a5b8e5a62e63e0d5d224a87f0b489201a
 -e git+https://github.com/jambonrose/markdown_subscript_extension.git@609d8bd797ab451cb1510e9b252c87b9194bda14#egg=MarkdownSubscript
 -e git+https://github.com/kriwil/markdown-newtab.git@59d00f0b4b4479ed06fa6bebc68311be892a33ae#egg=markdown-newtab
 -e git+https://github.com/Bodekaer/Labster.EdX.django-wiki.git@6b79eaaeb0efd8e7b8a68008d0a4745d8b1737ba#egg=django-wiki
+-e git+https://github.com/kriwil/django-hijack-email.git@f9c70f4584cae5446c91e1d31ad698fa642ca794#egg=hijack_email
+# -e git+https://github.com/Bodekaer/Labster.BackOffice@feature/integrate_edx#egg=labster_backoffice
 
 # Our libraries:
 -e git+https://github.com/edx/XBlock.git@b5e83915d9d205076eac357b71a91f7cd6d8010d#egg=XBlock

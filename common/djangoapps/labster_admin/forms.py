@@ -53,6 +53,7 @@ class TeacherToLicenseForm(forms.Form):
 
         return user, course_ids
 
+IS_VOUCHER_CHOICES = ((True, 'Yes',), (False, 'No',))
 
 class DuplicateMultipleCourseForm(forms.Form):
 
@@ -61,11 +62,19 @@ class DuplicateMultipleCourseForm(forms.Form):
     org = forms.CharField(required=True, label='University Name')
     all_labs = forms.BooleanField(required=False, help_text='Choose this to duplicate all courses')
     labs = forms.MultipleChoiceField(required=False, widget=CheckboxSelectMultiple, choices=[])
+    is_voucher = forms.ChoiceField(widget=forms.RadioSelect, choices=IS_VOUCHER_CHOICES, help_text="Are you using voucher code")
+    voucher_code = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         super(DuplicateMultipleCourseForm, self).__init__(*args, **kwargs)
         labs_choices = tuple([(lab.demo_course_id, lab.name) for lab in Lab.objects.all() if lab.demo_course_id])
         self.fields['labs'].choices = labs_choices
+        self.fields['is_voucher'].initial = True
+        self.fields['is_voucher'].widget.attrs = {'class': "form-control is_voucher"}
+        self.fields['email'].widget.attrs = {'class': "form-control"}
+        self.fields['license_count'].widget.attrs = {'class': "form-control"}
+        self.fields['org'].widget.attrs = {'class': "form-control"}
+        self.fields['voucher_code'].widget.attrs = {'class': "form-control"}
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -92,9 +101,10 @@ class DuplicateMultipleCourseForm(forms.Form):
         all_labs = self.cleaned_data.get('all_labs')
         license_count = self.cleaned_data.get('license_count')
         org = self.cleaned_data.get('org')
+        voucher_code = self.cleaned_data.get('voucher_code')
 
         user = User.objects.get(email=email)
 
-        duplicate_courses.delay(user.id, license_count, all_labs, labs, org, request_user_id=request.user.id)
+        duplicate_courses.delay(user.id, license_count, all_labs, labs, org, voucher_code, request_user_id=request.user.id)
 
         return user
