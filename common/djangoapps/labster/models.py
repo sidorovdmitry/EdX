@@ -375,6 +375,32 @@ class Problem(models.Model):
         return ""
 
 
+class Mission(models.Model):
+    lab = models.ForeignKey(Lab)
+    element_id = models.CharField(max_length=100, db_index=True)
+    title = models.TextField(blank=True, default='')
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
+
+    def __unicode__(self):
+        return "{}: {}".format(self.lab, self.element_id)
+
+
+class Task(models.Model):
+    mission = models.ForeignKey(Mission)
+    element_id = models.CharField(max_length=100, db_index=True)
+    title = models.TextField(blank=True, default='')
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
+
+    def __unicode__(self):
+        return "{}: {}".format(self.mission, self.element_id)
+
+
 class AdaptiveProblemManager(models.Manager):
     def get_query_set(self):
         qs = super(AdaptiveProblemManager, self).get_query_set()
@@ -466,32 +492,6 @@ class LabProxyData(models.Model):
     def data_file_name(self):
         name = self.data_file.name.split('/')[-1]
         return name
-
-
-class UserSave(models.Model):
-    """
-    SavePoint need to be linked to LabProxy instead of Lab
-
-    The way we designed the system, many courses could use same lab,
-    with different set of questions.
-    """
-    lab_proxy = models.ForeignKey(LabProxy)
-    user = models.ForeignKey(User)
-    save_file = models.FileField(blank=True, null=True, upload_to='edx/labster/lab/save')
-    created_at = models.DateTimeField(default=timezone.now)
-    modified_at = models.DateTimeField(default=timezone.now)
-
-    # these will be deleted
-    play_count = models.IntegerField(default=0)
-    is_finished = models.BooleanField(default=False)
-
-    class Meta:
-        unique_together = ('lab_proxy', 'user')
-
-    def get_new_save_file_name(self):
-        timestamp = calendar.timegm(datetime.utcnow().utctimetuple())
-        file_name = "{}_{}_{}.zip".format(timestamp, self.lab_proxy_id, self.user_id)
-        return file_name
 
 
 class UserAttemptManager(models.Manager):
@@ -637,6 +637,32 @@ class UserAttempt(models.Model):
             self.is_completed = self.check_completed()
 
         return super(UserAttempt, self).save(*args, **kwargs)
+
+
+class UserSave(models.Model):
+    """
+    SavePoint need to be linked to LabProxy instead of Lab
+
+    The way we designed the system, many courses could use same lab,
+    with different set of questions.
+    """
+    attempt = models.ForeignKey(UserAttempt, blank=True, null=True)
+    lab_proxy = models.ForeignKey(LabProxy)
+    user = models.ForeignKey(User)
+    save_file = models.FileField(blank=True, null=True, upload_to='edx/labster/lab/save')
+    is_checkpoint = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(default=timezone.now)
+
+    # these will be deleted
+    play_count = models.IntegerField(default=0)
+    is_finished = models.BooleanField(default=False)
+
+    def get_new_save_file_name(self):
+        timestamp = calendar.timegm(datetime.utcnow().utctimetuple())
+        file_name = "{}_{}_{}.zip".format(timestamp, self.lab_proxy_id, self.user_id)
+        return file_name
 
 
 class ErrorInfo(models.Model):

@@ -3,7 +3,7 @@ import requests
 
 from django.utils import timezone
 
-from labster.models import Lab, QuizBlock, Problem, Answer
+from labster.models import Lab, QuizBlock, Problem, Answer, Mission, Task
 from labster.utils import get_hashed_text
 
 
@@ -115,6 +115,41 @@ def fetch_quizblocks(lab):
 
     Lab.objects.filter(id=lab.id).update(
         quiz_block_last_updated=timezone.now())
+
+
+def create_mission_from_tree(lab, tree):
+    for mission in tree.iterfind('.//Mission'):
+        try:
+            mission_obj = Mission.objects.get(lab=lab, element_id=mission.attrib['Id'])
+        except Mission.DoesNotExist:
+            mission_obj = Mission(lab=lab, element_id=mission.attrib['Id'])
+
+        mission_obj.is_active = True
+        mission_obj.title = mission.attrib.get('Title')
+        mission_obj.save()
+
+        create_task_from_tree(mission_obj, mission)
+
+
+def create_task_from_tree(mission, tree):
+    for task in tree.iterfind('.//Task'):
+        try:
+            task_obj = Task.objects.get(mission=mission, element_id=task.attrib['Id'])
+        except Task.DoesNotExist:
+            task_obj = Task(mission=mission, element_id=task.attrib['Id'])
+
+        task_obj.is_active = True
+        task_obj.title = task.attrib.get('Title')
+        task_obj.save()
+
+
+def fetch_missions(lab):
+    engine_xml = lab.engine_xml_url
+    response = requests.get(engine_xml)
+    assert response.status_code == 200, "missing engine xml"
+
+    tree = etree.fromstring(response.content)
+    create_mission_from_tree(lab, tree)
 
 
 def fetch_labs_as_json():

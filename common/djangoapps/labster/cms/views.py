@@ -11,7 +11,7 @@ from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
 from labster.courses import duplicate_course
 from labster.edx_bridge import duplicate_lab_content
-from labster.masters import fetch_quizblocks
+from labster.masters import fetch_quizblocks, fetch_missions
 from labster.models import Lab
 
 
@@ -127,6 +127,7 @@ class UpdateQuizBlock(AdminOnlyMixin, View):
             raise Http404
 
         fetch_quizblocks(lab)
+        fetch_missions(lab)
         lab = Lab.objects.get(id=lab_id)
 
         response = {
