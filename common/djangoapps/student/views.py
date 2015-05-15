@@ -1911,6 +1911,43 @@ def password_reset(request):
     })
 
 
+@csrf_exempt
+@require_POST
+def password_reset_labster(request):
+    """ Attempts to send a password reset e-mail. """
+    # Add some rate limiting here by re-using the RateLimitMixin as a helper class
+    limiter = BadRequestRateLimiter()
+    if limiter.is_rate_limit_exceeded(request):
+        AUDIT_LOG.warning("Rate limit exceeded in password_reset")
+        return HttpResponseForbidden()
+
+    form = PasswordResetFormNoActive(request.POST)
+    if form.is_valid():
+        form.save(use_https=request.is_secure(),
+                  from_email=settings.DEFAULT_FROM_EMAIL,
+                  request=request,
+                  domain_override=request.get_host())
+    else:
+        # bad user? tick the rate limiter counter
+        AUDIT_LOG.info("Bad password_reset user passed in.")
+        limiter.tick_bad_request_counter(request)
+
+    email = request.POST['email']
+    try:
+        user = User.objects.get(email=email)
+
+        return JsonResponse({
+            'success': True,
+            'value': render_to_string('registration/password_reset_done.html', {}),
+        })
+    except User.DoesNotExist:
+        return JsonResponse({
+            'success': True,
+            'value': render_to_string('registration/labster_password_reset_user_not_exist.html', {}),
+        })
+    
+
+
 def password_reset_confirm_wrapper(
     request,
     uidb36=None,
