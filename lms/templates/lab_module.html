@@ -202,6 +202,9 @@ LANGUAGES = [
     <div class="lab-module-info">
       <h2>${lab.name}</h2>
       <p>In this section, you will be using one of the virtual Labster labs.</p>
+      % if user_has_finished_lab:
+        <p><i>You have finished this lab before.</i></p>
+      % endif
       % if user_save:
       <p>It appears that you have already used this specific lab in the past, and we have automatically stored your progress in the lab, so you don't have to start all from the beginning.</p>
       <p>Please click the <strong>Continue from save game</strong> button below, if you would like to continue from the last position in the lab that was stored, or click <strong>Restart from beginning</strong> if you would like to play the whole lab from the start again.</p>
