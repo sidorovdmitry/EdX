@@ -518,6 +518,8 @@ class UserAttempt(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
 
+    # is_current = models.BooleanField(default=False)
+
     # user is finished with this attempt (could be completed or starting new one)
     is_finished = models.BooleanField(default=False)
     finished_at = models.DateTimeField(blank=True, null=True)
