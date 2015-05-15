@@ -227,6 +227,8 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
 
             # check if has unfinished user attempt
             user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user_id=user_id)
+            user_has_finished_lab = UserAttempt.objects.filter(is_finished=True).exists()
+
             user_save = None
             if user_attempt:
                 user_save = get_latest_user_save(lab_proxy=lab_proxy, user_id=user_id)
@@ -250,6 +252,7 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                 'labster_user': labster_user,
                 'unity_log_url': reverse('labster-api:create-unity-log', args=[lab_proxy.id]),
                 'user_attempt': user_attempt,
+                'user_has_finished_lab': user_has_finished_lab,
                 'result_url': result_url,
             })
 
