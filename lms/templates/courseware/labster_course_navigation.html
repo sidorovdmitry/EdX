@@ -87,6 +87,7 @@ def url_class(is_active):
       % elif course.labster_demo:
         <li style="float:right"><a href="#invite-students-modal" rel="leanModal" class="invite-students" style="color:green" data-course-name="${course.display_name_with_default}" data-course-location="${course.location.org}/${course.location.course}/${course.location.run}">${_("Invite Students to Try Course")}</a></li>
       % endif
+      <li><a href="${reverse('student_progress_detail', args=[course.id, user.id])}" >Individual Progress</a></li>
     </ol>
   </div>
 </nav>
