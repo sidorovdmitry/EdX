@@ -518,7 +518,7 @@ class UserAttempt(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(default=timezone.now)
 
-    # is_current = models.BooleanField(default=False)
+    is_current_active = models.BooleanField(default=False)  # currently active attempt
 
     # user is finished with this attempt (could be completed or starting new one)
     is_finished = models.BooleanField(default=False)
