@@ -712,6 +712,16 @@ class UnityLog(models.Model):
 
     @classmethod
     def new(self, user, lab_proxy, log_type, message, url='', request_method=''):
+
+        if log_type.upper() == 'GAME_PROGRESS':
+            if message.get('GameComponent') == 'FinishGame':
+                user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
+                user_attempt.is_completed = True
+                user_attempt.is_finished = True
+                user_attempt.finished_at = timezone.now()
+                user_attempt.completed_at = timezone.now()
+                user_attempt.save()
+
         message = json.dumps(message)
         return self.objects.create(
             user=user, lab_proxy=lab_proxy,
