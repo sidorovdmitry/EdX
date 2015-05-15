@@ -500,7 +500,7 @@ class UserAttemptManager(models.Manager):
             user = User.objects.get(id=user_id)
         try:
             return self.get_query_set().filter(
-                is_finished=False, lab_proxy=lab_proxy, user=user).latest('created_at')
+                is_finished=False, lab_proxy=lab_proxy, user=user, is_current_active=True).latest('created_at')
         except self.model.DoesNotExist:
             return None
 
@@ -633,12 +633,6 @@ class UserAttempt(models.Model):
     def get_total_play_count(self):
         return UserAttempt.objects.filter(
             user=self.user, lab_proxy=self.lab_proxy).count()
-
-    def save(self, *args, **kwargs):
-        if not self.is_completed:
-            self.is_completed = self.check_completed()
-
-        return super(UserAttempt, self).save(*args, **kwargs)
 
 
 class UserSave(models.Model):
