@@ -257,6 +257,12 @@ class StartNewLab(PlayLab):
             lab_proxy=lab_proxy, user=user, is_finished=False).update(
                 is_finished=True, finished_at=timezone.now())
 
+        # set is_current_active in other attempts to false
+        UserAttempt.objects.filter(lab_proxy=lab_proxy, user=user).update(is_current_active=False)
+
+        # create new active user attempt
+        UserAttempt.objects.create(lab_proxy=lab_proxy, user=user, is_current_active=True)
+
         return self.render(request)
 
 
