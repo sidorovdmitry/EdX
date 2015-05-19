@@ -33,7 +33,7 @@ def get_attempts_and_answers(
         quizblock = "QuizblockPostTest"
         if not problems:
             problems = Problem.objects.filter(is_active=True, quiz_block__lab_id=73, quiz_block__element_id=quizblock)
-            print len(problems)
+            problems = [problem for problem in problems if problem.correct_answers]
         answers = answers.filter(problem__in=problems)
 
     answers_by_attempt = defaultdict(list)
@@ -51,7 +51,6 @@ def get_attempts_and_answers(
         # FIXME: for LAB_ID 35 only
         if lab_proxy.lab_id in [35, 73]:
             correct_count = len([answer for answer in attempt.answers if answer.is_correct])
-            print correct_count, len(problems)
             attempt.custom_score = 100 * correct_count / len(problems)
 
             if attempt.custom_score > 100:
