@@ -149,10 +149,10 @@ button.labster-register {
     background-image: linear-gradient(to bottom,#1d354d 0%,#00032c 50%,#00001d 50%,#00001f 100%);
 }
 
-.labster-register-box li {
+/*.labster-register-box li {
     margin: 0;
     padding: 0;
-}
+}*/
 
 .labster-register-box li a {
     color: #666;
@@ -227,4 +227,12 @@ button.labster-register {
 
 .padding-box {
   padding: 3px 12px 12px 0;
+}
+
+.language-box {
+  padding: 0px 12px 8px 0;
+}
+
+.language-box span {
+  float:right;
 }

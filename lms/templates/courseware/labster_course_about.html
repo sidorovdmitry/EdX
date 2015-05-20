@@ -219,13 +219,13 @@
                   <div class="labster-register-box teachers" style="text-align: left;">
                     <h2 style="font-size: 3em; font-weight: 600;">$ ${set_price_html(labster_price_univ)}</h2>
                     <ul>
-                      % if labster_price_hs != 10:
+                      % if labster_price_hs != 0:
                         <li>
                           <h2>$ ${set_price_html(labster_price_hs)}<span style="text-transform: none;font-size: .8em;"> for High School Lab</span></h2>
                         </li>
                       % endif
-                      <li><b>Languages:</b>  <span style="text-align: right;">${labster_language}</span></li> 
-                      <li><b>Includes:</b>  Full semester access</li> 
+                      <li class="language-box"><b>Languages</b> <span>${labster_language}</span></li> 
+                      <li class="language-box"><b>Includes</b> <span>Full semester access</span></li> 
                     </ul>
                   </div>
                 </div>
