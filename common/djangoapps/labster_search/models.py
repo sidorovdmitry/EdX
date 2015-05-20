@@ -51,6 +51,13 @@ class LabKeyword(models.Model):
         super(LabKeyword, self).save(*args, **kwargs)
 
 
+def get_primary_manual_keywords(lab):
+    return LabKeyword.objects.filter(
+        lab=lab,
+        keyword_type=LabKeyword.KEYWORD_PRIMARY,
+        source=LabKeyword.SOURCE_MANUAL).order_by('-rank')
+
+
 def get_keywords_from_lab_problems(lab):
     problems = Problem.get_by_lab(lab)
     sentences = [lab.name]
