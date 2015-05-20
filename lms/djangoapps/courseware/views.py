@@ -75,7 +75,9 @@ from eventtracking import tracker
 import analytics
 
 from labster.courses import get_primary_keywords
+from labster.models import Lab, LabProxy
 
+from labster_backoffice.models import Product
 
 log = logging.getLogger("edx.courseware")
 
@@ -105,6 +107,13 @@ def user_groups(user):
         cache.set(key, group_names, cache_expiration)
 
     return group_names
+
+
+def get_location_from_course(course):
+    for section in course.get_children():
+        for sub_section in section.get_children():
+            if sub_section.lab_id:
+                return sub_section.location
 
 
 @ensure_csrf_cookie
@@ -833,6 +842,34 @@ def course_about(request, course_id):
             settings.COURSE_ABOUT_VISIBILITY_PERMISSION
         )
         course = get_course_with_access(request.user, permission_name, course_key)
+        
+        location = get_location_from_course(course)
+        labster_language = ""
+        try:
+            lab_proxy = LabProxy.objects.get(location=location)
+            labster_language = lab_proxy.get_language_display()
+        except LabProxy.DoesNotExist:
+            pass
+
+        try:
+            lab = Lab.objects.get(demo_course_id=course_key)
+            lab_id = lab.id
+        except Lab.DoesNotExist:
+            lab_id = 0
+        
+        labster_price_univ = 0
+        labster_price_hs = 0        
+        try:
+            product_univ = Product.objects.get(external_id=lab_id, product_type='univ')                
+            labster_price_univ = product_univ.price                
+        except Product.DoesNotExist:
+            pass
+
+        try:
+            product_hs = Product.objects.get(external_id=lab_id, product_type='hs')
+            labster_price_hs = product_hs.price
+        except Product.DoesNotExist:
+            pass
 
         if microsite.get_value('ENABLE_MKTG_SITE', settings.FEATURES.get('ENABLE_MKTG_SITE', False)):
             return redirect(reverse('info', args=[course.id.to_deprecated_string()]))
@@ -914,6 +951,9 @@ def course_about(request, course_id):
             'cart_link': reverse('shoppingcart.views.show_cart'),
             'pre_requisite_courses': pre_requisite_courses,
             'primary_keywords': get_primary_keywords(course_key),
+            'labster_price_univ': str(labster_price_univ),
+            'labster_price_hs': str(labster_price_hs),
+            'labster_language': labster_language,
         })
 
 
@@ -1207,12 +1247,7 @@ def progress_detail(request, course_id, student_id):
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
     student = User.objects.get(id=int(student_id))
     course = modulestore().get_course(course_key)
-
-    location = None
-    for section in course.get_children():
-        for sub_section in section.get_children():
-            if not location and sub_section.lab_id:
-                location = sub_section.location
+    location = get_location_from_course(course)
 
     lab_proxy = LabProxy.objects.get(location=location)
     attempts = get_attempts_and_answers(lab_proxy, student)
