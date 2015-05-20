@@ -951,8 +951,8 @@ def course_about(request, course_id):
             'cart_link': reverse('shoppingcart.views.show_cart'),
             'pre_requisite_courses': pre_requisite_courses,
             'primary_keywords': get_primary_keywords(course_key),
-            'labster_price_univ': labster_price_univ,
-            'labster_price_hs': labster_price_hs,
+            'labster_price_univ': str(labster_price_univ),
+            'labster_price_hs': str(labster_price_hs),
             'labster_language': labster_language,
         })
 
