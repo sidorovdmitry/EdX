@@ -207,11 +207,13 @@
                   <div class="labster-register-box students">                                      
                     <ul>
                       <li><a href="/student_license/${course.id}/" class="purchase-demo-course-link student-purchase-button btn btn-blue" data-click-type="cta-purchase"><i class="fa fa-flask"></i>
-                        Take this course</a></li>
-                      <li><a href="#register-modal" rel="leanModal" class="new-register student-voucher-button padding-box" data-click-type="cta-voucher" data-user-type="1"><i class="fa fa-tags"></i>
-                        Use Voucher</a></li>
+                        Take this course</a></li>                      
+                      <li><a class="voucher-demo-course-link padding-box" href="/student_voucher_code"><i class="fa fa-tags"></i> Use Voucher</a></li>                      
+                      % if not user.is_authenticated():
                       <li><a href="#register-modal" rel="leanModal" class="new-register educators-preview-button padding-box" data-click-type="cta-preview" data-user-type="2"><i class="fa fa-search-plus"></i>
                         Free Preview</a></li>
+                      % endif
+
                       <li><a href="/pricing" class="educators-pricing-button padding-box" data-click-type="cta-pricing"><i class="fa fa-users"></i>
                         See Bulk Pricing</a></li>
                     </ul>
