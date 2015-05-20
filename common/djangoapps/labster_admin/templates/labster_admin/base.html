@@ -43,6 +43,7 @@
             <li class="{% if is_duplicate_multiple_courses %}active{% endif %}"><a href="{% url 'labster_duplicate_multiple_courses' %}">Duplicate courses</a></li>
             <li class="{% if is_update_quizblocks %}active{% endif %}"><a href="{% url 'labster_manage_lab' %}">Update QuizBlocks</a></li>
             <li class="{% if is_add_teacher_to_license %}active{% endif %}"><a href="{% url 'labster_add_teacher_to_license' %}">Add Teacher to License</a></li>
+            <li class="{% if is_labster_lab_keywords %}active{% endif %}"><a href="{% url 'labster_lab_keywords_index' %}">Lab Keywords</a></li>
 
             {% comment %}
             <li><a href="#">Link</a></li>
