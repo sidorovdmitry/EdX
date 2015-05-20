@@ -74,7 +74,16 @@ class LabsPlayData(StaffMixin, TemplateView):
         return context
 
 
+class LabKeywordsIndex(StaffMixin, TemplateView):
+    template_name = "labster_admin/lab_keywords_index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(LabKeywordsIndex, self).get_context_data(**kwargs)
+        context['is_labster_lab_keywords'] = True
+        context['labs'] = [lab for lab in Lab.objects.order_by('name') if lab.demo_course_id]
+        return context
 home = Home.as_view()
 add_teacher_to_license = AddTeacherToLicense.as_view()
 duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
 labs_play_data = LabsPlayData.as_view()
+lab_keywords_index = LabKeywordsIndex.as_view()
