@@ -1,0 +1,40 @@
+{% extends "labster_admin/base.html" %}
+{% load url from future %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12">
+      <h2>{{ lab.name }}</h2>
+      <hr>
+      {% if messages %}
+      <div class="alert alert-success" role="alert">
+        {% for message in messages %}
+        <div>{{ message|safe }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <form method="post" class="form-horizontal">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        <div class="form-group">
+          <div class="col-sm-5"><label>Keyword</label></div>
+          <div class="col-sm-1"><label>Rank</label></div>
+        </div>
+        {% for form in formset %}
+        <div class="form-group">
+          <div class="col-sm-5">
+            {{ form.id }}
+            {{ form.display_name }}
+          </div>
+          <div class="col-sm-1">
+            {{ form.display_rank }}
+          </div>
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary" type="submit">save</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

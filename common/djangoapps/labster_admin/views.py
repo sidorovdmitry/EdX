@@ -1,11 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.core.urlresolvers import reverse
+from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, FormView
 
-from labster_admin.forms import TeacherToLicenseForm, DuplicateMultipleCourseForm
 from labster.models import Lab
+from labster_admin.forms import TeacherToLicenseForm, DuplicateMultipleCourseForm
+from labster_search.forms import LabKeywordFormSet
+from labster_search.models import get_primary_manual_keywords
 
 
 def is_staff(user):
@@ -82,6 +85,27 @@ class LabKeywordsIndex(StaffMixin, TemplateView):
         context['is_labster_lab_keywords'] = True
         context['labs'] = [lab for lab in Lab.objects.order_by('name') if lab.demo_course_id]
         return context
+
+
+def lab_keywords_edit(request, lab_id):
+    lab = get_object_or_404(Lab, id=lab_id)
+    if request.method == 'POST':
+        formset = LabKeywordFormSet(request.POST, instance=lab)
+        if formset.is_valid():
+            formset.save()
+
+    else:
+        formset = LabKeywordFormSet(instance=lab)
+
+    context = {
+        'is_labster_lab_keywords': True,
+        'lab': lab,
+        'formset': formset,
+    }
+    template_name = "labster_admin/lab_keywords_edit.html"
+    return render(request, template_name, context)
+
+
 home = Home.as_view()
 add_teacher_to_license = AddTeacherToLicense.as_view()
 duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
