@@ -18,6 +18,16 @@ def uniqify(seq):
     return list(OrderedDict.fromkeys(seq))
 
 
+def set_price_html(price):
+    """
+    input: 19.99
+    output: 19<sub>.99</sub>
+    """
+    price_list = price.split('.')
+    if len(price_list) == 2:
+        return "{}.<sup>{}</sup>".format(price_list[0], price_list[1])
+    return "0"
+
 def get_request(user=None, data=None):
     """
     creates request object to be used to do some xblock modifications
