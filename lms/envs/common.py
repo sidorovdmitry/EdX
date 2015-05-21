@@ -1895,6 +1895,8 @@ if FEATURES.get('LABSTER'):
     LABSTER_BACKOFFICE_BASE_URL = "https://internal.labster.com"
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
     LABSTER_ENABLE_SALESFORCE = False
+    LABSTER_EDX_BASE_URL = "https://www.labster.com"
+    LABSTER_CDN_BASE = "d1hm9s9o1fn2y.cloudfront.net"
 
     HIJACK_EMAILS = ['edx+staging-lms@labster.com']
     LABSTER_LANGUAGES = ('en', 'da')

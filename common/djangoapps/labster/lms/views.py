@@ -141,7 +141,7 @@ class SettingsXml(LabProxyXMLView):
         user = self.get_user(request)
 
         engine_xml = self.get_engine_xml(lab_proxy, user)
-        url_prefix = lab_proxy.lab.xml_url_prefix
+        url_prefix = lab_proxy.lab.get_xml_url_prefix()
         language = lab_proxy.language if lab_proxy.language else 'en'
 
         return {

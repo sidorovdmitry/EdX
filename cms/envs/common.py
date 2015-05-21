@@ -822,6 +822,9 @@ if FEATURES.get('LABSTER'):
     LABSTER_S3_BASE_URL = "https://labster.s3.amazonaws.com/"
     LABSTER_UNITY_URL_PREFIX = "{}unity/".format(LABSTER_S3_BASE_URL)
 
+    LABSTER_BACKOFFICE_PDF_GENERATOR_BASE_URL = "http://localhost:14045/"
+    LABSTER_CDN_BASE = "d1hm9s9o1fn2y.cloudfront.net"
+
     HIJACK_EMAILS = ['edx+staging-cms@labster.com']
     LABSTER_LANGUAGES = ('en', 'da')
 
