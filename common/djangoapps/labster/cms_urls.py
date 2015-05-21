@@ -6,6 +6,8 @@ urlpatterns = patterns('labster_admin.views',  # nopep8
     url('^add-teacher-to-license/$', 'add_teacher_to_license', name='labster_add_teacher_to_license'),
     url('^duplicate-multiple-courses/$', 'duplicate_multiple_courses', name='labster_duplicate_multiple_courses'),
     url('^labs-play-data/$', 'labs_play_data', name='labster_labs_play_data'),
+    url('^lab-keywords/$', 'lab_keywords_index', name='labster_lab_keywords_index'),
+    url('^lab-keywords/(?P<lab_id>\d+)/$', 'lab_keywords_edit', name='labster_lab_keywords_edit'),
 )
 
 urlpatterns += patterns('labster.cms.views',  # nopep8
