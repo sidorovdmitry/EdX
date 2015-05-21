@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, FormView
@@ -90,12 +91,16 @@ class LabKeywordsIndex(StaffMixin, TemplateView):
 def lab_keywords_edit(request, lab_id):
     lab = get_object_or_404(Lab, id=lab_id)
     if request.method == 'POST':
-        formset = LabKeywordFormSet(request.POST, instance=lab)
+        formset = LabKeywordFormSet(
+            request.POST,
+            instance=lab,
+        )
         if formset.is_valid():
             formset.save()
-
+            return HttpResponseRedirect(request.build_absolute_uri())
     else:
-        formset = LabKeywordFormSet(instance=lab)
+        formset = LabKeywordFormSet(
+            instance=lab, queryset=get_primary_manual_keywords(lab=lab))
 
     context = {
         'is_labster_lab_keywords': True,

@@ -29,20 +29,16 @@ class LabKeywordForm(forms.ModelForm):
         obj = super(LabKeywordForm, self).save(*args, **kwargs)
         obj.keyword = data['display_name'].lower().strip()
         obj.rank = int(data['display_rank'] * 100)
+        obj.keyword_type = LabKeyword.KEYWORD_PRIMARY
+        obj.source = LabKeyword.SOURCE_MANUAL
         obj.save()
         return obj
 
 
-class BaseLabKeywordFormSet(BaseInlineFormSet):
-    def __init__(self, *args, **kwargs):
-        queryset = LabKeyword.objects\
-            .filter(
-                keyword_type=LabKeyword.KEYWORD_PRIMARY,
-                source=LabKeyword.SOURCE_MANUAL)\
-            .exclude(display_name='').order_by('-rank')
-        kwargs['queryset'] = queryset
-        super(BaseLabKeywordFormSet, self).__init__(*args, **kwargs)
-
-
 LabKeywordFormSet = inlineformset_factory(
-    Lab, LabKeyword, form=LabKeywordForm, formset=BaseLabKeywordFormSet)
+    Lab,
+    LabKeyword,
+    form=LabKeywordForm,
+    extra=1,
+    can_delete=True,
+)
