@@ -39,7 +39,10 @@ class LabAdminForm(forms.ModelForm):
             'engine_file',
             'quiz_block_file',
             'xml_url_prefix',
-            'use_quiz_blocks', 'is_active', 'demo_course_id',
+            'use_cdn',
+            'use_quiz_blocks',
+            'is_active',
+            'demo_course_id',
             'verified_only')
 
     def clean_demo_course_id(self):
@@ -77,13 +80,25 @@ class LabAdminForm(forms.ModelForm):
 
 class LabAdmin(admin.ModelAdmin):
     list_display = (
-        'name', 'engine_xml_link', 'engine_file_link', 'quiz_block_file_link',
-        'use_quiz_blocks', 'demo_course_id', 'xml_url_prefix', 'is_active')
+        'name',
+        'engine_xml_link',
+        'engine_file_link',
+        'quiz_block_file_link',
+        'xml_url_prefix_display',
+        'use_cdn',
+        'use_quiz_blocks',
+        'demo_course_id',
+        'is_active',
+    )
     list_filter = ('is_active', 'engine_file')
     form = LabAdminForm
+    actions = ['disable_cdn', 'enable_cdn']
 
     def queryset(self, request):
         return Lab.all_objects.all()
+
+    def xml_url_prefix_display(self, obj):
+        return obj.get_xml_url_prefix()
 
     def engine_xml_link(self, obj):
         return HTML_LINK.format(obj.engine_xml_url, obj.engine_xml)
@@ -99,6 +114,14 @@ class LabAdmin(admin.ModelAdmin):
         return HTML_LINK.format(obj.quiz_block_file_url, obj.quiz_block_file)
     quiz_block_file_link.allow_tags = True
     quiz_block_file_link.short_description = "Quiz block file"
+
+    def disable_cdn(self, request, queryset):
+        queryset.update(use_cdn=False)
+    disable_cdn.short_description = "Disable CDN usage"
+
+    def enable_cdn(self, request, queryset):
+        queryset.update(use_cdn=False)
+    enable_cdn.short_description = "Enable CDN usage"
 
 
 class QuizBlockAdmin(BaseAdmin):
