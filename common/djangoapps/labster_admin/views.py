@@ -120,7 +120,7 @@ class VatIndexView(StaffMixin, ListView):
         return context
 
     def get_queryset(self):
-        """ Return the list of voucher. """
+        """ Return the list of vat. """
         result = CountryVat.objects.all().order_by('-id')
 
         keyword = self.request.GET.get('keyword')
