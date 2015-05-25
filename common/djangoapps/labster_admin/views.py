@@ -168,6 +168,8 @@ class CreateLabsterUser(StaffMixin, FormView):
         messages.success(
             self.request,
             "You have successfully created user for <strong>{}</strong>".format(labster_user.user))
+        
+        return super(CreateLabsterUser, self).form_valid(form)
 
 
 def home(request):
