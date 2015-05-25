@@ -25,7 +25,7 @@ def set_price_html(price):
     """
     price_list = price.split('.')
     if len(price_list) == 2:
-        return "{}.<sup>{}</sup>".format(price_list[0], price_list[1])
+        return "{}.<sup style=\"font-size: 55%;\">{}</sup>".format(price_list[0], price_list[1])
     return "0"
 
 def get_request(user=None, data=None):
