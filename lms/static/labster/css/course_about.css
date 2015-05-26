@@ -114,6 +114,7 @@ button.labster-register {
 .labster-register-box-container {
     display: -webkit-flex;
     display: flex;
+    min-height: 200px;
 }
 
 .labster-register-box {
