@@ -133,13 +133,18 @@ def create_mission_from_tree(lab, tree):
 
 def create_task_from_tree(mission, tree):
     for task in tree.iterfind('.//Task'):
+        task_id = task.attrib.get('Id')
+        task_title = task.attrib.get('Title', '')
+        if not task_id:
+            return
+
         try:
-            task_obj = Task.objects.get(mission=mission, element_id=task.attrib['Id'])
+            task_obj = Task.objects.get(mission=mission, element_id=task_id)
         except Task.DoesNotExist:
-            task_obj = Task(mission=mission, element_id=task.attrib['Id'])
+            task_obj = Task(mission=mission, element_id=task_id)
 
         task_obj.is_active = True
-        task_obj.title = task.attrib.get('Title')
+        task_obj.title = task_title
         task_obj.save()
 
 
