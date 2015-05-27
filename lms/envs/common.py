@@ -1878,6 +1878,7 @@ if FEATURES.get('LABSTER'):
         'labster_salesforce',
         'labster_backoffice.api',
         'labster_backoffice',
+        'labster_lti',
         'widget_tweaks',
         'corsheaders',
         'diplomat',
