@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<link rel="stylesheet" id="options-google-fonts"  href="//fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic&amp;subset=latin&amp;v=1410882627" type="text/css" media="all" />
+<style>
+body {
+  font-family: "Lato", "Verdana", sans-serif;
+}
+#mozilla-no, #mozilla-yes {
+  display: none;
+  background-image: url('https://labsterim.s3.amazonaws.com/media/uploads/labster/labster2_small.png');
+  background-position: bottom -100px right -90px;
+  background-repeat: no-repeat;
+}
+
+a.download-firefox {
+  background-color: #1d354d;
+  background-image: url('https://labsterim.s3.amazonaws.com/media/uploads/edx/firefox_24.png');
+  background-position: top 10px left 10px;
+  background-repeat: no-repeat;
+  border-radius: 4px;
+  border: 1px solid rgb(29, 53, 77);
+  color: white;
+  display: inline-block;
+  height: 44px;
+  line-height: 44px;
+  padding-left: 46px;
+  padding-right: 16px;
+  text-decoration: none;
+  transition-delay: 0s;
+  transition-duration: 0.1s;
+  transition-property: all;
+  transition-timing-function: linear;
+}
+a.download-firefox:hover {
+  background-color: #578fbf;
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-browser/0.0.7/jquery.browser.min.js"></script>
+<script>
+
+function detectUnityWebPlayer() {
+  var tInstalled = false;
+  if (navigator.mimeTypes && navigator.mimeTypes["application/vnd.unity"]) {
+    if (navigator.mimeTypes["application/vnd.unity"].enabledPlugin &&
+        navigator.plugins && navigator.plugins["Unity Player"]) {
+
+      tInstalled = true;
+    }
+  }
+  return tInstalled;
+}
+
+function isWindows() {
+  var ua = navigator.userAgent.toUpperCase();
+  return ua.toUpperCase().indexOf('WINDOWS NT') > -1;
+}
+
+function isMac() {
+  var ua = navigator.userAgent.toUpperCase();
+  return ua.toUpperCase().indexOf('MACINTOSH') > -1;
+}
+
+$(function() {
+  if ($.browser.mozilla) {
+    $('#mozilla-yes').show();
+  } else {
+    $('#mozilla-no').show();
+    if (isMac) {
+      $('#mozilla-no .fx-mac').show();
+    } else {
+      $('#mozilla-no .fx-windows').show();
+    }
+  }
+});
+
+</script>
+</head>
+<body>
+<div id="mozilla-no">
+  <h3>Please use Firefox or Safari</h3>
+  <p>Currently Labster is best supported on Firefox and Safari browsers.</p>
+  <p>It appears that you are currently using another browser, so we recommend that you launch e.g. Firefox to start using Labster.</p>
+  <p>If you do not have Firefox installed, you can easily download and install it using the button below.</p>
+  <p><em>Please notice, that this is only temporary, and Labster will be supported on all browsers within a few months.</em></p>
+  <p style="display:none" class="firefox-download fx-windows">
+    <a target="_blank" href="https://download.mozilla.org/?product=firefox-stub&os=win&lang=en-US" class="download-firefox">
+      <span><img src="https://labsterim.s3.amazonaws.com/media/uploads/edx/firefox.png"></span><span>Download Mozilla Firefox</span>
+    </a>
+  </p>
+  <p style="display:none" class="firefox-download fx-mac">
+    <a target="_blank" href="https://www.mozilla.org/en-US/firefox/new/" class="download-firefox">
+      Download Mozilla Firefox</span>
+    </a>
+  </p>
+</div>
+<div id="mozilla-yes">:)</div>
+</body>
+</html>
