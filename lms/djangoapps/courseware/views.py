@@ -112,7 +112,7 @@ def user_groups(user):
 def get_location_from_course(course):
     for section in course.get_children():
         for sub_section in section.get_children():
-            if sub_section.lab_id:
+            if getattr(sub_section, 'lab_id', None):
                 return sub_section.location
 
 
@@ -842,7 +842,7 @@ def course_about(request, course_id):
             settings.COURSE_ABOUT_VISIBILITY_PERMISSION
         )
         course = get_course_with_access(request.user, permission_name, course_key)
-        
+
         location = get_location_from_course(course)
         labster_language = ""
         try:
@@ -856,12 +856,12 @@ def course_about(request, course_id):
             lab_id = lab.id
         except Lab.DoesNotExist:
             lab_id = 0
-        
+
         labster_price_univ = 0
-        labster_price_hs = 0        
+        labster_price_hs = 0
         try:
-            product_univ = Product.objects.get(external_id=lab_id, product_type='univ')                
-            labster_price_univ = product_univ.price                
+            product_univ = Product.objects.get(external_id=lab_id, product_type='univ')
+            labster_price_univ = product_univ.price
         except Product.DoesNotExist:
             pass
 

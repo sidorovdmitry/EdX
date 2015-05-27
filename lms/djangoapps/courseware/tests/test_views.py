@@ -976,6 +976,7 @@ class TestIndexView(ModuleStoreTestCase):
 
     @XBlock.register_temp_plugin(ViewCheckerBlock, 'view_checker')
     @ddt.data(ModuleStoreEnum.Type.mongo, ModuleStoreEnum.Type.split)
+    @unittest.skip('LABSTER')
     def test_student_state(self, default_store):
         """
         Verify that saved student state is loaded for xblocks rendered in the index view.

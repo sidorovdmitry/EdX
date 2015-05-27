@@ -87,7 +87,6 @@ def url_class(is_active):
       % elif course.labster_demo:
         <li style="float:right"><a href="#invite-students-modal" rel="leanModal" class="invite-students" style="color:green" data-course-name="${course.display_name_with_default}" data-course-location="${course.location.org}/${course.location.course}/${course.location.run}">${_("Invite Students to Try Course")}</a></li>
       % endif
-      <li><a href="${reverse('student_progress_detail', args=[course.id, user.id])}" >Individual Progress</a></li>
     </ol>
   </div>
 </nav>
@@ -138,6 +137,7 @@ def url_class(is_active):
   % endif
 </script>
 <script type="text/javascript" src="${staticfiles_storage.url('js/invite_students.js')}"></script>
+% if request.user.is_authenticated():
 <script>
 $(function() {
   var progressUrl = '${reverse('student_progress_detail', args=[course.id, user.id])}',
@@ -146,6 +146,7 @@ $(function() {
   progressLi.find('a').prop('href', progressUrl);
 });
 </script>
+% endif
 
 <section id="invite-students-modal" class="modal invite-students-modal" aria-hidden="true">
   <div class="inner-wrapper" role="alertdialog" aria-labelledy="invite-students-modal-title">
