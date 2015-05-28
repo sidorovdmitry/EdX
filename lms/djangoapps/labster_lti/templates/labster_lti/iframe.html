@@ -7,6 +7,9 @@
 body {
   font-family: "Lato", "Verdana", sans-serif;
 }
+#unity-container {
+    display: none;
+}
 #mozilla-no, #mozilla-yes, #unity-no {
   display: none;
   background-image: url('https://labsterim.s3.amazonaws.com/media/uploads/labster/labster2_small.png');
@@ -132,20 +135,10 @@ $(function() {
   <p>In this section, you will be using one of the virtual Labster labs.</p>
   <p>Please click the button below, to begin the exercise and enter the virtual lab.</p>
   <p>
-    <a id="" class="button" href="">Enter the Lab</a>
+    <a id="enter-lab-button" class="button" href="{{ lab_url }}">Enter the Lab</a>
   </p>
 
-  <div id="unity-player-container" style="display:none">
-    <a href="" class="exit-lab">Exit Lab</a>
-    <div id="unity-player">
-      <div class="missing">
-        <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
-          <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
-        </a>
-      </div>
-    </div>
-  </div>
-
 </div>
+
 </body>
 </html>
