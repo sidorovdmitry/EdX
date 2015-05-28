@@ -9,7 +9,7 @@ from xmodule.course_module import CourseDescriptor
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
 
-from labster.models import Lab, LabsterUser
+from labster.models import Lab, LabsterUser, LabProxy
 from labster_search.models import LabKeyword
 
 
@@ -181,3 +181,23 @@ def get_lab_by_course_id(course_id):
 def is_demo_course(course_key):
     course = modulestore().get_course(course_key)
     return course is not None and course.labster_demo
+
+
+def get_location_from_course_key(course_key):
+    course = modulestore().get_course(course_key)
+    for section in course.get_children():
+        for sub_section in section.get_children():
+            if sub_section.lab_id:
+                return sub_section.location
+
+    return None
+
+
+def get_lab_proxy_from_course_key(course_key):
+    location = get_location_from_course_key(course_key)
+    if location:
+        try:
+            return LabProxy.objects.get(location=location)
+        except LabProxy.DoesNotExist:
+            pass
+    return None
