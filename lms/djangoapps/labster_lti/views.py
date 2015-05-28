@@ -54,3 +54,59 @@ def lab(request, lab_slug):
 
     template_name = 'labster_lti/lab.html'
     return render(request, template_name, context)
+
+
+def settings_xml(request, lab_slug):
+    lab = get_lab_from_slug(slug=lab_slug.strip())
+    course_key = get_course_key_from_slug(slug=lab_slug.strip())
+    if not lab or not course_key:
+        raise Http404
+
+    print lab, lab.engine_xml
+
+    context = {
+        'url_prefix': lab.get_xml_url_prefix(),
+        'engine_xml': lab.engine_xml,
+    }
+    return render(request, 'labster_lti/settings.xml', context)
+
+
+def server_xml(request, lab_slug):
+    lab = get_lab_from_slug(slug=lab_slug.strip())
+    course_key = get_course_key_from_slug(slug=lab_slug.strip())
+    lab_proxy = get_lab_proxy_from_course_key(course_key)
+    if not lab or not course_key:
+        raise Http404
+
+    device_info = reverse('labster-api:create-log', args=[lab_proxy.id, 'device_info'])
+    game_progress = reverse('labster-api:create-log', args=[lab_proxy.id, 'game_progress'])
+    player_start_end = reverse('labster-api:play', args=[lab_proxy.id])
+    quiz_block = reverse('labster-api:questions', args=[lab_proxy.id])
+    quiz_statistic = reverse('labster-api:answer', args=[lab_proxy.id])
+    save_game = reverse('labster-api:save', args=[lab_proxy.id])
+    send_email = reverse('labster-api:create-log', args=[lab_proxy.id, 'send_email'])
+    wiki = "/labster/api/wiki/article/"
+    api_prefix = getattr(settings, 'LABSTER_UNITY_API_PREFIX', '')
+
+    context = {
+        'api_prefix': api_prefix,
+        'device_info': device_info,
+        'game_progress': game_progress,
+        'player_start_end': player_start_end,
+        'quiz_block': quiz_block,
+        'quiz_statistic': quiz_statistic,
+        'save_game': save_game,
+        'send_email': send_email,
+        'wiki': wiki,
+    }
+    return render(request, 'labster_lti/server.xml', context)
+
+
+def platform_xml(request, lab_slug):
+    lab = get_lab_from_slug(slug=lab_slug.strip())
+    course_key = get_course_key_from_slug(slug=lab_slug.strip())
+    if not lab or not course_key:
+        raise Http404
+
+    context = {}
+    return render(request, 'labster_lti/platform.xml', context)

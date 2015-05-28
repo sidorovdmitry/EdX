@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Server Url="http://localhost:8000">
+  <ServerAPI Path="{{ game_progress }}" Id="GameProgress"/>
+  <ServerAPI Path="{{ device_info }}" Id="DeviceInfo"/>
+  <ServerAPI Path="{{ quiz_statistic }}" Id="QuizStatistic"/>
+  <ServerAPI Path="{{ save_game }}" Id="SaveGame"/>
+  <ServerAPI Path="{{ send_email }}" Id="SendEmail"/>
+  <ServerAPI Path="{{ player_start_end }}" Id="PlayerStartEnd"/>
+  <ServerAPI Path="{{ wiki }}" AllowCache="true" Id="Wiki" CatchError="false"/>
+  <ServerAPI Path="{{ quiz_block }}" Id="QuizBlock"/>
+</Server>
