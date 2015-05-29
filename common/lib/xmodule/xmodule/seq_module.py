@@ -231,7 +231,7 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
 
             user_save = None
             if user_attempt:
-                user_save = get_latest_user_save(lab_proxy=lab_proxy, user_id=user_id)
+                user_save = get_latest_user_save(lab_proxy=lab_proxy, user_id=user_id, user_attempt=user_attempt)
 
             user_profile = UserProfile.objects.get(user_id=user_id)
             labster_user = LabsterUser.objects.get(user_id=user_id)

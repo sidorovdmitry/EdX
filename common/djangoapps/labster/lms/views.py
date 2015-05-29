@@ -115,10 +115,11 @@ class SettingsXml(LabProxyXMLView):
             return ''
 
         # check for save game
-        user_save = get_latest_user_save(lab_proxy=lab_proxy, user_id=user.id)
+        user_save = get_latest_user_save(lab_proxy=lab_proxy, user_id=user.id, user_attempt=user_attempt)
         if user_save and user_save.save_file:
             engine_xml = user_save.save_file.url
-            user_save.attempt.mark_save()
+            if engine_xml:
+                user_save.attempt.mark_active()
 
         return engine_xml
 
