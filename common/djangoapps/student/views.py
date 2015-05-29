@@ -101,7 +101,7 @@ from microsite_configuration import microsite
 
 from util.password_policy_validators import (
     validate_password_length, validate_password_complexity,
-    validate_password_dictionary
+    validate_password_dictionary, labster_validate_password_values
 )
 
 import third_party_auth
@@ -1934,6 +1934,8 @@ def password_reset_confirm_wrapper(
 
     if request.method == 'POST':
         password = request.POST['new_password1']
+        password2 = request.POST['new_password2']
+
         if settings.FEATURES.get('ENFORCE_PASSWORD_POLICY', False):
             try:
                 validate_password_length(password)
@@ -1941,6 +1943,12 @@ def password_reset_confirm_wrapper(
                 validate_password_dictionary(password)
             except ValidationError, err:
                 err_msg = _('Password: ') + '; '.join(err.messages)
+
+        # check if user enters the same password to both fields
+        try:
+            labster_validate_password_values(password, password2)
+        except ValidationError, err:
+            err_msg = ''.join(err.messages)
 
         # also, check the password reuse policy
         if not PasswordHistory.is_allowable_password_reuse(user, password):

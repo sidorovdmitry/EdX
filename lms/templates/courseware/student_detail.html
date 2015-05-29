@@ -11,7 +11,7 @@
 <%block name="pagetitle">${_("{course_number} Progress").format(course_number=course.display_number_with_default) | h}</%block>
 <%block name="nav_skip">#course-info-progress</%block>
 
-<%include file="/courseware/labster_course_navigation.html" args="active_page='instructor'" />
+<%include file="/courseware/labster_course_navigation.html" args="active_page='individual_progress'" />
 
 <style>
 .lab-result-wrapper {
@@ -53,7 +53,7 @@
 <div class="container">
   <div class="profile-wrapper">
     <div class="course-info lab-result-wrapper" id="course-info-progress" aria-label="${_('Result Detail')}">
-      <a href="${progress_all_url}" class="float-right">View all students</a>
+      <!-- <a href="${progress_all_url}" class="float-right">View all students</a> -->
     <h2>Score details for ${student.profile.name}</h2>
     % for attempt in attempts:
     % if attempt.answers:

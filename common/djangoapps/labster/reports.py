@@ -5,6 +5,9 @@ from labster.models import (
 )
 
 
+ADAPTIVE_LABS = [73]
+
+
 def get_attempts_and_answers(
         lab_proxy, user, latest_only=False,
         attempts=None,
@@ -26,6 +29,13 @@ def get_attempts_and_answers(
             problems = Problem.objects.filter(is_active=True, element_id__in=quiz_ids)
         answers = answers.filter(problem__in=problems)
 
+    elif lab_proxy.lab_id == 73:
+        quizblock = "QuizblockPostTest"
+        if not problems:
+            problems = Problem.objects.filter(is_active=True, quiz_block__lab_id=73, quiz_block__element_id=quizblock)
+            problems = [problem for problem in problems if problem.correct_answers]
+        answers = answers.filter(problem__in=problems)
+
     answers_by_attempt = defaultdict(list)
     answers_by_attempt_check = defaultdict(list)
     for answer in answers:
@@ -39,7 +49,7 @@ def get_attempts_and_answers(
         attempt.answers = answers_by_attempt[attempt.id]
 
         # FIXME: for LAB_ID 35 only
-        if lab_proxy.lab_id == 35:
+        if lab_proxy.lab_id in [35, 73]:
             correct_count = len([answer for answer in attempt.answers if answer.is_correct])
             attempt.custom_score = 100 * correct_count / len(problems)
 

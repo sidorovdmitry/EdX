@@ -202,6 +202,7 @@ class Lab(models.Model):
 
     play_count = models.IntegerField(default=0)
     duration = models.IntegerField(default=0)
+    use_cdn = models.BooleanField(default=True)
 
     all_objects = models.Manager()
     objects = ActiveManager()
@@ -250,6 +251,12 @@ class Lab(models.Model):
     @property
     def quiz_block_file_url(self):
         return get_quiz_block_file_url(self.quiz_block_file)
+
+    def get_xml_url_prefix(self):
+        url = self.xml_url_prefix
+        if self.use_cdn:
+            url = url.replace('labster.s3.amazonaws.com', settings.LABSTER_CDN_BASE)
+        return url
 
     def to_json(self):
         return {

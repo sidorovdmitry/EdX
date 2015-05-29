@@ -5,6 +5,7 @@
   from django.conf import settings
   from edxmako.shortcuts import marketing_link
   from django.utils import timezone
+  from labster.utils import set_price_html
 %>
 <%namespace name='static' file='../static_content.html'/>
 <%! from microsite_configuration import microsite %>
@@ -189,21 +190,7 @@
             % if course.start > timezone.now():
             <span class="register disabled">${_("The Course Is Not Started Yet")}</span>
             % else:
-              % if user.is_authenticated():
-                % if user.labster_user.is_student:
-                <!-- show purchase/voucher button -->
-                <div class="labster-register-box-container">
-                  <div class="labster-register-box students">
-                    <h4><a href="/student_voucher_code">Students</a></h4>
-                    <ul>
-                      <li><a class="voucher-demo-course-link" href="/student_voucher_code"><i class="fa fa-tags"></i>
-                        Use Voucher</a></li>
-                      <li><a class="purchase-demo-course-link" href="/student_license/${course.id}/"><i class="fa fa-shopping-cart"></i>
-                        Purchase</a></li>
-                    </ul>
-                  </div>
-                </div>
-                % else:
+              % if user.is_authenticated() and user.labster_user.is_teacher:
                   % if user.labster_user.is_active:
                   <a href="#try-course-modal" rel="leanModal" class="try-course">
                     ${_("Try Course for Free")}
@@ -214,26 +201,37 @@
                     ${_("Try Course for Free")}
                   </a>
                   % endif
-                % endif
               % else:
-                <!-- user is not authenticated -->
+                <!-- user is not authenticated or student-->
                 <div class="labster-register-box-container">
-                  <div class="labster-register-box students">
-                    <h4><a href="#register-modal" rel="leanModal" class="new-register student-button" data-click-type="cta-header" data-user-type="1">Students</a></h4>
+                  <div class="labster-register-box students">                                      
                     <ul>
-                      <li><a href="#register-modal" rel="leanModal" class="new-register student-voucher-button" data-click-type="cta-voucher" data-user-type="1"><i class="fa fa-tags"></i>
-                        Use Voucher</a></li>
-                      <li><a href="/student_license/${course.id}/" class="purchase-demo-course-link student-purchase-button" data-click-type="cta-purchase"><i class="fa fa-shopping-cart"></i>
-                        Purchase</a></li>
+                      % if not user.is_authenticated():
+                        <li><a href="#register-modal" rel="leanModal" class="new-register purchase-demo-course-link student-purchase-button btn btn-blue" data-click-type="cta-voucher" data-user-type="1"><i class="fa fa-tags"></i>
+                          Take this course</a></li>
+                        <li><a href="#register-modal" rel="leanModal" class="new-register educators-preview-button padding-box" data-click-type="cta-preview" data-user-type="2"><i class="fa fa-search-plus"></i>
+                          Free Preview</a></li>
+                      % else:
+                        <li><a href="/student_license/${course.id}/" class="purchase-demo-course-link student-purchase-button btn btn-blue" data-click-type="cta-purchase"><i class="fa fa-flask"></i>
+                        Take this course</a></li>
+                      % endif
+
+                      <li><a class="voucher-demo-course-link padding-box" href="/student_voucher_code"><i class="fa fa-tags"></i> Use Voucher</a></li>
+
+                      <li><a href="/pricing" class="educators-pricing-button padding-box" data-click-type="cta-pricing"><i class="fa fa-users"></i>
+                        See Bulk Pricing</a></li>
                     </ul>
                   </div>
-                  <div class="labster-register-box teachers">
-                    <h4><a href="#register-modal" rel="leanModal" class="new-register educators-button" data-click-type="cta-header" data-user-type="2">Educators</a></h4>
+                  <div class="labster-register-box teachers" style="text-align: left;">
+                    <h2 style="font-size: 3em; font-weight: 600;">$ ${set_price_html(labster_price_univ)}</h2>
                     <ul>
-                      <li><a href="#register-modal" rel="leanModal" class="new-register educators-preview-button" data-click-type="cta-preview" data-user-type="2"><i class="fa fa-search-plus"></i>
-                        Free Preview</a></li>
-                      <li><a href="/pricing" class="educators-pricing-button" data-click-type="cta-pricing"><i class="fa fa-users"></i>
-                        See Bulk Pricing</a></li>
+                      % if labster_price_hs != 0:
+                        <li>
+                          <h2>$ ${set_price_html(labster_price_hs)}<span style="text-transform: none;font-size: .8em;"> for High School Lab</span></h2>
+                        </li>
+                      % endif
+                      <li class="language-box"><b>Languages</b> <span>${labster_language}</span></li> 
+                      <li class="language-box"><b>Includes</b> <span>Full semester access</span></li> 
                     </ul>
                   </div>
                 </div>

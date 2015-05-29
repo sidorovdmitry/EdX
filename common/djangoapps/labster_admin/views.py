@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, get_object_or_404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import render_to_string
@@ -28,6 +29,9 @@ from labster_backoffice.forms import VoucherForm, StripePaymentForm, \
 from labster_backoffice.helpers import send_invoice_mail, send_confirmation_mail
 
 from labster.models import Lab
+from labster_admin.forms import TeacherToLicenseForm, DuplicateMultipleCourseForm
+from labster_search.forms import LabKeywordFormSet
+from labster_search.models import get_primary_manual_keywords
 
 
 def is_staff(user):
@@ -116,7 +120,7 @@ class VatIndexView(StaffMixin, ListView):
         return context
 
     def get_queryset(self):
-        """ Return the list of voucher. """
+        """ Return the list of vat. """
         result = CountryVat.objects.all().order_by('-id')
 
         keyword = self.request.GET.get('keyword')
@@ -164,6 +168,8 @@ class CreateLabsterUser(StaffMixin, FormView):
         messages.success(
             self.request,
             "You have successfully created user for <strong>{}</strong>".format(labster_user.user))
+        
+        return super(CreateLabsterUser, self).form_valid(form)
 
 
 def home(request):
@@ -442,6 +448,39 @@ class LabsPlayData(StaffMixin, TemplateView):
         return context
 
 
+class LabKeywordsIndex(StaffMixin, TemplateView):
+    template_name = "labster_admin/lab_keywords_index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(LabKeywordsIndex, self).get_context_data(**kwargs)
+        context['is_labster_lab_keywords'] = True
+        context['labs'] = [lab for lab in Lab.objects.order_by('name') if lab.demo_course_id]
+        return context
+
+
+def lab_keywords_edit(request, lab_id):
+    lab = get_object_or_404(Lab, id=lab_id)
+    if request.method == 'POST':
+        formset = LabKeywordFormSet(
+            request.POST,
+            instance=lab,
+        )
+        if formset.is_valid():
+            formset.save()
+            return HttpResponseRedirect(request.build_absolute_uri())
+    else:
+        formset = LabKeywordFormSet(
+            instance=lab, queryset=get_primary_manual_keywords(lab=lab))
+
+    context = {
+        'is_labster_lab_keywords': True,
+        'lab': lab,
+        'formset': formset,
+    }
+    template_name = "labster_admin/lab_keywords_edit.html"
+    return render(request, template_name, context)
+
+
 add_teacher_to_license = AddTeacherToLicense.as_view()
 duplicate_multiple_courses = DuplicateMultipleCourse.as_view()
 activate_deactivate_user = ActivateDeactivateUser.as_view()
@@ -449,3 +488,4 @@ upload_vat = UploadCsvVat.as_view()
 index_vat = VatIndexView.as_view()
 create_labster_user = CreateLabsterUser.as_view()
 labs_play_data = LabsPlayData.as_view()
+lab_keywords_index = LabKeywordsIndex.as_view()

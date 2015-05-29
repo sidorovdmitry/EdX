@@ -137,6 +137,16 @@ def url_class(is_active):
   % endif
 </script>
 <script type="text/javascript" src="${staticfiles_storage.url('js/invite_students.js')}"></script>
+% if request.user.is_authenticated():
+<script>
+$(function() {
+  var progressUrl = '${reverse('student_progress_detail', args=[course.id, user.id])}',
+    progressLi = $('ol.course-tabs li:nth-child(5)');
+
+  progressLi.find('a').prop('href', progressUrl);
+});
+</script>
+% endif
 
 <section id="invite-students-modal" class="modal invite-students-modal" aria-hidden="true">
   <div class="inner-wrapper" role="alertdialog" aria-labelledy="invite-students-modal-title">

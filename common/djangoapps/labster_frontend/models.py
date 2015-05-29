@@ -29,3 +29,17 @@ class DemoCourse(models.Model):
         self.modified_at = timezone.now()
         self.is_active = len(self.slug) > 0
         return super(DemoCourse, self).save(*args, **kwargs)
+
+
+def get_course_key_from_slug(slug):
+    demo_courses = DemoCourse.objects.filter(slug__iexact=slug)
+    if demo_courses:
+        return demo_courses[0].course_id
+    return None
+
+
+def get_lab_from_slug(slug):
+    demo_courses = DemoCourse.objects.filter(slug__iexact=slug)
+    if demo_courses:
+        return demo_courses[0].lab
+    return None

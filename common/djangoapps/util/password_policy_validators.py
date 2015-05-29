@@ -90,3 +90,13 @@ def validate_password_dictionary(value):
             distance = nltk.metrics.distance.edit_distance(value, word)
             if distance <= password_max_edit_distance:
                 raise ValidationError(_("Too similar to a restricted dictionary word."), code="dictionary_word")
+
+
+
+def labster_validate_password_values(value1, value2):
+    """
+    Insures that user entered the same value to both password field
+    """
+
+    if value1 != value2:
+        raise ValidationError(_("The two password fields did not match."), code="match_password")        

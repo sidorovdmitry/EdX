@@ -9,9 +9,11 @@ from django.conf.urls import patterns, include, url  # noqa
 
 urlpatterns = patterns('labster_admin.views',  # nopep8
     url('^labs-play-data/$', 'labs_play_data', name='labster_labs_play_data'),
+    url('^lab-keywords/$', 'lab_keywords_index', name='labster_lab_keywords_index'),
+    url('^lab-keywords/(?P<lab_id>\d+)/$', 'lab_keywords_edit', name='labster_lab_keywords_edit'),
 )
 
-urlpatterns = patterns('labster.cms.views',  # nopep8
+urlpatterns += patterns('labster.cms.views',  # nopep8
     url('^duplicate-lab/$', 'duplicate_lab', name='labster_duplicate_lab'),
     url('^duplicate-course/$', 'duplicate_course_view', name='labster_duplicate_course'),
     url('^manage-lab/$', 'manage_lab_view', name='labster_manage_lab'),

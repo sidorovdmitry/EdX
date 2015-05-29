@@ -29,17 +29,20 @@ class LabsterUserForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(LabsterUserForm, self).__init__(*args, **kwargs)
         self.fields['is_active'].help_text = "False means user can't play lab"
+        self.fields['is_active'].initial = True
+        self.fields['user_is_active'].initial = True
         self.fields['is_email_active'].help_text = "True means user has validated their email"
 
         if self.instance.id:
             user = self.instance.user
             user_profile = UserProfile.objects.get(user=user)
             self.fields['email'].initial = user.email
-            self.fields['user_is_active'].initial = user.is_active
             self.fields['name'].initial = user_profile.name
             self.fields['gender'].initial = user_profile.gender
             self.fields['level_of_education'].initial = user_profile.level_of_education
+            self.fields['user_is_active'].initial = user.is_active
             self.fields['is_active'].initial = self.instance.is_active
+            self.fields['is_email_active'].initial = self.instance.is_email_active
             self.fields['user_type'].initial = self.instance.user_type
             self.fields['user_school_level'].initial = self.instance.user_school_level
             self.fields['phone_number'].initial = self.instance.phone_number
