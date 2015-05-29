@@ -735,6 +735,7 @@ class UnityLog(models.Model):
     request_method = models.CharField(max_length=10, blank=True, default='')
     message = models.TextField(help_text="JSON representation of data")
     tag = models.CharField(max_length=50, default="INFO", db_index=True)
+    attempt = models.ForeignKey(UserAttempt, blank=True, null=True)
 
     created_at = models.DateTimeField(default=timezone.now)
     objects = UnityLogManager()
@@ -753,10 +754,10 @@ class UnityLog(models.Model):
 
     @classmethod
     def new(self, user, lab_proxy, log_type, message, url='', request_method=''):
+        user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
 
         if log_type.upper() == 'GAME_PROGRESS':
             if message.get('GameComponent') == 'FinishGame':
-                user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
                 user_attempt.is_completed = True
                 user_attempt.is_finished = True
                 user_attempt.finished_at = timezone.now()
@@ -766,11 +767,13 @@ class UnityLog(models.Model):
         message = json.dumps(message)
         return self.objects.create(
             user=user, lab_proxy=lab_proxy,
-            log_type=log_type, message=message, url=url, request_method=request_method)
+            log_type=log_type, message=message, url=url, request_method=request_method,
+            attempt=user_attempt)
 
     @classmethod
     def new_unity_log(self, user, lab_proxy, message, url='', request_method=''):
         tag, message = separate_tag_from_message(message)
+        user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
         return self.objects.create(
             user=user,
             lab_proxy=lab_proxy,
@@ -778,7 +781,8 @@ class UnityLog(models.Model):
             message=message,
             tag=tag,
             url=url,
-            request_method=request_method)
+            request_method=request_method,
+            user_attempt=user_attempt)
 
 
 class UnityPlatformLogManager(models.Manager):
