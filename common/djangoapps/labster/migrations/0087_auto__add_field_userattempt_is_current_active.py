@@ -121,6 +121,7 @@ class Migration(SchemaMigration):
             'play_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'quiz_block_file': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '128'}),
             'quiz_block_last_updated': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'use_cdn': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'use_quiz_blocks': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'verified_only': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'xml_url_prefix': ('django.db.models.fields.CharField', [], {'default': "'https://labster.s3.amazonaws.com/unity/'", 'max_length': '255'})
