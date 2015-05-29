@@ -191,7 +191,8 @@ class ProblemProxyAdmin(admin.ModelAdmin):
 
 
 class UserSaveAdmin(BaseAdmin):
-    list_display = ('user', 'lab', 'location', 'has_file', 'modified_at')
+    list_display = ('user', 'lab', 'location', 'has_file', 'modified_at', 'mission')
+    raw_id_fields = ('user', 'lab_proxy', 'attempt')
 
     def lab(self, obj):
         return obj.lab_proxy.lab.name
