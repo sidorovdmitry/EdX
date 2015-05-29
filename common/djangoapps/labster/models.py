@@ -603,7 +603,7 @@ class UserAttempt(models.Model):
         picked = []
 
         for user_answer in user_answers:
-            if not user_answer.problem.id in picked:
+            if user_answer.problem.id not in picked:
                 picked.append(user_answer.problem.id)
                 score += user_answer.score
 
@@ -635,6 +635,16 @@ class UserAttempt(models.Model):
     def mark_finished(self):
         self.is_finished = True
         self.finished_at = timezone.now()
+        self.save()
+
+    def mark_active(self):
+        UserAttempt.objects.filter(
+            self.user,
+            lab_proxy=self.lab_proxy,
+            is_currect_active=True
+        ).update(is_current_active=False)
+
+        self.is_current_active = True
         self.save()
 
     def get_total_play_count(self):
