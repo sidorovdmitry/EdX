@@ -118,6 +118,7 @@ class SettingsXml(LabProxyXMLView):
         user_save = get_latest_user_save(lab_proxy=lab_proxy, user_id=user.id)
         if user_save and user_save.save_file:
             engine_xml = user_save.save_file.url
+            user_save.attempt.mark_save()
 
         return engine_xml
 
