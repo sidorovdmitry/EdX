@@ -782,7 +782,7 @@ class UnityLog(models.Model):
             tag=tag,
             url=url,
             request_method=request_method,
-            user_attempt=user_attempt)
+            attempt=user_attempt)
 
 
 class UnityPlatformLogManager(models.Manager):
