@@ -652,6 +652,8 @@ class UserSave(models.Model):
     attempt = models.ForeignKey(UserAttempt, blank=True, null=True)
     lab_proxy = models.ForeignKey(LabProxy)
     user = models.ForeignKey(User)
+    mission = models.ForeignKey(Mission, blank=True, null=True)
+
     save_file = models.FileField(blank=True, null=True, upload_to='edx/labster/lab/save')
     is_checkpoint = models.BooleanField(default=False)
 
