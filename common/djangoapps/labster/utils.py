@@ -28,6 +28,7 @@ def set_price_html(price):
         return "{}.<sup style=\"font-size: 55%;\">{}</sup>".format(price_list[0], price_list[1])
     return "0"
 
+
 def get_request(user=None, data=None):
     """
     creates request object to be used to do some xblock modifications
@@ -223,6 +224,7 @@ def get_quiz_block_file_url(quiz_block_file):
     url = "{}uploads/{}".format(prefix, quiz_block_file)
     return url
 
+
 def country_code_from_ip(ip_addr):
     """
     Return the country code associated with an IP address.
@@ -239,3 +241,10 @@ def country_code_from_ip(ip_addr):
         return pygeoip.GeoIP(settings.GEOIPV6_PATH).country_code_by_addr(ip_addr)
     else:
         return pygeoip.GeoIP(settings.GEOIP_PATH).country_code_by_addr(ip_addr)
+
+
+def get_object_or_none(model, *args, **kwargs):
+    try:
+        return model.objects.get(*args, **kwargs)
+    except model.DoesNotExist:
+        return None

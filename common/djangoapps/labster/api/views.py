@@ -36,11 +36,12 @@ from labster.api.serializers import (
 from labster.authentication import GetTokenAuthentication
 from labster.models import (
     UserSave, ErrorInfo, DeviceInfo, LabProxy, UserAttempt, UnityLog,
-    UserAnswer, LabsterUser)
+    UserAnswer, Mission, ProblemProxy)
 from labster.parsers.problem_parsers import MultipleChoiceProblemParser
 from labster.renderers import LabsterXMLRenderer, LabsterDirectXMLRenderer
 from labster.masters import get_problem
 from labster.proxies import get_lab_proxy_as_platform_xml
+from labster.utils import get_object_or_none
 from labster.wiki_utils import get_all_links
 
 
@@ -483,10 +484,13 @@ class CreateSave(AuthMixin, APIView):
         lab_id = kwargs.get('lab_id')
 
         lab_proxy = get_object_or_404(LabProxy, id=lab_id)
-        is_checkpoint = request.POST.get('checkpoint') == '1'
+        mission_id = request.POST.get('missionId')
+        mission = None
+        if mission_id:
+            mission = get_object_or_none(Mission, element_id=mission_id, lab=lab_proxy.lab)
 
         self.user_save = UserSave.objects.create(
-            user=user, lab_proxy=lab_proxy, is_checkpoint=is_checkpoint)
+            user=user, lab_proxy=lab_proxy, mission=mission)
 
         http_status = status.HTTP_200_OK
 
@@ -914,13 +918,13 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         is_view_theory_clicked = request.POST.get('isViewTheoryClicked', 'False') == 'True'
 
         if not all([
-                score is not None,
-                completion_time is not None,
-                chosen_answer is not None,
-                start_time is not None,
-                play_count is not None,
-                attempt_count is not None,
-                ]):
+            score is not None,
+            completion_time is not None,
+            chosen_answer is not None,
+            start_time is not None,
+            play_count is not None,
+            attempt_count is not None,
+        ]):
 
             return self.bad_request_response(
                 request, lab_proxy, "Missing required data")
