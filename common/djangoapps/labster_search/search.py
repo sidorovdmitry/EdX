@@ -28,14 +28,15 @@ def get_course_ids_from_keywords(keywords):
 
     # primary
     primary_results = results.filter(keyword__icontains=keywords)
-    primary_course_ids = primary_results.values_list('course_id', flat=True)
+    primary_course_ids = list(primary_results.values_list('course_id', flat=True))
+    primary_course_ids += list(primary_results.values_list('lab__demo_course_id', flat=True))
 
     # and
     and_filters = reduce(operator.and_, (Q(keyword__icontains=keyword) for keyword in keyword_list))
     and_results = results.filter(and_filters)
     and_course_ids = and_results.values_list('course_id', flat=True)
 
-    if len(keywords) > 1:
+    if len(keyword_list) > 1:
         # or
         or_filters = reduce(operator.or_, (Q(keyword__icontains=keyword) for keyword in keyword_list))
         or_results = results.filter(or_filters)
