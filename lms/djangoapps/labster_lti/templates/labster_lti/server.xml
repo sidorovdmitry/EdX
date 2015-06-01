@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Server Url="http://localhost:8000">
+<Server Url="{{ api_prefix }}">
   <ServerAPI Path="{{ game_progress }}" Id="GameProgress"/>
   <ServerAPI Path="{{ device_info }}" Id="DeviceInfo"/>
   <ServerAPI Path="{{ quiz_statistic }}" Id="QuizStatistic"/>
