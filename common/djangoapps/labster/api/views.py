@@ -1,4 +1,5 @@
 import json
+import re
 import urllib2
 from lxml import etree
 
@@ -461,6 +462,16 @@ class CreateSave(AuthMixin, APIView):
         }
 
     def dispatch(self, request, *args, **kwargs):
+        # hack to be able to have multipart form data
+        # the content type header needs to be empty and somehow unity sends
+        # application/json by default
+        # the correct content-type should be: multipart/form-data; boundary=xxx
+        try:
+            content_type = re.search(r'--(--)?(\w+[^\-\s]+)', request.body).group(2)
+        except AttributeError:
+            pass
+        else:
+            request.META['CONTENT_TYPE'] = 'multipart/form-data; boundary={}'.format(content_type)
         return super(CreateSave, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -484,18 +495,8 @@ class CreateSave(AuthMixin, APIView):
         obj.lab_proxy = get_object_or_404(LabProxy, id=lab_id)
 
     def post(self, request, *args, **kwargs):
-        print request.body
-        if 'CONTENT_TYPE' in request.META:
-            del request.META['CONTENT_TYPE']
-        if 'HTTP_CONTENT_TYPE' in request.META:
-            del request.META['HTTP_CONTENT_TYPE']
-
         request._load_method_and_content_type()
         request._data, request._files = request._parse()
-        print request.content_type
-        print request._content_type
-        print request._data
-        print request._files
         user = request.user
         lab_id = kwargs.get('lab_id')
 
@@ -513,18 +514,14 @@ class CreateSave(AuthMixin, APIView):
         http_status = status.HTTP_200_OK
 
         file_name = self.user_save.get_new_save_file_name()
-        post_data, parsed = request._parse()
-        print post_data
-        print parsed
-        # data_file = parsed.get('file')
-        # self.user_save.save_file.save(
-        #     file_name,
-        #     SimpleUploadedFile(file_name, data_file.read().strip()[152:]),
-        #     save=True)
+        self.user_save.save_file.save(
+            file_name,
+            SimpleUploadedFile(file_name, request.FILES.get('data').read()),
+            save=True)
 
         file_url = ''
-        # if self.user_save.save_file:
-        #     file_url = self.user_save.save_file.url
+        if self.user_save.save_file:
+            file_url = self.user_save.save_file.url
         response_data = {
             'path': file_url,
         }
