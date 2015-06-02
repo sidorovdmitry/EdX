@@ -252,6 +252,12 @@ class Lab(models.Model):
     def quiz_block_file_url(self):
         return get_quiz_block_file_url(self.quiz_block_file)
 
+    @property
+    def duration_avg(self):
+        if not self.play_count:
+            return 0
+        return float(self.duration) / float(self.play_count)
+
     def get_xml_url_prefix(self):
         url = self.xml_url_prefix
         if self.use_cdn:

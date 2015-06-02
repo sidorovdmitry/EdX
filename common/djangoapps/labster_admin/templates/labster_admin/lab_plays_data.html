@@ -21,6 +21,7 @@
             <th>Count</th>
             <th>Duration</th>
             <th>Seconds</th>
+            <th>Hours Avg</th>
           </tr>
         </thead>
         <tbody>
@@ -30,6 +31,7 @@
             <td>{{ lab.play_count }}</td>
             <td>{{ lab.duration|durations }}</td>
             <td>{{ lab.duration }}</td>
+            <td>{{ lab.duration_avg|durations }}</td>
           </tr>
           {% endfor %}
         </tbody>
