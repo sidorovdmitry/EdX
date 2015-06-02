@@ -950,7 +950,7 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
 
         user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
         if not user_attempt:
-            user_attempt = UserAttempt.objects.create(lab_proxy, user)
+            user_attempt = UserAttempt.objects.create(lab_proxy=lab_proxy, user=user)
 
         try:
             answer_index = int(answer_index)

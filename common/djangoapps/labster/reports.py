@@ -172,7 +172,7 @@ def get_duration(lab):
     for ua in userattempts:
         end_time = get_last_end_time(ua)
         if end_time:
-            _duration = (end_time - ua.created_at).seconds
+            _duration = (end_time - ua.created_at).total_seconds()
             duration += _duration
 
     return duration
