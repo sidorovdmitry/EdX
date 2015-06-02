@@ -85,6 +85,7 @@ LANGUAGES = [
     .labster-verified-form .button-group {
       margin-top: 20px;
     }
+    #livechat-compact-container { display: none; }
   </style>
   <script src="https://s3-us-west-2.amazonaws.com/labster/static/js/jquery.browser.min.js"></script>
   <script type="text/javascript">
@@ -379,10 +380,10 @@ LANGUAGES = [
       var max_height = 760;
       var browser_width = $(document).width();
       var browser_height = $(document).height();
-      var unity_width = '100%';
+      var unity_width = 'auto';
       var unity_height = '100%';
-      var margin_left = '86px';
-      var margin_top = '37px';
+      var margin_left = '90px';
+      var margin_top = '40px';
 
       var diff_width = browser_width - max_width;
       var diff_height = browser_height - max_height;
@@ -397,15 +398,13 @@ LANGUAGES = [
 
         unity_width = unity_width + 'px';
         unity_height = unity_height + 'px';
-        margin_top = (37 + margin_top) + 'px';
-        margin_left = (86 + margin_left) + 'px';
-
       }
 
       var styles = {
         'width': unity_width,
         'height': unity_height,
         'margin-left': margin_left,
+        'margin-right': margin_left,
         'margin-top': margin_top
       };
 
@@ -528,7 +527,7 @@ LANGUAGES = [
         loaded = true;
       }
 
-      jQuery('#livechat-compact-container').hide();
+      // jQuery('#livechat-compact-container').hide();
       isPlaying = true;
 
       // jQuery('window').bind('resize', function(event) {
@@ -538,7 +537,7 @@ LANGUAGES = [
 
     var stopLab = function() {
       jQuery('#unityPlayer').empty();
-      jQuery('#livechat-compact-container').show();
+      // jQuery('#livechat-compact-container').show();
       loaded = false;
 
       // jQuery('window').unbind('resize');
