@@ -53,7 +53,9 @@ class TeacherToLicenseForm(forms.Form):
 
         return user, course_ids
 
+
 IS_VOUCHER_CHOICES = ((True, 'Yes',), (False, 'No',))
+
 
 class DuplicateMultipleCourseForm(forms.Form):
 
@@ -81,7 +83,7 @@ class DuplicateMultipleCourseForm(forms.Form):
         if email:
             try:
                 LabsterUser.objects.get(user__email=email)
-            except User.DoesNotExist:
+            except LabsterUser.DoesNotExist:
                 raise forms.ValidationError('Invalid User Email')
         return email
 
