@@ -647,7 +647,7 @@ class UserAttempt(models.Model):
         UserAttempt.objects.filter(
             user=self.user,
             lab_proxy=self.lab_proxy,
-            is_currect_active=True
+            is_current_active=True
         ).update(is_current_active=False)
 
         self.is_current_active = True
