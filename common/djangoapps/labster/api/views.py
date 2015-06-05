@@ -17,6 +17,8 @@ from django.http.multipartparser import parse_header, ChunkIter
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
@@ -370,6 +372,7 @@ class CreateSave(AuthMixin, APIView):
             'root_attributes': self.get_root_attributes(),
         }
 
+    @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         # hack to be able to have multipart form data
         # the content type header needs to be empty and somehow unity sends
