@@ -378,30 +378,24 @@ LANGUAGES = [
       var player = jQuery('#unityPlayer');
       var max_width = 1170;
       var max_height = 760;
-      var browser_width = $(document).width();
-      var browser_height = $(document).height();
+      var browser_width = $(window).width();
+      var browser_height = $(window).height();
       var unity_width = 'auto';
       var unity_height = '100%';
       var margin_left = '90px';
       var margin_top = '40px';
 
-      var diff_width = browser_width - max_width;
-      var diff_height = browser_height - max_height;
+      var diff_width = browser_width - (max_width + 90);
+      var diff_height = browser_height - (max_height + 40);
 
-      // width & height are larger than max
       if (diff_width > 0 && diff_height > 0) {
         unity_width = max_width;
         unity_height = max_height;
 
-        margin_top = diff_height / 2;
         margin_left = diff_width / 2;
-        if (margin_left < 86) {
-          margin_left = 86;
-        }
 
         unity_width = unity_width + 'px';
         unity_height = unity_height + 'px';
-
       }
 
       var styles = {
