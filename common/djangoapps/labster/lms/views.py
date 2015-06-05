@@ -195,6 +195,13 @@ class ServerXml(LabProxyXMLView):
         # wiki = reverse('labster-api:wiki-article', args=['replaceme'])
         wiki = "/labster/api/wiki/article/"
 
+        try:
+            token = Token.objects.get(user=self.request.user)
+        except Token.DoesNotExist:
+            pass
+        else:
+            save_game = "{}?token={}".format(save_game, token)
+
         children = [
             {'Id': "GameProgress", 'Path': game_progress},
             {'Id': "DeviceInfo", 'Path': device_info},
