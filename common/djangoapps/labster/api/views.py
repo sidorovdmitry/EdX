@@ -404,6 +404,10 @@ class CreateSave(AuthMixin, APIView):
         obj.lab_proxy = get_object_or_404(LabProxy, id=lab_id)
 
     def post(self, request, *args, **kwargs):
+        http_status = status.HTTP_200_OK
+        if not request.user.is_authenticated():
+            return Response({}, status=http_status)
+
         request._load_method_and_content_type()
         request._data, request._files = request._parse()
         user = request.user
@@ -419,8 +423,6 @@ class CreateSave(AuthMixin, APIView):
         self.user_save = UserSave.objects.create(
             user=user, lab_proxy=lab_proxy, mission=mission,
             attempt=user_attempt)
-
-        http_status = status.HTTP_200_OK
 
         file_name = self.user_save.get_new_save_file_name()
         self.user_save.save_file.save(
