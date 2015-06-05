@@ -385,7 +385,7 @@ LANGUAGES = [
       var margin_left = '90px';
       var margin_top = '40px';
 
-      var diff_width = browser_width - (max_width + 90);
+      var diff_width = browser_width - (max_width + 180);
       var diff_height = browser_height - (max_height + 40);
 
       if (diff_width > 0 && diff_height > 0) {
@@ -396,13 +396,31 @@ LANGUAGES = [
 
         unity_width = unity_width + 'px';
         unity_height = unity_height + 'px';
+
+      } else if (diff_width < 0 || diff_height < 0) {
+        if (max_width + 180 > browser_width) {
+          unity_width = browser_width - 180;
+          unity_height = unity_width * max_height / max_width;
+
+        } else if (max_height + 40 > browser_height) {
+          unity_height = browser_height - 40;
+          unity_width = unity_height * max_width / max_height;
+
+        } else {
+          unity_width = max_width;
+          unity_height = max_height;
+        }
+
+        unity_width = unity_width + 'px';
+        unity_height = unity_height + 'px';
       }
+
 
       var styles = {
         'width': unity_width,
         'height': unity_height,
-        'margin-left': margin_left,
-        'margin-right': margin_left,
+        'margin-left': 'auto',
+        'margin-right': 'auto',
         'margin-top': margin_top
       };
 
