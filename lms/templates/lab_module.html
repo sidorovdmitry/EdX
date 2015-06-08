@@ -384,37 +384,40 @@ LANGUAGES = [
       var unity_height = '100%';
       var margin_left = '90px';
       var margin_top = '40px';
+      var _unity_height = 0;
 
       var diff_width = browser_width - (max_width + 180);
       var diff_height = browser_height - (max_height + 40);
 
       if (diff_width > 0 && diff_height > 0) {
         unity_width = max_width;
-        unity_height = max_height;
-
-        margin_left = diff_width / 2;
+        _unity_height = max_height;
 
         unity_width = unity_width + 'px';
-        unity_height = unity_height + 'px';
+        unity_height = _unity_height + 'px';
 
       } else if (diff_width < 0 || diff_height < 0) {
         if (max_width + 180 > browser_width) {
           unity_width = browser_width - 180;
-          unity_height = unity_width * max_height / max_width;
+          _unity_height = unity_width * max_height / max_width;
 
         } else if (max_height + 40 > browser_height) {
-          unity_height = browser_height - 40;
+          _unity_height = browser_height - 40;
           unity_width = unity_height * max_width / max_height;
 
         } else {
           unity_width = max_width;
-          unity_height = max_height;
+          _unity_height = max_height;
         }
 
         unity_width = unity_width + 'px';
-        unity_height = unity_height + 'px';
+        unity_height = _unity_height + 'px';
       }
 
+      if (diff_height > 0) {
+        margin_top = (browser_height - _unity_height) / 2;
+        margin_top = margin_top + 'px';
+      }
 
       var styles = {
         'width': unity_width,
