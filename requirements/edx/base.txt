@@ -166,4 +166,4 @@ html2text==2014.7.3
 raven==5.1.1
 teamcity-messages==1.12
 -e git+https://github.com/kriwil/django-hijack-email.git@5bcd849d591143ba26f4fa22fc36462182211094#egg=hijack_email
--e git+git@github.com:Bodekaer/Labster.BackOffice.git@ee2915a34edc2bbe9fd0106e6c40658adb753564#egg=labster_backoffice
+-e git+git@github.com:Bodekaer/Labster.BackOffice.git@d9d164bb2d1e8ff077951dd005fd96c0ae384ee0#egg=labster_backoffice
