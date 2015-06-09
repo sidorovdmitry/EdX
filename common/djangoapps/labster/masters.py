@@ -16,8 +16,13 @@ def create_quizblock_from_tree(lab, tree):
             continue
 
         element_id = child.attrib.get('Id').strip()
+        try:
+            time_limit = child.attrib.get('TimeLimit').strip()
+        except:
+            time_limit = None
 
         quiz_block, _ = QuizBlock.objects.get_or_create(lab=lab, element_id=element_id)
+        quiz_block.time_limit = time_limit
         quiz_block.is_active = True
         quiz_block.order = order
         quiz_block.save()
