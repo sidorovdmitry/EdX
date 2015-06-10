@@ -743,7 +743,7 @@ class UnityLog(models.Model):
     tag = models.CharField(max_length=50, default="INFO", db_index=True)
     attempt = models.ForeignKey(UserAttempt, blank=True, null=True)
 
-    created_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(default=timezone.now, db_index=True)
     objects = UnityLogManager()
 
     def get_message(self):
