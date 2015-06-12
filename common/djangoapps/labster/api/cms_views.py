@@ -63,7 +63,6 @@ class CourseDuplicateFromLabs(APIView):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
 
     def post(self, request, *args, **kwargs):
-        print "POST started ..."
         labs = request.DATA.get('labs', [])
         payment_id = request.DATA.get('payment_id')
         token = request.DATA.get('token')
@@ -108,7 +107,6 @@ class CourseDuplicateFromLabs(APIView):
 
             source = target = lab.demo_course_id.to_deprecated_string()
             course = duplicate_course(source, target, request.user, extra_fields)
-            print "duplicating {} for {}".format(source, request.user)
 
             if course:
                 course_ids.append(str(course.id))
