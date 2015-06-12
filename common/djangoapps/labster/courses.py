@@ -131,7 +131,8 @@ def duplicate_multiple_courses(user, license_count, all_labs, labs, org):
             fields={'max_student_enrollments_allowed': license_count},
         )
 
-        results.append(dest_course.id.to_deprecated_string())
+        if dest_course:
+            results.append(dest_course.id.to_deprecated_string())
     return results
 
 
