@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 
 from rest_framework import generics, status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -117,6 +118,8 @@ class UserView(AuthMixin, generics.RetrieveUpdateAPIView):
 
 
 class Login(APIView):
+
+    authentication_classes = (TokenAuthentication,)
 
     def post(self, request, *args, **kwargs):
         email = request.DATA.get('email')
