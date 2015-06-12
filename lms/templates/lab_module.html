@@ -532,6 +532,22 @@ LANGUAGES = [
           return null;
         }
       };
+
+      var checkDirectOpen = function() {
+        if (location.search) {
+          var params = location.search.substring(1).split('&')[0];
+          console.log(params);
+          if (params == 'open=1') {
+            jQuery('.loading').hide();
+            jQuery('#unityPlayerContainer').show();
+            jQuery('#labModuleContainer').show();
+            setPlayerSize();
+            playLab();
+          }
+        }
+      };
+
+      checkDirectOpen();
     });
 
     var u;
@@ -609,6 +625,31 @@ LANGUAGES = [
       container.find('a.exit').bind('click', exitContainer);
       container.show();
     }
+  </script>
+
+  <script>
+  function resetMission(missionId) {
+    var url = "${reset_mission_url}",
+      csrf = "${csrf_token}",
+      token = '${user_token.key}',
+      postData = {'mission_id': missionId};
+
+    $.ajax({
+      url: url,
+      type: "POST",
+      beforeSend: function(xhr, settings) {
+        xhr.setRequestHeader("X-CSRFToken", csrf);
+        xhr.setRequestHeader("Authorization", "Token " + token);
+      },
+      data: postData
+
+    }).success(function(response) {
+      var current = location.pathname;
+      location.href = current + "?open=1";
+    }).error(function(response) {
+    });
+
+  }
   </script>
 
 % endif

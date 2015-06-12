@@ -243,6 +243,8 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                 result_url = reverse('labster_lab_result',
                                      args=[self.course_id.to_deprecated_string(), lab_proxy.id])
 
+            reset_mission_url = reverse('labster-api:load-mission', args=[lab_proxy.id])
+
             params.update({
                 'lab': lab,
                 'lab_proxy': lab_proxy,
@@ -254,6 +256,7 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
                 'user_attempt': user_attempt,
                 'user_has_finished_lab': user_has_finished_lab,
                 'result_url': result_url,
+                'reset_mission_url': reset_mission_url,
             })
 
         fragment.add_content(self.system.render_template('lab_module.html', params))

@@ -1012,5 +1012,41 @@ class CreateUnityLog(ParserMixin, AuthMixin, APIView):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
+class LoadMission(ParserMixin, AuthMixin, APIView):
+
+    renderer_classes = (JSONRenderer,)
+
+    def post(self, request, *args, **kwargs):
+        lab_id = kwargs.get('lab_id')
+        mission_id = request.DATA.get('mission_id')
+        lab_proxy = get_object_or_404(LabProxy, id=lab_id)
+        user = request.user
+        http_status = status.HTTP_200_OK
+
+        # if not mission_id, new game
+        if mission_id:
+            try:
+                user_save = UserSave.objects.get(
+                    lab_proxy=lab_proxy,
+                    user=user,
+                    mission__id=mission_id)
+            except UserSave.DoesNotExist:
+                http_status = status.HTTP_400_BAD_REQUEST
+            else:
+                user_save.attempt.mark_active()
+        else:
+            UserAttempt.objects.filter(
+                lab_proxy=lab_proxy, user=user, is_finished=False).update(
+                    is_finished=True, finished_at=timezone.now())
+
+            # set is_current_active in other attempts to false
+            UserAttempt.objects.filter(lab_proxy=lab_proxy, user=user).update(is_current_active=False)
+            # create new active user attempt
+            UserAttempt.objects.create(lab_proxy=lab_proxy, user=user, is_current_active=True)
+
+        response_data = {}
+        return Response(response_data, status=http_status)
+
+
 def collect_response(request, action):
     return HttpResponse('ok')
