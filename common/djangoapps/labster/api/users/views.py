@@ -114,3 +114,32 @@ class UserView(AuthMixin, generics.RetrieveUpdateAPIView):
 
     def get_queryset(self):
         return User.objects.all()
+
+
+class Login(APIView):
+
+    def post(self, request, *args, **kwargs):
+        email = request.DATA.get('email')
+        password = request.DATA.get('password')
+        http_status = status.HTTP_200_OK
+
+        # user_id = None
+        token = None
+
+        try:
+            user = User.objects.get(email__iexact=email.strip())
+        except User.DoesNotExist:
+            http_status = status.HTTP_400_BAD_REQUEST
+        else:
+            if user.check_password(password.strip()):
+                # user_id = user.id
+                token = LabsterUser.objects.get(user=user).token_key
+            else:
+                http_status = status.HTTP_400_BAD_REQUEST
+
+        response_data = {
+            # 'user_id': user_id,
+            'token': token,
+        }
+
+        return Response(response_data, status=http_status)

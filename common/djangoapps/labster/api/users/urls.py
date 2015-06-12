@@ -1,10 +1,11 @@
 from django.conf.urls import patterns, url
 
-from labster.api.users.views import UserCreate, UserView, SendEmailUserCreate
+from labster.api.users.views import UserCreate, UserView, SendEmailUserCreate, Login
 
 
 urlpatterns = patterns('',  # nopep8
     url('^$', UserCreate.as_view(), name='users'),
+    url('^login/$', Login.as_view(), name='login'),
     url('^(?P<user_id>\d+)/$', UserView.as_view(), name='users'),
     url('^send-email/(?P<user_id>\d+)/$', SendEmailUserCreate.as_view(), name='send-email-user'),
 )
