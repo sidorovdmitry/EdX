@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
@@ -140,9 +140,4 @@ class Login(APIView):
             else:
                 http_status = status.HTTP_400_BAD_REQUEST
 
-        response_data = {
-            # 'user_id': user_id,
-            'token': token,
-        }
-
-        return Response(response_data, status=http_status)
+        return HttpResponse(token, status=http_status)
