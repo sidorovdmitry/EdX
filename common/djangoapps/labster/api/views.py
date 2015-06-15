@@ -1029,7 +1029,7 @@ class LoadMission(ParserMixin, AuthMixin, APIView):
                 user_save = UserSave.objects.get(
                     lab_proxy=lab_proxy,
                     user=user,
-                    mission__id=mission_id)
+                    mission__element_id=mission_id)
             except UserSave.DoesNotExist:
                 http_status = status.HTTP_400_BAD_REQUEST
             else:
