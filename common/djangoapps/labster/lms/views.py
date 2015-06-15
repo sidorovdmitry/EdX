@@ -196,7 +196,8 @@ class ServerXml(LabProxyXMLView):
         wiki = "/labster/api/wiki/article/"
 
         try:
-            token = Token.objects.get(user=self.request.user)
+            user = User.objects.get(id=self.request.user.id)
+            token = Token.objects.get(user=user)
         except Token.DoesNotExist:
             pass
         else:
