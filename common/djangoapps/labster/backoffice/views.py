@@ -44,7 +44,7 @@ def get_payment(payment_id, token, format='json'):
 
 
 def get_user_token(user, format='json'):
-    get_user_url = '{}/api/users/token/{}'.format(get_base_url(), user.id)
+    get_user_url = '{}/api/users/token/{}/'.format(get_base_url(), user.id)
 
     resp = requests.get(get_user_url)
     assert resp.status_code in range(200, 201), resp.status_code
