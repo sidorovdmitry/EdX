@@ -106,7 +106,7 @@ class CourseDuplicateFromLabs(APIView):
             }
 
             source = target = lab.demo_course_id.to_deprecated_string()
-            course = duplicate_course(source, target, request.user, extra_fields)
+            course = duplicate_course(source, target, request.user, extra_fields, replace_org=True)
 
             if course:
                 course_ids.append(str(course.id))

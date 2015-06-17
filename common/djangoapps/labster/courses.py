@@ -59,7 +59,7 @@ def duplicate_course(source, target, user, fields=None, replace_org=False):
     source_org = source.split('/')[0]
     target_org = org
 
-    if replace_org and source_org == target_org:
+    if replace_org or source_org == target_org:
         target = target.replace(org, get_org(user))
 
     source_course_id = course_key_from_str(source)
