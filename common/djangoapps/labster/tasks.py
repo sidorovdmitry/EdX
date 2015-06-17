@@ -33,7 +33,7 @@ def send_completed_email(user, course_ids):
     send_mail(subject, body, from_email, to_emails)
 
 
-@job
+@job('cms_default')
 def duplicate_courses(user_id, license_count, all_labs, labs, org, voucher_code=None, request_user_id=None):
     user = User.objects.get(id=user_id)
     course_ids = duplicate_multiple_courses(user, license_count, all_labs, labs, org)
@@ -42,13 +42,14 @@ def duplicate_courses(user_id, license_count, all_labs, labs, org, voucher_code=
     else:
         request_user = user
 
-     # if there is voucher code, then create license for the teacher and create labster course license data
+    # if there is voucher code, then create license for the teacher and create labster course license data
     if voucher_code:
         voucher = Voucher.objects.get(id=voucher_code)
 
         # create license
         date_end_license = timezone.now() + relativedelta(weeks=+voucher.week_subscription)
-        license = License(user=user, voucher_code=voucher_code, date_bought=timezone.now(), date_end_license=date_end_license,
+        license = License(
+            user=user, voucher_code=voucher_code, date_bought=timezone.now(), date_end_license=date_end_license,
             is_active=True, item_count=license_count, item_used=0)
         license.save()
 

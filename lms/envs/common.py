@@ -1913,7 +1913,7 @@ if FEATURES.get('LABSTER'):
     FAVICON_PATH = "themes/{}/images/favicon.ico".format(THEME_NAME)
 
     RQ_QUEUES = {
-        'default': {
+        'lms_default': {
             'HOST': 'localhost',
             'PORT': 6379,
             'DB': 1,

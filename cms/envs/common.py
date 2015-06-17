@@ -836,7 +836,7 @@ if FEATURES.get('LABSTER'):
     LABSTER_LANGUAGES = ('en', 'da')
 
     RQ_QUEUES = {
-        'default': {
+        'cms_default': {
             'HOST': 'localhost',
             'PORT': 6379,
             'DB': 0,

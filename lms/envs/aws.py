@@ -599,7 +599,7 @@ STRIPE_PUBLISHABLE_KEY = AUTH_TOKENS.get('STRIPE_PUBLISHABLE_KEY', '')
 RAVEN_CONFIG = AUTH_TOKENS.get('RAVEN_CONFIG', {})
 
 RQ_QUEUES = {
-    'default': {
+    'lms_default': {
         'HOST': ENV_TOKENS.get('RQ_REDIS_HOST', 'localhost'),
         'PORT': 6379,
         'DB': 0,
