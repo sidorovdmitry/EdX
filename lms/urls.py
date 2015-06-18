@@ -232,12 +232,14 @@ for key, value in settings.MKTG_URL_LINK_MAP.items():
 # the custom tab catch-all)
 if settings.WIKI_ENABLED:
     from wiki.urls import get_pattern as wiki_pattern
+    from wiki.views import article
     from django_notify.urls import get_pattern as notify_pattern
 
     urlpatterns += (
         # First we include views from course_wiki that we use to override the default views.
         # They come first in the urlpatterns so they get resolved first
         url('^wiki/create-root/$', 'course_wiki.views.root_create', name='root_create'),
+        url('^wiki/(?P<path>.+/?|)$', article.ArticleView.as_view(), name='get'),
         url(r'^wiki/', include(wiki_pattern())),
         url(r'^notify/', include(notify_pattern())),
 
