@@ -31,8 +31,8 @@ urlpatterns = patterns('',  # nopep8
     url('^labs/(?P<lab_id>\d+)/load-mission/$', LoadMission.as_view(), name='load-mission'),
 
     # since article can have children it might conflict with course-wiki, so I add keyword article in the end
-    url('^wiki/article/(?P<article_slug>.+)$', ArticleSlug.as_view(), name='wiki-article'),
-    url('^wiki/article-links/(?P<article_slug>.+)/$', ArticleLinks.as_view(), name='wiki-article-links'),
+    url('^wiki/article/(?P<article_slug>.+)/?$', ArticleSlug.as_view(), name='wiki-article'),
+    url('^wiki/article-links/(?P<article_slug>.+)/?$', ArticleLinks.as_view(), name='wiki-article-links'),
     url('^wiki/(?P<course_id>[^/]+/[^/]+/[^/]+)/?$', Wiki.as_view(), name='wiki'),
 
     url('^search/$', Search.as_view(), name='search'),
