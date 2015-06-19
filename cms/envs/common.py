@@ -985,5 +985,3 @@ ELASTIC_FIELD_MAPPINGS = {
         "type": "date"
     }
 }
-
-APPEND_SLASH = False
