@@ -239,7 +239,7 @@ if settings.WIKI_ENABLED:
         # First we include views from course_wiki that we use to override the default views.
         # They come first in the urlpatterns so they get resolved first
         url('^wiki/create-root/$', 'course_wiki.views.root_create', name='root_create'),
-        url(r'^wiki/(?P<path>.+/?|)$', article.ArticleView.as_view(), name='get'),
+        url('^wiki/(?P<path>.+/?|)$', article.ArticleView.as_view(), name='get'),
         url(r'^wiki/', include(wiki_pattern())),
         url(r'^notify/', include(notify_pattern())),
 
@@ -247,7 +247,6 @@ if settings.WIKI_ENABLED:
         # never be returned by a reverse() so they come after the other url patterns
         url(r'^courses/{}/course_wiki/?$'.format(settings.COURSE_ID_PATTERN),
             'course_wiki.views.course_wiki_redirect', name="course_wiki"),
-        url(r'^courses/{}/wiki/(?P<path>.+/?|)$'.format(settings.COURSE_KEY_REGEX), article.ArticleView.as_view(), name='get'),
         url(r'^courses/{}/wiki/'.format(settings.COURSE_KEY_REGEX), include(wiki_pattern())),
     )
 
