@@ -1,7 +1,9 @@
-import json
-from datetime import datetime
 from dateutil.relativedelta import relativedelta
+
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
+
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.models import Token
@@ -10,11 +12,9 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
-
 from diplomat.models import ISOCountry
 
+from labster.models import activate_labster_user
 from labster_backoffice.api.serializers import PaymentSerializer, PaymentStripeSerializer, \
     ProductSerializer, PaymentListSerializer, LicenseListSerializer, \
     ProductGroupSerializer, CountrySerializer, PaymentProductMinSerializer, UserLicenseSerializer, VoucherSerializer, \
@@ -40,14 +40,12 @@ class UserToken(APIView):
 
         try:
             existing_user = User.objects.get(id=self.kwargs['user_id'])
-            http_status = status.HTTP_200_OK
             token, _ = Token.objects.get_or_create(user=existing_user)
             response_data.update({
                 'id': existing_user.id,
                 'token': token.key
             })
         except User.DoesNotExist:
-            http_status = status.HTTP_204_NO_CONTENT
             response_data.update({
                 'token': token.key
             })
@@ -114,7 +112,6 @@ class CancelOrder(AuthMixin, APIView):
 
     def post(self, request, *args, **kwargs):
         payment_id = self.kwargs['pk']
-        user = self.request.user
 
         payment = get_object_or_404(Payment, pk=payment_id)
         payment.is_active = False
@@ -168,7 +165,6 @@ class CreatePayment(AuthMixin, CreateAPIView):
                                              month_subscription=item["month_subscription"])
             payment_product.save()
 
-
             if is_renew is None and is_teacher:
                 # create trial license, only create trial license for teacher
                 create_license(payment_product)
@@ -185,6 +181,7 @@ class CreatePayment(AuthMixin, CreateAPIView):
         payment.total = payment.get_total_after_tax()
         payment.save()
 
+        activate_labster_user(payment.user)
         if payment.is_manual:
             payment.send_invoice_email()
 
@@ -246,8 +243,9 @@ class CreatePaymentVoucherCode(AuthMixin, CreateAPIView):
                     except License.DoesNotExist:
                         pass
 
-                    license_product = License(user=request.user, payment_product=payment_product, is_active=True, \
-                        item_count=payment_product.item_count, item_used=1, date_bought=timezone.now(), \
+                    license_product = License(
+                        user=request.user, payment_product=payment_product, is_active=True,
+                        item_count=payment_product.item_count, item_used=1, date_bought=timezone.now(),
                         created_at=timezone.now(), parent_license=parent_license)
                     license_product.date_end_license = timezone.now() + relativedelta(weeks=+voucher.week_subscription)
                     license_product.save()
@@ -415,6 +413,7 @@ class CreatePaymentStripe(AuthMixin, CreateAPIView):
                 response_license_id = license_product.id
 
             payment.send_invoice_email()
+            activate_labster_user(user)
             http_status = status.HTTP_201_CREATED
             response_data.update({
                 'status': True,
@@ -490,7 +489,6 @@ class CountryList(ListAPIView):
         })
 
         return Response(response_data)
-
 
 
 class CreateUserLicense(AuthMixin, CreateAPIView):
