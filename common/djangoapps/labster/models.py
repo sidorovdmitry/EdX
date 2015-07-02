@@ -763,7 +763,7 @@ class UnityLog(models.Model):
         user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
 
         if log_type.upper() == 'GAME_PROGRESS':
-            if message.get('GameComponent') == 'FinishGame':
+            if user_attempt and message.get('GameComponent') == 'FinishGame':
                 user_attempt.is_completed = True
                 user_attempt.is_finished = True
                 user_attempt.finished_at = timezone.now()
