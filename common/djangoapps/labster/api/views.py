@@ -723,7 +723,19 @@ class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
         try:
             url_path = URLPath.get_by_path(article_slug, select_related=True)
         except (NoRootURL, ObjectDoesNotExist):
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
+            # The slug could be localized. Get the english one if it exists
+            # AG: i18n codes could be more than 2 digits and may contain
+            # '-' symbol. But Matthias said that he'll make sure that he
+            # doesn't make pages that can have that problems
+            split_slug = article_slug.split('-')
+            locale = split_slug[-1]
+            is_valid_locale = locale in dict(settings.LANGUAGES).keys()
+            if len(split_slug) > 1 and is_valid_locale:
+                article_slug = '-'.join(split_slug[:-1])
+            try:
+                url_path = URLPath.get_by_path(article_slug, select_related=True)
+            except (NoRootURL, ObjectDoesNotExist):
+                return Response({}, status=status.HTTP_404_NOT_FOUND)
 
         try:
             article = Article.objects.get(id=url_path.article.id)
