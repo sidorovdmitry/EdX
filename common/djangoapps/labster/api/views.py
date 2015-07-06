@@ -713,6 +713,8 @@ class Wiki(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
 
 
 class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
+    # Valid locales in our wiki
+    valid_locales = ['da']
 
     def _request(self, request, article_slug, *args, **kwargs):
         from wiki.core.exceptions import NoRootURL
@@ -723,7 +725,18 @@ class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
         try:
             url_path = URLPath.get_by_path(article_slug, select_related=True)
         except (NoRootURL, ObjectDoesNotExist):
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
+            # Get english article if exists
+            split_slug = article_slug.split('-')
+            locale = split_slug[-1]
+            if len(split_slug) > 1 and (locale in ArticleSlug.valid_locales):
+                article_slug = '-'.join(split_slug[:-1])
+                try:
+                    url_path = URLPath.get_by_path(
+                        article_slug, select_related=True)
+                except (NoRootURL, ObjectDoesNotExist):
+                    return Response({}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                return Response({}, status=status.HTTP_404_NOT_FOUND)
 
         try:
             article = Article.objects.get(id=url_path.article.id)
