@@ -969,19 +969,8 @@ class UnityPlayLab(ParserMixin, AuthMixin, APIView):
 
             user_attempts = UserAttempt.objects.filter(
                 lab_proxy=lab_proxy, user=user, is_finished=False).order_by('-id')
-            if user_attempts.exists():
-                user_attempt = user_attempts[0]
-            else:
-                user_attempt = UserAttempt.objects.create(
-                    lab_proxy=lab_proxy, user=user, is_finished=False)
-
-        else:
-            user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user)
-            user_attempt.is_finished = True
-            user_attempt.finished_at = timezone.now()
-            user_attempt.is_completed = True
-            user_attempt.completed_at = timezone.now()
-            user_attempt.save()
+            if not user_attempts.exists():
+                UserAttempt.objects.create(lab_proxy=lab_proxy, user=user, is_finished=False)
 
         response_data = {'status': 'ok'}
         return Response(response_data, status=status.HTTP_201_CREATED)
