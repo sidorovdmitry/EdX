@@ -1692,22 +1692,16 @@ EDXMKTG_COOKIE_NAME = 'edxloggedin'
 MKTG_URLS = {}
 MKTG_URL_LINK_MAP = {
     'ABOUT': None,
-    'CONTACT': 'contact',  # 'contact',
-    'FAQ': 'faq',  # 'help_edx',
+    'CONTACT': None,  # 'contact',
+    'FAQ': None,  # 'help_edx',
     'COURSES': 'courses',
     'ROOT': 'root',
-    'TOS': 'tos',
+    'TOS': None,
     'HONOR': None,  # 'honor',
     'PRIVACY': None,  # 'privacy_edx',
-    'JOBS': None,
     'PRESS': None,
-    # 'BLOG': 'blog',
+    'BLOG': None,
     'DONATE': None,
-    'CAREER': 'career',
-    'PRICING': 'pricing',
-    'TESTIMONIAL': 'testimonial',
-    'SUPPORT': 'support',
-    'CURRICULUM-COVERAGE': 'curriculum-coverage',
 
     # Verified Certificates
     'WHAT_IS_VERIFIED_CERT': None,
