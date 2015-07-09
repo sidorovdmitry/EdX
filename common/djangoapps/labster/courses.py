@@ -68,7 +68,8 @@ def duplicate_course(source, target, user, fields=None, replace_org=False):
     mstore = modulestore()
 
     from contentstore.utils import delete_course_and_groups
-    delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
+    if not target.lower().startswith('labsterx'):
+        delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
 
     try:
         with mstore.bulk_operations(dest_course_id):
