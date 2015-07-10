@@ -53,13 +53,13 @@ def get_org(user):
     return org
 
 
-def duplicate_course(source, target, user, fields=None, replace_org=False):
+def duplicate_course(source, target, user, fields=None, replace_org=False, force=False):
 
     org = target.split('/')[0]
     source_org = source.split('/')[0]
     target_org = org
 
-    if replace_org or source_org == target_org:
+    if replace_org:
         target = target.replace(org, get_org(user))
 
     source_course_id = course_key_from_str(source)
@@ -68,16 +68,11 @@ def duplicate_course(source, target, user, fields=None, replace_org=False):
     mstore = modulestore()
 
     from contentstore.utils import delete_course_and_groups
-    if not target.lower().startswith('labsterx'):
+    if force or not target.lower().startswith('labsterx'):
         delete_course_and_groups(dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
 
-    try:
-        with mstore.bulk_operations(dest_course_id):
-            if mstore.clone_course(source_course_id, dest_course_id,
-                                   ModuleStoreEnum.UserID.mgmt_command):
-                pass
-    except:
-        return None
+    with mstore.bulk_operations(dest_course_id):
+        mstore.clone_course(source_course_id, dest_course_id, ModuleStoreEnum.UserID.mgmt_command)
 
     course = mstore.get_course(dest_course_id)
 
