@@ -105,9 +105,10 @@ class CourseDuplicateFromLabs(APIView):
                 'labster_license': True,
             }
 
-            source = target = lab.demo_course_id.to_deprecated_string()
-            duplicate_course.delay(source, target, request.user, extra_fields, replace_org=True, license_id=license_id)
-            course_ids.append(lab.name)
+            if lab.demo_course_id:
+                source = target = lab.demo_course_id.to_deprecated_string()
+                duplicate_course.delay(source, target, request.user, extra_fields, replace_org=True, license_id=license_id)
+                course_ids.append(lab.name)
 
         response_data = {'courses': course_ids}
         return Response(response_data)
