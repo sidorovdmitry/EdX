@@ -8,6 +8,7 @@ from student.roles import CourseInstructorRole, CourseStaffRole
 from xmodule.course_module import CourseDescriptor
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
+from xmodule.modulestore.exceptions import ItemNotFoundError
 
 from labster.models import Lab, LabsterUser, LabProxy
 from labster_search.models import LabKeyword
@@ -120,12 +121,15 @@ def duplicate_multiple_courses(user, license_count, all_labs, labs, org):
 
     results = []
     for source, target in zip(demo_course_ids, new_course_ids):
-        dest_course = duplicate_course(
-            source,
-            target,
-            user,
-            fields={'max_student_enrollments_allowed': license_count},
-        )
+        try:
+            dest_course = duplicate_course(
+                source,
+                target,
+                user,
+                fields={'max_student_enrollments_allowed': license_count},
+            )
+        except ItemNotFoundError:
+            continue
 
         if dest_course:
             results.append(dest_course.id.to_deprecated_string())
