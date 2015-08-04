@@ -44,7 +44,7 @@ angular.module('LabsterBackOffice')
         lab_count++;
         total_license += product.item_count;
       });
-      return lab_count + " labs with " + total_license + " licenses. ($" + total + ")";
+      return total_license + " licenses. ($" + total + ")";
     };
 
     function checkStripe() {

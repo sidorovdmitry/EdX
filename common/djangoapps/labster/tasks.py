@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from django_rq import job
 
-from labster.courses import duplicate_multiple_courses, course_key_from_str
+from labster.courses import duplicate_multiple_courses, course_key_from_str, duplicate_course as _duplicate_course
 from labster.models import LabsterCourseLicense
 
 from labster_backoffice.models import License, Voucher
@@ -62,3 +62,12 @@ def duplicate_courses(user_id, license_count, all_labs, labs, org, voucher_code=
                 course_id=course_id)
 
     send_completed_email(request_user, course_ids)
+
+
+@job('cms_default')
+def duplicate_course(source, target, user, fields=None, replace_org=False, force=False, license_id=None):
+    course = _duplicate_course(source=source, target=target, user=user, fields=fields, replace_org=replace_org, force=force)
+
+    if license_id:
+        LabsterCourseLicense.objects.create(
+            user=user, course_id=course.id, license_id=license_id)

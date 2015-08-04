@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from labster.backoffice.views import get_payment
-from labster.courses import duplicate_course
+from labster.tasks import duplicate_course
 from labster.edx_bridge import unregister_course
 from labster.models import Lab
 from labster.models import LabsterCourseLicense
@@ -106,13 +106,8 @@ class CourseDuplicateFromLabs(APIView):
             }
 
             source = target = lab.demo_course_id.to_deprecated_string()
-            course = duplicate_course(source, target, request.user, extra_fields, replace_org=True)
-
-            if course:
-                course_ids.append(str(course.id))
-
-                LabsterCourseLicense.objects.create(
-                    user=request.user, course_id=course.id, license_id=license_id)
+            duplicate_course.delay(source, target, request.user, extra_fields, replace_org=True, license_id=license_id)
+            course_ids.append(lab.name)
 
         response_data = {'courses': course_ids}
         return Response(response_data)
