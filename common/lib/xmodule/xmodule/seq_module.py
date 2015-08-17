@@ -223,7 +223,12 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
             user_id = self.scope_ids.user_id
             token, _ = Token.objects.get_or_create(user_id=user_id)
             location_str = str(self.location)
-            lab_proxy, _ = LabProxy.objects.get_or_create(location=location_str, defaults={'lab_id': self.lab_id})
+            lab_proxy, _ = LabProxy.objects.get_or_create(
+                location=location_str, defaults={'lab_id': self.lab_id})
+            if self.labster_language:
+                if lab_proxy.language != self.labster_language:
+                    lab_proxy.language = self.labster_language
+                    lab_proxy.save()
 
             # check if has unfinished user attempt
             user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user_id=user_id)
