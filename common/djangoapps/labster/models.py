@@ -485,7 +485,10 @@ class LabProxy(models.Model):
     @property
     def course_from_location(self):
         paths = self.location.split('/')
-        return '/'.join([paths[2], paths[3]])
+        try:
+            return '/'.join([paths[2], paths[3]])
+        except IndexError:
+            return ''
 
     @property
     def latest_data(self):
