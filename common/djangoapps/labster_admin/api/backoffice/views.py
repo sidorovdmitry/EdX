@@ -273,6 +273,15 @@ class CreatePaymentVoucherCode(AuthMixin, CreateAPIView):
 
             http_status = status.HTTP_201_CREATED
 
+        else:
+            if response_license_id == 0:  # ??
+                user_licenses = License.objects.filter(
+                    payments=existing_payment, user_id=data['user'], parent_license__isnull=False,
+                    voucher_code=data['voucher_code'],
+                )
+                if user_licenses:
+                    response_license_id = user_licenses[0].parent_license.id
+
         response_data.update({
             'payment': payment_serializer.data,
             'voucher': voucher_serializer.data,
