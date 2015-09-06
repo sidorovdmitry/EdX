@@ -46,23 +46,28 @@ def duplicate_courses(user_id, license_count, all_labs, labs, org, voucher_code=
     if voucher_code:
         voucher = Voucher.objects.get(id=voucher_code)
 
-        # create license
-        date_end_license = timezone.now() + relativedelta(weeks=+voucher.week_subscription)
-        license = License(
-            user=user, voucher_code=voucher_code, date_bought=timezone.now(), date_end_license=date_end_license,
-            is_active=True, item_count=license_count, item_used=0)
         try:
+            license = License.objects.get(voucher_code=voucher_code)
+        except License.DoesNotExist:
+            # create license
+            date_end_license = timezone.now() + relativedelta(weeks=+voucher.week_subscription)
+            license = License(
+                user=user,
+                voucher_code=voucher_code,
+                date_bought=timezone.now(),
+                date_end_license=date_end_license,
+                is_active=True,
+                item_count=license_count,
+                item_used=0)
             license.save()
-        except:
-            pass
-        else:
-            # create course license data
-            for item in course_ids:
-                course_id = course_key_from_str(item)
-                LabsterCourseLicense.objects.get_or_create(
-                    user_id=user.id,
-                    license_id=license.id,
-                    course_id=course_id)
+
+        # create course license data
+        for item in course_ids:
+            course_id = course_key_from_str(item)
+            LabsterCourseLicense.objects.get_or_create(
+                user_id=user.id,
+                license_id=license.id,
+                course_id=course_id)
 
     send_completed_email(request_user, course_ids)
 
