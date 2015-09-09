@@ -207,7 +207,7 @@ class LicenseListWidget extends LicenseListBaseWidget
       url: @list_endpoint
       data: rolename: 'license'
       success: (data) => cb? null, data['license']
-      error: std_ajax_err => 
+      error: std_ajax_err =>
         `// Translators: A rolename appears this sentence. A rolename is something like "staff" or "beta tester".`
         cb? gettext("Error fetching list for role")
 
@@ -258,15 +258,13 @@ class AuthListWidget extends MemberListWidget
       # only show the list of there are members
       @clear_rows()
 
+      revoke_tpl = _.template('<div class="revoke"><i class="icon fa fa-times-circle"></i> <%= label %></div>')
       # use _.each instead of 'for' so that member
       # is bound in the button callback.
       _.each member_list, (member) =>
         # if there are members, show the list
-
         # create revoke button and insert it into the row
-        label_trans = gettext("Revoke access")
-        $revoke_btn = $ _.template('<div class="revoke"><i class="icon fa fa-times-circle"></i> <%= label %></div>', {label: label_trans}),
-          class: 'revoke'
+        $revoke_btn = $(revoke_tpl({label: gettext("Revoke access")}))
         $revoke_btn.click =>
             @modify_member_access member.email, 'revoke', (error) =>
               # abort on error
@@ -498,7 +496,7 @@ class StudentListWidget extends StudentListBaseWidget
       url: @list_endpoint
       data: rolename: @rolename
       success: (data) => cb? null, data[@rolename]
-      error: std_ajax_err => 
+      error: std_ajax_err =>
         `// Translators: A rolename appears this sentence. A rolename is something like "staff" or "beta tester".`
         cb? gettext("Error fetching list for role") + " '#{@rolename}'"
 
@@ -836,7 +834,7 @@ class BatchEnrollment
         (sr.identifier for sr in notunenrolled)
 
     Membership $('#membership')
-          
+
 
 # Wrapper for auth list subsection.
 # manages a list of users who have special access.
