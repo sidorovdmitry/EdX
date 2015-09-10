@@ -366,9 +366,11 @@ if settings.COURSEWARE_ENABLED:
         # Takes optional student_id for instructor use--shows profile as that student sees it.
         url(r'^courses/{}/progress/(?P<student_id>[^/]*)/$'.format(settings.COURSE_ID_PATTERN),
             'courseware.views.progress', name="student_progress"),
-        url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/progress_all_students$',
+        url(r'^courses/{}/progress_all_students$'.format(settings.COURSE_ID_PATTERN),
             'courseware.views.progress_all', name="progress_all_students"),
-        url(r'^courses/(?P<course_id>[^/]+/[^/]+/[^/]+)/(?P<student_id>\d+)/student_progress_detail$',
+        url(r'^courses/{}/student_progress_detail$'.format(settings.COURSE_ID_PATTERN),
+            'courseware.views.progress_detail', name="progress_detail"),
+        url(r'^courses/{}/(?P<student_id>\d+)/student_progress_detail$'.format(settings.COURSE_ID_PATTERN),
             'courseware.views.progress_detail', name="student_progress_detail"),
 
         # For the instructor

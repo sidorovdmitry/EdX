@@ -319,7 +319,7 @@ class ProgressTab(EnrolledOrStaffTab):
             # Translators: "Progress" is the name of the student's course progress page
             name=tab_dict['name'] if tab_dict else _('Progress'),
             tab_id=self.type,
-            link_func=link_reverse_func(self.type),
+            link_func=link_reverse_func('progress_detail'),
         )
 
     def can_display(self, course, settings, is_user_authenticated, is_user_staff, is_user_enrolled):

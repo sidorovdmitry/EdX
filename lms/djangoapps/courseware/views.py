@@ -1237,7 +1237,7 @@ def _progress_all(request, course_key):
 
 
 @login_required
-def progress_detail(request, course_id, student_id):
+def progress_detail(request, course_id, student_id=None):
     """
         Create page for student detail
     """
@@ -1245,10 +1245,19 @@ def progress_detail(request, course_id, student_id):
     from labster.reports import get_attempts_and_answers
 
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
-    student = User.objects.get(id=int(student_id))
     course = modulestore().get_course(course_key)
-    location = get_location_from_course(course)
+    staff_access = has_access(request.user, 'staff', course)
 
+    if student_id is None or student_id == request.user.id:
+        # always allowed to see your own profile
+        student = request.user
+    else:
+        # Requesting access to a different student's profile
+        if not staff_access:
+            raise Http404
+        student = User.objects.get(id=int(student_id))
+
+    location = get_location_from_course(course)
     lab_proxy = LabProxy.objects.get(location=location)
     attempts = get_attempts_and_answers(lab_proxy, student)
 
