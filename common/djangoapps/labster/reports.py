@@ -108,7 +108,6 @@ def unique_user_attempts(user_attempts):
 
 
 def export_answers(lab_proxy):
-
     headers = [
         'Email',
         'Name',
