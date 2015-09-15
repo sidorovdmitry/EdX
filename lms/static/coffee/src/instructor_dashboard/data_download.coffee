@@ -46,7 +46,7 @@ class DataDownload
 
     @$student_quiz_detail_csv_button.click (e) =>
       url = new URI(@$student_quiz_detail_csv_button.data 'endpoint')
-      url.setQuery({attemptsType: @$student_quiz_detail_csv_dropdown.val()})
+      url.setQuery({attempts_type: @$student_quiz_detail_csv_dropdown.val()})
       location.href = url.toString()
 
     # this handler binds to both the download
