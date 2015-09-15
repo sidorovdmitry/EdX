@@ -2099,7 +2099,8 @@ def student_quiz_detail_csv(request, course_id):
     response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(filename)
 
     writer = csv.writer(response)
-    rows = export_answers(lab_proxy)
+    attemps_type = request.GET.get('attemptsType')
+    rows = export_answers(lab_proxy, attemps_type)
 
     for row in rows:
         writer.writerow(row)

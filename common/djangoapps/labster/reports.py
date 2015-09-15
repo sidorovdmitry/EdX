@@ -66,7 +66,9 @@ def get_answers(user_attempt):
 
 def user_attempts_to_rows(user_attempts):
     rows = []
-    for user_attempt in user_attempts:
+    for attempt in user_attempts:
+        index = attempt[0]
+        user_attempt = attempt[1]
         user = user_attempt.user
         user_answers = UserAnswer.objects.filter(attempt=user_attempt).order_by('problem__order', '-created_at')
         answered = []
@@ -80,6 +82,7 @@ def user_attempts_to_rows(user_attempts):
             row = [
                 user.email.encode('utf-8'),
                 user.profile.name.encode('utf-8'),
+                index,
                 user_answer.question.encode('utf-8'),
                 user_answer.answer_string.encode('utf-8'),
                 user_answer.correct_answer.encode('utf-8'),
@@ -97,20 +100,38 @@ def user_attempts_to_rows(user_attempts):
 def unique_user_attempts(user_attempts):
     attempts = []
     user_ids = []
-    for user_attempt in user_attempts:
+    for attempt in user_attempts:
+        user_attempt = attempt[1]
         if user_attempt.user.id in user_ids:
             continue
 
         user_ids.append(user_attempt.user.id)
-        attempts.append(user_attempt)
+        attempts.append(attempt)
 
     return attempts
 
 
-def export_answers(lab_proxy):
+def last_user_attempt(completed_user_attempts, missing_user_attempts):
+    """
+    Returns the last user attempt.
+    """
+    completed_user_attempts.reverse()
+    missing_user_attempts.reverse()
+    return unique_user_attempts(completed_user_attempts), unique_user_attempts(missing_user_attempts)
+
+
+ATTEMPTS_DISPLAY_STRATEGIES = {
+    "first": lambda a, b: (unique_user_attempts(a), unique_user_attempts(b)),
+    "last": last_user_attempt,
+    "all": lambda a, b: (a, b),
+}
+
+
+def export_answers(lab_proxy, attempts_type="first"):
     headers = [
         'Email',
         'Name',
+        'Simulation Attempt',
         'Question',
         'User Answer',
         'Correct Answer',
@@ -122,6 +143,7 @@ def export_answers(lab_proxy):
     ]
 
     user_attempts = get_user_attempts_from_lab_proxy(lab_proxy)
+
     all_users = user_attempts.values_list('user__id', flat=True)
     all_users = list(set(all_users))
 
@@ -132,10 +154,19 @@ def export_answers(lab_proxy):
     missing_users = set(all_users) - set(completed_users)
     missing_user_attempts = user_attempts.filter(user__id__in=missing_users).order_by('-created_at')
 
-    completed_user_attempts = unique_user_attempts(completed_user_attempts)
-    missing_user_attempts = unique_user_attempts(missing_user_attempts)
+    completed_user_attempts = [(indx+1, atmpt) for indx, atmpt in enumerate(completed_user_attempts)]
+    missing_user_attempts = [(indx+1, atmpt) for indx, atmpt in enumerate(missing_user_attempts)]
+
+    if not attempts_type in ATTEMPTS_DISPLAY_STRATEGIES:
+        attempts_type = "first"
+
+    attempt_strategy = ATTEMPTS_DISPLAY_STRATEGIES[attempts_type]
+    completed_user_attempts, missing_user_attempts = attempt_strategy(
+        completed_user_attempts, missing_user_attempts
+    )
 
     rows = [headers]
+
     rows.extend(user_attempts_to_rows(completed_user_attempts))
     rows.extend(user_attempts_to_rows(missing_user_attempts))
 

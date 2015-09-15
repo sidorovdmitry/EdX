@@ -23,6 +23,7 @@ class DataDownload
     @$grade_config_btn = @$section.find("input[name='dump-gradeconf']'")
     @$calculate_grades_csv_btn = @$section.find("input[name='calculate-grades-csv']'")
     @$student_quiz_detail_csv_button = @$section.find("input[name='student-quiz-detail-csv']")
+    @$student_quiz_detail_csv_dropdown = @$section.find("#student-quiz-detail-csv-attempt")
 
     # response areas
     @$download                        = @$section.find '.data-download-container'
@@ -44,8 +45,9 @@ class DataDownload
       location.href = url
 
     @$student_quiz_detail_csv_button.click (e) =>
-      url = @$student_quiz_detail_csv_button.data 'endpoint'
-      location.href = url
+      url = new URI(@$student_quiz_detail_csv_button.data 'endpoint')
+      url.setQuery({attemptsType: @$student_quiz_detail_csv_dropdown.val()})
+      location.href = url.toString()
 
     # this handler binds to both the download
     # and the csv button
