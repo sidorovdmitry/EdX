@@ -603,7 +603,6 @@ class UserAttempt(models.Model):
     def get_score(self):
         user_answers = UserAnswer.objects.filter(
             attempt=self,
-            is_correct=True,
             problem__is_active=True,
             problem__no_score=False,
         ).order_by('-created_at')
