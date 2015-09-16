@@ -53,17 +53,16 @@
 <div class="container">
   <div class="profile-wrapper">
     <div class="course-info lab-result-wrapper" id="course-info-progress" aria-label="${_('Result Detail')}">
-      <!-- <a href="${progress_all_url}" class="float-right">View all students</a> -->
+      <!-- <a href="${progress_all_url}" class="float-right">${_('View all students')}</a> -->
     <h2>Score details for ${student.profile.name}</h2>
     % for attempt in attempts:
     % if attempt.answers:
-    <h3 class="score">Score:
-      % if hasattr(attempt, 'custom_score'):
-        <span>${attempt.custom_score}%</span>
-      % else:
-        <span>${attempt.get_score()}</span>
-      % endif
-      / Progress: <span> ${attempt.progress_in_percent}</h3></span>
+    <h3 class="score">
+      ${_('Score: {score} / Questions Answered: {questions_answered}').format(
+        score='<span>{}%</span>'.format(attempt.custom_score if hasattr(attempt, "custom_score") else attempt.get_score()),
+        questions_answered='<span>{}%</span>'.format(attempt.progress_in_percent)
+      )}
+    </h3>
     <table>
       <thead>
         <tr>
@@ -72,7 +71,7 @@
           <th>Answer</th>
           <th>Correct Answer</th>
           % if hasattr(attempt, 'custom_score'):
-          <th>Is Correct?</th>
+          <th>${_('Is Correct?')}</th>
           % endif
         </tr>
       </thead>
@@ -84,7 +83,7 @@
           <td>${answer.answer_string}</td>
           <td>${answer.correct_answer}</td>
           % if hasattr(attempt, 'custom_score'):
-          <td>${'yes' if answer.is_correct else 'no'}</td>
+          <td>${_('yes') if answer.is_correct else _('no')}</td>
           % endif
         </tr>
         % endfor
