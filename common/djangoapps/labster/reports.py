@@ -126,6 +126,13 @@ ATTEMPTS_DISPLAY_STRATEGIES = {
     "all": lambda a, b: (a, b),
 }
 
+def add_attempt_index(user_attempts):
+    simulation_attempt = defaultdict(int)
+    attempts = []
+    for user_attempt in user_attempts:
+        simulation_attempt[user_attempt.user.id] += 1
+        attempts.append((simulation_attempt[user_attempt.user.id], user_attempt))
+    return attempts
 
 def export_answers(lab_proxy, attempts_type="first"):
     headers = [
@@ -141,7 +148,6 @@ def export_answers(lab_proxy, attempts_type="first"):
         'View Theory',
         'Number of Attempts',
     ]
-
     user_attempts = get_user_attempts_from_lab_proxy(lab_proxy)
 
     all_users = user_attempts.values_list('user__id', flat=True)
@@ -154,8 +160,8 @@ def export_answers(lab_proxy, attempts_type="first"):
     missing_users = set(all_users) - set(completed_users)
     missing_user_attempts = user_attempts.filter(user__id__in=missing_users).order_by('-created_at')
 
-    completed_user_attempts = [(indx+1, atmpt) for indx, atmpt in enumerate(completed_user_attempts)]
-    missing_user_attempts = [(indx+1, atmpt) for indx, atmpt in enumerate(missing_user_attempts)]
+    completed_user_attempts = add_attempt_index(completed_user_attempts)
+    missing_user_attempts = add_attempt_index(missing_user_attempts)
 
     if not attempts_type in ATTEMPTS_DISPLAY_STRATEGIES:
         attempts_type = "first"
