@@ -1,7 +1,3 @@
-_.templateSettings = {
-    interpolate: /\{\{(.+?)\}\}/g
-};
-
 function postEnrollProcess(data) {
   var emails = [],
       newList = [],
@@ -62,11 +58,11 @@ function revokeMembership(ev) {
 function updateLicenseList() {
   var container = $('.student-license-container'),
       tbody = container.find('tbody'),
-      template = _.template($('#license-row-template').html());
+      template = $('#license-row-template').html();
 
   tbody.empty();
   _.each(window.userLicenses, function(license) {
-      var rendered = template(license),
+      var rendered = Mustache.render(template, license),
           rendered_el;
       rendered_el = $(rendered);
       rendered_el.find('.revoke').click(revokeMembership);

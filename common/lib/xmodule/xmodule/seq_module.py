@@ -232,7 +232,9 @@ class SequenceDescriptor(SequenceFields, MakoModuleDescriptor, XmlDescriptor):
 
             # check if has unfinished user attempt
             user_attempt = UserAttempt.objects.latest_for_user(lab_proxy, user_id=user_id)
-            user_has_finished_lab = UserAttempt.objects.filter(is_finished=True).exists()
+            user_has_finished_lab = UserAttempt.objects.filter(
+                lab_proxy=lab_proxy, user_id=user_id, is_finished=True
+            ).exists()
 
             user_save = None
             if user_attempt:
