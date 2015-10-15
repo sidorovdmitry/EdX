@@ -1179,7 +1179,7 @@ def _progress_all(request, course_key):
         lab_proxy = LabProxy.objects.create(location=location, lab_id=lab_id)
 
     attempts = UserAttempt.objects.filter(lab_proxy=lab_proxy)\
-        .exclude(useranswer=None).order_by('created_at')\
+        .exclude(useranswer=None).order_by('-created_at')\
         .select_related('user')
 
     attempts_by_user = defaultdict(list)
