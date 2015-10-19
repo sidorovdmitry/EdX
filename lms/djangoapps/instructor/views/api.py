@@ -2096,7 +2096,7 @@ def student_quiz_detail_csv(request, course_id):
     )
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(filename)
+    response['Content-Disposition'] = 'attachment; filename="{}.txt"'.format(filename)
 
     writer = csv.writer(response, dialect='excel-tab', quoting=csv.QUOTE_ALL)
     attempts_type = request.GET.get('attempts_type')
