@@ -78,3 +78,51 @@ def cache_if_anonymous(*get_parameters):
 
         return wrapper
     return decorator
+
+
+def cache_for_every_user(*get_parameters):
+    """Cache a page for every users.
+
+    Many of the pages in edX are identical when the user is not logged
+    in, but should not be cached when the user is logged in (because
+    of the navigation bar at the top with the username).
+
+    The django middleware cache does not handle this correctly, because
+    we access the session to put the csrf token in the header. This adds
+    the cookie to the vary header, and so every page is cached seperately
+    for each user (because each user has a different csrf token).
+
+    Optionally, provide a series of GET parameters as arguments to cache
+    pages with these GET parameters separately.
+
+    Note that this decorator should only be used on views that do not
+    contain the csrftoken within the html. The csrf token can be included
+    in the header by ordering the decorators as such:
+
+    @ensure_csrftoken
+    @cache_if_anonymous()
+    def myView(request):
+    """
+    def decorator(view_func):
+        """The outer wrapper, used to allow the decorator to take optional arguments."""
+        @wraps(view_func)
+        def wrapper(request, *args, **kwargs):
+            """The inner wrapper, which wraps the view function."""
+            if not request.GET:
+                # Use the cache. The same view accessed through different domain names may
+                # return different things, so include the domain name in the key.
+                domain = str(request.META.get('HTTP_HOST')) + '.'
+                cache_key = domain + str(request.user.id) + "." + get_language() + '.' + request.path
+                response = cache.get(cache_key)  # pylint: disable=maybe-no-member
+                if not response:
+                    response = view_func(request, *args, **kwargs)
+                    cache.set(cache_key, response, 60 * 300)  # pylint: disable=maybe-no-member
+
+                return response
+
+            else:
+                # Don't use the cache.
+                return view_func(request, *args, **kwargs)
+
+        return wrapper
+    return decorator

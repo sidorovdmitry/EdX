@@ -1,4 +1,5 @@
 import json
+from django.views.decorators.cache import cache_control
 import requests
 
 from django.conf import settings
@@ -14,7 +15,7 @@ from django.db.models import Count
 
 from edxmako.shortcuts import render_to_response
 
-from util.cache import cache_if_anonymous
+from util.cache import cache_for_every_user
 from courseware.courses import get_courses, sort_by_announcement
 
 from labster.courses import get_popular_courses
@@ -24,7 +25,8 @@ from labster_search.search import get_courses_from_keywords
 
 
 @ensure_csrf_cookie
-@cache_if_anonymous()
+@cache_control(private=True)
+@cache_for_every_user()
 def index(request, user=AnonymousUser()):
     '''
     Redirects to main page -- info page if user authenticated, or marketing if not
@@ -83,6 +85,8 @@ def index(request, user=AnonymousUser()):
 
 
 @ensure_csrf_cookie
+@cache_control(private=True)
+@cache_for_every_user()
 def courses(request, user=AnonymousUser()):
     """
     Render the "find courses" page. If the marketing site is enabled, redirect
