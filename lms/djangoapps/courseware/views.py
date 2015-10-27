@@ -75,7 +75,7 @@ from eventtracking import tracker
 import analytics
 
 from labster.courses import get_primary_keywords
-from labster.models import Lab, LabProxy
+from labster.models import Lab, LabProxy, get_or_create_lab_proxy
 
 from labster_backoffice.models import Product
 
@@ -1258,7 +1258,7 @@ def progress_detail(request, course_id, student_id=None):
         student = User.objects.get(id=int(student_id))
 
     location = get_location_from_course(course)
-    lab_proxy = LabProxy.objects.get(location=location)
+    lab_proxy = get_or_create_lab_proxy(unicode(location))
     attempts = get_attempts_and_answers(lab_proxy, student)
 
     context = {
