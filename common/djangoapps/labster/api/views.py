@@ -6,6 +6,7 @@ from lxml import etree
 from dateutil import parser
 from datetime import timedelta
 
+from util.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -712,6 +713,27 @@ class Wiki(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
         return self._request(request, course_id, *args, **kwargs)
 
 
+class ArticleSlugCache(object):
+    """
+    A cache for article slugs.
+    """
+    def _cache_key(self, slug):
+        """Creates a cache key."""
+        return u"labster.api.views.ArticleSlug.{}".format(unicode(slug))
+
+    def get(self, key):
+        """
+        Retun data from django's cache.
+        """
+        return cache.get(self._cache_key(key))
+
+    def set(self, key, data):
+        """
+        Update the cache.
+        """
+        cache.set(self._cache_key(key), data, 60 * 60 * 4)  # 4 hours
+
+
 class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
     # Valid locales in our wiki
     valid_locales = ['da']
@@ -719,6 +741,13 @@ class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
     def _request(self, request, article_slug, *args, **kwargs):
         from wiki.core.exceptions import NoRootURL
         from wiki.models import URLPath, Article
+
+        initial_article_slug = article_slug
+        article_slug_cache = ArticleSlugCache()
+        cached_data = article_slug_cache.get(initial_article_slug)
+        # if the data is already cached, just return it.
+        if cached_data:
+            return Response(cached_data)
 
         # since we already have article slug we don't need to search the course
         # article slug is unique
@@ -749,6 +778,7 @@ class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
         self.article = article
 
         response_data = self.get_response_data()
+        article_slug_cache.set(initial_article_slug, response_data)
         return Response(response_data)
 
     def post(self, request, article_slug, *args, **kwargs):
