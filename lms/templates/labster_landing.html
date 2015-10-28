@@ -23,7 +23,6 @@ show_partners = microsite.get_value('show_partners', True)
 </%block>
 
 <!-- start header -->
-
 <section class="home home-wrapper" ng-app="LabsterAnalytics">
   <header class="landing-home">
     <div class="container">
@@ -79,15 +78,7 @@ show_partners = microsite.get_value('show_partners', True)
       </header>
 
       <section class="courses">
-        <ul class="courses-listing">
-          <!-- list labs -->
-          %for course in popular_labs:
-            <li class="courses-listing-item">
-              <%include file="labster_course.html" args="course=course" />
-            </li>
-          %endfor
-          <!-- end list labs -->
-        </ul>
+        ${popular_labs_view}
       </section>
     </section>
     <!-- end section highlighted-courses -->
@@ -118,21 +109,13 @@ show_partners = microsite.get_value('show_partners', True)
       </header>
       % if settings.FEATURES.get('COURSES_ARE_BROWSABLE'):
         <section class="courses">
-          <ul class="courses-listing">
-            %for course in courses:
-            <li class="courses-listing-item">
-              <%include file="labster_course.html" args="course=course" />
-            </li>
-            %endfor
-          </ul>
+          ${course_list_view}
         </section>
         % endif
 
       </section>
     </section>
   </section>
-
-
   <%block name="js_extra">
   <script type="text/javascript">
     $(window).load(function() {

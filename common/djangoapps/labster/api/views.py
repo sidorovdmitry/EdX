@@ -714,27 +714,6 @@ class Wiki(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
         return self._request(request, course_id, *args, **kwargs)
 
 
-class ArticleSlugCache(object):
-    """
-    A cache for article slugs.
-    """
-    def _cache_key(self, slug):
-        """Creates a cache key."""
-        return u"labster.api.views.ArticleSlug.{}".format(unicode(slug))
-
-    def get(self, key):
-        """
-        Retun data from django's cache.
-        """
-        return cache.get(self._cache_key(key))
-
-    def set(self, key, data):
-        """
-        Update the cache.
-        """
-        cache.set(self._cache_key(key), data, 60 * 60 * 4)  # 4 hours
-
-
 class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
     # Valid locales in our wiki
     valid_locales = ['da']
@@ -743,9 +722,8 @@ class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
         from wiki.core.exceptions import NoRootURL
         from wiki.models import URLPath, Article
 
-        initial_article_slug = article_slug
-        article_slug_cache = ArticleSlugCache()
-        cached_data = article_slug_cache.get(initial_article_slug)
+        cache_key = u"labster.api.views.ArticleSlug.{}".format(unicode(article_slug))
+        cached_data = cache.get(cache_key)
         # if the data is already cached, just return it.
         if cached_data:
             return Response(cached_data)
@@ -779,7 +757,7 @@ class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
         self.article = article
 
         response_data = self.get_response_data()
-        article_slug_cache.set(initial_article_slug, response_data)
+        cache.set(cache_key, response_data, 60 * 60 * 4)
         return Response(response_data)
 
     def post(self, request, article_slug, *args, **kwargs):
