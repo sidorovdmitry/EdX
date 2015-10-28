@@ -1,5 +1,6 @@
 import json
 from django.views.decorators.cache import cache_control
+import newrelic.agent
 import requests
 
 from django.conf import settings
@@ -31,6 +32,7 @@ def index(request, user=AnonymousUser()):
     '''
     Redirects to main page -- info page if user authenticated, or marketing if not
     '''
+    nr_transaction = newrelic.agent.current_transaction()
 
     if settings.COURSEWARE_ENABLED and request.user.is_authenticated():
         return redirect(reverse('dashboard'))
@@ -50,12 +52,14 @@ def index(request, user=AnonymousUser()):
     # do explicit check, because domain=None is valid
     if domain is False:
         domain = request.META.get('HTTP_HOST')
-
-    courses = get_courses(user, domain=domain)
-    courses = sort_by_announcement(courses)
+    with newrelic.agent.FunctionTrace(nr_transaction, "get_courses"):
+        courses = get_courses(user, domain=domain)
+    with newrelic.agent.FunctionTrace(nr_transaction, "sort_by_announcement"):
+        courses = sort_by_announcement(courses)
 
     # get 5 popular labs
-    user_attempts = UserAttempt.objects.all().values('lab_proxy__lab').annotate(total=Count('lab_proxy__lab')).order_by('-total')
+    with newrelic.agent.FunctionTrace(nr_transaction, "user_attempts "):
+        user_attempts = UserAttempt.objects.all().values('lab_proxy__lab').annotate(total=Count('lab_proxy__lab')).order_by('-total')
     labs_id = []
 
     # get the lab foreign key
@@ -72,9 +76,10 @@ def index(request, user=AnonymousUser()):
 
     # get courses based on course id
     popular_labs = get_popular_courses(list_courses_id)[:6]
-
-    courses = labsterify_courses(courses)
-    popular_labs = labsterify_courses(popular_labs)
+    with newrelic.agent.FunctionTrace(nr_transaction, "labsterify_courses"):
+        courses = labsterify_courses(courses)
+    with newrelic.agent.FunctionTrace(nr_transaction, "labsterify_courses_popular_labs"):
+        popular_labs = labsterify_courses(popular_labs)
 
     context = {
         'courses': courses,
@@ -97,6 +102,8 @@ def courses(request, user=AnonymousUser()):
     if not settings.FEATURES.get('COURSES_ARE_BROWSABLE'):
         raise Http404
 
+    nr_transaction = newrelic.agent.current_transaction()
+
     # The course selection work is done in courseware.courses.
     domain = settings.FEATURES.get('FORCE_UNIVERSITY_DOMAIN')  # normally False
     # do explicit check, because domain=None is valid
@@ -106,13 +113,18 @@ def courses(request, user=AnonymousUser()):
     referer = request.META.get('HTTP_REFERER', request.build_absolute_uri())
 
     keywords = request.GET.get('q', '').strip()
-    if keywords:
-        courses = get_courses_from_keywords(keywords)
-    else:
-        courses = get_courses(user, domain=domain)
-        courses = sort_by_announcement(courses)
 
-    courses = labsterify_courses(courses)
+    if keywords:
+        with newrelic.agent.FunctionTrace(nr_transaction, "get_courses_from_keywords"):
+            courses = get_courses_from_keywords(keywords)
+    else:
+        with newrelic.agent.FunctionTrace(nr_transaction, "get_courses"):
+            courses = get_courses(user, domain=domain)
+        with newrelic.agent.FunctionTrace(nr_transaction, "sort_by_announcement"):
+            courses = sort_by_announcement(courses)
+
+    with newrelic.agent.FunctionTrace(nr_transaction, "labsterify_courses"):
+        courses = labsterify_courses(courses)
 
     context = {
         'courses': courses,
