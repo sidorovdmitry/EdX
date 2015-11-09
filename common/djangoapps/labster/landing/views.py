@@ -26,8 +26,8 @@ from labster_search.search import get_courses_from_keywords
 
 
 @ensure_csrf_cookie
-@cache_control(private=True)
-@cache_for_every_user()
+# @cache_control(private=True)
+# @cache_for_every_user()
 def index(request, user=AnonymousUser()):
     '''
     Redirects to main page -- info page if user authenticated, or marketing if not
@@ -90,8 +90,8 @@ def index(request, user=AnonymousUser()):
 
 
 @ensure_csrf_cookie
-@cache_control(private=True)
-@cache_for_every_user()
+# @cache_control(private=True)
+# @cache_for_every_user()
 def courses(request, user=AnonymousUser()):
     """
     Render the "find courses" page. If the marketing site is enabled, redirect
