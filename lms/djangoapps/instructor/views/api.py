@@ -2095,10 +2095,10 @@ def student_quiz_detail_csv(request, course_id):
         lab_proxy.id,
     )
 
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(filename)
+    response = HttpResponse(content_type='text/txt')
+    response['Content-Disposition'] = 'attachment; filename="{}.txt"'.format(filename)
 
-    writer = csv.writer(response, quoting=csv.QUOTE_ALL)
+    writer = csv.writer(response, dialect='excel-tab', quoting=csv.QUOTE_ALL)
     attempts_type = request.GET.get('attempts_type')
     rows = export_answers(lab_proxy, attempts_type)
 
