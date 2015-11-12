@@ -365,8 +365,6 @@ def get_courses(user, domain=None):
 
     courses = [c for c in courses if has_access(user, permission_name, c)]
 
-    courses = sorted(courses, key=lambda course: course.number)
-
     return courses
 
 

@@ -1,11 +1,11 @@
 import json
+import newrelic.agent
 import re
 import urllib2
 from lxml import etree
-
 from dateutil import parser
 from datetime import timedelta
-
+from util.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -19,7 +19,6 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.models import Token
@@ -32,7 +31,6 @@ from rest_framework.renderers import XMLRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
-
 from labster.api.serializers import (
     ErrorInfoSerializer, DeviceInfoSerializer,
     UserAttemptSerializer, FinishLabSerializer)
@@ -231,7 +229,6 @@ class AuthMixin:
 
 
 class APIRoot(RendererMixin, AuthMixin, APIView):
-
     def get(self, request, *args, **kwargs):
         format = kwargs.get('format')
         lab_proxy_detail_url = reverse(
@@ -274,7 +271,6 @@ class APIRoot(RendererMixin, AuthMixin, APIView):
 
 
 class UserAuth(RendererMixin, APIView):
-
     def post(self, request, *args, **kwargs):
         email = request.DATA.get('email')
         password = request.DATA.get('password')
@@ -318,7 +314,7 @@ class SendGraphData(AuthMixin, APIView):
         email_html = render_to_string('emails/graph_data.html', context)
         subject = "Graph Data"
 
-        email = EmailMessage(subject, email_html, "no-reply@labster.com", [user.email,])
+        email = EmailMessage(subject, email_html, "no-reply@labster.com", [user.email, ])
         email.content_subtype = "html"
         email.attach(file.name, file.read(), file.content_type)
         email.send(fail_silently=False)
@@ -343,7 +339,7 @@ class SendGraphData(AuthMixin, APIView):
         email_html = render_to_string('emails/graph_data.html', context)
         subject = "Graph Data"
 
-        email = EmailMessage(subject, email_html, "no-reply@labster.com", [user.email,])
+        email = EmailMessage(subject, email_html, "no-reply@labster.com", [user.email, ])
         email.content_subtype = "html"
         email.attach(file_url.split('/')[-1], response.read(), 'application/octet-stream')
         email.send(fail_silently=False)
@@ -443,7 +439,6 @@ class CreateSave(AuthMixin, APIView):
 
 
 class PlayLab(RendererMixin, ParserMixin, AuthMixin, ListCreateAPIView):
-
     def get(self, request, *args, **kwargs):
         # http://www.django-rest-framework.org/api-guide/requests#user
         user = request.user
@@ -489,7 +484,6 @@ class PlayLab(RendererMixin, ParserMixin, AuthMixin, ListCreateAPIView):
 
 
 class FinishLab(RendererMixin, ParserMixin, AuthMixin, ListCreateAPIView):
-
     def get(self, request, *args, **kwargs):
         # http://www.django-rest-framework.org/api-guide/requests#user
         user = request.user
@@ -532,7 +526,6 @@ class FinishLab(RendererMixin, ParserMixin, AuthMixin, ListCreateAPIView):
 
 
 class LabSettings(LabsterRendererMixin, AuthMixin, APIView):
-
     def get_root_attributes(self):
         return {
             'EngineXML': "",
@@ -638,10 +631,9 @@ class WikiMixin(object):
                 },
                 'children': [],
             } for link in links
-        ]
+            ]
 
         return wiki_links
-
 
     def get_response_data(self):
         # ref:
@@ -674,7 +666,6 @@ class WikiMixin(object):
 
 
 class Wiki(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
-
     def _request(self, request, course_id, *args, **kwargs):
         from course_wiki.utils import course_wiki_slug
         from courseware.courses import get_course_by_id
@@ -719,6 +710,14 @@ class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
         from wiki.core.exceptions import NoRootURL
         from wiki.models import URLPath, Article
 
+        cache_key = u"labster.api.views.ArticleSlug.{}".format(unicode(article_slug))
+
+        cached_data = cache.get(cache_key)
+        # if the data is already cached, just return it.
+        if cached_data:
+            self.article_id, self.title, self.slug = cached_data.get('attrs')
+            return Response(cached_data.get('response'))
+
         # since we already have article slug we don't need to search the course
         # article slug is unique
         try:
@@ -750,6 +749,10 @@ class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
         self.article = article
 
         response_data = self.get_response_data()
+        cache.set(
+            cache_key, {'response': response_data, 'attrs': [self.article_id, self.title, self.slug]}, 60 * 60 * 4
+        )
+
         return Response(response_data)
 
     def post(self, request, article_slug, *args, **kwargs):
@@ -760,7 +763,6 @@ class ArticleSlug(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
 
 
 class ArticleLinks(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
-
     def _request(self, request, article_slug, *args, **kwargs):
         self.get_article(article_slug)
         response_data = self.get_response_data()
@@ -799,7 +801,7 @@ class ArticleLinks(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
                 },
                 'children': [],
             } for link in links
-        ]
+            ]
 
     def get_response_data(self):
         links = get_all_links(self.article)
@@ -817,7 +819,6 @@ class ArticleLinks(WikiMixin, LabsterRendererMixin, AuthMixin, APIView):
 
 
 class AnswerProblem(ParserMixin, AuthMixin, APIView):
-
     renderer_classes = (JSONRenderer,)
 
     def __init__(self, *args, **kwargs):
@@ -863,14 +864,13 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
         is_view_theory_clicked = request.POST.get('isViewTheoryClicked', 'False') == 'True'
 
         if not all([
-            score is not None,
-            completion_time is not None,
-            chosen_answer is not None,
-            start_time is not None,
-            play_count is not None,
-            attempt_count is not None,
+                    score is not None,
+                    completion_time is not None,
+                    chosen_answer is not None,
+                    start_time is not None,
+                    play_count is not None,
+                    attempt_count is not None,
         ]):
-
             return self.bad_request_response(
                 request, lab_proxy, "Missing required data")
 
@@ -927,7 +927,6 @@ class AnswerProblem(ParserMixin, AuthMixin, APIView):
 
 
 class UnityPlayLab(ParserMixin, AuthMixin, APIView):
-
     renderer_classes = (JSONRenderer,)
 
     def bad_request_response(self, request, lab_proxy, error_message):
@@ -978,7 +977,6 @@ class UnityPlayLab(ParserMixin, AuthMixin, APIView):
 
 
 class CreateLog(ParserMixin, AuthMixin, APIView):
-
     renderer_classes = (JSONRenderer,)
 
     def post(self, request, *args, **kwargs):
@@ -998,25 +996,29 @@ class CreateLog(ParserMixin, AuthMixin, APIView):
 
 
 class CreateUnityLog(ParserMixin, AuthMixin, APIView):
-
     renderer_classes = (JSONRenderer,)
 
     def post(self, request, *args, **kwargs):
-        lab_id = kwargs.get('lab_id')
+        nr_transaction = newrelic.agent.current_transaction()
 
-        lab_proxy = get_object_or_404(LabProxy, id=lab_id)
+        lab_id = kwargs.get('lab_id')
+        with newrelic.agent.FunctionTrace(nr_transaction, "lab_proxy_get_object_or_404"):
+            lab_proxy = get_object_or_404(LabProxy, id=lab_id)
+
         user = request.user
         message = request.POST.get('message', '')
-        url = request.build_absolute_uri()
-        request_method = request.method
 
-        UnityLog.new_unity_log(user, lab_proxy, message, url, request_method)
+        url = request.build_absolute_uri()
+
+        request_method = request.method
+        with newrelic.agent.FunctionTrace(nr_transaction, "UnityLog.new_unity_log"):
+            UnityLog.new_unity_log(user, lab_proxy, message, url, request_method)
+
         response_data = {'status': 'ok'}
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
 class LoadMission(ParserMixin, AuthMixin, APIView):
-
     renderer_classes = (JSONRenderer,)
 
     def post(self, request, *args, **kwargs):
@@ -1040,7 +1042,7 @@ class LoadMission(ParserMixin, AuthMixin, APIView):
         else:
             UserAttempt.objects.filter(
                 lab_proxy=lab_proxy, user=user, is_finished=False).update(
-                    is_finished=True, finished_at=timezone.now())
+                is_finished=True, finished_at=timezone.now())
 
             # set is_current_active in other attempts to false
             UserAttempt.objects.filter(lab_proxy=lab_proxy, user=user).update(is_current_active=False)

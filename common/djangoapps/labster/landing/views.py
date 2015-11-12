@@ -1,5 +1,4 @@
 import json
-from django.views.decorators.cache import cache_control
 import requests
 
 from django.conf import settings
@@ -13,9 +12,9 @@ from django_future.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import AnonymousUser
 from django.db.models import Count
 
-from edxmako.shortcuts import render_to_response
+from edxmako.shortcuts import render_to_response, render_to_string
 
-from util.cache import cache_for_every_user
+from util.cache import cache
 from courseware.courses import get_courses, sort_by_announcement
 
 from labster.courses import get_popular_courses
@@ -25,8 +24,6 @@ from labster_search.search import get_courses_from_keywords
 
 
 @ensure_csrf_cookie
-@cache_control(private=True)
-@cache_for_every_user()
 def index(request, user=AnonymousUser()):
     '''
     Redirects to main page -- info page if user authenticated, or marketing if not
@@ -51,9 +48,12 @@ def index(request, user=AnonymousUser()):
     if domain is False:
         domain = request.META.get('HTTP_HOST')
 
+    cached_data = cache.get('labster.landing.view.index')
+    if cached_data:
+        return render_to_response('labster_landing.html', cached_data)
+
     courses = get_courses(user, domain=domain)
     courses = sort_by_announcement(courses)
-
     # get 5 popular labs
     user_attempts = UserAttempt.objects.all().values('lab_proxy__lab').annotate(total=Count('lab_proxy__lab')).order_by('-total')
     labs_id = []
@@ -72,22 +72,21 @@ def index(request, user=AnonymousUser()):
 
     # get courses based on course id
     popular_labs = get_popular_courses(list_courses_id)[:6]
-
     courses = labsterify_courses(courses)
     popular_labs = labsterify_courses(popular_labs)
 
-    context = {
-        'courses': courses,
-        'popular_labs': popular_labs,
+    course_list_view = render_to_string('labster_course_listing.html', {'courses': courses})
+    popular_labs_view = render_to_string('labster_course_listing.html', {'courses': popular_labs})
+    data_to_cache = {
+        'course_list_view': course_list_view,
+        'popular_labs_view': popular_labs_view,
     }
-
-    return render_to_response('labster_landing.html', context)
+    cache.set('labster.landing.view.index', data_to_cache, 60 * 60 * 4)
+    return render_to_response('labster_landing.html', data_to_cache)
 
 
 
 @ensure_csrf_cookie
-@cache_control(private=True)
-@cache_for_every_user()
 def courses(request, user=AnonymousUser()):
     """
     Render the "find courses" page. If the marketing site is enabled, redirect
@@ -107,19 +106,28 @@ def courses(request, user=AnonymousUser()):
     referer = request.META.get('HTTP_REFERER', request.build_absolute_uri())
 
     keywords = request.GET.get('q', '').strip()
+    need_to_cache = False
     if keywords:
         courses = get_courses_from_keywords(keywords)
     else:
+        cached_data = cache.get('labster.landing.view.courses')
+        if cached_data:
+            return render_to_response('courseware/labster_courses.html', cached_data)
+
         courses = get_courses(user, domain=domain)
         courses = sort_by_announcement(courses)
+        need_to_cache = True
 
     courses = labsterify_courses(courses)
-
+    course_list_view = render_to_string('labster_course_listing.html', {'courses': courses})
     context = {
-        'courses': courses,
         'keywords': keywords,
         'referer': referer,
+        'course_list_view': course_list_view,
+        'len_courses': len(courses),
     }
+    if need_to_cache:
+        cache.set('labster.landing.view.courses', context, 60 * 60 * 4)
 
     return render_to_response('courseware/labster_courses.html', context)
 
