@@ -458,6 +458,12 @@ class Answer(models.Model):
             "correct" if self.is_correct else "incorrect")
 
 
+class LabProxyManager(models.Manager):
+    def get_queryset(self):
+        qs = super(LabProxyManager, self).get_query_set()
+        return qs.filter(lab_id__isnull=False).filter(is_active=True)
+
+
 class LabProxy(models.Model):
     """
     Stores connection between subsection and lab
@@ -474,7 +480,7 @@ class LabProxy(models.Model):
     modified_at = models.DateTimeField(default=timezone.now)
 
     all_objects = models.Manager()
-    objects = ActiveManager()
+    objects = LabProxyManager()
 
     class Meta:
         verbose_name_plural = 'Lab proxies'
