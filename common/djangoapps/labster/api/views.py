@@ -999,20 +999,20 @@ class CreateUnityLog(ParserMixin, AuthMixin, APIView):
     renderer_classes = (JSONRenderer,)
 
     def post(self, request, *args, **kwargs):
-        nr_transaction = newrelic.agent.current_transaction()
-
-        lab_id = kwargs.get('lab_id')
-        with newrelic.agent.FunctionTrace(nr_transaction, "lab_proxy_get_object_or_404"):
-            lab_proxy = get_object_or_404(LabProxy, id=lab_id)
-
-        user = request.user
-        message = request.POST.get('message', '')
-
-        url = request.build_absolute_uri()
-
-        request_method = request.method
-        with newrelic.agent.FunctionTrace(nr_transaction, "UnityLog.new_unity_log"):
-            UnityLog.new_unity_log(user, lab_proxy, message, url, request_method)
+        # nr_transaction = newrelic.agent.current_transaction()
+        #
+        # lab_id = kwargs.get('lab_id')
+        # with newrelic.agent.FunctionTrace(nr_transaction, "lab_proxy_get_object_or_404"):
+        #     lab_proxy = get_object_or_404(LabProxy, id=lab_id)
+        #
+        # user = request.user
+        # message = request.POST.get('message', '')
+        #
+        # url = request.build_absolute_uri()
+        #
+        # request_method = request.method
+        # with newrelic.agent.FunctionTrace(nr_transaction, "UnityLog.new_unity_log"):
+        #     UnityLog.new_unity_log(user, lab_proxy, message, url, request_method)
 
         response_data = {'status': 'ok'}
         return Response(response_data, status=status.HTTP_201_CREATED)
