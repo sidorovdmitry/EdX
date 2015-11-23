@@ -155,19 +155,19 @@ def instructor_dashboard_2(request, course_id):
 def _section_export_students(course, access):
     """ Provide data for the corresponding dashboard section """
     course_key = course.id
-    enrolled_students = User.objects.filter(
-        courseenrollment__course_id=course_key,
-        courseenrollment__is_active=1,
-    ).prefetch_related("groups").order_by('username')
 
-    emails = ','.join([student.email for student in enrolled_students])
     section_data = {
         'section_key': 'export_students',
         'section_display_name': _('Export Students'),
         'access': access,
         'course_id': unicode(course_key),
-        'enrolled_students': emails,
+        'enrolled_students': '',
     }
+
+    if settings.FEATURES.get('LABSTER'):
+        from labster.licenses import get_user_licenses
+        user_licenses = ','.join([student['email'] for student in get_user_licenses(course_key)])
+        section_data['enrolled_students'] = json.dumps(user_licenses)
     return section_data
 
 
