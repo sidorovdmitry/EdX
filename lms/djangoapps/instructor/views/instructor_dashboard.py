@@ -167,7 +167,7 @@ def _section_export_students(course, access):
     if settings.FEATURES.get('LABSTER'):
         from labster.licenses import get_user_licenses
         user_licenses = ','.join([student['email'] for student in get_user_licenses(course_key)])
-        section_data['enrolled_students'] = json.dumps(user_licenses)
+        section_data['enrolled_students'] = user_licenses
     return section_data
 
 
