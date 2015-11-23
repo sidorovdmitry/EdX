@@ -10,6 +10,7 @@ from opaque_keys.edx.keys import CourseKey
 import uuid
 import pytz
 
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
@@ -79,6 +80,7 @@ def instructor_dashboard_2(request, course_id):
         _section_student_admin(course, access),
         _section_data_download(course, access),
         _section_analytics(course, access),
+        _section_export_students(course, access),
     ]
 
     #check if there is corresponding entry in the CourseMode Table related to the Instructor Dashboard course
@@ -149,6 +151,24 @@ def instructor_dashboard_2(request, course_id):
 
 ## section_key will be used as a css attribute, javascript tie-in, and template import filename.
 ## section_display_name will be used to generate link titles in the nav bar.
+
+def _section_export_students(course, access):
+    """ Provide data for the corresponding dashboard section """
+    course_key = course.id
+
+    section_data = {
+        'section_key': 'export_students',
+        'section_display_name': _('Export Students'),
+        'access': access,
+        'course_id': unicode(course_key),
+        'enrolled_students': '',
+    }
+
+    if settings.FEATURES.get('LABSTER'):
+        from labster.licenses import get_user_licenses
+        user_licenses = ','.join([student['email'] for student in get_user_licenses(course_key)])
+        section_data['enrolled_students'] = json.dumps(user_licenses)
+    return section_data
 
 
 def _section_e_commerce(course, access, paid_mode, coupons_enabled):
