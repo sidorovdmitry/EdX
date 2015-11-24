@@ -295,7 +295,7 @@ class QuizBlock(models.Model):
         ordering = ('order', 'created_at')
 
     def __unicode__(self):
-        return "{}: {}".format(self.lab.name, self.element_id)
+        return "{}: {}".format(getattr(self.lab, 'name', ''), self.element_id)
 
 
 class Scale(models.Model):
@@ -486,7 +486,7 @@ class LabProxy(models.Model):
         verbose_name_plural = 'Lab proxies'
 
     def __unicode__(self):
-        return "{}: {}".format(self.id, self.lab.name)
+        return "{}: {}".format(self.id, getattr(self.lab, 'name', ''))
 
     @property
     def course_from_location(self):
