@@ -583,6 +583,7 @@ LANGUAGES = [
   <script>
     function Log(message) {
       console.dir(message);
+      /*
       var csrf_token = "${csrf_token}";
       var token = '${user_token.key}';
       var unity_log_url = '${unity_log_url}';
@@ -599,6 +600,7 @@ LANGUAGES = [
       }).success(function(response) {
       }).error(function(response) {
       });
+      */
     }
 
     function gaLogEvent(category, action, label, value, noninteract) {}
