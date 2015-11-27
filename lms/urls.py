@@ -650,8 +650,6 @@ if settings.FEATURES.get('CERTIFICATES_HTML_VIEW', False):
 if settings.FEATURES.get('LABSTER'):
     urlpatterns += (
         url(r'^student_voucher_code/$', 'labster.student_voucher_code.views.home', name="labster_student_voucher_code"),
-        url(r'^student_license/(?P<course_id>[^/]+/[^/]+/[^/]+)/$', 'labster.student_license.views.home', name="labster_student_license"),
-        url('^labs/', include('labster.backoffice_urls')),
         url('^labster/', include('labster.urls')),
         url('^lti/', include('labster_lti.urls')),
         url(r'^django-rq/', include('django_rq.urls')),
