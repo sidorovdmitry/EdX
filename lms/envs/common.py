@@ -1891,12 +1891,12 @@ if FEATURES.get('LABSTER'):
     LABSTER_S3_BASE_URL = "https://labster.s3.amazonaws.com/"
     LABSTER_UNITY_URL_PREFIX = "{}unity/".format(LABSTER_S3_BASE_URL)
 
-    LABSTER_UNITY_API_PREFIX = "https://www.temp.labster.com"
+    LABSTER_UNITY_API_PREFIX = "https://temp.labster.com"
     LABSTER_CMS_BASE = 'https://tempstudio.labster.com'
     LABSTER_BACKOFFICE_BASE_URL = "{}/labster/internal".format(LABSTER_CMS_BASE)
     LABSTER_BACKOFFICE_JS_BASE_URL = LABSTER_BACKOFFICE_BASE_URL
     LABSTER_ENABLE_SALESFORCE = False
-    LABSTER_EDX_BASE_URL = "https://www.temp.labster.com"
+    LABSTER_EDX_BASE_URL = "https://temp.labster.com"
     LABSTER_CDN_BASE = "d1hm9s9o1fn2y.cloudfront.net"
 
     HIJACK_EMAILS = ['edx+staging-lms@labster.com']
