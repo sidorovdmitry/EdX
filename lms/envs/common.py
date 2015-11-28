@@ -1944,7 +1944,7 @@ if FEATURES.get('LABSTER'):
         "developing-labster-on-two-continents/",
     ]
 
-    FEATURES['SHOW_LABSTER_NOTIFICATION'] = True
+    FEATURES['SHOW_LABSTER_NOTIFICATION'] = False
 
 ############################ ORA 2 ############################################
 
