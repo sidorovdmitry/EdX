@@ -25,7 +25,8 @@ urlpatterns = (
     url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
 
     url(r'^invalid-browser/$', 'labster.lms.views.invalid_browser', name='invalid_browser'),
-
+    url('^labs/', include('labster.backoffice_urls')),
+	
     # certificate view
     url(r'^update_certificate$', 'certificates.views.update_certificate'),
     url(r'^update_example_certificate$', 'certificates.views.update_example_certificate'),
