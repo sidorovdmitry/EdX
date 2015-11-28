@@ -193,23 +193,40 @@
                   % endif
               % else:
                 <!-- user is not authenticated or student-->
-                <div class="labster-register-box-container">
+                <div id="reg-box-ctr" class="labster-register-box-container">
                   <div class="labster-register-box students">
                     <ul>
-                      % if not user.is_authenticated():
-                        <li><a href="#register-modal" rel="leanModal" class="new-register purchase-demo-course-link student-purchase-button btn btn-blue" data-click-type="cta-voucher" data-user-type="1"><i class="fa fa-tags"></i>
-                          Take this course</a></li>
-                        <li><a href="#register-modal" rel="leanModal" class="new-register educators-preview-button padding-box" data-click-type="cta-preview" data-user-type="2"><i class="fa fa-search-plus"></i>
-                          Free Preview</a></li>
+                      % if unicode(course.org).lower().startswith('labsterx'):
+                          % if not user.is_authenticated():
+                            <li><a href="#register-modal" rel="leanModal" class="disabled new-register purchase-demo-course-link student-purchase-button btn btn-blue" data-click-type="cta-voucher" data-user-type="1"><i class="fa fa-tags"></i>
+                              Take this course</a></li>
+                            <li><a href="#register-modal" rel="leanModal" class="new-register educators-preview-button padding-box" data-click-type="cta-preview" data-user-type="2"><i class="fa fa-search-plus"></i>
+                              Free Preview</a></li>
+                          % else:
+                            <li><a href="#maintenance-info-modal" rel="leanModal" id="take-course-btn-1" class="purchase-demo-course-link student-purchase-button btn btn-blue" data-click-type="cta-purchase"><i class="fa fa-flask"></i>
+                            Take this course</a></li>
+                          % endif
+
+                          <li><a class="voucher-demo-course-link padding-box" href="/student_voucher_code"><i class="fa fa-tags"></i> Use Voucher</a></li>
+
+                          <li><a href="http://web.labster.com/pricing/" class="disabled educators-pricing-button padding-box" data-click-type="cta-pricing"><i class="fa fa-users"></i>
+                            See Bulk Pricing</a></li>
                       % else:
-                        <li><a href="/student_license/${course.id}/" class="purchase-demo-course-link student-purchase-button btn btn-blue" data-click-type="cta-purchase"><i class="fa fa-flask"></i>
-                        Take this course</a></li>
+                          % if not user.is_authenticated():
+                            <li><a href="#register-modal" rel="leanModal" class="new-register purchase-demo-course-link student-purchase-button btn btn-blue" data-click-type="cta-voucher" data-user-type="1"><i class="fa fa-tags"></i>
+                              Take this course</a></li>
+                            <li><a href="#register-modal" rel="leanModal" class="new-register educators-preview-button padding-box" data-click-type="cta-preview" data-user-type="2"><i class="fa fa-search-plus"></i>
+                              Free Preview</a></li>
+                          % else:
+                            <li><a href="/student_license/${course.id}/" class="purchase-demo-course-link student-purchase-button btn btn-blue" data-click-type="cta-purchase"><i class="fa fa-flask"></i>
+                            Take this course</a></li>
+                          % endif
+
+                          <li><a class="voucher-demo-course-link padding-box" href="/student_voucher_code"><i class="fa fa-tags"></i> Use Voucher</a></li>
+
+                          <li><a href="http://web.labster.com/pricing/" class="educators-pricing-button padding-box" data-click-type="cta-pricing"><i class="fa fa-users"></i>
+                            See Bulk Pricing</a></li>
                       % endif
-
-                      <li><a class="voucher-demo-course-link padding-box" href="/student_voucher_code"><i class="fa fa-tags"></i> Use Voucher</a></li>
-
-                      <li><a href="http://web.labster.com/pricing/" class="educators-pricing-button padding-box" data-click-type="cta-pricing"><i class="fa fa-users"></i>
-                        See Bulk Pricing</a></li>
                     </ul>
                   </div>
                   <div class="labster-register-box teachers" style="text-align: left;">
@@ -493,6 +510,24 @@
   </div>
 </section>
 
+<section id="maintenance-info-modal" class="modal" aria-hidden="true">
+  <div class="inner-wrapper" role="alertdialog" aria-labelledy="maintenance-info-modal-title">
+   <button class="close-modal">
+      x
+      <i class="icon-remove"></i>
+      <span class="sr">
+        ## Translators: this is a control to allow users to exit out of this modal interface (a menu or piece of UI that takes the full focus of the screen)
+        ${_('Close')}
+      </span>
+    </button>
+
+    <header style="z-index:2;margin-bottom:20px"> </header>
+      <div class="submit">
+	    <p style="margin-bottom:2em">Please write an e-mail to <a href="mailto:info@labster.com">info@labster.com</a> with your information, and we will get back to you.</p>
+      </div>
+  </div>
+</section>
+
 <%include file="../labster_register_modal.html" />
 <script src="${static.url('js/labster/register_modal.js')}"></script>
 <script src="${static.url('js/labster/course_about.js')}"></script>
@@ -505,5 +540,9 @@ registerModalInit({
     nextUrl: "/",
     courseId: "${course.id}",
     isDemoCourse: "${course.labster_demo}"
+});
+$(function() {
+	accessible_modal("#take-course-btn-1", "#maintenance-info-modal .close-modal", "#maintenance-info-modal", "#reg-box-ctr");
+	accessible_modal("#take-course-btn-2", "#maintenance-info-modal .close-modal", "#maintenance-info-modal", "#reg-box-ctr");
 });
 </script>

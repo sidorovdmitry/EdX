@@ -16,7 +16,7 @@ COMPLETED_EMAIL_BODY = """
 Hello,
 
 We're happy to inform you the courses you bought are ready.
-Go to dashboard (http://www.labster.com/dashboard) to check it.
+Go to dashboard (http://www.temp.labster.com/dashboard) to check it.
 
 Best Regards,
 Labster

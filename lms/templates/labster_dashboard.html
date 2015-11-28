@@ -178,6 +178,7 @@
 
   $(function(){
     accessible_modal(".edit-name", "#apply_name_change .close-modal", "#apply_name_change", "#dashboard-main");
+    accessible_modal("#use-voucher-link", "#maintenance-info-modal .close-modal", "#maintenance-info-modal", "#dashboard-main");
 
     accessible_modal(".edit-email", "#change_email .close-modal", "#change_email", "#dashboard-main");
 
@@ -266,9 +267,9 @@
     <a href="${marketing_link('COURSES')}" analytics-on="click" analytics-category="Dashboard" class="sidebar-button">Find More Courses</a>
 
     % if user.labster_user.is_teacher:
-    <a href="${reverse('labster_backoffice')}" analytics-on="click" analytics-category="Dashboard" id="buy-student-licenses-link" class="sidebar-button">${_("Buy Student Licenses")}</a>
+    <a href="#maintenance-info-modal" rel='leanModal' analytics-on="click" analytics-category="Dashboard" id="buy-student-licenses-link" class="sidebar-button">${_("Buy Student Licenses")}</a>
     % elif user.labster_user.is_student:
-    <a href="${reverse('labster_student_voucher_code')}" analytics-on="click" analytics-category="Dashboard" id="use-voucher-link" class="sidebar-button">${_("Use Voucher")}</a>
+	<a href="${reverse('labster_student_voucher_code')}" analytics-on="click" analytics-category="Dashboard" id="use-voucher-link" class="sidebar-button">${_("Use Voucher")}</a>
     % endif
 
     <section class="user-info">
@@ -629,12 +630,30 @@
         <p>If you have any questions, please feel free to call us or email us at any time.</p>
         <p>We are here ready to help you get going with Labster.<br>
         <p>You can see our contact info on our
-        <a href="http://labster.com/support" target="_blank">support page</a>.</p>
+        <a href="http://temp.labster.com/support" target="_blank">support page</a>.</p>
         <div class="submit">
           <input name="submit" type="submit" value="${_('Enter Your New Course')}" />
         </div>
       </form>
     </div>
+  </div>
+</section>
+
+<section id="maintenance-info-modal" class="modal" aria-hidden="true">
+  <div class="inner-wrapper" role="alertdialog" aria-labelledy="maintenance-info-modal-title">
+   <button class="close-modal">
+      x
+      <i class="icon-remove"></i>
+      <span class="sr">
+        ## Translators: this is a control to allow users to exit out of this modal interface (a menu or piece of UI that takes the full focus of the screen)
+        ${_('Close')}
+      </span>
+    </button>
+
+    <header style="z-index:2;margin-bottom:20px"> </header>
+      <div class="submit">
+	    <p style="margin-bottom:2em">Please write an e-mail to <a href="mailto:info@labster.com">info@labster.com</a> with your information, and we will get back to you.</p>
+      </div>
   </div>
 </section>
 
