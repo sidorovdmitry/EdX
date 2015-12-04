@@ -45,6 +45,7 @@ def create_problem_from_tree(quiz_block, tree):
 
         problem.is_adaptive = quiz_block.element_id in ['QuizblockPreTest', 'QuizblockPostTest']
         problem.is_active = True
+        problem.voice_id = child.attrib.get('VoiceId', '').strip()
         problem.sentence = child.attrib.get('Sentence', '').strip()
         problem.hashed_sentence = get_hashed_text(problem.sentence)
         problem.correct_message = child.attrib.get('CorrectMessage', '')
@@ -203,6 +204,8 @@ def get_problem_as_platform_xml(problem):
     }
 
     extra = {}
+    if problem.voice_id:
+        extra['VoiceId'] = str(problem.voice_id)
     if problem.no_score:
         extra['NoScore'] = "true"
     if problem.max_attempts:
