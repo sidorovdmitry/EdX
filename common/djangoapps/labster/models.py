@@ -319,6 +319,7 @@ class Problem(models.Model):
     quiz_block = models.ForeignKey(QuizBlock)
     element_id = models.CharField(max_length=100, db_index=True)
 
+    voice_id = models.CharField(max_length=50, blank=True, default="")
     sentence = models.TextField()
     correct_message = models.TextField(default="", blank=True)
     wrong_message = models.TextField(default="", blank=True)
