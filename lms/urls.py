@@ -778,3 +778,7 @@ urlpatterns += (
 urlpatterns += (
     url(r'^api/', include('edx_proctoring.urls')),
 )
+
+urlpatterns += (
+    url(r'^sso/', include('openedx.core.djangoapps.labster.urls_lms', namespace='labster')),
+)
