@@ -749,10 +749,3 @@ MICROSITE_ROOT_DIR = path(ENV_TOKENS.get('MICROSITE_ROOT_DIR', ''))
 # Cutoff date for granting audit certificates
 if ENV_TOKENS.get('AUDIT_CERT_CUTOFF_DATE', None):
     AUDIT_CERT_CUTOFF_DATE = dateutil.parser.parse(ENV_TOKENS.get('AUDIT_CERT_CUTOFF_DATE'))
-
-
-# @TODO: Remove this import
-try:
-    from .labster import *  # pylint: disable=import-error
-except ImportError:
-    pass

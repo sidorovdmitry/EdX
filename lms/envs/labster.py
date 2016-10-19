@@ -12,6 +12,14 @@ LABSTER_FEATURES = {
     "ENABLE_VOUCHERS": False,
 }
 
+##### Custom Courses for EdX #####
+if FEATURES.get('CUSTOM_COURSES_EDX'):
+    INSTALLED_APPS += ('lms.djangoapps.ccx',)
+    FIELD_OVERRIDE_PROVIDERS += (
+        'lms.djangoapps.ccx.overrides.CustomCoursesForEdxOverrideProvider',
+    )
+CCX_MAX_STUDENTS_ALLOWED = ENV_TOKENS.get('CCX_MAX_STUDENTS_ALLOWED', CCX_MAX_STUDENTS_ALLOWED)
+
 
 ENV_LABSTER_FEATURES = LABSTER_SETTINGS.get('LABSTER_FEATURES', LABSTER_FEATURES)
 for feature, value in ENV_LABSTER_FEATURES.items():
