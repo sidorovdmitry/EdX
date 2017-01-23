@@ -40,3 +40,20 @@ class CourseLicense(models.Model):
 
     def __unicode__(self):
         return unicode(repr(self))
+
+
+class LicensedCoursewareItems(models.Model):
+    """
+    Stores all licensed simulations from block including ones from child blocks.
+    """
+    course_license = models.ForeignKey(CourseLicense)
+    block = models.CharField(max_length=64)
+    licensed_simulations = models.TextField()
+
+
+class LicensedSimulations(models.Model):
+    """
+    Keeps cached info from Labster API about licensed simulations for license.
+    """
+    course_license = models.ForeignKey(CourseLicense)
+    licensed_simulations = models.TextField(blank=True, null=True)
