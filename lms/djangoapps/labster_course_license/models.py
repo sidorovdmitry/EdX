@@ -1,6 +1,7 @@
 """
 Models for the Labster License.
 """
+import json
 from django.db import models
 
 from ccx_keys.locator import CCXLocator
@@ -37,6 +38,7 @@ class CourseLicense(models.Model):
         except cls.DoesNotExist:
             course_license = cls.objects.create(course_id=course_id, license_code=license_code)
         course_license.save()
+        return course_license
 
     def __unicode__(self):
         return unicode(repr(self))
@@ -57,3 +59,16 @@ class LicensedSimulations(models.Model):
     """
     course_license = models.ForeignKey(CourseLicense)
     licensed_simulations = models.TextField(blank=True, null=True)
+
+    @classmethod
+    def store_simulations(cls, course_license, sim_list):
+        if not isinstance(sim_list, set) or not course_license:
+            return
+
+        try:
+            lic_sims = cls.objects.get(course_license=course_license)
+        except cls.DoesNotExist:
+            lic_sims = cls.objects.create(course_license=course_license)
+
+        lic_sims.licensed_simulations = json.dumps(list(sim_list))
+        lic_sims.save()

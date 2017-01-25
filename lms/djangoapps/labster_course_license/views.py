@@ -13,7 +13,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
-from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -21,7 +20,7 @@ from django.http import HttpResponseBadRequest, Http404
 from django.utils.safestring import mark_safe
 
 from labster_course_license.utils import LtiPassport, course_tree_info, SimulationValidationError
-from labster_course_license.models import CourseLicense
+from labster_course_license.models import CourseLicense, LicensedSimulations
 from ccx_keys.locator import CCXLocator
 from ccx.views import coach_dashboard, get_ccx_for_coach
 from ccx.overrides import get_override_for_ccx, override_field_for_ccx, clear_override_for_ccx
@@ -101,7 +100,7 @@ def apply_field_overrides(ccx, course_info, descriptors):
 
 def _send_request(url, data):
     """
-    Sends a request the Labster API.
+    Sends a request to the Labster API.
     """
     headers = {
         "authorization": 'Token {}'.format(settings.LABSTER_API_AUTH_TOKEN),
@@ -204,14 +203,14 @@ def set_license(request, course, ccx):
         passports.append(str(passport))
 
     override_field_for_ccx(ccx, course, 'lti_passports', passports)
-    CourseLicense.set_license(ccx_locator, license)
+    course_license = CourseLicense.set_license(ccx_locator, license)
 
     update_course_structure = request.POST.get('update', None)
     if not update_course_structure:
         return redirect(url)
 
     try:
-        update_course(ccx, course_key, passports)
+        save_course_access_info(course_key, course_license, passports)
     except (LabsterApiError, ItemNotFoundError):
         messages.error(
             request, _('Your license is successfully applied, but there was an error with updating your course.')
@@ -249,3 +248,22 @@ def update_course(ccx, course_key, passports):
         simulations = (block for block in lti_blocks if '/simulation/' in block.launch_url)
         course_info, chapters = course_tree_info(store, simulations, licensed_simulations)
         apply_field_overrides(ccx, course_info, chapters)
+
+
+def save_course_access_info(course_key, course_license, passports):
+    """
+    Updates the course to show/hide blocks depends on the available simulations.
+    """
+    # Getting a list of licensed simulations
+    consumer_keys = [LtiPassport(passport_str).consumer_key for passport_str in passports]
+    # Updating the course: hides unlicensed simulations.
+    licensed_simulations = get_licensed_simulations(consumer_keys)
+    LicensedSimulations.store_simulations(course_license, licensed_simulations)
+    print(LicensedSimulations.objects.all().first().licensed_simulations)
+    # store = modulestore()
+    # with store.bulk_operations(course_key):
+    #     lti_blocks = store.get_items(course_key, qualifiers={'category': 'lti'})
+    #     # Filter a list of lti blocks to get only blocks with simulations.
+    #     simulations = (block for block in lti_blocks if '/simulation/' in block.launch_url)
+    #     course_info, chapters = course_tree_info(store, simulations, licensed_simulations)
+    #     # apply_field_overrides(ccx, course_info, chapters)
