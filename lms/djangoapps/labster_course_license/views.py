@@ -19,8 +19,13 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import HttpResponseBadRequest, Http404
 from django.utils.safestring import mark_safe
 
-from labster_course_license.utils import LtiPassport, course_tree_info, SimulationValidationError
-from labster_course_license.models import CourseLicense, LicensedSimulations
+from labster_course_license.utils import (
+    get_course_blocks_info,
+    get_block_course_key,
+    SimulationValidationError,
+    LtiPassport
+)
+from labster_course_license.models import CourseLicense, LicensedSimulations, LicensedCoursewareItems
 from ccx_keys.locator import CCXLocator
 from ccx.views import coach_dashboard, get_ccx_for_coach
 from ccx.overrides import get_override_for_ccx, override_field_for_ccx, clear_override_for_ccx
@@ -233,37 +238,43 @@ def set_license(request, course, ccx):
     return redirect(url)
 
 
-def update_course(ccx, course_key, passports):
+# def update_course(ccx, course_key, passports):
+#     """
+#     Updates the course to show/hide blocks depends on the available simulations.
+#     """
+#     # Getting a list of licensed simulations
+#     consumer_keys = [LtiPassport(passport_str).consumer_key for passport_str in passports]
+#     # Updating the course: hides unlicensed simulations.
+#     licensed_simulations = get_licensed_simulations(consumer_keys)
+#     store = modulestore()
+#     with store.bulk_operations(course_key):
+#         lti_blocks = store.get_items(course_key, qualifiers={'category': 'lti'})
+#         # Filter a list of lti blocks to get only blocks with simulations.
+#         simulations = (block for block in lti_blocks if '/simulation/' in block.launch_url)
+#         course_info, chapters = course_tree_info(store, simulations, licensed_simulations)
+#         apply_field_overrides(ccx, course_info, chapters)
+
+
+def save_course_access_info(course_key, course_license, passports):
     """
-    Updates the course to show/hide blocks depends on the available simulations.
+    Stores course access info which will be used by FieldOverrideProvider.
     """
     # Getting a list of licensed simulations
     consumer_keys = [LtiPassport(passport_str).consumer_key for passport_str in passports]
-    # Updating the course: hides unlicensed simulations.
     licensed_simulations = get_licensed_simulations(consumer_keys)
+    # Store them for future use
+    LicensedSimulations.store_simulations(course_license, licensed_simulations)
+
     store = modulestore()
     with store.bulk_operations(course_key):
         lti_blocks = store.get_items(course_key, qualifiers={'category': 'lti'})
         # Filter a list of lti blocks to get only blocks with simulations.
         simulations = (block for block in lti_blocks if '/simulation/' in block.launch_url)
-        course_info, chapters = course_tree_info(store, simulations, licensed_simulations)
-        apply_field_overrides(ccx, course_info, chapters)
-
-
-def save_course_access_info(course_key, course_license, passports):
-    """
-    Updates the course to show/hide blocks depends on the available simulations.
-    """
-    # Getting a list of licensed simulations
-    consumer_keys = [LtiPassport(passport_str).consumer_key for passport_str in passports]
-    # Updating the course: hides unlicensed simulations.
-    licensed_simulations = get_licensed_simulations(consumer_keys)
-    LicensedSimulations.store_simulations(course_license, licensed_simulations)
-    print(LicensedSimulations.objects.all().first().licensed_simulations)
-    # store = modulestore()
-    # with store.bulk_operations(course_key):
-    #     lti_blocks = store.get_items(course_key, qualifiers={'category': 'lti'})
-    #     # Filter a list of lti blocks to get only blocks with simulations.
-    #     simulations = (block for block in lti_blocks if '/simulation/' in block.launch_url)
-    #     course_info, chapters = course_tree_info(store, simulations, licensed_simulations)
-    #     # apply_field_overrides(ccx, course_info, chapters)
+        course_info = get_course_blocks_info(simulations, licensed_simulations)
+        for block, block_simulations in course_info.items():
+            lci, __ = LicensedCoursewareItems.objects.get_or_create(
+                course_license=course_license,
+                block=block.location.block_id
+            )
+            lci.licensed_simulations = json.dumps(block_simulations)
+            lci.save()

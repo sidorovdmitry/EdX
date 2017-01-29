@@ -62,6 +62,9 @@ class LicensedSimulations(models.Model):
 
     @classmethod
     def store_simulations(cls, course_license, sim_list):
+        """
+        Save list of licensed simulations as json string.
+        """
         if not isinstance(sim_list, set) or not course_license:
             return
 
