@@ -46,7 +46,7 @@ class CourseLicense(models.Model):
 
 class LicensedCoursewareItems(models.Model):
     """
-    Stores all licensed simulations from block including ones from child blocks.
+    Stores all licensed simulations within block including ones from child blocks.
     """
     course_license = models.ForeignKey(CourseLicense)
     block = models.CharField(max_length=64)

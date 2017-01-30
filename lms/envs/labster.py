@@ -44,3 +44,8 @@ LABSTER_DEFAULT_LTI_ID = LABSTER_SETTINGS.get('LABSTER_DEFAULT_LTI_ID', 'MC')
 RAVEN_CONFIG = AUTH_TOKENS.get('RAVEN_CONFIG', {})
 if RAVEN_CONFIG.get('dsn'):
     INSTALLED_APPS += ('raven.contrib.django.raven_compat',)
+
+# Register labster override provider
+FIELD_OVERRIDE_PROVIDERS += (
+    'lms.djangoapps.labster_course_license.licensed_blocks_override.LicensedBlocksOverrideProvider',
+)

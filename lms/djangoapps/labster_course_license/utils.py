@@ -110,27 +110,6 @@ def get_block_course_key(block):
     return course_key
 
 
-# class XBlockInfo(object):
-#     def __init__(self, info=None):
-#         self.is_hidden = info.is_hidden if info else True
-#         self.children = list(info.children) if info else []
-#
-#     def set_visibility(self, value):
-#         if self.is_hidden is not False:
-#             self.is_hidden = value
-
-
-# def get_xblock_info(xblock, course_info, is_hidden=True, child=None):
-#     """
-#     Returns information (`is_hidden`(bool), `children`(list)) about the xblock.
-#     """
-#     info = XBlockInfo(course_info.get(xblock))
-#     info.set_visibility(is_hidden)
-#     if child is not None:
-#         info.children.append(child)
-#     return info
-
-
 def update_simulations(course_info, block, simulation_id):
     """
     Updates licensed simulations for block.
@@ -138,60 +117,15 @@ def update_simulations(course_info, block, simulation_id):
     block_licensed_simulations = course_info.get(block)
     if not block_licensed_simulations:
         block_licensed_simulations = list()
-    block_licensed_simulations.append(simulation_id)
+    # blocks without licensed simulations will have empty list value
+    if simulation_id:
+        block_licensed_simulations.append(simulation_id)
     return block_licensed_simulations
-
-
-# def course_tree_info(store, simulations, licensed_simulations):
-#     """
-#     Returns information about the course's xblocks.
-#     """
-#     url_validator = URLValidator()
-#     sim_id_validator = RegexValidator(re.compile(r'^[a-zA-Z0-9]+$'), message=_('Enter a valid simulation id.'))
-#
-#     course_info = {}
-#     errors = []
-#
-#     for simulation in simulations:
-#         simulation_id = get_simulation_id(simulation.launch_url)
-#
-#         for value, validator in ((simulation.launch_url, url_validator), (simulation_id, sim_id_validator)):
-#             try:
-#                 validator(value)
-#             except ValidationError as err:
-#                 errors.append((simulation.display_name, simulation_id, u'<br>'.join(err.messages)))
-#
-#         if WILD_CARD in licensed_simulations:
-#             is_hidden = False
-#         else:
-#             is_hidden = simulation_id not in licensed_simulations
-#
-#         unit = get_parent_unit(simulation)
-#         if unit is None:
-#             log.debug('Cannot find ancestor for the xblock: %s', simulation)
-#             continue
-#         course_info[unit] = get_xblock_info(unit, course_info, is_hidden=is_hidden)
-#         subsection = unit.get_parent()
-#         if subsection is None:
-#             log.debug('Cannot find ancestor for the xblock: %s', unit)
-#             continue
-#         course_info[subsection] = get_xblock_info(subsection, course_info, is_hidden=is_hidden, child=unit)
-#         chapter = subsection.get_parent()
-#         if chapter is None:
-#             log.debug('Cannot find ancestor for the xblock: %s', subsection)
-#             continue
-#         course_info[chapter] = get_xblock_info(chapter, course_info, is_hidden=is_hidden, child=subsection)
-#
-#     if errors:
-#         raise SimulationValidationError(errors)
-#
-#     chapters = filter(lambda x: getattr(x, 'category') == 'chapter', course_info.keys())
-#     return (course_info, chapters)
 
 
 def get_course_blocks_info(simulations, licensed_simulations):
     """
-    Returns information about the course's xblocks.
+    Returns information about licensed simulations per block.
     """
     url_validator = URLValidator()
     sim_id_validator = RegexValidator(re.compile(r'^[a-zA-Z0-9]+$'), message=_('Enter a valid simulation id.'))
@@ -213,22 +147,25 @@ def get_course_blocks_info(simulations, licensed_simulations):
         else:
             is_hidden = simulation_id not in licensed_simulations
 
-        if not is_hidden:
-            unit = get_parent_unit(simulation)
-            if unit is None:
-                log.debug('Cannot find ancestor for the xblock: %s', simulation)
-                continue
-            course_info[unit] = update_simulations(course_info, unit, simulation_id)
-            subsection = unit.get_parent()
-            if subsection is None:
-                log.debug('Cannot find ancestor for the xblock: %s', unit)
-                continue
-            course_info[subsection] = update_simulations(course_info, subsection, simulation_id)
-            chapter = subsection.get_parent()
-            if chapter is None:
-                log.debug('Cannot find ancestor for the xblock: %s', subsection)
-                continue
-            course_info[chapter] = update_simulations(course_info, chapter, simulation_id)
+        if is_hidden:
+            simulation_id = None
+
+        # we need to add blocks even if they do not have licensed simulations
+        unit = get_parent_unit(simulation)
+        if unit is None:
+            log.debug('Cannot find ancestor for the xblock: %s', simulation)
+            continue
+        course_info[unit] = update_simulations(course_info, unit, simulation_id)
+        subsection = unit.get_parent()
+        if subsection is None:
+            log.debug('Cannot find ancestor for the xblock: %s', unit)
+            continue
+        course_info[subsection] = update_simulations(course_info, subsection, simulation_id)
+        chapter = subsection.get_parent()
+        if chapter is None:
+            log.debug('Cannot find ancestor for the xblock: %s', subsection)
+            continue
+        course_info[chapter] = update_simulations(course_info, chapter, simulation_id)
 
     if errors:
         raise SimulationValidationError(errors)

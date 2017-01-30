@@ -238,23 +238,6 @@ def set_license(request, course, ccx):
     return redirect(url)
 
 
-# def update_course(ccx, course_key, passports):
-#     """
-#     Updates the course to show/hide blocks depends on the available simulations.
-#     """
-#     # Getting a list of licensed simulations
-#     consumer_keys = [LtiPassport(passport_str).consumer_key for passport_str in passports]
-#     # Updating the course: hides unlicensed simulations.
-#     licensed_simulations = get_licensed_simulations(consumer_keys)
-#     store = modulestore()
-#     with store.bulk_operations(course_key):
-#         lti_blocks = store.get_items(course_key, qualifiers={'category': 'lti'})
-#         # Filter a list of lti blocks to get only blocks with simulations.
-#         simulations = (block for block in lti_blocks if '/simulation/' in block.launch_url)
-#         course_info, chapters = course_tree_info(store, simulations, licensed_simulations)
-#         apply_field_overrides(ccx, course_info, chapters)
-
-
 def save_course_access_info(course_key, course_license, passports):
     """
     Stores course access info which will be used by FieldOverrideProvider.
@@ -262,7 +245,7 @@ def save_course_access_info(course_key, course_license, passports):
     # Getting a list of licensed simulations
     consumer_keys = [LtiPassport(passport_str).consumer_key for passport_str in passports]
     licensed_simulations = get_licensed_simulations(consumer_keys)
-    # Store them for future use
+    # Store them for future use to prevent from requesting labster API
     LicensedSimulations.store_simulations(course_license, licensed_simulations)
 
     store = modulestore()
@@ -271,6 +254,7 @@ def save_course_access_info(course_key, course_license, passports):
         # Filter a list of lti blocks to get only blocks with simulations.
         simulations = (block for block in lti_blocks if '/simulation/' in block.launch_url)
         course_info = get_course_blocks_info(simulations, licensed_simulations)
+        # store licensed blocks info
         for block, block_simulations in course_info.items():
             lci, __ = LicensedCoursewareItems.objects.get_or_create(
                 course_license=course_license,
