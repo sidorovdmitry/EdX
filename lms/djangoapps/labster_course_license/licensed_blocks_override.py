@@ -40,7 +40,8 @@ class LicensedBlocksOverrideProvider(FieldOverrideProvider):
 
     @classmethod
     def enabled_for(cls, course):
-        """CCX field overrides are enabled per-course
+        """
+        CCX field overrides are enabled per-course
 
         protect against missing attributes
         """
@@ -60,4 +61,10 @@ def is_visible_to_staff_only(block, default):
     if licensed_simulations:
         return False
     else:
+        if block.category not in ['chapter', 'sequential']:
+            if block.has_children:
+                children = block.children
+                for item in children:
+                    if item.category != 'lti':
+                        return False
         return True

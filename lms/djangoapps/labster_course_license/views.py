@@ -26,6 +26,7 @@ from labster_course_license.utils import (
     LtiPassport
 )
 from labster_course_license.models import CourseLicense, LicensedSimulations, LicensedCoursewareItems
+from labster_course_license.utils import get_simulation_id
 from ccx_keys.locator import CCXLocator
 from ccx.views import coach_dashboard, get_ccx_for_coach
 from ccx.overrides import get_override_for_ccx, override_field_for_ccx, clear_override_for_ccx
@@ -85,22 +86,15 @@ def dashboard(request, course, ccx):
     return render_to_response('labster/course_license.html', context)
 
 
-def apply_field_overrides(ccx, course_info, descriptors):
+def apply_field_overrides(ccx, simulations, licensed_simulations):
     """
     Applies field overrides for the given descriptors.
     """
     field_name = 'visible_to_staff_only'
-    for descriptor in descriptors:
-        info = course_info[descriptor]
-        if info.is_hidden:
-            override_field_for_ccx(ccx, descriptor, field_name, info.is_hidden)
-        else:
-            # In case, when the block should be visible field overrides are removed
-            # to get most actual values from Master course.
-            # It fixes the issue when the block is hidden in Master Course, but is still
-            # displayed in CCX that causes Permission Denied error for end users.
-            clear_override_for_ccx(ccx, descriptor, field_name)
-        apply_field_overrides(ccx, course_info, info.children)
+    for sim in simulations:
+        sim_id = get_simulation_id(sim)
+        if sim_id not in licensed_simulations:
+            override_field_for_ccx(ccx, sim, field_name, True)
 
 
 def _send_request(url, data):
@@ -215,7 +209,7 @@ def set_license(request, course, ccx):
         return redirect(url)
 
     try:
-        save_course_access_info(course_key, course_license, passports)
+        save_course_access_info(ccx, course_key, course_license, passports)
     except (LabsterApiError, ItemNotFoundError):
         messages.error(
             request, _('Your license is successfully applied, but there was an error with updating your course.')
@@ -238,16 +232,25 @@ def set_license(request, course, ccx):
     return redirect(url)
 
 
-def save_course_access_info(course_key, course_license, passports):
+def save_course_access_info(ccx, course_key, course_license, passports):
     """
     Stores course access info which will be used by FieldOverrideProvider.
     """
     # Getting a list of licensed simulations
     consumer_keys = [LtiPassport(passport_str).consumer_key for passport_str in passports]
     licensed_simulations = get_licensed_simulations(consumer_keys)
+
     # Store them for future use to prevent from requesting labster API
     LicensedSimulations.store_simulations(course_license, licensed_simulations)
 
+    update_course_access_structure(ccx, course_key, course_license, licensed_simulations)
+
+
+def update_course_access_structure(ccx, course_key, course_license, licensed_simulations):
+    """
+    Fetch course licensed simulations structure info and save it for override provider.
+    Also can be called by `course_published` signal handler.
+    """
     store = modulestore()
     with store.bulk_operations(course_key):
         lti_blocks = store.get_items(course_key, qualifiers={'category': 'lti'})
@@ -256,9 +259,18 @@ def save_course_access_info(course_key, course_license, passports):
         course_info = get_course_blocks_info(simulations, licensed_simulations)
         # store licensed blocks info
         for block, block_simulations in course_info.items():
-            lci, __ = LicensedCoursewareItems.objects.get_or_create(
+            lci, created = LicensedCoursewareItems.objects.get_or_create(
                 course_license=course_license,
                 block=block.location.block_id
             )
-            lci.licensed_simulations = json.dumps(block_simulations)
+            if created:
+                lci.licensed_simulations = json.dumps(block_simulations)
+            else:
+                lci_simulations = json.loads(lci.licensed_simulations)
+                # update licensed simulations only if their list has changed
+                if len(set(block_simulations) & set(lci_simulations)) != len(block_simulations):
+                    lci.licensed_simulations = json.dumps(block_simulations)
             lci.save()
+
+        # process simulations visibility
+        apply_field_overrides(ccx, simulations, licensed_simulations)
