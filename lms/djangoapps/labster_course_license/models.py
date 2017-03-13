@@ -34,6 +34,21 @@ def add_simulations(inst, sim_list):
         log.debug('No changes in %s', inst.license_code)
 
 
+class Simulation(models.Model):
+    """
+    Store simulations ids.
+    """
+    code = models.CharField(max_length=18, db_index=True)
+
+
+class CCXLocatorField(OpaqueKeyField):
+    """
+    A django Field that stores a CCXLocator object as a string.
+    """
+    description = "A CCXLocator object, saved to the DB in the form of a string"
+    KEY_CLASS = CCXLocator
+
+
 class CourseLicense(models.Model):
     """
     A Labster License with related simulations for course.
