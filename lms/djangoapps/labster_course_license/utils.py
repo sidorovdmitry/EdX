@@ -171,3 +171,22 @@ def get_course_blocks_info(simulations, licensed_simulations):
         raise SimulationValidationError(errors)
 
     return course_info
+
+
+def update_course_access_structure(course_key):
+    """
+    Fetch course licensed simulations structure info and save it for override provider.
+    Also can be called by `course_published` signal handler.
+    """
+    store = modulestore()
+    with store.bulk_operations(course_key):
+        lti_blocks = store.get_items(course_key, qualifiers={'category': 'lti'})
+        # Filter a list of lti blocks to get only blocks with simulations.
+        simulations = (block for block in lti_blocks if '/simulation/' in block.launch_url)
+        course_license = CourseLicense.get_license(course_key)
+        licensed_simulations = course_license.simulations.all().values_list('code', flat=True)
+        course_info = get_course_blocks_info(simulations, licensed_simulations)
+        # store licensed blocks info
+        for block, block_simulations in course_info.items():
+            lci, created = LicensedCoursewareItems.objects.get_or_create(block=block)
+            lci.add_simulations(block_simulations)

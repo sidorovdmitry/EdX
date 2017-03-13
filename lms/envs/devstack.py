@@ -227,3 +227,11 @@ if os.path.isfile(join(dirname(abspath(__file__)), 'private.py')):
 MODULESTORE = convert_module_store_setting_if_needed(MODULESTORE)
 
 SECRET_KEY = '85920908f28904ed733fe576320db18cabd7b6cd'
+
+BULK_EMAIL_DEFAULT_RETRY_DELAY = 5
+
+try:
+    from .labster import *  # pylint: disable=import-error
+except ImportError:
+    pass
+

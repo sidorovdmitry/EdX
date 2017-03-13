@@ -1,27 +1,55 @@
 """
 Models for the Labster License.
 """
+import logging
 import json
 from django.db import models
 
 from ccx_keys.locator import CCXLocator
-from xmodule_django.models import OpaqueKeyField  # pylint: disable=import-error
+from xmodule_django.models import CourseKeyField, OpaqueKeyField, UsageKeyField  # pylint: disable=import-error
 
 
-class CCXLocatorField(OpaqueKeyField):
+log = logging.getLogger(__name__)
+
+
+def add_simulations(inst, sim_list):
     """
-    A django Field that stores a CCXLocator object as a string.
+    Associate licensed simulations to instance.
     """
-    description = "A CCXLocator object, saved to the DB in the form of a string"
-    KEY_CLASS = CCXLocator
+    print('______   adding simulations to %s' % inst.__class__.__name__)
+    print(sim_list)
+    if not isinstance(sim_list, set):
+        return
+
+    simulations = set(inst.simulations.all().values_list('code', flat=True))
+
+    print('current list', simulations)
+    if simulations != set(sim_list):
+        print('updating')
+        inst.simulations.clear()
+        related_sims = [Simulation.objects.get_or_create(code=simulation)[0] for simulation in sim_list]
+        if related_sims:
+            inst.simulations.add(*related_sims)
+    else:
+        log.debug('No changes in %s', inst.license_code)
 
 
 class CourseLicense(models.Model):
     """
-    A Labster License.
+    A Labster License with related simulations for course.
     """
-    course_id = CCXLocatorField(max_length=255, db_index=True, unique=True)
+    course_id = CourseKeyField(max_length=255, db_index=True)
     license_code = models.CharField(max_length=255, db_index=True)
+    simulations = models.ManyToManyField(Simulation, related_name='courselicenses')
+
+    def add_simulations(self, sim_list):
+        """
+        Associate licensed simulations to course license.
+        """
+        add_simulations(self, sim_list)
+
+    def get_simulations_set(self):
+        return set(self.simulations.all().values_list('code', flat=True))
 
     @classmethod
     def get_license(cls, course_id):
@@ -32,46 +60,25 @@ class CourseLicense(models.Model):
 
     @classmethod
     def set_license(cls, course_id, license_code):
-        try:
-            course_license = cls.objects.get(course_id=course_id)
-            course_license.license_code = license_code
-        except cls.DoesNotExist:
-            course_license = cls.objects.create(course_id=course_id, license_code=license_code)
-        course_license.save()
+        course_license, __ = cls.objects.get_or_create(course_id=course_id, license_code=license_code)
         return course_license
 
     def __unicode__(self):
-        return unicode(repr(self))
+        return unicode("%s, %s" % (self.course_id, self.license_code))
+
+
+
 
 
 class LicensedCoursewareItems(models.Model):
     """
     Stores all licensed simulations within block including ones from child blocks.
     """
-    course_license = models.ForeignKey(CourseLicense)
-    block = models.CharField(max_length=64)
-    licensed_simulations = models.TextField()
+    block = UsageKeyField(max_length=255, db_index=True)
+    simulations = models.ManyToManyField(Simulation, related_name='licenseditems')
 
-
-class LicensedSimulations(models.Model):
-    """
-    Keeps cached info from Labster API about licensed simulations for license.
-    """
-    course_license = models.ForeignKey(CourseLicense)
-    licensed_simulations = models.TextField(blank=True, null=True)
-
-    @classmethod
-    def store_simulations(cls, course_license, sim_list):
+    def add_simulations(self, sim_list):
         """
-        Save list of licensed simulations as json string.
+        Associate licensed simulations to course license.
         """
-        if not isinstance(sim_list, set) or not course_license:
-            return
-
-        try:
-            lic_sims = cls.objects.get(course_license=course_license)
-        except cls.DoesNotExist:
-            lic_sims = cls.objects.create(course_license=course_license)
-
-        lic_sims.licensed_simulations = json.dumps(list(sim_list))
-        lic_sims.save()
+        add_simulations(self, sim_list)

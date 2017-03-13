@@ -6,7 +6,6 @@ import requests
 import logging
 
 from requests.exceptions import RequestException
-from xmodule.modulestore.django import modulestore
 from edxmako.shortcuts import render_to_response  # pylint: disable=import-error
 
 from django.conf import settings
@@ -17,19 +16,17 @@ from django.shortcuts import redirect
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import HttpResponseBadRequest, Http404
-from django.utils.safestring import mark_safe
+from rest_framework.generics import UpdateAPIView
+from rest_framework.response import Response
+from rest_framework import status
 
-from labster_course_license.utils import (
-    get_course_blocks_info,
-    get_block_course_key,
-    SimulationValidationError,
-    LtiPassport
-)
-from labster_course_license.models import CourseLicense, LicensedSimulations, LicensedCoursewareItems
-from labster_course_license.utils import get_simulation_id
+from labster_course_license.utils import SimulationValidationError, LtiPassport
+# from labster_course_license.authentication import LabsterAPIAuthentication, IsAuthenticatedByToken
+from labster_course_license.models import CourseLicense, LicensedCoursewareItems
+# from labster_course_license.serializers import LicensedSimulationsSerializer
 from ccx_keys.locator import CCXLocator
 from ccx.views import coach_dashboard, get_ccx_for_coach
-from ccx.overrides import get_override_for_ccx, override_field_for_ccx, clear_override_for_ccx
+from ccx.overrides import get_override_for_ccx, override_field_for_ccx
 
 
 log = logging.getLogger(__name__)
@@ -63,6 +60,37 @@ def license_handler(request, course, ccx=None):
     return HttpResponseBadRequest('Only GET and POST methods are supported.')
 
 
+class LicensedSimulationsUpdateView(UpdateAPIView):
+    """
+    Labster License update handlers.
+    """
+    # authentication_classes = (LabsterAPIAuthentication, )
+    # permission_classes = (IsAuthenticatedByToken,)
+    # serializer_class = LicensedSimulationsSerializer
+    lookup_field = 'course_license__license_code'
+
+    def get_queryset(self):
+        # queryset = LicensedSimulations.objects.all()
+        queryset = CourseLicense.objects.all()
+        queryset = self.get_serializer_class().setup_eager_loading(queryset)
+        return queryset
+
+    def update(self, request, *args, **kwargs):
+        if 'licensed_simulations' not in request.data:
+            return Response(
+                {"error": "`licensed_simulations` parameter is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # obj = self.get_object()
+        # serializer = self.get_serializer(obj, data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        # self.perform_update(serializer)
+        #
+        # return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
+
+
 def dashboard(request, course, ccx):
     """
     Display the Course License Dashboard.
@@ -84,17 +112,6 @@ def dashboard(request, course, ccx):
     else:
         context['ccx_coach_dashboard'] = reverse('ccx_coach_dashboard', kwargs={'course_id': course.id})
     return render_to_response('labster/course_license.html', context)
-
-
-def apply_field_overrides(ccx, simulations, licensed_simulations):
-    """
-    Applies field overrides for the given descriptors.
-    """
-    field_name = 'visible_to_staff_only'
-    for sim in simulations:
-        sim_id = get_simulation_id(sim)
-        if sim_id not in licensed_simulations:
-            override_field_for_ccx(ccx, sim, field_name, True)
 
 
 def _send_request(url, data):
@@ -202,75 +219,28 @@ def set_license(request, course, ccx):
         passports.append(str(passport))
 
     override_field_for_ccx(ccx, course, 'lti_passports', passports)
-    course_license = CourseLicense.set_license(ccx_locator, license)
+    course_license = CourseLicense.set_license(course_key, license)
 
-    update_course_structure = request.POST.get('update', None)
-    if not update_course_structure:
-        return redirect(url)
+    # update_course_structure = request.POST.get('update', None)
+    # if not update_course_structure:
+    #     return redirect(url)
 
     try:
-        save_course_access_info(ccx, course_key, course_license, passports)
+        # Getting a list of licensed simulations
+        consumer_keys = [LtiPassport(passport_str).consumer_key for passport_str in passports]
+        licensed_simulations_ids = get_licensed_simulations(consumer_keys)
+        print('save license: try successful')
     except (LabsterApiError, ItemNotFoundError):
+        print('save license: exception')
         messages.error(
             request, _('Your license is successfully applied, but there was an error with updating your course.')
         )
         return redirect(url)
-    except SimulationValidationError as err:
-        msg = _((
-            'Please verify LTI URLs are correct for the following simulations:<br><br> {}'
-        ).format(
-            '<br><br>'.join(
-                'Simulation name is "{}"<br>Simulation id is "{}"<br>Error message: <b>{}</b>'.format(
-                    sim_name, sim_id, err_msg
-                ) for sim_name, sim_id, err_msg in err.message
-            )
-        ))
-        messages.error(request, mark_safe(msg))
-        return redirect(url)
+    else:
+        print('save license: else')
+        # Store them for future use to prevent from requesting labster API
+        course_license.add_simulations(licensed_simulations_ids)
+        print('added', course_license.simulations.all())
 
     url = reverse('labster_license_handler', kwargs={'course_id': CCXLocator.from_course_locator(course.id, ccx.id)})
     return redirect(url)
-
-
-def save_course_access_info(ccx, course_key, course_license, passports):
-    """
-    Stores course access info which will be used by FieldOverrideProvider.
-    """
-    # Getting a list of licensed simulations
-    consumer_keys = [LtiPassport(passport_str).consumer_key for passport_str in passports]
-    licensed_simulations = get_licensed_simulations(consumer_keys)
-
-    # Store them for future use to prevent from requesting labster API
-    LicensedSimulations.store_simulations(course_license, licensed_simulations)
-
-    update_course_access_structure(ccx, course_key, course_license, licensed_simulations)
-
-
-def update_course_access_structure(ccx, course_key, course_license, licensed_simulations):
-    """
-    Fetch course licensed simulations structure info and save it for override provider.
-    Also can be called by `course_published` signal handler.
-    """
-    store = modulestore()
-    with store.bulk_operations(course_key):
-        lti_blocks = store.get_items(course_key, qualifiers={'category': 'lti'})
-        # Filter a list of lti blocks to get only blocks with simulations.
-        simulations = (block for block in lti_blocks if '/simulation/' in block.launch_url)
-        course_info = get_course_blocks_info(simulations, licensed_simulations)
-        # store licensed blocks info
-        for block, block_simulations in course_info.items():
-            lci, created = LicensedCoursewareItems.objects.get_or_create(
-                course_license=course_license,
-                block=block.location.block_id
-            )
-            if created:
-                lci.licensed_simulations = json.dumps(block_simulations)
-            else:
-                lci_simulations = json.loads(lci.licensed_simulations)
-                # update licensed simulations only if their list has changed
-                if len(set(block_simulations) & set(lci_simulations)) != len(block_simulations):
-                    lci.licensed_simulations = json.dumps(block_simulations)
-            lci.save()
-
-        # process simulations visibility
-        apply_field_overrides(ccx, simulations, licensed_simulations)
