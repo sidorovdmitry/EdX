@@ -1,4 +1,4 @@
-from .devstack import *  # pylint: disable=wildcard-import, unused-wildcard-import
+from .aws import *  # pylint: disable=wildcard-import, unused-wildcard-import
 import urlparse
 
 
@@ -18,6 +18,7 @@ for feature, value in ENV_LABSTER_FEATURES.items():
     LABSTER_FEATURES[feature] = value
 
 INSTALLED_APPS += (
+    'rest_framework.authtoken',
     'labster_course_license',
     'labster_vouchers',
 )
@@ -49,7 +50,3 @@ if RAVEN_CONFIG.get('dsn'):
 FIELD_OVERRIDE_PROVIDERS += (
     'lms.djangoapps.labster_course_license.licensed_blocks_override.LicensedBlocksOverrideProvider',
 )
-
-BULK_EMAIL_DEFAULT_RETRY_DELAY = 5
-BULK_EMAIL_MAX_RETRIES = 5
-GRADES_DOWNLOAD_ROUTING_KEY = ''

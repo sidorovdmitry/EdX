@@ -2,51 +2,12 @@
 Models for the Labster License.
 """
 import logging
-import json
 from django.db import models
-
-from ccx_keys.locator import CCXLocator
+from django_extensions.db.fields.json import JSONField
 from xmodule_django.models import CourseKeyField, OpaqueKeyField, UsageKeyField  # pylint: disable=import-error
 
 
 log = logging.getLogger(__name__)
-
-
-def add_simulations(inst, sim_list):
-    """
-    Associate licensed simulations to instance.
-    """
-    print('______   adding simulations to %s' % inst.__class__.__name__)
-    print(sim_list)
-    if not isinstance(sim_list, set):
-        return
-
-    simulations = set(inst.simulations.all().values_list('code', flat=True))
-
-    print('current list', simulations)
-    if simulations != set(sim_list):
-        print('updating')
-        inst.simulations.clear()
-        related_sims = [Simulation.objects.get_or_create(code=simulation)[0] for simulation in sim_list]
-        if related_sims:
-            inst.simulations.add(*related_sims)
-    else:
-        log.debug('No changes in %s', inst.license_code)
-
-
-class Simulation(models.Model):
-    """
-    Store simulations ids.
-    """
-    code = models.CharField(max_length=18, db_index=True)
-
-
-class CCXLocatorField(OpaqueKeyField):
-    """
-    A django Field that stores a CCXLocator object as a string.
-    """
-    description = "A CCXLocator object, saved to the DB in the form of a string"
-    KEY_CLASS = CCXLocator
 
 
 class CourseLicense(models.Model):
@@ -55,23 +16,16 @@ class CourseLicense(models.Model):
     """
     course_id = CourseKeyField(max_length=255, db_index=True)
     license_code = models.CharField(max_length=255, db_index=True)
-    simulations = models.ManyToManyField(Simulation, related_name='courselicenses')
-
-    def add_simulations(self, sim_list):
-        """
-        Associate licensed simulations to course license.
-        """
-        add_simulations(self, sim_list)
-
-    def get_simulations_set(self):
-        return set(self.simulations.all().values_list('code', flat=True))
+    simulations = JSONField()
 
     @classmethod
     def get_license(cls, course_id):
+        ret = None
         try:
-            return cls.objects.get(course_id=course_id)
+            ret = cls.objects.get(course_id=course_id)
         except cls.DoesNotExist:
-            return None
+            pass
+        return ret
 
     @classmethod
     def set_license(cls, course_id, license_code):
@@ -79,10 +33,7 @@ class CourseLicense(models.Model):
         return course_license
 
     def __unicode__(self):
-        return unicode("%s, %s" % (self.course_id, self.license_code))
-
-
-
+        return unicode("%s, %s" % (self.ccx_id, self.license_code))
 
 
 class LicensedCoursewareItems(models.Model):
@@ -90,10 +41,7 @@ class LicensedCoursewareItems(models.Model):
     Stores all licensed simulations within block including ones from child blocks.
     """
     block = UsageKeyField(max_length=255, db_index=True)
-    simulations = models.ManyToManyField(Simulation, related_name='licenseditems')
+    simulations = JSONField()
 
-    def add_simulations(self, sim_list):
-        """
-        Associate licensed simulations to course license.
-        """
-        add_simulations(self, sim_list)
+    def __unicode__(self):
+        return unicode("%s, %s" % (self.block, self.simulations))
