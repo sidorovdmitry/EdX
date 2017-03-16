@@ -4,7 +4,7 @@ Models for the Labster License.
 import logging
 from django.db import models
 from django_extensions.db.fields.json import JSONField
-from xmodule_django.models import CourseKeyField, OpaqueKeyField, UsageKeyField  # pylint: disable=import-error
+from xmodule_django.models import CourseKeyField, UsageKeyField  # pylint: disable=import-error
 
 
 log = logging.getLogger(__name__)
@@ -20,6 +20,9 @@ class CourseLicense(models.Model):
 
     @classmethod
     def get_license(cls, course_id):
+        """
+        Return license by course key.
+        """
         ret = None
         try:
             ret = cls.objects.get(course_id=course_id)
@@ -29,6 +32,9 @@ class CourseLicense(models.Model):
 
     @classmethod
     def set_license(cls, course_id, license_code):
+        """
+        Save course license.
+        """
         course_license, __ = cls.objects.get_or_create(course_id=course_id, license_code=license_code)
         return course_license
 

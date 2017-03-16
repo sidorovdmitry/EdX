@@ -25,8 +25,8 @@ from rest_framework.permissions import IsAuthenticated
 from ccx_keys.locator import CCXLocator
 from ccx.views import coach_dashboard, get_ccx_for_coach
 from ccx.overrides import get_override_for_ccx, override_field_for_ccx
-from labster_course_license.models import CourseLicense, LicensedCoursewareItems
-from labster_course_license.utils import SimulationValidationError, LtiPassport, validate_simulations_ids
+from labster_course_license.models import CourseLicense
+from labster_course_license.utils import LtiPassport, validate_simulations_ids
 
 
 log = logging.getLogger(__name__)
@@ -199,7 +199,7 @@ def set_license(request, course, ccx):
         messages.error(
             request, _('There are some issues with applying your license. Please try again in a few minutes.')
         )
-        log.error("Unable to get consumer secret for license {}: {}".format(license, api_err))
+        log.error("Unable to get consumer secret for license %s: %s", license, api_err)
         return redirect(url)
     except ItemNotFoundError:
         messages.error(request, _('Ensure you are using correct License code.'))

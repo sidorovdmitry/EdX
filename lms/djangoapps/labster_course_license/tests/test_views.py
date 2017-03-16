@@ -12,7 +12,7 @@ from xmodule.modulestore.tests.factories import ItemFactory
 from xblock.field_data import DictFieldData
 from courseware.field_overrides import OverrideFieldData
 from lms.djangoapps.ccx.overrides import get_override_for_ccx
-from labster_course_license.models import LicensedCoursewareItems, CourseLicense
+from labster_course_license.models import LicensedCoursewareItems
 from labster_course_license.tests.factories import CourseLicenseFactory
 
 

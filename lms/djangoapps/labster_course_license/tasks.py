@@ -7,7 +7,7 @@ from opaque_keys.edx.keys import CourseKey
 from opaque_keys import InvalidKeyError
 from xmodule.modulestore.django import modulestore
 from labster_course_license.models import LicensedCoursewareItems
-from labster_course_license.utils import SimulationValidationError, get_course_blocks_info, validate_simulations_ids
+from labster_course_license.utils import get_course_blocks_info, validate_simulations_ids
 
 
 log = get_task_logger(__name__)
@@ -40,9 +40,10 @@ def update_course_access_structure(course_key):
     with store.bulk_operations(course_key):
         valid_simulations, errors = validate_simulations_ids(course_key)
         if errors:
-            log.error("Invalid LTI URLs in the following simulations: {}".format(
+            log.error(
+                "Invalid LTI URLs in the following simulations: %s",
                 ' '.join('{}:{}:{}'.format(sim_name, sim_id, err_msg) for sim_name, sim_id, err_msg in errors)
-            ))
+            )
         course_info = get_course_blocks_info(valid_simulations)
         # store licensed blocks info
         for block, block_simulations in course_info.items():
