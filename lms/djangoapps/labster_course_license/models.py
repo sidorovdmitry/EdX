@@ -33,7 +33,7 @@ class CourseLicense(models.Model):
         return course_license
 
     def __unicode__(self):
-        return unicode("%s, %s" % (self.ccx_id, self.license_code))
+        return unicode("%s, %s" % (self.course_id, self.license_code))
 
 
 class LicensedCoursewareItems(models.Model):

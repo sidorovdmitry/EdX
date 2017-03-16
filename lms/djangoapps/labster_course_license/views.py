@@ -16,17 +16,17 @@ from django.shortcuts import redirect
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import HttpResponseBadRequest, Http404
+from django.utils.safestring import mark_safe
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
-from labster_course_license.utils import SimulationValidationError, LtiPassport
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from labster_course_license.models import CourseLicense, LicensedCoursewareItems
 from ccx_keys.locator import CCXLocator
 from ccx.views import coach_dashboard, get_ccx_for_coach
 from ccx.overrides import get_override_for_ccx, override_field_for_ccx
+from labster_course_license.models import CourseLicense, LicensedCoursewareItems
+from labster_course_license.utils import SimulationValidationError, LtiPassport, validate_simulations_ids
 
 
 log = logging.getLogger(__name__)
@@ -224,6 +224,9 @@ def set_license(request, course, ccx):
         # Getting a list of licensed simulations
         consumer_keys = [LtiPassport(passport_str).consumer_key for passport_str in passports]
         licensed_simulations_ids = get_licensed_simulations(consumer_keys)
+
+        # Validate course simulations
+        valid, errors = validate_simulations_ids(course_key)
     except (LabsterApiError, ItemNotFoundError):
         messages.error(
             request, _('Your license is successfully applied, but there was an error with updating your course.')
@@ -233,6 +236,19 @@ def set_license(request, course, ccx):
         # Store them for future use to prevent from requesting labster API
         course_license.simulations = list(licensed_simulations_ids)
         course_license.save()
+
+        if errors:
+            msg = _((
+                'Please verify LTI URLs are correct for the following simulations:<br><br> {}'
+            ).format(
+                '<br><br>'.join(
+                    'Simulation name is "{}"<br>Simulation id is "{}"<br>Error message: <b>{}</b>'.format(
+                        sim_name, sim_id, err_msg
+                    ) for sim_name, sim_id, err_msg in errors
+                )
+            ))
+            messages.error(request, mark_safe(msg))
+            return redirect(url)
 
     url = reverse('labster_license_handler', kwargs={'course_id': CCXLocator.from_course_locator(course.id, ccx.id)})
     return redirect(url)

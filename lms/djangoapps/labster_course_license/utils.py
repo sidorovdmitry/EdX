@@ -8,6 +8,7 @@ from urlparse import urlparse
 from django.core.validators import URLValidator, RegexValidator
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+from xmodule.modulestore.django import modulestore
 
 from opaque_keys.edx.keys import CourseKey, UsageKey
 
@@ -114,41 +115,21 @@ def update_simulations(course_info, block, simulation_id):
     """
     Updates licensed simulations for block.
     """
-    block_licensed_simulations = course_info.get(block)
-    if not block_licensed_simulations:
-        block_licensed_simulations = list()
-    # blocks without licensed simulations will have empty list value
-    if simulation_id:
-        block_licensed_simulations.append(simulation_id)
-    return block_licensed_simulations
+    block_simulations = course_info.get(block)
+    if not block_simulations and not isinstance(block_simulations, set):
+        block_simulations = set()
+    block_simulations.add(simulation_id)
+    return block_simulations
 
 
-def get_course_blocks_info(simulations, licensed_simulations):
+def get_course_blocks_info(simulations):
     """
     Returns information about licensed simulations per block.
     """
-    url_validator = URLValidator()
-    sim_id_validator = RegexValidator(re.compile(r'^[a-zA-Z0-9]+$'), message=_('Enter a valid simulation id.'))
-
     course_info = {}
-    errors = []
 
     for simulation in simulations:
         simulation_id = get_simulation_id(simulation.launch_url)
-
-        for value, validator in ((simulation.launch_url, url_validator), (simulation_id, sim_id_validator)):
-            try:
-                validator(value)
-            except ValidationError as err:
-                errors.append((simulation.display_name, simulation_id, u'<br>'.join(err.messages)))
-
-        if WILD_CARD in licensed_simulations:
-            is_hidden = False
-        else:
-            is_hidden = simulation_id not in licensed_simulations
-
-        if is_hidden:
-            simulation_id = None
 
         # we need to add blocks even if they do not have licensed simulations
         unit = get_parent_unit(simulation)
@@ -167,26 +148,28 @@ def get_course_blocks_info(simulations, licensed_simulations):
             continue
         course_info[chapter] = update_simulations(course_info, chapter, simulation_id)
 
-    if errors:
-        raise SimulationValidationError(errors)
-
     return course_info
 
 
-def update_course_access_structure(course_key):
+def validate_simulations_ids(course_key):
     """
-    Fetch course licensed simulations structure info and save it for override provider.
-    Also can be called by `course_published` signal handler.
+    Validate simulations ids.
     """
-    store = modulestore()
-    with store.bulk_operations(course_key):
-        lti_blocks = store.get_items(course_key, qualifiers={'category': 'lti'})
-        # Filter a list of lti blocks to get only blocks with simulations.
-        simulations = (block for block in lti_blocks if '/simulation/' in block.launch_url)
-        course_license = CourseLicense.get_license(course_key)
-        licensed_simulations = course_license.simulations.all().values_list('code', flat=True)
-        course_info = get_course_blocks_info(simulations, licensed_simulations)
-        # store licensed blocks info
-        for block, block_simulations in course_info.items():
-            lci, created = LicensedCoursewareItems.objects.get_or_create(block=block)
-            lci.add_simulations(block_simulations)
+    url_validator = URLValidator()
+    sim_id_validator = RegexValidator(re.compile(r'^[a-zA-Z0-9]+$'), message=_('Enter a valid simulation id.'))
+    errors = []
+    valid_simulations = []
+
+    lti_blocks = modulestore().get_items(course_key, qualifiers={'category': 'lti'})
+    simulations = (block for block in lti_blocks if '/simulation/' in block.launch_url)
+    for simulation in simulations:
+        simulation_id = get_simulation_id(simulation.launch_url)
+
+        for value, validator in ((simulation.launch_url, url_validator), (simulation_id, sim_id_validator)):
+            try:
+                validator(value)
+                valid_simulations.append(simulation)
+            except ValidationError as err:
+                errors.append((simulation.display_name, simulation_id, u'<br>'.join(err.messages)))
+
+    return valid_simulations, errors

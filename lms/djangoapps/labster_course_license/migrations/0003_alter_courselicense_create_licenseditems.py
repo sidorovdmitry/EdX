@@ -9,7 +9,7 @@ import django_extensions.db.fields.json
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('labster_course_license', '0002_courselicense_licensedcoursewareitems'),
+        ('labster_course_license', '0002_add_courselicense'),
     ]
 
     operations = [

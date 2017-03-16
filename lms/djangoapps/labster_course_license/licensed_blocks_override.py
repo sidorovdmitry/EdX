@@ -64,6 +64,7 @@ def is_visible_to_staff_only(course_key, block, default):
 
     available_simulations = set(course_license.simulations)
     actual_simulations = set(item.simulations)
+
     if len(actual_simulations.intersection(available_simulations)):
         return default
     else:

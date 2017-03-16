@@ -6,15 +6,14 @@ import mock
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from rest_framework import status
-from ccx_keys.locator import CCXLocator
+from ccx_keys.locator import CourseLocator
 from openedx.core.djangoapps.labster.tests.base import CCXCourseTestBase
 from xmodule.modulestore.tests.factories import ItemFactory
-from xmodule.modulestore.django import modulestore
-from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xblock.field_data import DictFieldData
 from courseware.field_overrides import OverrideFieldData
 from lms.djangoapps.ccx.overrides import get_override_for_ccx
 from labster_course_license.models import LicensedCoursewareItems, CourseLicense
+from labster_course_license.tests.factories import CourseLicenseFactory
 
 
 @override_settings(
@@ -33,12 +32,15 @@ class TestSetLicense(CCXCourseTestBase):
         OverrideFieldData.provider_classes = None
         self.override = OverrideFieldData.wrap(self.user, self.course, DictFieldData({}))
 
+        course_key = unicode(self.course.id)
+        course_locator = CourseLocator.from_string(course_key)
+        CourseLicenseFactory(course_id=course_locator, license_code=self.data['license'])
+
     def is_visible_to_staff_only(self, block):
         """
         Get `visible_to_staff_only` property value of block.
         """
         is_visible = self.override.get_override(block, 'visible_to_staff_only')
-        print(is_visible)
         if not isinstance(is_visible, bool):
             is_visible = False
         return is_visible
@@ -192,6 +194,7 @@ class TestSetLicense(CCXCourseTestBase):
             ('/simulation/a0Kw0000005', 'LTI5', 'a0Kw0000005'),
             ('localhost/simulation/a0Kw0000006/', 'LTI6', 'a0Kw0000006'),
         ]
+
         licenced_simulations = [ItemFactory.create(
             category='lti', modulestore=self.store, display_name=display_name,
             metadata={'lti_id': 'correct_lti_id', 'launch_url': url}
@@ -207,57 +210,70 @@ class TestSetLicense(CCXCourseTestBase):
             self.assertContains(resp, item[1])  # Display name
             self.assertContains(resp, item[2])  # Simulation id
 
+    def _get_block_location(self, block):
+        """
+        Returns BlockUsageLocation for block.
+        """
+        try:
+            location = block.location.to_block_locator()
+        except AttributeError:
+            location = block.location
+        return location
+
     @mock.patch('labster_course_license.views.get_licensed_simulations')
     @mock.patch('labster_course_license.views.get_consumer_secret')
     def test_access_structure_stored_correctly(self, mock_get_consumer_secret, mock_get_licensed_simulations):
         """
-        Test that the licence page is returned with no invalid simulations.
+        Test that course structure is saved correctly.
         """
         mock_get_consumer_secret.return_value = ('123', '__secret_key__')
         mock_get_licensed_simulations.return_value = ['a0Kw0000001']
 
-        data = [
-            ('https://example.com/simulation/a0Kw0000000/', 'LTI0'),
-            ('https://example.com/simulation/a0Kw0000001/', 'LTI1'),
-            ('https://example.com/simulation/a0Kw00000002', 'LTI2'),
-        ]
-
         chapter = ItemFactory.create(parent=self.course, category='chapter')
         sequential = ItemFactory.create(parent=chapter, category='sequential')
         vertical = ItemFactory.create(parent=sequential, category='vertical')
-
         sequential2 = ItemFactory.create(parent=chapter, category='sequential')
         vertical2 = ItemFactory.create(parent=sequential2, category='vertical')
 
-        blocks = [ItemFactory.create(
+        ItemFactory.create(
             parent=vertical,
-            category='lti', modulestore=self.store, display_name=item[1],
-            metadata={'lti_id': 'correct_lti_id', 'launch_url': item[0]}
-        ) for index, item in enumerate(data)]
+            category='lti', modulestore=self.store, display_name='LTI1',
+            metadata={'lti_id': 'correct_lti_id', 'launch_url': 'https://example.com/simulation/a0Kw0000001/'}
+        )
+        ItemFactory.create(parent=vertical2, category='overview', modulestore=self.store, display_name='Text')
         ItemFactory.create(
             parent=vertical2,
             category='lti', modulestore=self.store, display_name='LTI3',
-            metadata={
-                'lti_id': 'correct_lti_id',
-                'launch_url': 'https://example.com/simulation/a0Kw00000003'
-            }
+            metadata={'lti_id': 'correct_lti_id', 'launch_url': 'https://example.com/simulation/a0Kw00000003/'}
         )
-        ItemFactory.create(parent=vertical2, category='overview', modulestore=self.store, display_name='Text')
 
         res = self.client.post(self.url, data=self.data, follow=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        course_license = CourseLicense.objects.get(
-            course_id=CCXLocator.from_course_locator(self.course.id, self.ccx.id)
+        qs = LicensedCoursewareItems.objects.all()
+
+        self.assertEqual(qs.count(), 5)
+
+        self.assertEqual(
+            qs.get(block=self._get_block_location(chapter)).simulations,
+            ["a0Kw0000001", "a0Kw00000003"]
         )
-        lci = LicensedCoursewareItems.objects.filter(course_license=course_license)
-
-        # check chapter, both sequentials and both verticals are saved
-        self.assertEqual(lci.count(), 5)
-
-        # check text block parent is visible to students
-        vertical2 = self.ccx.course.get_children()[0].get_children()[1].get_children()[0]
-        self.assertFalse(self.is_visible_to_staff_only(vertical2))
+        self.assertEqual(
+            qs.get(block=self._get_block_location(sequential)).simulations,
+            ["a0Kw0000001"]
+        )
+        self.assertEqual(
+            qs.get(block=self._get_block_location(sequential2)).simulations,
+            ["a0Kw00000003"]
+        )
+        self.assertEqual(
+            qs.get(block=self._get_block_location(vertical)).simulations,
+            ["a0Kw0000001"]
+        )
+        self.assertEqual(
+            qs.get(block=self._get_block_location(vertical2)).simulations,
+            ["a0Kw00000003"]
+        )
 
     def setup_patch(self, function_name, return_value):
         """
