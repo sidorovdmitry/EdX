@@ -21,6 +21,11 @@ class Migration(migrations.Migration):
                 ('simulations', django_extensions.db.fields.json.JSONField()),
             ],
         ),
+        migrations.AlterField(
+            model_name='courselicense',
+            name='course_id',
+            field=xmodule_django.models.CourseKeyField(max_length=255, db_index=True)
+        ),
         migrations.AddField(
             model_name='courselicense',
             name='simulations',
