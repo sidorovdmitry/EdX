@@ -20,7 +20,6 @@ def update_course_access(course_id):
 
     Args:
         course_id(str): A string representation of course identifier
-        available_simulations(list): list of licensed simulations for course
 
     Returns:
         None
@@ -39,10 +38,7 @@ def update_course_access_structure(course_key):
     """
     store = modulestore()
     with store.bulk_operations(course_key):
-        lti_blocks = store.get_items(course_key, qualifiers={'category': 'lti'})
-        # Filter a list of lti blocks to get only blocks with simulations.
-        simulations = (block for block in lti_blocks if '/simulation/' in block.launch_url)
-        valid_simulations, errors = validate_simulations_ids(simulations)
+        valid_simulations, errors = validate_simulations_ids(course_key)
         if errors:
             log.error("Invalid LTI URLs in the following simulations: {}".format(
                 ' '.join('{}:{}:{}'.format(sim_name, sim_id, err_msg) for sim_name, sim_id, err_msg in errors)
