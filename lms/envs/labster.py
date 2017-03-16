@@ -47,6 +47,8 @@ if RAVEN_CONFIG.get('dsn'):
     INSTALLED_APPS += ('raven.contrib.django.raven_compat',)
 
 # Register labster override provider
-FIELD_OVERRIDE_PROVIDERS += (
+LABSTER_OVERRIDE_PROVIDERS = (
     'lms.djangoapps.labster_course_license.licensed_blocks_override.LicensedBlocksOverrideProvider',
 )
+
+FIELD_OVERRIDE_PROVIDERS = LABSTER_OVERRIDE_PROVIDERS + FIELD_OVERRIDE_PROVIDERS
