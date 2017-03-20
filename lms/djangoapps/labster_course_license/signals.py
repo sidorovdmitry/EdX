@@ -19,4 +19,3 @@ def on_course_publish(sender, course_key, **kwargs):  # pylint: disable=unused-a
     from .tasks import update_course_access
 
     update_course_access.delay(unicode(course_key))
-    log.info(u'Added task to update access course structure for course "%s" to the task queue', course_key)

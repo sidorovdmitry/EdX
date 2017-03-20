@@ -85,15 +85,18 @@ class CCXCourseTestBase(ModuleStoreTestCase):
             for i, k in enumerate(consumer_keys)
         ]
 
-    def make_coach(self):
+    def make_coach(self, course_id=None, user=None):
         """
         Create coach user.
         """
-        role = CourseCcxCoachRole(self.course.id)
-        role.add_users(self.user)
+        role = CourseCcxCoachRole(self.course.id if not course_id else course_id)
+        role.add_users(self.user if not user else user)
 
-    def make_ccx(self):
+    def make_ccx(self, course_id=None, user=None):
         """
         Create ccx.
         """
-        return CcxFactory(course_id=self.course.id, coach=self.user)
+        return CcxFactory(
+            course_id=self.course.id if not course_id else course_id,
+            coach=self.user if not user else user
+        )

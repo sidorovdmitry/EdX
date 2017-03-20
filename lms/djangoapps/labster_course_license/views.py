@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser
 from ccx_keys.locator import CCXLocator
 from ccx.views import coach_dashboard, get_ccx_for_coach
 from ccx.overrides import get_override_for_ccx, override_field_for_ccx
@@ -65,18 +65,12 @@ class LicensedSimulationsUpdateView(APIView):
     Labster License update handlers.
     """
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminUser,)
 
     def post(self, request, license_code):
         """
         Update course license with new simulations list.
         """
-        if 'licensed_simulations' not in request.data:
-            return Response(
-                {"error": "`licensed_simulations` parameter is required."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
         try:
             course_license = CourseLicense.objects.get(license_code=license_code)
         except CourseLicense.DoesNotExist:
@@ -85,7 +79,15 @@ class LicensedSimulationsUpdateView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        course_license.simulations = request.data['licensed_simulations']
+        try:
+            licensed_simulations_ids = get_licensed_simulations(consumer_keys)
+        except LabsterApiError:
+            log.error("Failed to update course license %s simulations" % course_license)
+            return Response(
+                {"error": "License %s not found." % license_code},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        course_license.simulations = licensed_simulations_ids
         course_license.save()
         return Response(status=status.HTTP_200_OK)
 
@@ -106,7 +108,7 @@ def dashboard(request, course, ccx):
 
     if ccx:
         ccx_locator = CCXLocator.from_course_locator(course.id, ccx.id)
-        context['license'] = CourseLicense.get_license(ccx_locator.to_course_locator())
+        context['license'] = CourseLicense.get_license(ccx_locator)
         context['labster_license_url'] = reverse('labster_license_handler', kwargs={'course_id': ccx_locator})
     else:
         context['ccx_coach_dashboard'] = reverse('ccx_coach_dashboard', kwargs={'course_id': course.id})
@@ -218,7 +220,7 @@ def set_license(request, course, ccx):
         passports.append(str(passport))
 
     override_field_for_ccx(ccx, course, 'lti_passports', passports)
-    course_license = CourseLicense.set_license(course_key, license)
+    course_license = CourseLicense.set_license(ccx_locator, license)
 
     try:
         # Getting a list of licensed simulations
