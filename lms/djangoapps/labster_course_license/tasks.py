@@ -48,6 +48,7 @@ def update_course_access_structure(course_key):
         course_info = get_course_blocks_info(valid_simulations)
         # store licensed blocks info
         for block, block_simulations in course_info.items():
+            log.debug("Updating block %s structure with simulations %s", block.display_name, block_simulations)
             lci, __ = LicensedCoursewareItems.objects.get_or_create(block=block.location)
             lci.simulations = list(block_simulations)
             lci.save()

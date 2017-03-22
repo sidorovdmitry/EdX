@@ -9,11 +9,12 @@ to trigger an update of course blocks simulations.
 """
 import logging
 from django.core.management.base import NoArgsCommand
+from django.conf import settings
 from lms.djangoapps.ccx.models import CustomCourseForEdX
 from xmodule.modulestore.django import SignalHandler
 
 from labster_course_license.models import CourseLicense
-from labster_course_license.views import LabsterApiError, get_licensed_simulations
+from labster_course_license.views import LabsterApiError, get_licensed_simulations, _send_request
 from labster_course_license.utils import get_consumer_keys
 
 
@@ -30,25 +31,46 @@ class Command(NoArgsCommand):
 
         cnt = 0
         courses = set()
+        licenses_keys = []
         print("Processing...")
         for course_license in CourseLicense.objects.all():
+            ccx_id = course_license.course_id.ccx
+            ccx = CustomCourseForEdX.objects.get(pk=ccx_id)
+            courses.update(ccx.course.id)
             try:
-                ccx_id = course_license.course_id.ccx
-                ccx = CustomCourseForEdX.objects.get(pk=ccx_id)
                 consumer_keys, __ = get_consumer_keys(ccx)
-                licensed_simulations_ids = get_licensed_simulations(consumer_keys)
-            except (LabsterApiError, OSError) as ex:
-                print("Failed to update `%s` license simulations: %s" % (course_license.license_code, ex))
+                licenses_keys.append([course_license.license_code, consumer_keys])
+            except OSError as ex:
+                print("Failed to get consumer keys for %s course: %s" % (ccx, ex))
                 continue
-            if course_license.simulations != list(licensed_simulations_ids):
+
+        try:
+            licensed_simulations = self.fetch_simulations_updates(licenses_keys)
+        except LabsterApiError as ex:
+            print("Failed to fetch licensed simulations from API: %s" % ex)
+            return
+
+        for license_code, simulations in licensed_simulations:
+            licensed_simulations_ids = list(simulations)
+            course_license = CourseLicense.objects.get(license_code=license_code)
+            if course_license.simulations != licensed_simulations_ids:
                 print("Updating `%s` license simulations: %s" % (course_license.license_code, licensed_simulations_ids))
-                course_license.simulations = list(licensed_simulations_ids)
-                course_license.save()
+                course_license.update(simulations=licensed_simulations_ids)
                 cnt += 1
-                courses.add(ccx.course.id)
             else:
                 print("`%s` license simulations already up to date." % course_license.license_code)
         print("Updated %d licenses" % cnt)
 
         for course_key in courses:
             SignalHandler.course_published.send(sender='management_task', course_key=course_key)
+
+    @staticmethod
+    def fetch_simulations_updates(consumer_keys):
+        """
+        Return a list of available simulation ids for each consumer_key item.
+        Raises: LabsterApiError
+        """
+        data = {'consumer_keys': consumer_keys}
+        url = settings.LABSTER_ENDPOINTS.get('available_simulations')
+        response = _send_request(url, data)
+        return response
