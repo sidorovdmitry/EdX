@@ -2,6 +2,7 @@
 Models for the Labster License.
 """
 import logging
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django_extensions.db.fields.json import JSONField
 from ccx_keys.locator import CCXLocator
@@ -23,11 +24,11 @@ class CourseLicense(models.Model):
     """
     A Labster License with related simulations for course.
     """
-    course_id = CCXLocatorField(max_length=255, db_index=True, unique=True)
+    course_id = CCXLocatorField(max_length=255, db_index=True, unique=True, help_text="CCXCourse locators only")
     license_code = models.CharField(max_length=255, db_index=True)
     simulations = JSONField(help_text="List of course licensed simulations, stored as json string value")
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    modified_at = models.DateTimeField(auto_now=True, null=True)
 
     @classmethod
     def get_license(cls, course_id):
@@ -36,7 +37,7 @@ class CourseLicense(models.Model):
         """
         try:
             return cls.objects.get(course_id=course_id)
-        except cls.DoesNotExist:
+        except ObjectDoesNotExist:
             return None
 
     @classmethod
@@ -57,8 +58,8 @@ class LicensedCoursewareItems(models.Model):
     """
     block = UsageKeyField(max_length=255, db_index=True)
     simulations = JSONField(help_text="List of block licensed simulations, stored as json string value")
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    modified_at = models.DateTimeField(auto_now=True, null=True)
 
     def __unicode__(self):
         return unicode("%s, simulations=%s" % (self.block, self.simulations))

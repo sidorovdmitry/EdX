@@ -23,6 +23,9 @@ class LicensedBlocksOverrideProvider(FieldOverrideProvider):
         """
         Just call the get_override_for_ccx method if there is a ccx
         """
+        # teacher or course staff can hide blocks in studio manually
+        # we need to return `default` instead of `False`
+        # this will allow to stay in sync with studio visibility edits
         if name != 'visible_to_staff_only':
             return default
         course_key = get_block_course_key(block)
@@ -31,8 +34,8 @@ class LicensedBlocksOverrideProvider(FieldOverrideProvider):
             try:
                 ccx = get_current_ccx(course_key)
                 if ccx:
-                    course_key = CCXLocator.from_course_locator(course_key, ccx.id)
-                    return is_visible_to_staff_only(course_key, block, default)
+                    ccx_key = CCXLocator.from_course_locator(course_key, ccx.id)
+                    return is_visible_to_staff_only(ccx_key, block, default)
             except ValueError:
                 # not a CourseKey instance
                 pass
@@ -48,27 +51,25 @@ class LicensedBlocksOverrideProvider(FieldOverrideProvider):
         return getattr(course, 'enable_ccx', False)
 
 
-def is_visible_to_staff_only(course_key, block, default):
+def is_visible_to_staff_only(ccx_key, block, default):
     """
     Show block if its licensed simulations intersect with course simulations.
     """
     # we need to filter LicensedCoursewareItems properly by block location
-    # just `block.location` will result in all courseware items are shown
+    # not all blocks locations are BlockUsageLocator's
     try:
         location = block.location.to_block_locator()
     except AttributeError:
         location = block.location
 
-    # teacher or course staff can hide blocks in studio manually
-    # we need to return `default` instead of `False`
-    # this will allow to stay in sync with studio visibility edits
     try:
         # List of actual simulations in the block (chapter, seq, vertical).
         item = LicensedCoursewareItems.objects.get(block=location)
         # List of licensed simulations in the course
-        course_license = CourseLicense.objects.get(course_id=course_key)
+        course_license = CourseLicense.objects.get(course_id=ccx_key)
     except LicensedCoursewareItems.DoesNotExist, CourseLicense.DoesNotExist:
         # we have regular block without simulations inside (text, video or other type)
+        # display block default visibility value
         return default
 
     available_simulations = set(course_license.simulations)
@@ -78,4 +79,6 @@ def is_visible_to_staff_only(course_key, block, default):
         # there are licensed simulations so block should be shown by default
         return default
     else:
+        # there are simulations but none of them are licensed
+        # thus we should hide the block
         return True

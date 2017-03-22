@@ -1,12 +1,8 @@
 """
 This file contains signals for labster_course_license app.
 """
-import logging
 from django.dispatch.dispatcher import receiver
 from xmodule.modulestore.django import SignalHandler
-
-
-log = logging.getLogger(__name__)
 
 
 @receiver(SignalHandler.course_published)

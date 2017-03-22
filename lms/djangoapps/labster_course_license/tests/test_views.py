@@ -33,12 +33,6 @@ class TestSetLicense(CCXCourseTestBase):
 
         CourseLicenseFactory(course_id=self.ccx_key, license_code=self.data['license'])
 
-    def is_visible_to_staff_only(self, block):
-        """
-        Get `visible_to_staff_only` property value of block.
-        """
-        return block.visible_to_staff_only
-
     @mock.patch('labster_course_license.views.get_licensed_simulations')
     @mock.patch('labster_course_license.views.get_consumer_secret')
     def test_valid_simulation_ids(self, mock_get_consumer_secret, mock_get_licensed_simulations):
@@ -96,14 +90,14 @@ class TestSetLicense(CCXCourseTestBase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         chapter = self.ccx.course.get_children()[0]
-        self.assertFalse(self.is_visible_to_staff_only(chapter))
+        self.assertFalse(chapter.visible_to_staff_only)
         sequential = chapter.get_children()[0]
-        self.assertFalse(self.is_visible_to_staff_only(sequential))
+        self.assertFalse(sequential.visible_to_staff_only)
         verticals = sequential.get_children()
 
         self.assertEqual(
             [False, False, False, True, True],
-            [self.is_visible_to_staff_only(i) for i in verticals]
+            [i.visible_to_staff_only for i in verticals]
         )
 
     @mock.patch('labster_course_license.views.get_licensed_simulations')
@@ -131,7 +125,7 @@ class TestSetLicense(CCXCourseTestBase):
 
         res = self.client.post(self.url, data=self.data, follow=True)
         vertical = self.ccx.course.get_children()[0].get_children()[0].get_children()[0]
-        self.assertTrue(self.is_visible_to_staff_only(vertical))
+        self.assertTrue(vertical.visible_to_staff_only)
 
         mock_get_licensed_simulations.return_value = ['a0Kw0000000']
 
@@ -140,7 +134,7 @@ class TestSetLicense(CCXCourseTestBase):
         self.assertIsNone(get_override_for_ccx(self.ccx, vertical, 'visible_to_staff_only'))
         # Flush field cache to make sure it returns most actual value.
         vertical._field_data_cache = {}  # pylint: disable=protected-access
-        self.assertFalse(self.is_visible_to_staff_only(vertical))
+        self.assertFalse(vertical.visible_to_staff_only)
 
     @mock.patch('labster_course_license.views.get_licensed_simulations')
     @mock.patch('labster_course_license.views.get_consumer_secret')
@@ -175,7 +169,7 @@ class TestSetLicense(CCXCourseTestBase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         chapter = self.ccx.course.get_children()[0]
         # Flush field cache to make sure it returns most actual value.
-        self.assertTrue(self.is_visible_to_staff_only(chapter))
+        self.assertTrue(chapter.visible_to_staff_only)
 
     @mock.patch('labster_course_license.views.get_licensed_simulations')
     @mock.patch('labster_course_license.views.get_consumer_secret')
@@ -316,8 +310,7 @@ class TestSetLicense(CCXCourseTestBase):
         self.assertEqual(res1.status_code, status.HTTP_200_OK)
         self.assertEqual(res2.status_code, status.HTTP_200_OK)
 
-        res = self.is_visible_to_staff_only(chapter)
-        self.assertFalse(res)
+        self.assertFalse(chapter.visible_to_staff_only)
 
     def setup_patch(self, function_name, return_value):
         """

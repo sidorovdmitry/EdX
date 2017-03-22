@@ -24,9 +24,10 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAdminUser
 from ccx_keys.locator import CCXLocator
 from ccx.views import coach_dashboard, get_ccx_for_coach
-from ccx.overrides import get_override_for_ccx, override_field_for_ccx
+from ccx.overrides import override_field_for_ccx
+from lms.djangoapps.ccx.models import CustomCourseForEdX
 from labster_course_license.models import CourseLicense
-from labster_course_license.utils import LtiPassport, validate_simulations_ids
+from labster_course_license.utils import LtiPassport, validate_simulations_ids, get_consumer_keys
 
 
 log = logging.getLogger(__name__)
@@ -67,10 +68,17 @@ class LicensedSimulationsUpdateView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminUser,)
 
-    def post(self, request, license_code):
+    def post(self, request):
         """
         Update course license with new simulations list.
         """
+        license_code = request.data.get('name')
+
+        if not license_code:
+            return Response(
+                {"error": "No license code was provided."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
             course_license = CourseLicense.objects.get(license_code=license_code)
         except CourseLicense.DoesNotExist:
@@ -78,6 +86,10 @@ class LicensedSimulationsUpdateView(APIView):
                 {"error": "License %s not found." % license_code},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        ccx_id = course_license.course_id.ccx
+        ccx = CustomCourseForEdX.objects.get(pk=ccx_id)
+        consumer_keys, __ = get_consumer_keys(ccx)
 
         try:
             licensed_simulations_ids = get_licensed_simulations(consumer_keys)
@@ -87,7 +99,7 @@ class LicensedSimulationsUpdateView(APIView):
                 {"error": "License %s not found." % license_code},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        course_license.simulations = licensed_simulations_ids
+        course_license.simulations = list(licensed_simulations_ids)
         course_license.save()
         return Response(status=status.HTTP_200_OK)
 
@@ -207,24 +219,23 @@ def set_license(request, course, ccx):
         messages.error(request, _('Ensure you are using correct License code.'))
         return redirect(url)
 
-    # Update passports
-    passports = get_override_for_ccx(ccx, course, 'lti_passports', course.lti_passports)[:]
-    passport, index = passport_by_lti_id(passports, settings.LABSTER_DEFAULT_LTI_ID)
-
-    if passport:
-        passport.consumer_key = consumer_key
-        passport.secret_key = secret_key
-        passports[index] = str(passport)
-    else:
-        passport = LtiPassport.construct(settings.LABSTER_DEFAULT_LTI_ID, consumer_key, secret_key)
-        passports.append(str(passport))
-
-    override_field_for_ccx(ccx, course, 'lti_passports', passports)
     course_license = CourseLicense.set_license(ccx_locator, license)
 
     try:
+        consumer_keys, passports = get_consumer_keys(ccx)
+
+        # Update passports
+        passport, index = passport_by_lti_id(passports, settings.LABSTER_DEFAULT_LTI_ID)
+        if passport:
+            passport.consumer_key = consumer_key
+            passport.secret_key = secret_key
+            passports[index] = str(passport)
+        else:
+            passport = LtiPassport.construct(settings.LABSTER_DEFAULT_LTI_ID, consumer_key, secret_key)
+            passports.append(str(passport))
+        override_field_for_ccx(ccx, course, 'lti_passports', passports)
+
         # Getting a list of licensed simulations
-        consumer_keys = [LtiPassport(passport_str).consumer_key for passport_str in passports]
         licensed_simulations_ids = get_licensed_simulations(consumer_keys)
 
         # Validate course simulations

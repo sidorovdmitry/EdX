@@ -8,6 +8,7 @@ from urlparse import urlparse
 from django.core.validators import URLValidator, RegexValidator
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+from ccx.overrides import get_override_for_ccx
 from xmodule.modulestore.django import modulestore
 
 from opaque_keys.edx.keys import CourseKey, UsageKey
@@ -68,6 +69,16 @@ class LtiPassport(object):
 
     def __unicode__(self):
         return unicode(str(self))
+
+
+def get_consumer_keys(ccx):
+    """
+    Returns (consumer_keys, passports) for ccx course.
+    """
+    course = ccx.course
+    passports = get_override_for_ccx(ccx, course, 'lti_passports', course.lti_passports)[:]
+    consumer_keys = [LtiPassport(passport_str).consumer_key for passport_str in passports]
+    return consumer_keys, passports
 
 
 def get_simulation_id(uri):

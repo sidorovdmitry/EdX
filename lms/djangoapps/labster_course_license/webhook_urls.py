@@ -8,7 +8,7 @@ from labster_course_license.views import LicensedSimulationsUpdateView
 
 urlpatterns = patterns('',
     url(
-        r'^update/(?P<license_code>\w+)/?$',
+        r'^update/?$',
         csrf_exempt(LicensedSimulationsUpdateView.as_view()), name='labster_license_update'
     ),
 )

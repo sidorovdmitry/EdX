@@ -28,6 +28,7 @@ def update_course_access(course_id):
     try:
         course_key = CourseKey.from_string(course_id)
         update_course_access_structure(course_key)
+        log.error("Course %s blocks structure was updated successfully.", course_id)
     except InvalidKeyError as ex:
         log.error("Course %s error: %s", course_id, ex)
 
@@ -47,6 +48,6 @@ def update_course_access_structure(course_key):
         course_info = get_course_blocks_info(valid_simulations)
         # store licensed blocks info
         for block, block_simulations in course_info.items():
-            lci, created = LicensedCoursewareItems.objects.get_or_create(block=block.location)
+            lci, __ = LicensedCoursewareItems.objects.get_or_create(block=block.location)
             lci.simulations = list(block_simulations)
             lci.save()
