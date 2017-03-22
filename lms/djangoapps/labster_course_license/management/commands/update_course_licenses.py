@@ -36,7 +36,7 @@ class Command(NoArgsCommand):
         for course_license in CourseLicense.objects.all():
             ccx_id = course_license.course_id.ccx
             ccx = CustomCourseForEdX.objects.get(pk=ccx_id)
-            courses.update(ccx.course.id)
+            courses.add(ccx.course.id)
             try:
                 consumer_keys, __ = get_consumer_keys(ccx)
                 licenses_keys.append([course_license.license_code, consumer_keys])
