@@ -39,11 +39,12 @@ class Command(NoArgsCommand):
             except LabsterApiError as ex:
                 print("Failed to update `%s` license simulations: %s" % (course_license.license_code, ex))
                 continue
-            print("`%s` license simulations: %s" % (course_license.license_code, licensed_simulations_ids))
-            course_license.simulations = list(licensed_simulations_ids)
-            course_license.save()
-            cnt += 1
-            courses.add(ccx.course.id)
+            if course_license.simulations != list(licensed_simulations_ids):
+                print("Updating `%s` license simulations: %s" % (course_license.license_code, licensed_simulations_ids))
+                course_license.simulations = list(licensed_simulations_ids)
+                course_license.save()
+                cnt += 1
+                courses.add(ccx.course.id)
         print("Updated %d licenses" % cnt)
 
         for course_key in courses:

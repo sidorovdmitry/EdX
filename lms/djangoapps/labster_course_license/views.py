@@ -74,11 +74,6 @@ class LicensedSimulationsUpdateView(APIView):
         """
         license_code = request.data.get('name')
 
-        if not license_code:
-            return Response(
-                {"error": "No license code was provided."}, status=status.HTTP_400_BAD_REQUEST
-            )
-
         try:
             course_license = CourseLicense.objects.get(license_code=license_code)
         except CourseLicense.DoesNotExist:

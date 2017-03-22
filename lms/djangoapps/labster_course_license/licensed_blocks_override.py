@@ -21,11 +21,11 @@ class LicensedBlocksOverrideProvider(FieldOverrideProvider):
     """
     def get(self, block, name, default):
         """
-        Just call the get_override_for_ccx method if there is a ccx
+        Overrides `is_visible_to_staff_only` field of block depending on if licensed simulations in it.
+
+        Teacher or course staff can hide blocks in studio manually so we need to return `default` instead of `False`,
+        this will allow to stay in sync with studio visibility edits.
         """
-        # teacher or course staff can hide blocks in studio manually
-        # we need to return `default` instead of `False`
-        # this will allow to stay in sync with studio visibility edits
         if name != 'visible_to_staff_only':
             return default
         course_key = get_block_course_key(block)
@@ -55,16 +55,9 @@ def is_visible_to_staff_only(ccx_key, block, default):
     """
     Show block if its licensed simulations intersect with course simulations.
     """
-    # we need to filter LicensedCoursewareItems properly by block location
-    # not all blocks locations are BlockUsageLocator's
-    try:
-        location = block.location.to_block_locator()
-    except AttributeError:
-        location = block.location
-
     try:
         # List of actual simulations in the block (chapter, seq, vertical).
-        item = LicensedCoursewareItems.objects.get(block=location)
+        item = LicensedCoursewareItems.objects.get(block=block.location.to_block_locator())
         # List of licensed simulations in the course
         course_license = CourseLicense.objects.get(course_id=ccx_key)
     except LicensedCoursewareItems.DoesNotExist, CourseLicense.DoesNotExist:
