@@ -36,14 +36,15 @@ class Command(NoArgsCommand):
         for course_license in CourseLicense.objects.all():
             ccx_id = course_license.course_id.ccx
             ccx = CustomCourseForEdX.objects.get(pk=ccx_id)
-            courses.add(ccx.course.id)
             try:
+                courses.add(ccx.course.id)
                 consumer_keys, __ = get_consumer_keys(ccx)
                 licenses_keys.append([course_license.license_code, consumer_keys])
             except OSError as ex:
                 print("Failed to get consumer keys for %s course: %s" % (ccx, ex))
                 continue
 
+        print("Requesting API for simulations...")
         try:
             licensed_simulations = self.fetch_simulations_updates(licenses_keys)
         except LabsterApiError as ex:
