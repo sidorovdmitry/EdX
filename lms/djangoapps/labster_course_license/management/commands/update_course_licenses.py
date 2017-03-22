@@ -55,7 +55,8 @@ class Command(NoArgsCommand):
             course_license = CourseLicense.objects.get(license_code=license_code)
             if course_license.simulations != licensed_simulations_ids:
                 print("Updating `%s` license simulations: %s" % (course_license.license_code, licensed_simulations_ids))
-                course_license.update(simulations=licensed_simulations_ids)
+                course_license.simulations = licensed_simulations_ids
+                course_license.save()
                 cnt += 1
             else:
                 print("`%s` license simulations already up to date." % course_license.license_code)
