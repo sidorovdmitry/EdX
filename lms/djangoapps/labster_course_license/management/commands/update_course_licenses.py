@@ -30,13 +30,14 @@ class Command(NoArgsCommand):
 
         cnt = 0
         courses = set()
+        print("Processing...")
         for course_license in CourseLicense.objects.all():
-            ccx_id = course_license.course_id.ccx
-            ccx = CustomCourseForEdX.objects.get(pk=ccx_id)
-            consumer_keys, __ = get_consumer_keys(ccx)
             try:
+                ccx_id = course_license.course_id.ccx
+                ccx = CustomCourseForEdX.objects.get(pk=ccx_id)
+                consumer_keys, __ = get_consumer_keys(ccx)
                 licensed_simulations_ids = get_licensed_simulations(consumer_keys)
-            except LabsterApiError as ex:
+            except (LabsterApiError, OSError) as ex:
                 print("Failed to update `%s` license simulations: %s" % (course_license.license_code, ex))
                 continue
             if course_license.simulations != list(licensed_simulations_ids):
@@ -45,6 +46,8 @@ class Command(NoArgsCommand):
                 course_license.save()
                 cnt += 1
                 courses.add(ccx.course.id)
+            else:
+                print("`%s` license simulations already up to date." % course_license.license_code)
         print("Updated %d licenses" % cnt)
 
         for course_key in courses:
