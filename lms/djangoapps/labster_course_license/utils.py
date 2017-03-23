@@ -124,7 +124,7 @@ def update_simulations(course_info, block, simulation_id):
     Updates licensed simulations for block.
     """
     block_simulations = course_info.get(block)
-    if not block_simulations and not isinstance(block_simulations, set):
+    if not block_simulations:
         block_simulations = set()
     block_simulations.add(simulation_id)
     return block_simulations
