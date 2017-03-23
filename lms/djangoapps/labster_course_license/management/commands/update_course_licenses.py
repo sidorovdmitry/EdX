@@ -11,12 +11,13 @@ import logging
 from django.core.management.base import NoArgsCommand
 from django.conf import settings
 from ccx_keys.locator import CCXLocator
+from opaque_keys import InvalidKeyError
 from lms.djangoapps.ccx.models import CustomCourseForEdX
-from xmodule.modulestore.django import SignalHandler
 
 from labster_course_license.models import CourseLicense
 from labster_course_license.views import LabsterApiError, get_licensed_simulations, _send_request
 from labster_course_license.utils import get_consumer_keys
+from labster_course_license.tasks import update_course_access_structure
 
 
 class Command(NoArgsCommand):
@@ -60,7 +61,11 @@ class Command(NoArgsCommand):
         print("Updated %d licenses" % cnt)
 
         for course_key in courses:
-            SignalHandler.course_published.send(sender='management_task', course_key=course_key)
+            try:
+                update_course_access_structure(course_key)
+                print("Course %s blocks structure was updated successfully." % str(course_key))
+            except InvalidKeyError as ex:
+                print("Course %s structure update error: %s", str(course_key), ex)
 
     @staticmethod
     def fetch_simulations_updates(consumer_keys):
@@ -77,7 +82,7 @@ class Command(NoArgsCommand):
         """
         Splits API requests to smaller lists to prevent 504 error.
         """
-        window = 20
+        window = 50
         licensed_simulations = {}
         try:
             cnt = 0
