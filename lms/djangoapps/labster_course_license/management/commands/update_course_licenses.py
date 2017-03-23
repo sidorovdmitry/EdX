@@ -10,6 +10,7 @@ to trigger an update of course blocks simulations.
 import logging
 from django.core.management.base import NoArgsCommand
 from django.conf import settings
+from ccx_keys.locator import CCXLocator
 from lms.djangoapps.ccx.models import CustomCourseForEdX
 from xmodule.modulestore.django import SignalHandler
 
@@ -38,7 +39,7 @@ class Command(NoArgsCommand):
             try:
                 courses.add(ccx.course.id)
                 consumer_keys, __ = get_consumer_keys(ccx)
-                licenses_keys.append([course_license.license_code, consumer_keys])
+                licenses_keys.append([str(course_license.course_id), consumer_keys])
             except OSError as ex:
                 print("Failed to get consumer keys for %s course: %s" % (ccx, ex))
                 continue
@@ -47,9 +48,8 @@ class Command(NoArgsCommand):
         print("Requesting API for simulations...")
         licensed_simulations = self.bulk_fetch_simulations(licenses_keys)
 
-        for license_code, simulations in licensed_simulations.items():
-            licensed_simulations_ids = list(simulations)
-            course_license = CourseLicense.objects.get(license_code=license_code)
+        for ccx_key, licensed_simulations_ids in licensed_simulations.items():
+            course_license = CourseLicense.objects.get(course_id=CCXLocator.from_string(ccx_key))
             if course_license.simulations != licensed_simulations_ids:
                 print("Updating `%s` license simulations: %s" % (course_license.license_code, licensed_simulations_ids))
                 course_license.simulations = licensed_simulations_ids
