@@ -32,7 +32,6 @@ class Command(NoArgsCommand):
         cnt = 0
         courses = set()
         licenses_keys = []
-        print("Processing...")
         for course_license in CourseLicense.objects.all():
             ccx_id = course_license.course_id.ccx
             ccx = CustomCourseForEdX.objects.get(pk=ccx_id)
@@ -43,11 +42,12 @@ class Command(NoArgsCommand):
             except OSError as ex:
                 print("Failed to get consumer keys for %s course: %s" % (ccx, ex))
                 continue
+        print("%d CourseLicense objects need to be updated." % len(licenses_keys))
 
         print("Requesting API for simulations...")
         licensed_simulations = self.bulk_fetch_simulations(licenses_keys)
 
-        for license_code, simulations in licensed_simulations:
+        for license_code, simulations in licensed_simulations.items():
             licensed_simulations_ids = list(simulations)
             course_license = CourseLicense.objects.get(license_code=license_code)
             if course_license.simulations != licensed_simulations_ids:
@@ -77,15 +77,16 @@ class Command(NoArgsCommand):
         """
         Splits API requests to smaller lists to prevent 504 error.
         """
+        window = 20
         licensed_simulations = {}
         try:
             cnt = 0
             while len(licenses_keys):
                 lngth = len(licenses_keys)
-                if lngth >= 10:
-                    licensed_simulations.update(self.fetch_simulations_updates(licenses_keys[0:10]))
-                    del licenses_keys[:10]
-                    cnt += 10
+                if lngth >= window:
+                    licensed_simulations.update(self.fetch_simulations_updates(licenses_keys[0:window]))
+                    del licenses_keys[:window]
+                    cnt += window
                 else:
                     licensed_simulations.update(self.fetch_simulations_updates(licenses_keys))
                     licenses_keys = []
