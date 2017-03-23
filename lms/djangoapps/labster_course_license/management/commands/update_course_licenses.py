@@ -79,13 +79,18 @@ class Command(NoArgsCommand):
         """
         licensed_simulations = {}
         try:
+            cnt = 0
             while len(licenses_keys):
-                if len(licenses_keys) > 10:
+                lngth = len(licenses_keys)
+                if lngth > 10:
                     licensed_simulations.update(self.fetch_simulations_updates(licenses_keys[0:10]))
                     del licenses_keys[:10]
+                    cnt += 10
                 else:
                     licensed_simulations.update(self.fetch_simulations_updates(licenses_keys))
-                    del licenses_keys[:len(licenses_keys) - 1]
+                    del licenses_keys[:lngth - 1]
+                    cnt += lngth
+                print("Fetched %d items" % cnt)
 
         except LabsterApiError as ex:
             print("Failed to fetch licensed simulations from API: %s" % ex)
