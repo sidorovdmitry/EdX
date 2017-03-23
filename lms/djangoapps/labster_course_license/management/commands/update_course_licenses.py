@@ -88,7 +88,7 @@ class Command(NoArgsCommand):
                     cnt += 10
                 else:
                     licensed_simulations.update(self.fetch_simulations_updates(licenses_keys))
-                    del licenses_keys[:lngth - 1]
+                    licenses_keys = []
                     cnt += lngth
                 print("Fetched %d items, %d left" % (cnt, len(licenses_keys)))
 
