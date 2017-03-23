@@ -18,6 +18,7 @@ class Migration(migrations.Migration):
             name='LicensedCoursewareItems',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('course_id', xmodule_django.models.CourseKeyField(help_text=b"Block's parent course locator.", max_length=255, db_index=True)),
                 ('block', xmodule_django.models.UsageKeyField(max_length=255, db_index=True)),
                 ('simulations', django_extensions.db.fields.json.JSONField(help_text=b'List of block licensed simulations, stored as json string value')),
             ],
@@ -25,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='courselicense',
             name='course_id',
-            field=labster_course_license.models.CCXLocatorField(unique=True, max_length=255, db_index=True),
+            field=labster_course_license.models.CCXLocatorField(help_text=b'CCXCourse locators only', unique=True, max_length=255, db_index=True),
         ),
         migrations.AddField(
             model_name='courselicense',
@@ -55,5 +56,9 @@ class Migration(migrations.Migration):
             name='modified_at',
             field=models.DateTimeField(auto_now=True, null=True),
             preserve_default=False,
+        ),
+        migrations.AlterUniqueTogether(
+            name='licensedcoursewareitems',
+            unique_together=set([('course_id', 'block')]),
         ),
     ]
