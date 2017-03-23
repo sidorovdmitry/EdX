@@ -45,11 +45,7 @@ class Command(NoArgsCommand):
                 continue
 
         print("Requesting API for simulations...")
-        try:
-            licensed_simulations = self.fetch_simulations_updates(licenses_keys)
-        except LabsterApiError as ex:
-            print("Failed to fetch licensed simulations from API: %s" % ex)
-            return
+        licensed_simulations = self.bulk_fetch_simulations(licenses_keys)
 
         for license_code, simulations in licensed_simulations:
             licensed_simulations_ids = list(simulations)
@@ -76,3 +72,22 @@ class Command(NoArgsCommand):
         url = settings.LABSTER_ENDPOINTS.get('available_simulations')
         response = _send_request(url, data)
         return response
+
+    def bulk_fetch_simulations(self, licenses_keys):
+        """
+        Splits API requests to smaller lists to prevent 504 error.
+        """
+        licensed_simulations = {}
+        try:
+            while len(licenses_keys):
+                if len(licenses_keys) > 10:
+                    licensed_simulations.update(self.fetch_simulations_updates(licenses_keys[0:10]))
+                    del licenses_keys[:10]
+                else:
+                    licensed_simulations.update(self.fetch_simulations_updates(licenses_keys))
+                    del licenses_keys[:len(licenses_keys) - 1]
+
+        except LabsterApiError as ex:
+            print("Failed to fetch licensed simulations from API: %s" % ex)
+
+        return licensed_simulations
