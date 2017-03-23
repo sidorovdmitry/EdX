@@ -112,14 +112,11 @@ def get_block_course_key(block):
     # location attribute.  That location attribute will be a UsageKey
     identifier = getattr(block, 'id', None)
     if isinstance(identifier, CourseKey):
-        course_key = block.id
+        return block.id
     elif isinstance(identifier, UsageKey):
-        course_key = block.id.course_key
+        return block.id.course_key
     elif hasattr(block, 'location'):
-        course_key = block.location.course_key
-    else:
-        course_key = None
-    return course_key
+        return block.location.course_key
 
 
 def update_simulations(course_info, block, simulation_id):

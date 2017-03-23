@@ -29,7 +29,7 @@ class LicensedBlocksOverrideProvider(FieldOverrideProvider):
         if name != 'visible_to_staff_only':
             return default
         course_key = get_block_course_key(block)
-        if course_key is not None:
+        if course_key:
             # find the ccx that is active for block course
             try:
                 ccx = get_current_ccx(course_key)

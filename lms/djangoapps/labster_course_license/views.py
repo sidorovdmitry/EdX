@@ -96,6 +96,7 @@ class LicensedSimulationsUpdateView(APIView):
             )
         course_license.simulations = list(licensed_simulations_ids)
         course_license.save()
+        log.info("License `%s` simulations were updated: %s", course_license.license_code, licensed_simulations_ids)
         return Response(status=status.HTTP_200_OK)
 
 

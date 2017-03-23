@@ -45,9 +45,12 @@ class CourseLicense(models.Model):
         """
         Save course license.
         """
-        course_license, __ = cls.objects.get_or_create(
+        course_license, created = cls.objects.get_or_create(
             course_id=course_id, defaults={'license_code': license_code.strip()}
         )
+        if not created:
+            course_license.license_code = license_code
+            course_license.save()
         return course_license
 
     def __unicode__(self):
