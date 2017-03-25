@@ -4,12 +4,14 @@ import logging
 from django.http import Http404
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.cache import cache_control
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.reverse import reverse
+from ccx_keys.locator import CCXLocator
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys import InvalidKeyError
 from util.json_request import JsonResponse, expect_json
@@ -17,8 +19,12 @@ from contentstore.views.course import _create_or_rerun_course
 from contentstore.utils import delete_course_and_groups
 from xmodule.modulestore.django import modulestore
 from xmodule.course_module import CourseDescriptor
+
+from lms.djangoapps.ccx.views import ccx_coach_dashboard, _ccx_students_enrrolling_center
 from cms.djangoapps.contentstore.utils import add_instructor, remove_all_instructors
 from student.roles import CourseCcxCoachRole
+from instructor.views.api import _split_input_list
+from instructor.enrollment import get_email_params
 
 
 log = logging.getLogger(__name__)
@@ -49,7 +55,7 @@ def setup_course(course_key, staff=None):
 @csrf_exempt
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 @authentication_classes((SessionAuthentication, TokenAuthentication))
-@permission_classes((IsAuthenticated,))
+@permission_classes((IsAdminUser,))
 @expect_json
 def course_handler(request, course_key_string=None):
     """
@@ -147,7 +153,7 @@ def course_handler(request, course_key_string=None):
 
 @api_view(['GET'])
 @authentication_classes((SessionAuthentication, TokenAuthentication))
-@permission_classes((IsAuthenticated,))
+@permission_classes((IsAdminUser,))
 def coach_list_handler(reuqest):
     """
     Returns a list of dicts with information about CCX coaches (full name, email).
@@ -158,3 +164,68 @@ def coach_list_handler(reuqest):
         'email': coach.email,
     } for coach in coaches)
     return Response(coaches_info)
+
+
+@csrf_exempt
+@api_view(['POST'])
+@authentication_classes((SessionAuthentication, TokenAuthentication))
+@permission_classes((IsAdminUser,))
+@cache_control(no_cache=True, no_store=True, must_revalidate=True)
+@coach_dashboard
+def ccx_invite(request, course, ccx=None):
+    """
+    Enroll or unenroll students to CCX by email.
+    Requires staff access.
+
+    **Request example**:
+        POST /labster/api/course/
+        {
+            "course_key": "course-v1:labster+LABX+2015_T1",
+            "action": "enroll",
+            "auto_enroll": true,
+            "email_students": false,
+            "identifiers": ["honor@example.com", "staff@example.com"]
+        }
+    Query Parameters:
+        - action in ['enroll', 'unenroll']
+        - identifiers is string containing a list of emails and/or usernames separated by anything split_input_list can handle.
+        - auto_enroll is a boolean (defaults to true)
+            If auto_enroll is false, students will be allowed to enroll.
+            If auto_enroll is true, students will be enrolled as soon as they register.
+        - email_students is a boolean (defaults to false)
+            If email_students is true, students will be sent email notification
+            If email_students is false, students will not be sent email notification
+    """
+    if not ccx:
+        raise Http404
+
+    action = request.POST.get('action')
+    identifiers_raw = request.POST.get('identifiers')
+    identifiers = _split_input_list(identifiers_raw)
+    email_students = 'email_students' in request.POST
+    auto_enroll = _get_boolean_param(request, 'auto_enroll', deafult=True)
+    email_students = _get_boolean_param(request, 'email_students')
+
+    course_key = CCXLocator.from_course_locator(course.id, ccx.id)
+    email_params = get_email_params(
+        course,
+        course_key=course_key,
+        auto_enroll=auto_enroll,
+        display_name=ccx.display_name,
+    )
+
+    _ccx_students_enrrolling_center(action, identifiers, email_students, course_key, email_params)
+    log.info(
+        "User: %s;\nAction: %s;\nIdentifiers: %s;\nSend email: %s;\nCourse: %s;\nEmail parameters: %s.",
+        request.user, action, identifiers, email_students, course_key, email_params
+    )
+    return Response(status=status.HTTP_200_OK)
+
+
+def _get_boolean_param(request, param_name, deafult=False):
+    """
+    Returns the value of the boolean parameter with the given
+    name in the POST request. Handles translation from string
+    values to boolean values.
+    """
+    return request.POST.get(param_name, deafult) in ['true', 'True', True]
