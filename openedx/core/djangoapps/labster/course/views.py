@@ -178,7 +178,7 @@ def ccx_invite(request, course, ccx=None):
     Requires staff access.
 
     **Request example**:
-        POST /labster/api/course/
+        POST /labster/api/course/enroll
         {
             "course_key": "course-v1:labster+LABX+2015_T1",
             "action": "enroll",
