@@ -67,8 +67,6 @@ def is_visible_to_staff_only(ccx_key, block, default):
 
     available_simulations = set(course_license.simulations)
     actual_simulations = set(item.simulations)
-    print(block.display_name, actual_simulations)
-    print(actual_simulations.intersection(available_simulations))
 
     if len(actual_simulations.intersection(available_simulations)):
         # there are licensed simulations so block should be shown by default

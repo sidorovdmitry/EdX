@@ -77,23 +77,23 @@ class LicensedSimulationsUpdateView(APIView):
         try:
             course_license = CourseLicense.objects.get(license_code=license_code)
         except CourseLicense.DoesNotExist:
-            return Response(
-                {"error": "License %s not found." % license_code},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            log.error("License %s not found.", license_code)
+            return Response(status=status.HTTP_200_OK)
 
         ccx_id = course_license.course_id.ccx
-        ccx = CustomCourseForEdX.objects.get(pk=ccx_id)
-        consumer_keys, __ = get_consumer_keys(ccx)
+        try:
+            ccx = CustomCourseForEdX.objects.get(pk=ccx_id)
+            consumer_keys, __ = get_consumer_keys(ccx)
+        except CustomCourseForEdX.DoesNotExist:
+            log.error("Course not found by provided license code.")
+            return Response(status=status.HTTP_200_OK)
 
         try:
             licensed_simulations_ids = get_licensed_simulations(consumer_keys)
         except LabsterApiError:
             log.error("Failed to update course license %s simulations" % course_license)
-            return Response(
-                {"error": "License %s not found." % license_code},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(status=status.HTTP_200_OK)
+
         course_license.simulations = list(licensed_simulations_ids)
         course_license.save()
         log.info("License `%s` simulations were updated: %s", course_license.license_code, licensed_simulations_ids)
