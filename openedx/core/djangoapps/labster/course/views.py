@@ -7,10 +7,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_control
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.reverse import reverse
 from ccx_keys.locator import CCXLocator
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys import InvalidKeyError
@@ -20,7 +19,7 @@ from contentstore.utils import delete_course_and_groups
 from xmodule.modulestore.django import modulestore
 from xmodule.course_module import CourseDescriptor
 
-from lms.djangoapps.ccx.views import ccx_coach_dashboard, _ccx_students_enrrolling_center
+from lms.djangoapps.ccx.views import coach_dashboard, _ccx_students_enrrolling_center
 from cms.djangoapps.contentstore.utils import add_instructor, remove_all_instructors
 from student.roles import CourseCcxCoachRole
 from instructor.views.api import _split_input_list
@@ -154,7 +153,7 @@ def course_handler(request, course_key_string=None):
 @api_view(['GET'])
 @authentication_classes((SessionAuthentication, TokenAuthentication))
 @permission_classes((IsAdminUser,))
-def coach_list_handler(reuqest):
+def coach_list_handler(request):
     """
     Returns a list of dicts with information about CCX coaches (full name, email).
     """
@@ -202,7 +201,6 @@ def ccx_invite(request, course, ccx=None):
     action = request.POST.get('action')
     identifiers_raw = request.POST.get('identifiers')
     identifiers = _split_input_list(identifiers_raw)
-    email_students = 'email_students' in request.POST
     auto_enroll = _get_boolean_param(request, 'auto_enroll', deafult=True)
     email_students = _get_boolean_param(request, 'email_students')
 
