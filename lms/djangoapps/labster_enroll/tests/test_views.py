@@ -41,7 +41,12 @@ class TestCCXInvite(CCXCourseTestBase):
     """
     def setUp(self):
         super(TestCCXInvite, self).setUp()
-        self.token, created = Token.objects.get_or_create(user=UserFactory.create(is_superuser=True))
+        admin = UserFactory.create(is_superuser=True, is_staff=True)
+        admin.set_password('pass')
+        admin.save()
+        self.client.login(username=admin.username, password="pass")
+        token, created = Token.objects.get_or_create(user=admin)
+        self.headers = {'Authorization': 'Token %s' % token}
 
     def get_outbox(self):
         """
@@ -65,20 +70,19 @@ class TestCCXInvite(CCXCourseTestBase):
         """
         self.make_coach()
         ccx = self.make_ccx()
+        ccx_course_key = CCXLocator.from_course_locator(self.course.id, ccx.id)
         enrollment = CourseEnrollmentFactory(course_id=self.course.id)
         student = enrollment.user
         outbox = self.get_outbox()
         self.assertEqual(outbox, [])
 
-        url = reverse('labster_ccx_invite', kwargs={'course_id': ccx.course.id})
+        url = reverse('labster_ccx_invite', kwargs={'course_id': str(ccx_course_key)})
         data = {
             'action': action,
-            'course_key': CCXLocator.from_course_locator(self.course.id, ccx.id),
             'identifiers': u','.join([student.email, ]),  # pylint: disable=no-member
+            'email_students': send_email
         }
-        if send_email:
-            data['email_students'] = 'Notify-students-by-email'
-        response = self.client.post(url, data=data, headers={'Authorization': 'Token %s' % self.token})
+        response = self.client.post(url, data=data, headers=self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(outbox), outbox_count)
         if send_email:
@@ -103,13 +107,12 @@ class TestCCXInvite(CCXCourseTestBase):
         students = [
             UserFactory.create(is_staff=False) for _ in range(3)
         ]
-        url = reverse('labster_ccx_invite', kwargs={'course_id': ccx.course.id})
+        url = reverse('labster_ccx_invite', kwargs={'course_id': str(ccx_course_key)})
         data = {
             'action': 'enroll',
-            'course_key': ccx_course_key,
             'identifiers': u','.join([student.email for student in students]),
         }
-        response = self.client.post(url, data=data, headers={'Authorization': 'Token %s' % self.token})
+        response = self.client.post(url, data=data, headers=self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # a CcxMembership exists for the first two students but not the third
         self.assertTrue(
@@ -142,15 +145,13 @@ class TestCCXInvite(CCXCourseTestBase):
         outbox = self.get_outbox()
         self.assertEqual(outbox, [])
 
-        url = reverse('labster_ccx_invite', kwargs={'course_id': ccx.course.id})
+        url = reverse('labster_ccx_invite', kwargs={'course_id': str(course_key)})
         data = {
             'action': action,
-            'course_key': course_key,
             'identifiers': u','.join([student.email, ]),  # pylint: disable=no-member
+            'email_students': send_email
         }
-        if send_email:
-            data['email_students'] = 'Notify-students-by-email'
-        response = self.client.post(url, data=data, headers={'Authorization': 'Token %s' % self.token})
+        response = self.client.post(url, data=data, headers=self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(outbox), outbox_count)
         if send_email:
@@ -180,15 +181,13 @@ class TestCCXInvite(CCXCourseTestBase):
         outbox = self.get_outbox()
         self.assertEqual(outbox, [])
 
-        url = reverse('labster_ccx_invite', kwargs={'course_id': ccx.course.id})
+        url = reverse('labster_ccx_invite', kwargs={'course_id': str(course_key)})
         data = {
             'action': action,
-            'course_key': course_key,
             'identifiers': u','.join([identifier, ]),
+            'email_students': send_email
         }
-        if send_email:
-            data['email_students'] = 'Notify-students-by-email'
-        response = self.client.post(url, data=data, headers={'Authorization': 'Token %s' % self.token})
+        response = self.client.post(url, data=data, headers=self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(outbox), outbox_count)
 
@@ -222,15 +221,13 @@ class TestCCXInvite(CCXCourseTestBase):
         CourseEnrollmentAllowed(course_id=course_key, email=identifier)
         self.assertEqual(outbox, [])
 
-        url = reverse('labster_ccx_invite', kwargs={'course_id': ccx.course.id})
+        url = reverse('labster_ccx_invite', kwargs={'course_id': str(course_key)})
         data = {
             'action': action,
-            'course_key': course_key,
             'identifiers': u','.join([identifier, ]),
+            'email_students': send_email
         }
-        if send_email:
-            data['email_students'] = 'Notify-students-by-email'
-        response = self.client.post(url, data=data, headers={'Authorization': 'Token %s' % self.token})
+        response = self.client.post(url, data=data, headers=self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(outbox), outbox_count)
         self.assertFalse(

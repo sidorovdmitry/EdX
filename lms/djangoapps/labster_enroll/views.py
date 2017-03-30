@@ -4,6 +4,7 @@ import json
 
 from django.http import HttpResponseBadRequest
 from django.http import Http404
+from django.http.request import RawPostDataException
 from django.views.decorators.cache import cache_control
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication as OriginalSessionAuthentication
@@ -49,7 +50,8 @@ def ccx_invite(request, course_id):
         }
     Query Parameters:
         - action in ['enroll', 'unenroll']
-        - identifiers is string containing a list of emails and/or usernames separated by anything split_input_list can handle.
+        - identifiers is string containing a list of emails and/or usernames separated by anything
+          split_input_list can handle.
         - auto_enroll is a boolean (defaults to true)
             If auto_enroll is false, students will be allowed to enroll.
             If auto_enroll is true, students will be enrolled as soon as they register.
@@ -71,15 +73,18 @@ def ccx_invite(request, course_id):
         data = json.loads(request.body)
     except ValueError:
         return HttpResponseBadRequest()
+    except RawPostDataException:
+        data = request.data.dict()
 
     action = data.get('action')
     identifiers_raw = data.get('identifiers')
-    if isinstance(identifiers_raw, str):
+    if isinstance(identifiers_raw, (str, unicode)):
         identifiers = _split_input_list(identifiers_raw)
     elif isinstance(identifiers_raw, list):
         identifiers = identifiers_raw
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
     auto_enroll = _get_boolean_param(data, 'auto_enroll', deafult=True)
     email_students = _get_boolean_param(data, 'email_students')
 
@@ -91,12 +96,15 @@ def ccx_invite(request, course_id):
         display_name=ccx.display_name,
     )
 
-    _ccx_students_enrrolling_center(action, identifiers, email_students, course_key, email_params)
-    log.info(
-        "User: %s;\nAction: %s;\nIdentifiers: %s;\nSend email: %s;\nCourse: %s;\nEmail parameters: %s.",
-        request.user, action, identifiers, email_students, course_key, email_params
-    )
-    return Response(status=status.HTTP_200_OK)
+    if action:
+        _ccx_students_enrrolling_center(action.capitalize(), identifiers, email_students, course_key, email_params)
+        log.info(
+            "User: %s;\nAction: %s;\nIdentifiers: %s;\nSend email: %s;\nCourse: %s;\nEmail parameters: %s.",
+            request.user, action, identifiers, email_students, course_key, email_params
+        )
+        return Response(status=status.HTTP_200_OK)
+    else:
+        return Response("No action was provided.", status=status.HTTP_400_BAD_REQUEST)
 
 
 def _get_boolean_param(data, param_name, deafult=False):
