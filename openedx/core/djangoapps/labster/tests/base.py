@@ -58,7 +58,6 @@ class CCXCourseTestBase(ModuleStoreTestCase):
 
         self.addCleanup(RequestCache.clear_request_cache)
 
-
     def inject_field_overrides(self):
         """
         Apparently the test harness doesn't use LmsFieldStorage, and I'm

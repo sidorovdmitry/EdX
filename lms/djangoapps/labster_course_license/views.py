@@ -91,7 +91,7 @@ class LicensedSimulationsUpdateView(APIView):
         try:
             licensed_simulations_ids = get_licensed_simulations(consumer_keys)
         except LabsterApiError:
-            log.error("Failed to update course license %s simulations" % course_license)
+            log.error("Failed to fetch licensed simulations from API: license=%s" % course_license)
             return Response(status=status.HTTP_200_OK)
 
         course_license.simulations = list(licensed_simulations_ids)

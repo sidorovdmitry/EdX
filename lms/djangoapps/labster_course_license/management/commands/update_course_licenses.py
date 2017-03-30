@@ -38,15 +38,21 @@ class Command(BaseCommand):
         courses = set()
 
         for course_license in CourseLicense.objects.all():
-            ccx_id = course_license.course_id.ccx
-            ccx = CustomCourseForEdX.objects.get(pk=ccx_id)
-            courses.add(ccx.course.id)
             licensed_simulations_ids = data.get(course_license.license_code)
             if licensed_simulations_ids and course_license.simulations != licensed_simulations_ids:
                 print("Updating `%s` license simulations: %s" % (course_license.license_code, licensed_simulations_ids))
                 course_license.simulations = licensed_simulations_ids
                 course_license.save()
                 cnt += 1
+
+            # add course id for future update
+            try:
+                ccx_id = course_license.course_id.ccx
+                ccx = CustomCourseForEdX.objects.get(pk=ccx_id)
+                courses.add(ccx.course.id)
+            except CustomCourseForEdX.DoesNotExist:
+                pass
+
         print("Updated %d licenses" % cnt)
 
         for course_key in courses:

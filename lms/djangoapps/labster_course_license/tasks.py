@@ -28,7 +28,7 @@ def update_course_access(course_id):
     try:
         course_key = CourseKey.from_string(course_id)
         update_course_access_structure(course_key)
-        log.error("Course %s blocks structure was updated successfully.", course_id)
+        log.info("Course %s blocks structure was updated successfully.", course_id)
     except InvalidKeyError as ex:
         log.error("Course %s error: %s", course_id, ex)
 
@@ -37,6 +37,8 @@ def update_course_access_structure(course_key):
     """
     Fetch course licensed simulations structure info and save it for override provider.
     """
+    if not isinstance(course_key, CourseKey):
+        return
     store = modulestore()
     with store.bulk_operations(course_key):
         valid_simulations, errors = validate_simulations_ids(course_key)
@@ -49,7 +51,7 @@ def update_course_access_structure(course_key):
         # store licensed blocks info
         course_blocks = []
         for block, block_simulations in course_info.items():
-            log.debug("Updating block %s structure with simulations %s", block.display_name, block_simulations)
+            log.info("Updating block %s structure with simulations %s", block.display_name, block_simulations)
             lci, __ = LicensedCoursewareItems.objects.get_or_create(block=block.location, course_id=course_key)
             lci.simulations = list(block_simulations)
             lci.save()
