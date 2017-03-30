@@ -36,9 +36,11 @@ class CourseLicense(models.Model):
         Return license by course key.
         """
         try:
-            return cls.objects.get(course_id=course_id)
-        except ObjectDoesNotExist:
-            return None
+            # we do not return result immediately because DoesNotExist object could be returned and called
+            obj = cls.objects.get(course_id=course_id)
+        except cls.DoesNotExist:
+            obj = None
+        return obj
 
     @classmethod
     def set_license(cls, course_id, license_code):
