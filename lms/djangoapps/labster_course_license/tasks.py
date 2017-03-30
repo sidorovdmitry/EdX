@@ -38,6 +38,7 @@ def update_course_access_structure(course_key):
     Fetch course licensed simulations structure info and save it for override provider.
     """
     if not isinstance(course_key, CourseKey):
+        log.error("%s is not CourseKey instance. Canceled update.", course_key)
         return
     store = modulestore()
     with store.bulk_operations(course_key):
@@ -51,10 +52,12 @@ def update_course_access_structure(course_key):
         # store licensed blocks info
         course_blocks = []
         for block, block_simulations in course_info.items():
-            log.info("Updating block %s structure with simulations %s", block.display_name, block_simulations)
+            simulations = list(block_simulations)
+            log.info("Updating block %s structure with simulations %s", block.display_name, simulations)
             lci, __ = LicensedCoursewareItems.objects.get_or_create(block=block.location, course_id=course_key)
-            lci.simulations = list(block_simulations)
-            lci.save()
+            if lci.simulations != simulations:
+                lci.simulations = simulations
+                lci.save()
             course_blocks.append(block.location)
 
         # remove unused blocks for course
