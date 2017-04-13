@@ -9,9 +9,10 @@ from django.core.validators import URLValidator, RegexValidator
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from ccx.overrides import get_override_for_ccx
-from xmodule.modulestore.django import modulestore
 
 from opaque_keys.edx.keys import CourseKey, UsageKey
+from xmodule.modulestore.django import modulestore
+from lms.djangoapps.labster_course_license.models import LicensedCoursewareItems
 
 
 log = logging.getLogger(__name__)
@@ -181,3 +182,34 @@ def validate_simulations_ids(course_key):
                 errors.append((simulation.display_name, simulation_id, u'<br>'.join(err.messages)))
 
     return valid_simulations, errors
+
+
+def update_course_access_structure(course_key):
+    """
+    Fetch course licensed simulations structure info and save it for override provider.
+    """
+    if not isinstance(course_key, CourseKey):
+        log.error("%s is not CourseKey instance. Canceled update.", course_key)
+        return
+    store = modulestore()
+    with store.bulk_operations(course_key):
+        valid_simulations, errors = validate_simulations_ids(course_key)
+        if errors:
+            log.error(
+                "Invalid LTI URLs in the following simulations: %s",
+                ' '.join('{}:{}:{}'.format(sim_name, sim_id, err_msg) for sim_name, sim_id, err_msg in errors)
+            )
+        course_info = get_course_blocks_info(valid_simulations)
+        # store licensed blocks info
+        course_blocks = []
+        for block, block_simulations in course_info.items():
+            simulations = list(block_simulations)
+            log.info("Updating block %s structure with simulations %s", block.display_name, simulations)
+            lci, __ = LicensedCoursewareItems.objects.get_or_create(block=block.location, course_id=course_key)
+            if lci.simulations != simulations:
+                lci.simulations = simulations
+                lci.save()
+            course_blocks.append(block.location)
+
+        # remove unused blocks for course
+        LicensedCoursewareItems.objects.filter(course_id=course_key).exclude(block__in=course_blocks).delete()

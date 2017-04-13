@@ -13,7 +13,7 @@ from opaque_keys import InvalidKeyError
 from lms.djangoapps.ccx.models import CustomCourseForEdX
 
 from labster_course_license.models import CourseLicense
-from labster_course_license.tasks import update_course_access_structure
+from labster_course_license.utils import update_course_access_structure
 
 
 class Command(BaseCommand):
