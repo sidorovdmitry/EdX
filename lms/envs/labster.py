@@ -21,6 +21,7 @@ INSTALLED_APPS += (
     'rest_framework.authtoken',
     'labster_course_license',
     'labster_vouchers',
+    'labster_enroll',
 )
 
 LABSTER_WIKI_LINK = LABSTER_SETTINGS.get('LABSTER_WIKI_LINK', 'https://theory.labster.com/')

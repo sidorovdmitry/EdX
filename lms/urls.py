@@ -924,6 +924,7 @@ urlpatterns += (
 
 urlpatterns += (
     url(r'^vouchers/', include('labster_vouchers.urls')),
+    url(r'^labster/api/', include('lms.djangoapps.labster_enroll.urls')),
 )
 
 # Certificates
