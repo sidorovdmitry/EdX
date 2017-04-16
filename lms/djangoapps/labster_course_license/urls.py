@@ -11,8 +11,4 @@ urlpatterns = patterns('',
         r'^labster_license/?$',
         'labster_course_license.views.license_handler', name='labster_license_handler'
     ),
-    url(
-        r'^labster_license/update/?$',
-        csrf_exempt(LicensedSimulationsUpdateView.as_view()), name='labster_license_update'
-    ),
 )
