@@ -11,10 +11,10 @@ from student.roles import CourseCcxCoachRole
 from student.models import CourseEnrollment
 
 from lms.djangoapps.ccx.models import CustomCourseForEdX, CcxFieldOverride
-from lms.djangoapps.labster_course_license.models import CourseLicense
 from lms.djangoapps.instructor.enrollment import unenroll_email
-
 from cms.djangoapps.contentstore.courseware_index import CoursewareSearchIndexer, CourseAboutSearchIndexer
+
+from labster_course_license.models import CourseLicense
 
 
 @CELERY_APP.task
