@@ -15,7 +15,9 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_http_methods
 from django.http import Http404
+from opaque_keys.edx.keys import CourseKey
 
+from courseware.courses import get_course_by_id
 from edxmako.shortcuts import render_to_response
 from enrollment.api import add_enrollment
 from enrollment.errors import (
@@ -23,6 +25,7 @@ from enrollment.errors import (
 )
 from labster_course_license.models import CourseLicense
 from labster_vouchers import forms, tasks
+from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from student.models import anonymous_id_for_user
 from xmodule.modulestore.django import modulestore
 
@@ -118,6 +121,15 @@ def activate_voucher(request):
 
     course_license = course_licenses[0]
     course_id = course_license.course_id
+
+    # check invitation_only on course_overview is updated
+    course_key = CourseKey.from_string(unicode(course_id))
+    course_overview = CourseOverview.get_from_id(course_key)
+    course = get_course_by_id(course_key)
+    if course_overview.invitation_only != course.invitation_only:
+        course_overview.invitation_only = course.invitation_only
+        course_overview.save()
+
     try:
         # enroll student to course
         add_enrollment(request.user, unicode(course_id))
