@@ -95,7 +95,7 @@ def get_override_for_ccx(ccx, block, name, default=None):
     block_overrides = overrides.get(non_ccx_key, {})
     log.warning("block_overrides {}".format(block_overrides))
     log.warning("default {}".format(default))
-    return default
+    return True
     if name in block_overrides:
         try:
             return block.fields[name].from_json(block_overrides[name])
