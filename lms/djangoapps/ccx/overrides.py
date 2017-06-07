@@ -85,6 +85,7 @@ def get_override_for_ccx(ccx, block, name, default=None):
     overridden for the given ccx, returns `default`.
     """
     overrides = _get_overrides_for_ccx(ccx)
+    log.warning("overrides {}".format(overrides))
 
     if isinstance(block.location, CCXBlockUsageLocator):
         non_ccx_key = block.location.to_block_locator()
@@ -92,6 +93,9 @@ def get_override_for_ccx(ccx, block, name, default=None):
         non_ccx_key = block.location
 
     block_overrides = overrides.get(non_ccx_key, {})
+    log.warning("block_overrides {}".format(block_overrides))
+    log.warning("default {}".format(default))
+    return default
     if name in block_overrides:
         try:
             return block.fields[name].from_json(block_overrides[name])
