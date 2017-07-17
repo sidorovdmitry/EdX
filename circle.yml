@@ -9,7 +9,7 @@ general:
 
 dependencies:
   override:
-    - sudo apt-get install libxmlsec1-dev
+    - sudo apt-get update && sudo apt-get install libxmlsec1-dev
     - npm install
 
     - pip install setuptools
